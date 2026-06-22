@@ -69,6 +69,15 @@ Create product metafield definitions first:
 /Users/vilovieta/Documents/Shopify/store-setup/product-metafields.json
 ```
 
+CLI/API path if an Admin API token is available:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+SHOPIFY_STORE=STORE.myshopify.com \
+SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_... \
+node scripts/create-product-metafields.js
+```
+
 Required product metafields:
 
 - [ ] `custom.product_deck`

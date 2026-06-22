@@ -7,6 +7,7 @@ Files:
 - `product-metafields.json` - product metafield definitions the theme reads.
 - `products.csv` - two-product starter import file.
 - `LAUNCH_CHECKLIST.md` - store-by-store checklist to execute after access exists.
+- `/Users/vilovieta/Documents/Shopify/scripts/create-product-metafields.js` - Admin GraphQL helper for creating the product metafield definitions from `product-metafields.json`.
 
 ## Setup Order
 
@@ -34,6 +35,30 @@ Create these definitions:
 | Specs | `custom.specs` | Multi-line text | Product specs list |
 
 The `Specs` value is semicolon-separated because it needs to work predictably in both CSV import and Liquid rendering.
+
+CLI/API shortcut after a Shopify Admin API token exists:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+SHOPIFY_STORE=STORE.myshopify.com \
+SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_... \
+node scripts/create-product-metafields.js
+```
+
+Local dry run without credentials:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+npm run store:metafields:dry-run
+```
+
+The script follows Shopify Admin GraphQL `metafieldDefinitionCreate` shape for the current `2026-04` Admin API:
+
+```text
+https://shopify.dev/docs/api/admin-graphql/latest/mutations/metafieldDefinitionCreate
+```
+
+Override the API version with `SHOPIFY_ADMIN_API_VERSION` if the store needs a different version.
 
 ## Product Import
 

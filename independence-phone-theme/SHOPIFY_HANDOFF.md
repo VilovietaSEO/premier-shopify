@@ -95,6 +95,15 @@ Preferred path:
 /Users/vilovieta/Documents/Shopify/store-setup/product-metafields.json
 ```
 
+API shortcut after an Admin API token exists:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+SHOPIFY_STORE=STORE.myshopify.com \
+SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_... \
+node scripts/create-product-metafields.js
+```
+
 2. Import the starter product CSV:
 
 ```bash

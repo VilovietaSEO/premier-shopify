@@ -455,6 +455,7 @@ for (const asset of themeAssets) {
 assertExecutable('scripts/apply-refresh-overlay.sh', 'Refresh overlay script');
 assertExecutable('scripts/bootstrap-refresh-store.sh', 'Refresh store bootstrap script');
 assertExecutable('scripts/test-refresh-overlay.sh', 'Refresh overlay smoke test');
+assertExecutable('scripts/create-product-metafields.js', 'Product metafield creation script');
 assertFileIncludes('.gitignore', ['refresh-theme/'], 'Repo gitignore');
 assertFileIncludes('independence-phone-theme/layout/theme.liquid', [
   "{% render 'ip-structured-data' %}",
@@ -527,6 +528,8 @@ assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'STORE.myshopify.com',
   'Shopify `Refresh` theme',
   'brief-materials/assets/logo/independence-phone-logo-export.png',
+  'node scripts/create-product-metafields.js',
+  'SHOPIFY_ADMIN_ACCESS_TOKEN',
   'scripts/bootstrap-refresh-store.sh',
   'scripts/apply-refresh-overlay.sh',
   'shopify theme dev --store STORE.myshopify.com --theme REFRESH_THEME_ID',
@@ -726,7 +729,7 @@ if (csvPath) {
 
 const packageJson = readJson('package.json');
 if (packageJson) {
-  for (const script of ['audit:coverage', 'overlay:test', 'theme:check', 'preview:test', 'verify:local']) {
+  for (const script of ['audit:coverage', 'store:metafields:dry-run', 'overlay:test', 'theme:check', 'preview:test', 'verify:local']) {
     if (packageJson.scripts && packageJson.scripts[script]) {
       pass(`package script ${script}`);
     } else {
