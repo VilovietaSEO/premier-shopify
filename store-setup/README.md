@@ -6,6 +6,7 @@ Files:
 
 - `product-metafields.json` - product metafield definitions the theme reads.
 - `products.csv` - two-product starter import file.
+- `LAUNCH_CHECKLIST.md` - store-by-store checklist to execute after access exists.
 
 ## Setup Order
 

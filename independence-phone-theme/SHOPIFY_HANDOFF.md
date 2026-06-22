@@ -10,6 +10,12 @@ Detailed Theme Editor editing guide:
 /Users/vilovieta/Documents/Shopify/independence-phone-theme/THEME_EDITOR_GUIDE.md
 ```
 
+Fresh store launch checklist:
+
+```bash
+/Users/vilovieta/Documents/Shopify/store-setup/LAUNCH_CHECKLIST.md
+```
+
 ## Refresh Base Requirement
 
 Final build target: Shopify `Refresh` plus the Independence Phone overlay.

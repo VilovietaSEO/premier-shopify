@@ -53,6 +53,20 @@ function readJson(filePath) {
   }
 }
 
+function assertFileIncludes(filePath, phrases, label = filePath) {
+  const absolute = assertFile(filePath, label);
+  if (!absolute) return;
+  const source = fs.readFileSync(absolute, 'utf8');
+
+  for (const phrase of phrases) {
+    if (source.includes(phrase)) {
+      pass(`${label}: includes ${phrase}`);
+    } else {
+      fail(`${label}: missing ${phrase}`);
+    }
+  }
+}
+
 function extractSectionSchema(section) {
   const filePath = `independence-phone-theme/sections/${section}.liquid`;
   const absolute = path.join(root, filePath);
@@ -418,6 +432,28 @@ assertFile('independence-phone-theme/SHOPIFY_HANDOFF.md', 'Shopify handoff');
 assertFile('independence-phone-theme/THEME_EDITOR_GUIDE.md', 'Theme Editor guide');
 assertFile('refresh-overlay/README.md', 'Refresh overlay README');
 assertFile('store-setup/README.md', 'Store setup README');
+assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
+  'STORE.myshopify.com',
+  'Shopify `Refresh` theme',
+  'scripts/apply-refresh-overlay.sh',
+  'shopify theme dev --store STORE.myshopify.com --theme REFRESH_THEME_ID',
+  'custom.product_deck',
+  '/products/freedom-phone',
+  '/products/patriot-phone',
+  'collection.phones',
+  'product.independence-phone',
+  'page.contact',
+  'indy-phone-reel-1.mov',
+  'Give them a phone. Not the internet.',
+  'Reachable without scrollable',
+  'A phone that acts like a phone',
+  'The useful part of a phone, first.',
+  'For bus days, home-alone minutes, and grandparents.',
+  'American-owned messaging is secondary trust',
+  'Confirm add-to-cart works for both products.',
+  'Send a test submission and confirm delivery to the store contact email.',
+  'Connect the final public domain after publish approval.',
+], 'Fresh store launch checklist');
 assertFile('visual-preview/index.html', 'Visual preview page');
 assertFile('visual-preview/preview.spec.js', 'Visual preview test');
 assertFile('visual-preview/verification.md', 'Visual verification report');
