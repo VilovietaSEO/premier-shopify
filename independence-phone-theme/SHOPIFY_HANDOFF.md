@@ -46,6 +46,15 @@ If login opens a device-code flow, complete it in the browser. After auth, the c
 
 In Shopify admin, add the free `Refresh` theme to the fresh store. Then:
 
+Preferred scripted path:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+scripts/bootstrap-refresh-store.sh STORE.myshopify.com REFRESH_THEME_ID /Users/vilovieta/Documents/Shopify/refresh-theme
+```
+
+Manual path:
+
 ```bash
 shopify theme list --store STORE.myshopify.com
 shopify theme pull --store STORE.myshopify.com --theme REFRESH_THEME_ID --path /Users/vilovieta/Documents/Shopify/refresh-theme

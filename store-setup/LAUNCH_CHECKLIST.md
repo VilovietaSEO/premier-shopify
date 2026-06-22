@@ -32,24 +32,20 @@ npm run verify:local
 shopify theme list --store STORE.myshopify.com
 ```
 
-- [ ] Pull Refresh locally:
-
-```bash
-shopify theme pull --store STORE.myshopify.com --theme REFRESH_THEME_ID --path /Users/vilovieta/Documents/Shopify/refresh-theme
-```
-
-- [ ] Apply the Independence Phone overlay:
+- [ ] Pull Refresh, apply the Independence Phone overlay, and run Theme Check:
 
 ```bash
 cd /Users/vilovieta/Documents/Shopify
-scripts/apply-refresh-overlay.sh /Users/vilovieta/Documents/Shopify/refresh-theme
+scripts/bootstrap-refresh-store.sh STORE.myshopify.com REFRESH_THEME_ID /Users/vilovieta/Documents/Shopify/refresh-theme
 ```
 
-- [ ] Validate the applied Refresh theme:
+- [ ] Use the manual overlay path only if the bootstrap script is not appropriate:
 
 ```bash
-cd /Users/vilovieta/Documents/Shopify/refresh-theme
-shopify theme check
+cd /Users/vilovieta/Documents/Shopify
+shopify theme pull --store STORE.myshopify.com --theme REFRESH_THEME_ID --path /Users/vilovieta/Documents/Shopify/refresh-theme
+scripts/apply-refresh-overlay.sh /Users/vilovieta/Documents/Shopify/refresh-theme
+shopify theme check --path /Users/vilovieta/Documents/Shopify/refresh-theme
 ```
 
 ## 3. Development Preview

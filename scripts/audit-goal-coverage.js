@@ -428,6 +428,14 @@ for (const asset of themeAssets) {
 }
 
 assertExecutable('scripts/apply-refresh-overlay.sh', 'Refresh overlay script');
+assertExecutable('scripts/bootstrap-refresh-store.sh', 'Refresh store bootstrap script');
+assertFileIncludes('.gitignore', ['refresh-theme/'], 'Repo gitignore');
+assertFileIncludes('scripts/bootstrap-refresh-store.sh', [
+  'shopify theme pull --store "$store" --theme "$theme_id" --path "$target_theme"',
+  '"$repo_root/scripts/apply-refresh-overlay.sh" "$target_theme"',
+  'shopify theme check --path "$target_theme"',
+  'shopify theme dev --store "$store" --theme "$theme_id"',
+], 'Refresh store bootstrap script');
 assertFile('independence-phone-theme/SHOPIFY_HANDOFF.md', 'Shopify handoff');
 assertFile('independence-phone-theme/THEME_EDITOR_GUIDE.md', 'Theme Editor guide');
 assertFile('refresh-overlay/README.md', 'Refresh overlay README');
@@ -435,6 +443,7 @@ assertFile('store-setup/README.md', 'Store setup README');
 assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'STORE.myshopify.com',
   'Shopify `Refresh` theme',
+  'scripts/bootstrap-refresh-store.sh',
   'scripts/apply-refresh-overlay.sh',
   'shopify theme dev --store STORE.myshopify.com --theme REFRESH_THEME_ID',
   'custom.product_deck',

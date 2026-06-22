@@ -9,6 +9,7 @@ Independence Phone fresh-store theme build:
 - Theme path: `/Users/vilovieta/Documents/Shopify/independence-phone-theme`
 - Refresh overlay path: `/Users/vilovieta/Documents/Shopify/refresh-overlay`
 - Refresh overlay script: `/Users/vilovieta/Documents/Shopify/scripts/apply-refresh-overlay.sh`
+- Refresh store bootstrap script: `/Users/vilovieta/Documents/Shopify/scripts/bootstrap-refresh-store.sh`
 - Fresh store setup data: `/Users/vilovieta/Documents/Shopify/store-setup`
 - Fresh store launch checklist: `/Users/vilovieta/Documents/Shopify/store-setup/LAUNCH_CHECKLIST.md`
 - Brief/source path: `/Users/vilovieta/Documents/Shopify/brief-materials`
@@ -41,7 +42,16 @@ Refresh-base path for the fresh store:
 
 1. Add Shopify `Refresh` to the new store.
 2. Pull that Refresh theme locally.
-3. Apply `/Users/vilovieta/Documents/Shopify/refresh-overlay` with:
+3. Apply `/Users/vilovieta/Documents/Shopify/refresh-overlay`.
+
+Preferred scripted path after you know the store handle and Refresh theme ID:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+scripts/bootstrap-refresh-store.sh STORE.myshopify.com REFRESH_THEME_ID /Users/vilovieta/Documents/Shopify/refresh-theme
+```
+
+Manual overlay-only path:
 
 ```bash
 cd /Users/vilovieta/Documents/Shopify

@@ -11,7 +11,7 @@ Files:
 ## Setup Order
 
 1. Add Shopify `Refresh` to the fresh store.
-2. Pull Refresh and apply `/Users/vilovieta/Documents/Shopify/refresh-overlay`.
+2. Pull Refresh and apply `/Users/vilovieta/Documents/Shopify/refresh-overlay` with `/Users/vilovieta/Documents/Shopify/scripts/bootstrap-refresh-store.sh`.
 3. Create the product metafields in Shopify admin.
 4. Import `products.csv`.
 5. Assign product templates and upload/select product images.
