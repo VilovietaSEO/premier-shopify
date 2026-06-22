@@ -1,0 +1,10 @@
+{
+  "name": "premier-shopify",
+  "private": true,
+  "scripts": {
+    "preview:test": "playwright test visual-preview/preview.spec.js --browser=chromium --reporter=line"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.0"
+  }
+}

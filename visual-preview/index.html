@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Independence Phone Visual Preview</title>
+    <link rel="stylesheet" href="../independence-phone-theme/assets/critical.css">
+    <link rel="stylesheet" href="../independence-phone-theme/assets/ip-theme.css">
+    <style>
+      :root {
+        --font-primary--family: "Work Sans", "Trebuchet MS", Arial, sans-serif;
+        --page-width: 110rem;
+        --page-margin: 24px;
+        --color-background: #f8f4eb;
+        --color-foreground: #172033;
+        --style-border-radius-inputs: 6px;
+      }
+
+      .preview-ribbon {
+        background: #172033;
+        color: #f8f4eb;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+        padding: 0.55rem 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+
+      .preview-ribbon a {
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 999px;
+        color: inherit;
+        font-size: 0.82rem;
+        font-weight: 800;
+        min-height: 2rem;
+        padding: 0.32rem 0.7rem;
+        text-decoration: none;
+      }
+
+      .preview-page-marker {
+        background: #fff;
+        border-block: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 12%, transparent);
+        color: var(--ip-blue, #263F73);
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0;
+        padding: 0.8rem var(--page-margin);
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .preview-mini-header {
+        align-items: center;
+        background: color-mix(in srgb, var(--ip-paper, #F8F4EB) 88%, #fff);
+        border-bottom: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 10%, transparent);
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+        padding: 1rem var(--page-margin);
+      }
+
+      .preview-mini-header img {
+        max-width: min(18rem, 50vw);
+      }
+
+      .preview-mini-header nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .preview-mini-header a {
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .preview-field-button {
+        background: var(--ip-red, #B73532);
+        border: 0;
+        border-radius: 6px;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 900;
+        min-height: 3rem;
+        padding: 0.85rem 1rem;
+      }
+
+      @media (max-width: 720px) {
+        .preview-ribbon {
+          justify-content: flex-start;
+          overflow-x: auto;
+        }
+
+        .preview-mini-header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="preview-ribbon" aria-label="Preview page navigation">
+      <a href="#home">Home</a>
+      <a href="#choose">Choose Your Phone</a>
+      <a href="#freedom">Freedom Product</a>
+      <a href="#patriot">Patriot Product</a>
+      <a href="#contact">Contact</a>
+    </div>
+
+    <header class="preview-mini-header">
+      <a href="#home" aria-label="Independence Phone">
+        <img src="../independence-phone-theme/assets/ip-current-site-logo.png" alt="Independence Phone" width="1200" height="110">
+      </a>
+      <nav aria-label="Store navigation">
+        <a href="#home">Home</a>
+        <a href="#choose">Choose Your Phone</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main class="ip-main">
+      <div id="home" class="preview-page-marker">Home /</div>
+
+      <div class="shopify-section">
+        <section class="ip-hero full-width" data-slot="home.hero">
+          <div class="ip-hero__media" aria-hidden="true">
+            <img class="ip-hero__image" src="../independence-phone-theme/assets/ip-hero-video-poster.jpg" alt="" width="2160" height="3840" loading="eager">
+          </div>
+          <div class="ip-hero__inner">
+            <div class="ip-hero__copy">
+              <p class="ip-kicker">A family phone for the smartphone-free years</p>
+              <h1 class="ip-heading">Give them a phone. Not the internet.</h1>
+              <div class="ip-lede">
+                <p>Kids can call home without apps, browsers, social media, or a personal screen. Built for bus days, home-alone minutes, grandparents, and the years before a smartphone.</p>
+              </div>
+              <ul class="ip-proof-list">
+                <li>No apps</li>
+                <li>No web browser</li>
+                <li>No social feeds</li>
+                <li>Simple phone service</li>
+              </ul>
+              <div class="ip-buttons">
+                <a class="ip-button" href="#choose">Choose your phone</a>
+                <a class="ip-button ip-button--secondary" href="#how-it-works">See how it works</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="shopify-section">
+        <section id="how-it-works" class="ip-section ip-story" data-slot="home.jtbd">
+          <div class="ip-story__intro">
+            <div class="ip-stack">
+              <p class="ip-kicker">Reachable without scrollable</p>
+              <h2 class="ip-heading ip-heading--medium ip-heading--wide">They need reachability. They do not need the whole internet yet.</h2>
+            </div>
+            <div class="ip-stack">
+              <div class="ip-lede">
+                <p>The first phone decision usually starts with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation.</p>
+              </div>
+              <p class="ip-note">Independence Phone gives families the calling layer first.</p>
+            </div>
+          </div>
+          <div class="ip-story__cards">
+            <article class="ip-card ip-story-card">
+              <h3 class="ip-story-card__title">Bus days</h3>
+              <div class="ip-story-card__body"><p>A simple way to call home before and after school without adding a smartphone.</p></div>
+            </article>
+            <article class="ip-card ip-story-card">
+              <h3 class="ip-story-card__title">Home-alone minutes</h3>
+              <div class="ip-story-card__body"><p>More independence for short windows while parents stay one call away.</p></div>
+            </article>
+            <article class="ip-card ip-story-card">
+              <h3 class="ip-story-card__title">Grandparents</h3>
+              <div class="ip-story-card__body"><p>A familiar phone experience that makes family calls feel easy again.</p></div>
+            </article>
+            <article class="ip-card ip-story-card">
+              <h3 class="ip-story-card__title">Before the smartphone</h3>
+              <div class="ip-story-card__body"><p>A calmer first step for families delaying apps, browsers, and social feeds.</p></div>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <div class="shopify-section">
+        <section class="ip-section ip-section--surface ip-section--tight ip-section--flag" data-slot="home.feature-strip">
+          <div class="ip-strip">
+            <div class="ip-stack">
+              <p class="ip-kicker">A phone that acts like a phone</p>
+              <h2 class="ip-heading ip-heading--medium">The useful part of a phone, first.</h2>
+            </div>
+            <div class="ip-strip__items">
+              <div class="ip-strip__item">
+                <h3>No apps</h3>
+                <p class="ip-note">No app store to negotiate.</p>
+              </div>
+              <div class="ip-strip__item">
+                <h3>No web browser</h3>
+                <p class="ip-note">Designed to avoid the open internet step.</p>
+              </div>
+              <div class="ip-strip__item">
+                <h3>Simple service</h3>
+                <p class="ip-note">A personal phone number with clear monthly or annual service.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="choose" class="preview-page-marker">Choose Your Phone /collections/phones</div>
+
+      <div class="shopify-section">
+        <section class="ip-section" data-slot="products.compare">
+          <div class="ip-stack">
+            <p class="ip-kicker">Two phones. One simple decision.</p>
+            <h2 class="ip-heading ip-heading--medium ip-heading--wide">Choose the everyday model or the rugged model.</h2>
+            <div class="ip-lede"><p>Both phones are cordless Wi-Fi handsets with charging bases. Both are built around simple family calling, not apps or feeds.</p></div>
+          </div>
+          <div class="ip-products" style="margin-top: 2rem;">
+            <article class="ip-card ip-product-card">
+              <div class="ip-product-card__image">
+                <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Freedom Phone" width="1200" height="1200" loading="lazy">
+              </div>
+              <div class="ip-product-card__body">
+                <div class="ip-product-card__meta">
+                  <h3>Freedom Phone</h3>
+                  <p class="ip-price">$99</p>
+                </div>
+                <p>Best for home, grandparents, short independence windows, and everyday family calling.</p>
+                <ul class="ip-spec-list">
+                  <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
+                  <li>HD audio quality and smart noise filtering</li>
+                  <li>Bluetooth 5.0, encrypted data transmission and storage</li>
+                  <li>9-hour talk time, 200-hour standby battery</li>
+                </ul>
+                <div class="ip-buttons"><a class="ip-button" href="#freedom">View Freedom Phone</a></div>
+              </div>
+            </article>
+
+            <article class="ip-card ip-product-card">
+              <div class="ip-product-card__image">
+                <img src="../independence-phone-theme/assets/ip-current-site-product-2.png" alt="Patriot Phone" width="1200" height="1200" loading="lazy">
+              </div>
+              <div class="ip-product-card__body">
+                <div class="ip-product-card__meta">
+                  <h3>Patriot Phone</h3>
+                  <p class="ip-price">$149</p>
+                </div>
+                <p>Best for families who want rugged durability, longer battery life, and a more resilient handset.</p>
+                <ul class="ip-spec-list">
+                  <li>Rugged cordless Wi-Fi handset with charging base</li>
+                  <li>Waterproof, dust-proof, and drop-proof up to 1.8 meters</li>
+                  <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
+                  <li>13-hour talk time, 300-hour standby battery</li>
+                </ul>
+                <div class="ip-buttons"><a class="ip-button" href="#patriot">View Patriot Phone</a></div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <div class="shopify-section">
+        <section class="ip-section ip-section--surface" data-slot="service.plans">
+          <div class="ip-stack">
+            <p class="ip-kicker">Simple service</p>
+            <h2 class="ip-heading ip-heading--medium ip-heading--wide">Personal phone service, priced clearly.</h2>
+            <div class="ip-lede"><p>Each phone pairs with a personal phone number and phone service. Choose the monthly plan or pay annually.</p></div>
+          </div>
+          <div class="ip-plan-grid" style="margin-top: 2rem;">
+            <article class="ip-card ip-plan-card">
+              <p class="ip-plan-card__label">Monthly</p>
+              <h3>Personal phone number + monthly service</h3>
+              <p class="ip-price">$17.76/mo</p>
+              <div><p>Simple monthly phone service for the family phone.</p></div>
+            </article>
+            <article class="ip-card ip-plan-card">
+              <p class="ip-plan-card__label">Annual</p>
+              <h3>Personal phone number + annual service</h3>
+              <p class="ip-price">$200/yr</p>
+              <div><p>Annual service saves $13.12 compared with monthly billing.</p></div>
+            </article>
+          </div>
+          <div class="ip-disclosures">
+            <p>Shipping is $15 per phone anywhere in the USA. All products and services are subject to federal, state, and local taxes.</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="shopify-section">
+        <section class="ip-section" data-slot="addons">
+          <div class="ip-stack">
+            <p class="ip-kicker">Optional add-ons</p>
+            <h2 class="ip-heading ip-heading--medium ip-heading--wide">Choose only the features your family needs.</h2>
+            <div class="ip-lede"><p>Both phones can present the same optional add-ons during the purchase flow.</p></div>
+          </div>
+          <div class="ip-addon-grid" style="margin-top: 2rem;">
+            <article class="ip-card ip-addon-card"><p class="ip-addon-card__label">$5/mo</p><h3>Call Recording</h3><p class="ip-note">Record and store all calls for 90 days.</p></article>
+            <article class="ip-card ip-addon-card"><p class="ip-addon-card__label">$5/mo</p><h3>Time Conditions</h3><p class="ip-note">Set on/off times for incoming calls.</p></article>
+            <article class="ip-card ip-addon-card"><p class="ip-addon-card__label">$5/mo</p><h3>Voicemail to Email</h3><p class="ip-note">Unanswered calls go to voicemail and messages are sent to email.</p></article>
+            <article class="ip-card ip-addon-card"><p class="ip-addon-card__label">$10/mo</p><h3>Victory Bundle</h3><p class="ip-note">Call Recording, Time Conditions, and Voicemail to Email together.</p></article>
+            <article class="ip-card ip-addon-card"><p class="ip-addon-card__label">$5/mo</p><h3>Auto Attendant</h3><p class="ip-note">Help screen spam calls before they interrupt the family phone.</p></article>
+          </div>
+        </section>
+      </div>
+
+      <div class="shopify-section">
+        <section class="ip-section" data-slot="capabilities">
+          <div class="ip-stack">
+            <p class="ip-kicker">Plain answers</p>
+            <h2 class="ip-heading ip-heading--medium ip-heading--wide">What it does, and what it is not trying to be.</h2>
+            <div class="ip-lede"><p>If a feature is not in the supplied launch specs, do not market it as included.</p></div>
+          </div>
+          <div class="ip-capability" style="margin-top: 2rem;">
+            <div class="ip-capability__row">
+              <div class="ip-capability__cell ip-capability__head">Capability</div>
+              <div class="ip-capability__cell ip-capability__head">Status</div>
+              <div class="ip-capability__cell ip-capability__head">How to explain it</div>
+            </div>
+            <div class="ip-capability__row"><div class="ip-capability__cell"><strong>Calls</strong></div><div class="ip-capability__cell"><span class="ip-status ip-status--yes">Yes</span></div><div class="ip-capability__cell">The product is built around calling and a personal phone number.</div></div>
+            <div class="ip-capability__row"><div class="ip-capability__cell"><strong>Wi-Fi handset</strong></div><div class="ip-capability__cell"><span class="ip-status ip-status--yes">Yes</span></div><div class="ip-capability__cell">Both products are cordless Wi-Fi handsets with charging bases.</div></div>
+            <div class="ip-capability__row"><div class="ip-capability__cell"><strong>Web browser</strong></div><div class="ip-capability__cell"><span class="ip-status ip-status--no">No</span></div><div class="ip-capability__cell">The product is positioned as a phone without web browsing.</div></div>
+            <div class="ip-capability__row"><div class="ip-capability__cell"><strong>SMS, GPS, camera, cellular mobility</strong></div><div class="ip-capability__cell"><span class="ip-status ip-status--plain">Not in supplied specs</span></div><div class="ip-capability__cell">Do not market these as included unless the product/service scope changes.</div></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="shopify-section">
+        <section class="ip-section ip-section--ink ip-section--flag" data-slot="package">
+          <div class="ip-package">
+            <div class="ip-stack">
+              <p class="ip-kicker">Introductory 250th Anniversary package</p>
+              <h2 class="ip-heading ip-heading--medium ip-heading--wide">A Freedom Phone starter package for the smartphone-free years.</h2>
+              <div class="ip-lede"><p>Get 1 Freedom Phone, 1 year of service, and the Victory Bundle in one introductory package.</p></div>
+              <div class="ip-buttons"><a class="ip-button" href="#freedom">View Freedom Phone</a></div>
+            </div>
+            <div class="ip-package__price">
+              <p class="ip-kicker">Package price</p>
+              <strong>$250</strong>
+              <p>1 Freedom Phone + 1 year service + Victory Bundle</p>
+              <p class="ip-note">$73.12 savings. Taxes may apply.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="freedom" class="preview-page-marker">Product /products/freedom-phone</div>
+
+      <div class="shopify-section">
+        <section class="ip-product-main" data-slot="product.freedom">
+          <div class="ip-product-main__media">
+            <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Freedom Phone" width="1200" height="1200">
+          </div>
+          <div class="ip-stack">
+            <p class="ip-kicker">A phone that acts like a phone</p>
+            <h1 class="ip-heading ip-heading--medium">Freedom Phone</h1>
+            <p class="ip-lede">The everyday family phone for kids who need to call home without stepping into smartphone life.</p>
+            <p class="ip-price">$99</p>
+            <div class="ip-card" style="padding: 1rem;"><h2 class="ip-story-card__title">Best for</h2><p>Best for home, grandparents, short independence windows, and everyday family calling.</p></div>
+            <ul class="ip-spec-list">
+              <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
+              <li>HD audio quality</li>
+              <li>Smart noise filtering</li>
+              <li>Encrypted data transmission and storage</li>
+              <li>Built-in Bluetooth 5.0</li>
+              <li>9-hour talk time, 200-hour standby battery</li>
+            </ul>
+            <form class="ip-product-form">
+              <label for="freedom-qty">Quantity</label>
+              <input id="freedom-qty" type="number" min="1" value="1">
+              <button type="button">Add to cart</button>
+            </form>
+            <div class="ip-disclosures">
+              <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
+              <p>Shipping: $15 per phone anywhere in the USA.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="patriot" class="preview-page-marker">Product /products/patriot-phone</div>
+
+      <div class="shopify-section">
+        <section class="ip-product-main" data-slot="product.patriot">
+          <div class="ip-product-main__media">
+            <img src="../independence-phone-theme/assets/ip-current-site-product-2.png" alt="Patriot Phone" width="1200" height="1200">
+          </div>
+          <div class="ip-stack">
+            <p class="ip-kicker">A phone that acts like a phone</p>
+            <h1 class="ip-heading ip-heading--medium">Patriot Phone</h1>
+            <p class="ip-lede">The rugged family phone for busier homes, tougher handling, and longer days.</p>
+            <p class="ip-price">$149</p>
+            <div class="ip-card" style="padding: 1rem;"><h2 class="ip-story-card__title">Best for</h2><p>Best for families who want rugged durability, longer battery life, and a more resilient handset.</p></div>
+            <ul class="ip-spec-list">
+              <li>Rugged cordless Wi-Fi handset with charging base</li>
+              <li>Waterproof and dust-proof, drop-proof up to 1.8 meters</li>
+              <li>Non-slip, anti-scratch, anti-bacterial construction</li>
+              <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
+              <li>Encrypted data transmission and storage</li>
+              <li>Built-in Bluetooth 5.0</li>
+              <li>13-hour talk time, 300-hour standby battery</li>
+            </ul>
+            <form class="ip-product-form">
+              <label for="patriot-qty">Quantity</label>
+              <input id="patriot-qty" type="number" min="1" value="1">
+              <button type="button">Add to cart</button>
+            </form>
+            <div class="ip-disclosures">
+              <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
+              <p>Shipping: $15 per phone anywhere in the USA.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="shopify-section">
+        <section class="ip-section ip-section--surface" data-slot="faq">
+          <div class="ip-stack">
+            <p class="ip-kicker">FAQ</p>
+            <h2 class="ip-heading ip-heading--medium ip-heading--wide">Questions parents ask before choosing a simpler phone.</h2>
+          </div>
+          <div class="ip-faq" style="margin-top: 2rem;">
+            <details open><summary>Does it have internet?</summary><div class="ip-faq__answer"><p>Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p></div></details>
+            <details><summary>What is the monthly fee?</summary><div class="ip-faq__answer"><p>Personal phone number plus monthly phone service is $17.76/mo. Annual service is $200/yr and saves $13.12 compared with monthly billing.</p></div></details>
+            <details><summary>What is the difference between Freedom Phone and Patriot Phone?</summary><div class="ip-faq__answer"><p>Freedom Phone is the everyday heavy-duty Wi-Fi handset. Patriot Phone is the rugged model with waterproof and dust-proof construction, drop protection up to 1.8 meters, and longer battery life.</p></div></details>
+          </div>
+        </section>
+      </div>
+
+      <div id="contact" class="preview-page-marker">Contact /pages/contact</div>
+
+      <div class="shopify-section">
+        <section class="ip-section" data-slot="contact.form">
+          <div class="ip-contact">
+            <div class="ip-stack">
+              <p class="ip-kicker">Need help choosing?</p>
+              <h1 class="ip-heading ip-heading--medium ip-heading--wide">Tell us what your family needs the phone to do.</h1>
+              <div class="ip-lede"><p>Ask about Freedom Phone, Patriot Phone, service, add-ons, the 250th Anniversary package, or launch updates.</p></div>
+              <p class="ip-note">Common buying moments include home-alone minutes, grandparents, school days, and a simpler first-phone step.</p>
+            </div>
+            <div class="ip-card" style="padding: clamp(1rem, 3vw, 1.5rem);">
+              <form class="ip-contact-form">
+                <div class="ip-grid ip-grid--2">
+                  <div class="ip-field"><label for="name">Name</label><input id="name" type="text" value=""></div>
+                  <div class="ip-field"><label for="email">Email</label><input id="email" type="email" value=""></div>
+                </div>
+                <div class="ip-grid ip-grid--2">
+                  <div class="ip-field"><label for="phone">Phone</label><input id="phone" type="tel" value=""></div>
+                  <div class="ip-field"><label for="age">Child age range</label><select id="age"><option>8-10</option><option>11-13</option><option>14+</option></select></div>
+                </div>
+                <div class="ip-grid ip-grid--2">
+                  <div class="ip-field"><label for="use-case">Main use case</label><select id="use-case"><option>Help choosing a phone</option><option>School or bus days</option><option>Grandparents and family calls</option></select></div>
+                  <div class="ip-field"><label for="product">Interested product</label><select id="product"><option>Freedom Phone</option><option>Patriot Phone</option><option>250th Anniversary package</option></select></div>
+                </div>
+                <div class="ip-field"><label for="plan">Preferred service plan</label><select id="plan"><option>Monthly service - $17.76/mo</option><option>Annual service - $200/yr</option><option>Not sure yet</option></select></div>
+                <div class="ip-field"><label for="questions">Questions</label><textarea id="questions"></textarea></div>
+                <label class="ip-form-note"><input type="checkbox"> Send me text or email updates and marketing information. I can opt out later.</label>
+                <button class="preview-field-button" type="button">Send my question</button>
+                <p class="ip-form-note">Provided payment information is stored securely in the billing system and used each month to pay the bill.</p>
+              </form>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="shopify-section">
+        <section class="ip-section ip-section--ink ip-section--flag" data-slot="trust">
+          <div class="ip-trust">
+            <div class="ip-stack">
+              <p class="ip-kicker">American-owned. Family-focused.</p>
+              <h2 class="ip-heading ip-heading--medium ip-heading--wide">A practical phone choice backed by decades of communication experience.</h2>
+              <div class="ip-lede"><p>The patriotic layer supports trust after parents understand the product: a phone that helps families stay connected without rushing into smartphone life.</p></div>
+            </div>
+            <div class="ip-trust__items">
+              <article class="ip-trust__item"><h3>American-owned</h3><p>A values-aligned trust layer for families choosing a simpler first phone.</p></article>
+              <article class="ip-trust__item"><h3>42 years in communications</h3><p>Use the company history to make the product feel dependable and experienced.</p></article>
+              <article class="ip-trust__item"><h3>250th Anniversary package</h3><p>A concrete introductory offer, not just patriotic styling.</p></article>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer__copyright">
+        <a href="#home">Independence Phone</a>
+        <p>American-owned and family-focused. Built for the smartphone-free years.</p>
+      </div>
+      <div class="footer__links">
+        <a href="#choose">Choose Your Phone</a>
+        <a href="#contact">Contact</a>
+        <a href="#home">Privacy</a>
+        <a href="#home">Terms</a>
+      </div>
+    </footer>
+  </body>
+</html>
