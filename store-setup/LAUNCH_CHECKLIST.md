@@ -90,6 +90,15 @@ Import or create exactly two products:
 /Users/vilovieta/Documents/Shopify/store-setup/products.csv
 ```
 
+CLI/API path after metafields exist:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+SHOPIFY_STORE=STORE.myshopify.com \
+SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_... \
+node scripts/create-storefront-objects.js
+```
+
 Required product handles:
 
 - [ ] `/products/freedom-phone`

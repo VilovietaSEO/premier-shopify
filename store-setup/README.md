@@ -8,14 +8,15 @@ Files:
 - `products.csv` - two-product starter import file.
 - `LAUNCH_CHECKLIST.md` - store-by-store checklist to execute after access exists.
 - `/Users/vilovieta/Documents/Shopify/scripts/create-product-metafields.js` - Admin GraphQL helper for creating the product metafield definitions from `product-metafields.json`.
+- `/Users/vilovieta/Documents/Shopify/scripts/create-storefront-objects.js` - Admin GraphQL helper for upserting the two products, creating the `Phones` collection, and creating the `Contact` page.
 
 ## Setup Order
 
 1. Add Shopify `Refresh` to the fresh store.
 2. Pull Refresh and apply `/Users/vilovieta/Documents/Shopify/refresh-overlay` with `/Users/vilovieta/Documents/Shopify/scripts/bootstrap-refresh-store.sh`.
-3. Create the product metafields in Shopify admin.
-4. Import `products.csv`.
-5. Assign product templates and upload/select product images.
+3. Create the product metafields in Shopify admin or run `/Users/vilovieta/Documents/Shopify/scripts/create-product-metafields.js`.
+4. Import `products.csv` manually or run `/Users/vilovieta/Documents/Shopify/scripts/create-storefront-objects.js`.
+5. Upload/select product images.
 6. Open Theme Editor and select the product objects in the product comparison section.
 
 ## Product Metafields
@@ -67,6 +68,24 @@ Import:
 ```bash
 /Users/vilovieta/Documents/Shopify/store-setup/products.csv
 ```
+
+CLI/API shortcut after product metafield definitions exist:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+SHOPIFY_STORE=STORE.myshopify.com \
+SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_... \
+node scripts/create-storefront-objects.js
+```
+
+Local dry run without credentials:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+npm run store:objects:dry-run
+```
+
+This helper uses current Shopify Admin GraphQL patterns verified against the `2026-04` docs: `productCreate`/`productUpdate`, `productVariantsBulkUpdate`, `collectionCreate`, `collectionAddProducts`, and `pageCreate`.
 
 Shopify's product CSV format requires the first line to use supported column headers, and Shopify supports product metafields in product CSV import/export after the metafields are defined. The CSV uses current column names such as `Title`, `URL handle`, `Description`, `Option1 name`, `Option1 value`, `Price`, `Product image URL`, and custom metafield columns in the `product.metafields.custom.KEY` format.
 

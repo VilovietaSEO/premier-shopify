@@ -110,6 +110,15 @@ node scripts/create-product-metafields.js
 /Users/vilovieta/Documents/Shopify/store-setup/products.csv
 ```
 
+API shortcut for the two products, `Phones` collection, and `Contact` page after metafields exist:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+SHOPIFY_STORE=STORE.myshopify.com \
+SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_... \
+node scripts/create-storefront-objects.js
+```
+
 3. Follow the setup notes:
 
 ```bash

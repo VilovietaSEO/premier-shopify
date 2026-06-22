@@ -456,6 +456,16 @@ assertExecutable('scripts/apply-refresh-overlay.sh', 'Refresh overlay script');
 assertExecutable('scripts/bootstrap-refresh-store.sh', 'Refresh store bootstrap script');
 assertExecutable('scripts/test-refresh-overlay.sh', 'Refresh overlay smoke test');
 assertExecutable('scripts/create-product-metafields.js', 'Product metafield creation script');
+assertExecutable('scripts/create-storefront-objects.js', 'Storefront object creation script');
+assertFileIncludes('scripts/create-storefront-objects.js', [
+  'productByIdentifier',
+  'productCreate',
+  'productUpdate',
+  'productVariantsBulkUpdate',
+  'collectionCreate',
+  'collectionAddProducts',
+  'pageCreate',
+], 'Storefront object creation script');
 assertFileIncludes('.gitignore', ['refresh-theme/'], 'Repo gitignore');
 assertFileIncludes('independence-phone-theme/layout/theme.liquid', [
   "{% render 'ip-structured-data' %}",
@@ -529,6 +539,7 @@ assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'Shopify `Refresh` theme',
   'brief-materials/assets/logo/independence-phone-logo-export.png',
   'node scripts/create-product-metafields.js',
+  'node scripts/create-storefront-objects.js',
   'SHOPIFY_ADMIN_ACCESS_TOKEN',
   'scripts/bootstrap-refresh-store.sh',
   'scripts/apply-refresh-overlay.sh',
@@ -729,7 +740,7 @@ if (csvPath) {
 
 const packageJson = readJson('package.json');
 if (packageJson) {
-  for (const script of ['audit:coverage', 'store:metafields:dry-run', 'overlay:test', 'theme:check', 'preview:test', 'verify:local']) {
+  for (const script of ['audit:coverage', 'store:metafields:dry-run', 'store:objects:dry-run', 'overlay:test', 'theme:check', 'preview:test', 'verify:local']) {
     if (packageJson.scripts && packageJson.scripts[script]) {
       pass(`package script ${script}`);
     } else {

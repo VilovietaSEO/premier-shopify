@@ -4,8 +4,9 @@
   "scripts": {
     "audit:coverage": "node scripts/audit-goal-coverage.js",
     "store:metafields:dry-run": "node scripts/create-product-metafields.js --dry-run",
+    "store:objects:dry-run": "node scripts/create-storefront-objects.js --dry-run",
     "theme:check": "shopify theme check --path independence-phone-theme",
-    "verify:local": "npm run audit:coverage && npm run store:metafields:dry-run && npm run overlay:test && npm run theme:check && npm run preview:test",
+    "verify:local": "npm run audit:coverage && npm run store:metafields:dry-run && npm run store:objects:dry-run && npm run overlay:test && npm run theme:check && npm run preview:test",
     "preview:test": "playwright test visual-preview/preview.spec.js --browser=chromium --reporter=line",
     "overlay:test": "scripts/test-refresh-overlay.sh"
   },
