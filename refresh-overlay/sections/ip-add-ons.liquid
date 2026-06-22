@@ -1,0 +1,118 @@
+<section class="ip-section">
+  <div class="ip-stack">
+    {% if section.settings.eyebrow != blank %}
+      <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
+    {% endif %}
+    <h2 class="ip-heading ip-heading--medium ip-heading--wide">{{ section.settings.heading }}</h2>
+    <div class="ip-lede">{{ section.settings.body }}</div>
+  </div>
+
+  <div class="ip-addon-grid" style="margin-top: 2rem;">
+    {% for block in section.blocks %}
+      <article class="ip-card ip-addon-card" {{ block.shopify_attributes }}>
+        <p class="ip-addon-card__label">{{ block.settings.price }}</p>
+        <h3>{{ block.settings.title }}</h3>
+        <p class="ip-note">{{ block.settings.body }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "IP add-ons",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Optional add-ons"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Choose only the features your family needs."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>Both phones can present the same optional add-ons during the purchase flow.</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "addon",
+      "name": "Add-on",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Call Recording"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price",
+          "default": "$5/mo"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Body",
+          "default": "Record and store all calls for 90 days."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IP add-ons",
+      "blocks": [
+        {
+          "type": "addon",
+          "settings": {
+            "title": "Call Recording",
+            "price": "$5/mo",
+            "body": "Record and store all calls for 90 days."
+          }
+        },
+        {
+          "type": "addon",
+          "settings": {
+            "title": "Time Conditions",
+            "price": "$5/mo",
+            "body": "Set on/off times for incoming calls."
+          }
+        },
+        {
+          "type": "addon",
+          "settings": {
+            "title": "Voicemail to Email",
+            "price": "$5/mo",
+            "body": "Unanswered calls go to voicemail and messages are sent to email."
+          }
+        },
+        {
+          "type": "addon",
+          "settings": {
+            "title": "Victory Bundle",
+            "price": "$10/mo",
+            "body": "Call Recording, Time Conditions, and Voicemail to Email together."
+          }
+        },
+        {
+          "type": "addon",
+          "settings": {
+            "title": "Auto Attendant",
+            "price": "$5/mo",
+            "body": "Help screen spam calls before they interrupt the family phone."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

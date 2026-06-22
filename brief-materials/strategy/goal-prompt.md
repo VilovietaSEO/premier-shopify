@@ -10,6 +10,8 @@ Treat the local brief-materials folder as the canonical source of truth. Do not 
 Build path:
 - Shopify repo root: /Users/vilovieta/Documents/Shopify
 - Theme implementation path: /Users/vilovieta/Documents/Shopify/independence-phone-theme
+- Refresh overlay path: /Users/vilovieta/Documents/Shopify/refresh-overlay
+- Refresh overlay script: /Users/vilovieta/Documents/Shopify/scripts/apply-refresh-overlay.sh
 - Canonical brief folder: /Users/vilovieta/Documents/Shopify/brief-materials
 - GitHub repo: https://github.com/VilovietaSEO/premier-shopify
 
@@ -44,7 +46,7 @@ Primary assets:
 - User reference thumbnail: /Users/vilovieta/Documents/Shopify/brief-materials/assets/reference-images/kid-phone-ui-reference.png
 - Current-site asset contact sheet: /Users/vilovieta/Documents/Shopify/brief-materials/assets/site-images/current-site-assets-contact-sheet.jpg
 
-Build a Shopify-native Online Store 2.0 theme using custom editable Liquid sections so the client can visually maintain the site in Shopify Theme Editor. Do not build headless. Do not buy or depend on unsupported third-party themes. If the fresh store starts with Shopify Refresh, port the custom sections/templates from /Users/vilovieta/Documents/Shopify/independence-phone-theme into Refresh; otherwise use /Users/vilovieta/Documents/Shopify/independence-phone-theme as the uploadable theme package. Use Shopify CLI and browser control as needed.
+Build a Shopify-native Online Store 2.0 theme using custom editable Liquid sections so the client can visually maintain the site in Shopify Theme Editor. Do not build headless. Do not buy or depend on unsupported third-party themes. Final target is Shopify Refresh plus the Independence Phone overlay. After the fresh store exists, install/add Refresh in Shopify admin, pull that Refresh theme locally, then apply /Users/vilovieta/Documents/Shopify/refresh-overlay using /Users/vilovieta/Documents/Shopify/scripts/apply-refresh-overlay.sh. Use /Users/vilovieta/Documents/Shopify/independence-phone-theme as the local uploadable source reference until store auth exists.
 
 Core positioning:
 - Lead with: "Give them a phone. Not the internet."

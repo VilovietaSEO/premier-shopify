@@ -21,6 +21,25 @@ Canonical source folder:
 - Product, service, add-on, package, and trust copy use the provided source facts.
 - `shopify theme check` passes with no offenses.
 - Store preview/push waits on fresh-store Shopify auth.
+- Refresh-base migration support exists at `/Users/vilovieta/Documents/Shopify/refresh-overlay`.
+
+## Refresh Base Path
+
+The active project direction is to use Shopify Refresh as the final base theme. Refresh is installed or pulled from a Shopify store; `shopify theme init` does not expose Refresh as a local starter.
+
+After the fresh store exists:
+
+```bash
+shopify theme list --store STORE.myshopify.com
+shopify theme pull --store STORE.myshopify.com --theme REFRESH_THEME_ID --path /Users/vilovieta/Documents/Shopify/refresh-theme
+cd /Users/vilovieta/Documents/Shopify
+scripts/apply-refresh-overlay.sh /Users/vilovieta/Documents/Shopify/refresh-theme
+cd /Users/vilovieta/Documents/Shopify/refresh-theme
+shopify theme check
+shopify theme dev --store STORE.myshopify.com --theme REFRESH_THEME_ID
+```
+
+The current `independence-phone-theme` folder remains a complete uploadable local package and a working source reference, but final Refresh compliance requires applying the overlay to a pulled Refresh theme.
 
 ## Fresh Store Setup
 

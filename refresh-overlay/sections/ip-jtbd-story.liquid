@@ -1,0 +1,120 @@
+<section id="{{ section.settings.anchor_id }}" class="ip-section ip-story">
+  <div class="ip-story__intro">
+    <div class="ip-stack">
+      {% if section.settings.eyebrow != blank %}
+        <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+      <h2 class="ip-heading ip-heading--medium ip-heading--wide">{{ section.settings.heading }}</h2>
+    </div>
+    <div class="ip-stack">
+      <div class="ip-lede">{{ section.settings.body }}</div>
+      {% if section.settings.note != blank %}
+        <p class="ip-note">{{ section.settings.note }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if section.blocks.size > 0 %}
+    <div class="ip-story__cards">
+      {% for block in section.blocks %}
+        <article class="ip-card ip-story-card" {{ block.shopify_attributes }}>
+          <h3 class="ip-story-card__title">{{ block.settings.title }}</h3>
+          <div class="ip-story-card__body">{{ block.settings.body }}</div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "IP JTBD story",
+  "settings": [
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "default": "how-it-works"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Reachable without scrollable"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "They need reachability. They do not need the whole internet yet."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>The first phone decision usually starts with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation.</p>"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Small note",
+      "default": "Independence Phone gives families the calling layer first."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "moment",
+      "name": "Family moment",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Bus days"
+        },
+        {
+          "type": "richtext",
+          "id": "body",
+          "label": "Body",
+          "default": "<p>A simple way to call home before and after school without adding a smartphone.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IP JTBD story",
+      "blocks": [
+        {
+          "type": "moment",
+          "settings": {
+            "title": "Bus days",
+            "body": "<p>A simple way to call home before and after school without adding a smartphone.</p>"
+          }
+        },
+        {
+          "type": "moment",
+          "settings": {
+            "title": "Home-alone minutes",
+            "body": "<p>More independence for short windows while parents stay one call away.</p>"
+          }
+        },
+        {
+          "type": "moment",
+          "settings": {
+            "title": "Grandparents",
+            "body": "<p>A familiar phone experience that makes family calls feel easy again.</p>"
+          }
+        },
+        {
+          "type": "moment",
+          "settings": {
+            "title": "Before the smartphone",
+            "body": "<p>A calmer first step for families delaying apps, browsers, and social feeds.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

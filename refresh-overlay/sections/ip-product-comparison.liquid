@@ -1,0 +1,155 @@
+{% liquid
+  assign freedom = section.settings.freedom_product
+  assign patriot = section.settings.patriot_product
+%}
+
+<section class="ip-section">
+  <div class="ip-stack">
+    {% if section.settings.eyebrow != blank %}
+      <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
+    {% endif %}
+    <h2 class="ip-heading ip-heading--medium ip-heading--wide">{{ section.settings.heading }}</h2>
+    <div class="ip-lede">{{ section.settings.body }}</div>
+  </div>
+
+  <div class="ip-products" style="margin-top: 2rem;">
+    <article class="ip-card ip-product-card">
+      <div class="ip-product-card__image">
+        {% if freedom.featured_image %}
+          {{
+            freedom.featured_image
+            | image_url: width: 900
+            | image_tag: alt: freedom.title, loading: 'lazy'
+          }}
+        {% elsif section.settings.freedom_image != blank %}
+          {{
+            section.settings.freedom_image
+            | image_url: width: 900
+            | image_tag: loading: 'lazy'
+          }}
+        {% else %}
+          <img src="{{ 'ip-current-site-product-1.png' | asset_url }}" alt="Freedom Phone" width="1200" height="1200" loading="lazy">
+        {% endif %}
+      </div>
+      <div class="ip-product-card__body">
+        <div class="ip-product-card__meta">
+          <h3>{{ freedom.title | default: 'Freedom Phone' }}</h3>
+          <p class="ip-price">{% if freedom.price %}{{ freedom.price | money }}{% else %}$99{% endif %}</p>
+        </div>
+        <p>{{ section.settings.freedom_summary }}</p>
+        <ul class="ip-spec-list">
+          <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
+          <li>HD audio quality and smart noise filtering</li>
+          <li>Bluetooth 5.0, encrypted data transmission and storage</li>
+          <li>9-hour talk time, 200-hour standby battery</li>
+        </ul>
+        <div class="ip-buttons">
+          <a class="ip-button" href="{% if freedom.url %}{{ freedom.url }}{% else %}/products/freedom-phone{% endif %}">
+            View Freedom Phone
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <article class="ip-card ip-product-card">
+      <div class="ip-product-card__image">
+        {% if patriot.featured_image %}
+          {{
+            patriot.featured_image
+            | image_url: width: 900
+            | image_tag: alt: patriot.title, loading: 'lazy'
+          }}
+        {% elsif section.settings.patriot_image != blank %}
+          {{
+            section.settings.patriot_image
+            | image_url: width: 900
+            | image_tag: loading: 'lazy'
+          }}
+        {% else %}
+          <img src="{{ 'ip-current-site-product-2.png' | asset_url }}" alt="Patriot Phone" width="1200" height="1200" loading="lazy">
+        {% endif %}
+      </div>
+      <div class="ip-product-card__body">
+        <div class="ip-product-card__meta">
+          <h3>{{ patriot.title | default: 'Patriot Phone' }}</h3>
+          <p class="ip-price">{% if patriot.price %}{{ patriot.price | money }}{% else %}$149{% endif %}</p>
+        </div>
+        <p>{{ section.settings.patriot_summary }}</p>
+        <ul class="ip-spec-list">
+          <li>Rugged cordless Wi-Fi handset with charging base</li>
+          <li>Waterproof, dust-proof, and drop-proof up to 1.8 meters</li>
+          <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
+          <li>13-hour talk time, 300-hour standby battery</li>
+        </ul>
+        <div class="ip-buttons">
+          <a class="ip-button" href="{% if patriot.url %}{{ patriot.url }}{% else %}/products/patriot-phone{% endif %}">
+            View Patriot Phone
+          </a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "IP product comparison",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Two phones. One simple decision."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Choose the everyday model or the rugged model."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>Both phones are cordless Wi-Fi handsets with charging bases. Both are built around simple family calling, not apps or feeds.</p>"
+    },
+    {
+      "type": "product",
+      "id": "freedom_product",
+      "label": "Freedom Phone product"
+    },
+    {
+      "type": "image_picker",
+      "id": "freedom_image",
+      "label": "Freedom fallback image"
+    },
+    {
+      "type": "textarea",
+      "id": "freedom_summary",
+      "label": "Freedom summary",
+      "default": "Best for home, grandparents, short independence windows, and everyday family calling."
+    },
+    {
+      "type": "product",
+      "id": "patriot_product",
+      "label": "Patriot Phone product"
+    },
+    {
+      "type": "image_picker",
+      "id": "patriot_image",
+      "label": "Patriot fallback image"
+    },
+    {
+      "type": "textarea",
+      "id": "patriot_summary",
+      "label": "Patriot summary",
+      "default": "Best for families who want rugged durability, longer battery life, and a more resilient handset."
+    }
+  ],
+  "presets": [
+    {
+      "name": "IP product comparison"
+    }
+  ]
+}
+{% endschema %}

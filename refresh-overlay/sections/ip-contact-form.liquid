@@ -1,0 +1,166 @@
+<section class="ip-section">
+  <div class="ip-contact">
+    <div class="ip-stack">
+      {% if section.settings.eyebrow != blank %}
+        <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+      <h1 class="ip-heading ip-heading--medium ip-heading--wide">{{ section.settings.heading }}</h1>
+      <div class="ip-lede">{{ section.settings.body }}</div>
+      {% if section.settings.helper != blank %}
+        <p class="ip-note">{{ section.settings.helper }}</p>
+      {% endif %}
+    </div>
+
+    <div class="ip-card" style="padding: clamp(1rem, 3vw, 1.5rem);">
+      {% form 'contact', class: 'ip-contact-form' %}
+        {% if form.posted_successfully? %}
+          <p class="ip-kicker">Message sent</p>
+          <p>Thanks. We received your question and will follow up.</p>
+        {% endif %}
+
+        {% if form.errors %}
+          <div class="ip-form-note">
+            {{ form.errors | default_errors }}
+          </div>
+        {% endif %}
+
+        <div class="ip-grid ip-grid--2">
+          <div class="ip-field">
+            <label for="ContactName-{{ section.id }}">Name</label>
+            <input id="ContactName-{{ section.id }}" type="text" name="contact[name]" autocomplete="name" required>
+          </div>
+
+          <div class="ip-field">
+            <label for="ContactEmail-{{ section.id }}">Email</label>
+            <input id="ContactEmail-{{ section.id }}" type="email" name="contact[email]" autocomplete="email" required>
+          </div>
+        </div>
+
+        <div class="ip-grid ip-grid--2">
+          <div class="ip-field">
+            <label for="ContactPhone-{{ section.id }}">Phone</label>
+            <input id="ContactPhone-{{ section.id }}" type="tel" name="contact[phone]" autocomplete="tel">
+          </div>
+
+          <div class="ip-field">
+            <label for="ContactAge-{{ section.id }}">Child age range</label>
+            <select id="ContactAge-{{ section.id }}" name="contact[Child age range]">
+              <option value="">Select one</option>
+              <option>Under 8</option>
+              <option>8-10</option>
+              <option>11-13</option>
+              <option>14+</option>
+              <option>Not for a child</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ip-grid ip-grid--2">
+          <div class="ip-field">
+            <label for="ContactUseCase-{{ section.id }}">Main use case</label>
+            <select id="ContactUseCase-{{ section.id }}" name="contact[Main use case]">
+              <option value="">Select one</option>
+              <option>Help choosing a phone</option>
+              <option>Home-alone minutes</option>
+              <option>School or bus days</option>
+              <option>Grandparents and family calls</option>
+              <option>Question about service</option>
+              <option>Question about add-ons</option>
+              <option>Referral question</option>
+            </select>
+          </div>
+
+          <div class="ip-field">
+            <label for="ContactProduct-{{ section.id }}">Interested product</label>
+            <select id="ContactProduct-{{ section.id }}" name="contact[Interested product]">
+              <option value="">Select one</option>
+              <option>Freedom Phone</option>
+              <option>Patriot Phone</option>
+              <option>250th Anniversary package</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ip-field">
+          <label for="ContactPlan-{{ section.id }}">Preferred service plan</label>
+          <select id="ContactPlan-{{ section.id }}" name="contact[Preferred service plan]">
+            <option value="">Select one</option>
+            <option>Monthly service - $17.76/mo</option>
+            <option>Annual service - $200/yr</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+
+        <div class="ip-field">
+          <label for="ContactMessage-{{ section.id }}">Questions</label>
+          <textarea id="ContactMessage-{{ section.id }}" name="contact[body]" required></textarea>
+        </div>
+
+        <label class="ip-form-note">
+          <input type="checkbox" name="contact[Marketing opt-in]" value="Yes">
+          {{ section.settings.opt_in_text }}
+        </label>
+
+        <button type="submit">{{ section.settings.button_label }}</button>
+
+        <p class="ip-form-note">{{ section.settings.payment_note }}</p>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "IP contact form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Need help choosing?"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Tell us what your family needs the phone to do."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>Ask about Freedom Phone, Patriot Phone, service, add-ons, the 250th Anniversary package, or launch updates.</p>"
+    },
+    {
+      "type": "textarea",
+      "id": "helper",
+      "label": "Helper text",
+      "default": "Common buying moments include home-alone minutes, grandparents, school days, and a simpler first-phone step."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Send my question"
+    },
+    {
+      "type": "textarea",
+      "id": "opt_in_text",
+      "label": "Marketing opt-in text",
+      "default": "Send me text or email updates and marketing information. I can opt out later."
+    },
+    {
+      "type": "textarea",
+      "id": "payment_note",
+      "label": "Payment note",
+      "default": "Provided payment information is stored securely in the billing system and used each month to pay the bill."
+    }
+  ],
+  "presets": [
+    {
+      "name": "IP contact form"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,358 @@
+{
+  "sections": {
+    "hero": {
+      "type": "ip-video-hero",
+      "blocks": {
+        "proof_1": {
+          "type": "proof",
+          "settings": {
+            "text": "No apps"
+          }
+        },
+        "proof_2": {
+          "type": "proof",
+          "settings": {
+            "text": "No web browser"
+          }
+        },
+        "proof_3": {
+          "type": "proof",
+          "settings": {
+            "text": "No social feeds"
+          }
+        },
+        "proof_4": {
+          "type": "proof",
+          "settings": {
+            "text": "Simple phone service"
+          }
+        }
+      },
+      "block_order": ["proof_1", "proof_2", "proof_3", "proof_4"],
+      "settings": {
+        "primary_link": "/collections/phones",
+        "secondary_link": "#how-it-works"
+      }
+    },
+    "parent_conflict": {
+      "type": "ip-jtbd-story",
+      "blocks": {
+        "moment_1": {
+          "type": "moment",
+          "settings": {
+            "title": "Bus days",
+            "body": "<p>A simple way to call home before and after school without adding a smartphone.</p>"
+          }
+        },
+        "moment_2": {
+          "type": "moment",
+          "settings": {
+            "title": "Home-alone minutes",
+            "body": "<p>More independence for short windows while parents stay one call away.</p>"
+          }
+        },
+        "moment_3": {
+          "type": "moment",
+          "settings": {
+            "title": "Grandparents",
+            "body": "<p>A familiar phone experience that makes family calls feel easy again.</p>"
+          }
+        },
+        "moment_4": {
+          "type": "moment",
+          "settings": {
+            "title": "Before the smartphone",
+            "body": "<p>A calmer first step for families delaying apps, browsers, and social feeds.</p>"
+          }
+        }
+      },
+      "block_order": ["moment_1", "moment_2", "moment_3", "moment_4"],
+      "settings": {}
+    },
+    "feature_strip": {
+      "type": "ip-feature-strip",
+      "blocks": {
+        "feature_1": {
+          "type": "feature",
+          "settings": {
+            "title": "No apps",
+            "body": "No app store to negotiate."
+          }
+        },
+        "feature_2": {
+          "type": "feature",
+          "settings": {
+            "title": "No web browser",
+            "body": "Designed to avoid the open internet step."
+          }
+        },
+        "feature_3": {
+          "type": "feature",
+          "settings": {
+            "title": "Simple service",
+            "body": "A personal phone number with clear monthly or annual service."
+          }
+        }
+      },
+      "block_order": ["feature_1", "feature_2", "feature_3"],
+      "settings": {}
+    },
+    "products": {
+      "type": "ip-product-comparison",
+      "settings": {}
+    },
+    "plans": {
+      "type": "ip-service-plans",
+      "blocks": {
+        "monthly": {
+          "type": "plan",
+          "settings": {
+            "label": "Monthly",
+            "title": "Personal phone number + monthly service",
+            "price": "$17.76/mo",
+            "body": "<p>Simple monthly phone service for the family phone.</p>"
+          }
+        },
+        "annual": {
+          "type": "plan",
+          "settings": {
+            "label": "Annual",
+            "title": "Personal phone number + annual service",
+            "price": "$200/yr",
+            "body": "<p>Annual service saves $13.12 compared with monthly billing.</p>"
+          }
+        }
+      },
+      "block_order": ["monthly", "annual"],
+      "settings": {}
+    },
+    "addons": {
+      "type": "ip-add-ons",
+      "blocks": {
+        "recording": {
+          "type": "addon",
+          "settings": {
+            "title": "Call Recording",
+            "price": "$5/mo",
+            "body": "Record and store all calls for 90 days."
+          }
+        },
+        "time_conditions": {
+          "type": "addon",
+          "settings": {
+            "title": "Time Conditions",
+            "price": "$5/mo",
+            "body": "Set on/off times for incoming calls."
+          }
+        },
+        "voicemail": {
+          "type": "addon",
+          "settings": {
+            "title": "Voicemail to Email",
+            "price": "$5/mo",
+            "body": "Unanswered calls go to voicemail and messages are sent to email."
+          }
+        },
+        "victory": {
+          "type": "addon",
+          "settings": {
+            "title": "Victory Bundle",
+            "price": "$10/mo",
+            "body": "Call Recording, Time Conditions, and Voicemail to Email together."
+          }
+        },
+        "attendant": {
+          "type": "addon",
+          "settings": {
+            "title": "Auto Attendant",
+            "price": "$5/mo",
+            "body": "Help screen spam calls before they interrupt the family phone."
+          }
+        }
+      },
+      "block_order": ["recording", "time_conditions", "voicemail", "victory", "attendant"],
+      "settings": {}
+    },
+    "capabilities": {
+      "type": "ip-capability-table",
+      "blocks": {
+        "calls": {
+          "type": "capability",
+          "settings": {
+            "capability": "Calls",
+            "status": "Yes",
+            "status_style": "yes",
+            "explanation": "The product is built around calling and a personal phone number."
+          }
+        },
+        "wifi": {
+          "type": "capability",
+          "settings": {
+            "capability": "Wi-Fi handset",
+            "status": "Yes",
+            "status_style": "yes",
+            "explanation": "Both products are cordless Wi-Fi handsets with charging bases."
+          }
+        },
+        "browser": {
+          "type": "capability",
+          "settings": {
+            "capability": "Web browser",
+            "status": "No",
+            "status_style": "no",
+            "explanation": "The product is positioned as a phone without web browsing."
+          }
+        },
+        "apps": {
+          "type": "capability",
+          "settings": {
+            "capability": "App store / social media / YouTube",
+            "status": "No",
+            "status_style": "no",
+            "explanation": "The product promise is calling without apps, feeds, or the open internet."
+          }
+        },
+        "unsupported": {
+          "type": "capability",
+          "settings": {
+            "capability": "SMS, GPS, camera, cellular mobility",
+            "status": "Not in supplied specs",
+            "status_style": "plain",
+            "explanation": "Do not market these as included unless the product/service scope changes."
+          }
+        }
+      },
+      "block_order": ["calls", "wifi", "browser", "apps", "unsupported"],
+      "settings": {}
+    },
+    "package": {
+      "type": "ip-package-band",
+      "settings": {
+        "cta_link": "/products/freedom-phone"
+      }
+    },
+    "matrix": {
+      "type": "ip-comparison-matrix",
+      "blocks": {
+        "primary_job": {
+          "type": "row",
+          "settings": {
+            "feature": "Primary job",
+            "independence": "Calling and family reachability",
+            "smartphone": "Full smartphone ecosystem with restrictions",
+            "flip": "Simpler hardware, often with carrier/browser complexity",
+            "landline": "Familiar calling, tied to one home line"
+          }
+        },
+        "apps": {
+          "type": "row",
+          "settings": {
+            "feature": "Apps and feeds",
+            "independence": "Not part of the product promise",
+            "smartphone": "Built into the ecosystem",
+            "flip": "Varies by model and carrier",
+            "landline": "No"
+          }
+        },
+        "browser": {
+          "type": "row",
+          "settings": {
+            "feature": "Web browser",
+            "independence": "No web browser positioning",
+            "smartphone": "Usually available unless locked down",
+            "flip": "Often available in some form",
+            "landline": "No"
+          }
+        },
+        "cost": {
+          "type": "row",
+          "settings": {
+            "feature": "Recurring cost",
+            "independence": "$17.76/mo or $200/yr service",
+            "smartphone": "Device plus mobile plan",
+            "flip": "Device plus mobile plan",
+            "landline": "Provider-dependent"
+          }
+        }
+      },
+      "block_order": ["primary_job", "apps", "browser", "cost"],
+      "settings": {}
+    },
+    "faq": {
+      "type": "ip-faq",
+      "blocks": {
+        "internet": {
+          "type": "faq",
+          "settings": {
+            "question": "Does it have internet?",
+            "answer": "<p>Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>"
+          }
+        },
+        "apps": {
+          "type": "faq",
+          "settings": {
+            "question": "Does it have an app store or social media?",
+            "answer": "<p>No. The storefront copy should keep the promise simple: calling without the app-store and social-feed ecosystem.</p>"
+          }
+        },
+        "fee": {
+          "type": "faq",
+          "settings": {
+            "question": "What is the monthly fee?",
+            "answer": "<p>Personal phone number plus monthly phone service is $17.76/mo. Annual service is $200/yr and saves $13.12 compared with monthly billing.</p>"
+          }
+        },
+        "package": {
+          "type": "faq",
+          "settings": {
+            "question": "What does the 250th Anniversary package include?",
+            "answer": "<p>The introductory package includes 1 Freedom Phone, 1 year of service, and the Victory Bundle for $250.</p>"
+          }
+        }
+      },
+      "block_order": ["internet", "apps", "fee", "package"],
+      "settings": {}
+    },
+    "trust": {
+      "type": "ip-trust-band",
+      "blocks": {
+        "owned": {
+          "type": "trust_item",
+          "settings": {
+            "title": "American-owned",
+            "body": "A values-aligned trust layer for families choosing a simpler first phone."
+          }
+        },
+        "experience": {
+          "type": "trust_item",
+          "settings": {
+            "title": "42 years in communications",
+            "body": "Use the company history to make the product feel dependable and experienced."
+          }
+        },
+        "package": {
+          "type": "trust_item",
+          "settings": {
+            "title": "250th Anniversary package",
+            "body": "A concrete introductory offer, not just patriotic styling."
+          }
+        }
+      },
+      "block_order": ["owned", "experience", "package"],
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "parent_conflict",
+    "feature_strip",
+    "products",
+    "plans",
+    "addons",
+    "capabilities",
+    "package",
+    "matrix",
+    "faq",
+    "trust"
+  ]
+}

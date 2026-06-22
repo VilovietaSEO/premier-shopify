@@ -7,6 +7,8 @@ Private working repository for building and operating a client Shopify storefron
 Independence Phone fresh-store theme build:
 
 - Theme path: `/Users/vilovieta/Documents/Shopify/independence-phone-theme`
+- Refresh overlay path: `/Users/vilovieta/Documents/Shopify/refresh-overlay`
+- Refresh overlay script: `/Users/vilovieta/Documents/Shopify/scripts/apply-refresh-overlay.sh`
 - Brief/source path: `/Users/vilovieta/Documents/Shopify/brief-materials`
 - Handoff checklist: `/Users/vilovieta/Documents/Shopify/independence-phone-theme/SHOPIFY_HANDOFF.md`
 - Goal prompt: `/Users/vilovieta/Documents/Shopify/brief-materials/strategy/goal-prompt.md`
@@ -17,6 +19,17 @@ Local validation currently passes:
 ```bash
 cd /Users/vilovieta/Documents/Shopify/independence-phone-theme
 shopify theme check
+```
+
+Refresh-base path for the fresh store:
+
+1. Add Shopify `Refresh` to the new store.
+2. Pull that Refresh theme locally.
+3. Apply `/Users/vilovieta/Documents/Shopify/refresh-overlay` with:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+scripts/apply-refresh-overlay.sh /path/to/pulled-refresh-theme
 ```
 
 ## Operating Model

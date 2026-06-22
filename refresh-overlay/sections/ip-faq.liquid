@@ -1,0 +1,114 @@
+<section class="ip-section ip-section--surface">
+  <div class="ip-stack">
+    {% if section.settings.eyebrow != blank %}
+      <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
+    {% endif %}
+    <h2 class="ip-heading ip-heading--medium ip-heading--wide">{{ section.settings.heading }}</h2>
+    {% if section.settings.body != blank %}
+      <div class="ip-lede">{{ section.settings.body }}</div>
+    {% endif %}
+  </div>
+
+  <div class="ip-faq" style="margin-top: 2rem;">
+    {% for block in section.blocks %}
+      <details {% if forloop.first and section.settings.open_first %}open{% endif %} {{ block.shopify_attributes }}>
+        <summary>{{ block.settings.question }}</summary>
+        <div class="ip-faq__answer">{{ block.settings.answer }}</div>
+      </details>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "IP FAQ",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "FAQ"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Questions parents ask before choosing a simpler phone."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>Use these rows to answer the objections that come up before purchase.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open first FAQ by default",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Does it have internet?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IP FAQ",
+      "blocks": [
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Does it have internet?",
+            "answer": "<p>Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Does it have an app store or social media?",
+            "answer": "<p>No. The storefront copy should keep the promise simple: calling without the app-store and social-feed ecosystem.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What is the monthly fee?",
+            "answer": "<p>Personal phone number plus monthly phone service is $17.76/mo. Annual service is $200/yr and saves $13.12 compared with monthly billing.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What is the difference between Freedom Phone and Patriot Phone?",
+            "answer": "<p>Freedom Phone is the everyday heavy-duty Wi-Fi handset. Patriot Phone is the rugged model with waterproof and dust-proof construction, drop protection up to 1.8 meters, and longer battery life.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What does the 250th Anniversary package include?",
+            "answer": "<p>The introductory package includes 1 Freedom Phone, 1 year of service, and the Victory Bundle for $250.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

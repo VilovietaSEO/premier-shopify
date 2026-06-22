@@ -2,6 +2,23 @@
 
 Use this after the fresh Shopify store exists.
 
+## Refresh Base Requirement
+
+Final build target: Shopify `Refresh` plus the Independence Phone overlay.
+
+The current local folder `/Users/vilovieta/Documents/Shopify/independence-phone-theme` is a complete uploadable theme package and source reference. The Refresh-specific path is:
+
+```bash
+/Users/vilovieta/Documents/Shopify/refresh-overlay
+```
+
+Apply it to a pulled Refresh theme with:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+scripts/apply-refresh-overlay.sh /path/to/pulled-refresh-theme
+```
+
 ## 1. Authenticate CLI
 
 ```bash
@@ -11,18 +28,23 @@ shopify theme dev --store STORE.myshopify.com
 
 If login opens a device-code flow, complete it in the browser. After auth, the command should print preview and Theme Editor URLs.
 
-## 2. Upload Or Preview Theme
+## 2. Pull Refresh, Then Preview
 
-For a development preview:
+In Shopify admin, add the free `Refresh` theme to the fresh store. Then:
 
 ```bash
-shopify theme dev --store STORE.myshopify.com
+shopify theme list --store STORE.myshopify.com
+shopify theme pull --store STORE.myshopify.com --theme REFRESH_THEME_ID --path /Users/vilovieta/Documents/Shopify/refresh-theme
+cd /Users/vilovieta/Documents/Shopify
+scripts/apply-refresh-overlay.sh /Users/vilovieta/Documents/Shopify/refresh-theme
+cd /Users/vilovieta/Documents/Shopify/refresh-theme
+shopify theme check
 ```
 
-For upload as a development theme:
+Preview against the pulled Refresh theme:
 
 ```bash
-shopify theme push --store STORE.myshopify.com
+shopify theme dev --store STORE.myshopify.com --theme REFRESH_THEME_ID
 ```
 
 Do not publish until desktop, mobile, product pages, cart, checkout, and contact form behavior are approved.
