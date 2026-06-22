@@ -62,6 +62,13 @@ cd /Users/vilovieta/Documents/Shopify/refresh-theme
 shopify theme check
 ```
 
+Local smoke test for this overlay path:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+npm run overlay:test
+```
+
 5. Preview:
 
 ```bash

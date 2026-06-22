@@ -263,6 +263,7 @@ npm run verify:local
 That command runs:
 
 - `npm run audit:coverage`
+- `npm run overlay:test`
 - `npm run theme:check`
 - `npm run preview:test`
 

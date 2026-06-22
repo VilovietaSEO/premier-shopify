@@ -34,7 +34,7 @@ cd /Users/vilovieta/Documents/Shopify
 npm run verify:local
 ```
 
-That command checks required goal artifacts, verifies the Shopify theme, and runs the desktop/tablet/mobile visual preview test.
+That command checks required goal artifacts, smoke-tests the Refresh overlay application path, verifies the Shopify theme, and runs the desktop/tablet/mobile visual preview test.
 
 The local goal audit also checks that the Independence Phone sections expose the expected Theme Editor settings, blocks, presets, product templates, product metafields, and Refresh overlay matches.
 

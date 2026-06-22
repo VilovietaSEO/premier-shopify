@@ -429,6 +429,7 @@ for (const asset of themeAssets) {
 
 assertExecutable('scripts/apply-refresh-overlay.sh', 'Refresh overlay script');
 assertExecutable('scripts/bootstrap-refresh-store.sh', 'Refresh store bootstrap script');
+assertExecutable('scripts/test-refresh-overlay.sh', 'Refresh overlay smoke test');
 assertFileIncludes('.gitignore', ['refresh-theme/'], 'Repo gitignore');
 assertFileIncludes('scripts/bootstrap-refresh-store.sh', [
   'shopify theme pull --store "$store" --theme "$theme_id" --path "$target_theme"',
@@ -436,6 +437,12 @@ assertFileIncludes('scripts/bootstrap-refresh-store.sh', [
   'shopify theme check --path "$target_theme"',
   'shopify theme dev --store "$store" --theme "$theme_id"',
 ], 'Refresh store bootstrap script');
+assertFileIncludes('scripts/test-refresh-overlay.sh', [
+  'scripts/apply-refresh-overlay.sh',
+  'sections/ip-video-hero.liquid',
+  'templates/product.independence-phone.json',
+  'ip-theme.css',
+], 'Refresh overlay smoke test');
 assertFile('independence-phone-theme/SHOPIFY_HANDOFF.md', 'Shopify handoff');
 assertFile('independence-phone-theme/THEME_EDITOR_GUIDE.md', 'Theme Editor guide');
 assertFile('refresh-overlay/README.md', 'Refresh overlay README');
@@ -594,7 +601,7 @@ if (csvPath) {
 
 const packageJson = readJson('package.json');
 if (packageJson) {
-  for (const script of ['audit:coverage', 'theme:check', 'preview:test', 'verify:local']) {
+  for (const script of ['audit:coverage', 'overlay:test', 'theme:check', 'preview:test', 'verify:local']) {
     if (packageJson.scripts && packageJson.scripts[script]) {
       pass(`package script ${script}`);
     } else {
