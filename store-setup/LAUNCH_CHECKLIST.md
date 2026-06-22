@@ -212,7 +212,18 @@ Theme Editor:
 ## 10. Publish And Domain
 
 - [ ] Push the approved theme to a non-live theme first.
+
+```bash
+cd /Users/vilovieta/Documents/Shopify/refresh-theme
+shopify theme push --store STORE.myshopify.com --theme REFRESH_THEME_ID
+```
+
 - [ ] Publish only after the preview URL is approved.
+
+```bash
+shopify theme publish --store STORE.myshopify.com --theme REFRESH_THEME_ID
+```
+
 - [ ] Connect the final public domain after publish approval.
 - [ ] Re-test Home, product pages, contact, cart, and checkout on the final domain.
 

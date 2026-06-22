@@ -72,6 +72,19 @@ shopify theme dev --store STORE.myshopify.com --theme REFRESH_THEME_ID
 
 Do not publish until desktop, mobile, product pages, cart, checkout, and contact form behavior are approved.
 
+After preview QA is approved, push the approved local Refresh theme back to the non-live theme:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify/refresh-theme
+shopify theme push --store STORE.myshopify.com --theme REFRESH_THEME_ID
+```
+
+Publish only after explicit approval:
+
+```bash
+shopify theme publish --store STORE.myshopify.com --theme REFRESH_THEME_ID
+```
+
 ## 3. Create Product Data
 
 Preferred path:
@@ -282,7 +295,7 @@ shopify theme check
 Result:
 
 ```text
-55 files inspected with no offenses found.
+56 files inspected with no offenses found.
 ```
 
 Visual preview QA also passes locally:

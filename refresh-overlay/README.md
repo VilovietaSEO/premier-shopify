@@ -77,6 +77,19 @@ npm run overlay:test
 shopify theme dev --store STORE.myshopify.com --theme REFRESH_THEME_ID
 ```
 
+6. After preview QA is approved, push the approved local Refresh theme back to that non-live theme:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify/refresh-theme
+shopify theme push --store STORE.myshopify.com --theme REFRESH_THEME_ID
+```
+
+7. Publish only after explicit approval:
+
+```bash
+shopify theme publish --store STORE.myshopify.com --theme REFRESH_THEME_ID
+```
+
 ## Layout Patch
 
 The apply script copies the overlay files and inserts these includes before `{{ content_for_header }}` in `layout/theme.liquid` when missing:

@@ -490,9 +490,16 @@ assertFileIncludes('scripts/test-refresh-overlay.sh', [
 assertFile('independence-phone-theme/SHOPIFY_HANDOFF.md', 'Shopify handoff');
 assertFileIncludes('independence-phone-theme/SHOPIFY_HANDOFF.md', [
   'Independence Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD',
+  '56 files inspected with no offenses found.',
+  'shopify theme push --store STORE.myshopify.com --theme REFRESH_THEME_ID',
+  'shopify theme publish --store STORE.myshopify.com --theme REFRESH_THEME_ID',
 ], 'Shopify handoff');
 assertFile('independence-phone-theme/THEME_EDITOR_GUIDE.md', 'Theme Editor guide');
 assertFile('refresh-overlay/README.md', 'Refresh overlay README');
+assertFileIncludes('refresh-overlay/README.md', [
+  'shopify theme push --store STORE.myshopify.com --theme REFRESH_THEME_ID',
+  'shopify theme publish --store STORE.myshopify.com --theme REFRESH_THEME_ID',
+], 'Refresh overlay README');
 assertFile('store-setup/README.md', 'Store setup README');
 assertFileIncludes('independence-phone-theme/sections/cart.liquid', [
   'item.properties',
@@ -536,6 +543,8 @@ assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'Page source includes Independence Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD.',
   'Cart shows selected service/add-on setup details.',
   'Send a test submission and confirm delivery to the store contact email.',
+  'shopify theme push --store STORE.myshopify.com --theme REFRESH_THEME_ID',
+  'shopify theme publish --store STORE.myshopify.com --theme REFRESH_THEME_ID',
   'Connect the final public domain after publish approval.',
 ], 'Fresh store launch checklist');
 assertFile('visual-preview/index.html', 'Visual preview page');
