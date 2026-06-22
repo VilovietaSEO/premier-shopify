@@ -16,7 +16,7 @@
     </a>
   </h2>
 
-  <div class="header__menu">
+  <nav class="header__menu" aria-label="Main menu">
     {% if section.settings.menu != blank %}
       {% for link in section.settings.menu.links %}
         {{ link.title | link_to: link.url }}
@@ -24,9 +24,9 @@
     {% else %}
       <a href="{{ routes.root_url }}">Home</a>
       <a href="{{ routes.collections_url }}/phones">Choose Your Phone</a>
-      <a href="/pages/contact">Contact</a>
+      <a href="{{ routes.root_url }}pages/contact">Contact</a>
     {% endif %}
-  </div>
+  </nav>
 
   <div class="header__icons">
     {% if shop.customer_accounts_enabled %}
@@ -35,7 +35,7 @@
       </shopify-account>
     {% endif %}
 
-    <a href="{{ routes.cart_url }}">
+    <a href="{{ routes.cart_url }}" aria-label="Cart">
       {% if cart.item_count > 0 %}
         <sup>{{ cart.item_count }}</sup>
       {% endif %}

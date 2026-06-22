@@ -6,18 +6,18 @@
     <p>{{ section.settings.footer_note }}</p>
   </div>
 
-  <div class="footer__links">
+  <nav class="footer__links" aria-label="Footer menu">
     {% if section.settings.menu != blank %}
       {% for link in section.settings.menu.links %}
         {{ link.title | link_to: link.url }}
       {% endfor %}
     {% else %}
       <a href="{{ routes.collections_url }}/phones">Choose Your Phone</a>
-      <a href="/pages/contact">Contact</a>
-      <a href="/policies/privacy-policy">Privacy</a>
-      <a href="/policies/terms-of-service">Terms</a>
+      <a href="{{ routes.root_url }}pages/contact">Contact</a>
+      <a href="{{ routes.root_url }}policies/privacy-policy">Privacy</a>
+      <a href="{{ routes.root_url }}policies/terms-of-service">Terms</a>
     {% endif %}
-  </div>
+  </nav>
 
   <div class="footer__payment">
     {% if section.settings.show_payment_icons %}

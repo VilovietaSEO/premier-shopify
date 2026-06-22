@@ -464,6 +464,19 @@ assertFileIncludes('independence-phone-theme/sections/cart.liquid', [
   'Selected service and add-ons',
   'Service and add-on selections are shown for setup confirmation.',
 ], 'Local cart section');
+assertFileIncludes('independence-phone-theme/sections/header.liquid', [
+  'aria-label="Main menu"',
+  'routes.collections_url',
+  'routes.root_url }}pages/contact',
+  'aria-label="Cart"',
+], 'Local header section');
+assertFileIncludes('independence-phone-theme/sections/footer.liquid', [
+  'aria-label="Footer menu"',
+  'routes.collections_url',
+  'routes.root_url }}pages/contact',
+  'routes.root_url }}policies/privacy-policy',
+  'routes.root_url }}policies/terms-of-service',
+], 'Local footer section');
 assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'STORE.myshopify.com',
   'Shopify `Refresh` theme',
