@@ -20,6 +20,7 @@ npm run verify:local
 - [ ] Confirm the store handle: `STORE.myshopify.com`.
 - [ ] Confirm staff/collaborator access with theme permissions.
 - [ ] Confirm product, collection, page, navigation, files, and settings access.
+- [ ] Confirm Admin API token includes `read_publications` and `write_publications`, or plan to publish objects to Online Store manually in admin.
 - [ ] Confirm whether CLI login or Shopify Theme Access app password will be used.
 - [ ] Do not connect or publish the final public domain until preview QA is approved.
 
@@ -103,6 +104,7 @@ Required product handles:
 
 - [ ] `/products/freedom-phone`
 - [ ] `/products/patriot-phone`
+- [ ] Both products are published to the Online Store sales channel.
 
 Required product facts:
 
@@ -118,6 +120,7 @@ Required product facts:
 - [ ] Set collection handle to `phones`.
 - [ ] Add Freedom Phone and Patriot Phone to the collection.
 - [ ] Assign collection template `collection.phones`.
+- [ ] Publish the collection to the Online Store sales channel.
 - [ ] Create page `Contact`.
 - [ ] Set page handle to `contact`.
 - [ ] Assign page template `page.contact`.

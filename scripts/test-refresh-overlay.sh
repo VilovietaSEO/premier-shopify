@@ -28,6 +28,7 @@ LIQUID
 
 required_files=(
   "assets/ip-theme.css"
+  "assets/ip-hero-video.mp4"
   "assets/ip-hero-video-poster.jpg"
   "sections/ip-video-hero.liquid"
   "sections/ip-product-main.liquid"

@@ -416,6 +416,7 @@ const themeAssets = [
   'ip-current-site-product-4.png',
   'ip-current-site-product-collage.png',
   'ip-independence-phone-product-crunchy.png',
+  'ip-hero-video.mp4',
   'ip-hero-video-poster.jpg',
 ];
 
@@ -464,6 +465,10 @@ assertFileIncludes('scripts/create-storefront-objects.js', [
   'productVariantsBulkUpdate',
   'collectionCreate',
   'collectionAddProducts',
+  'publications',
+  'publishablePublish',
+  'read_publications',
+  'write_publications',
   'pageCreate',
 ], 'Storefront object creation script');
 assertFileIncludes('.gitignore', ['refresh-theme/'], 'Repo gitignore');

@@ -119,6 +119,8 @@ SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_... \
 node scripts/create-storefront-objects.js
 ```
 
+For automatic Online Store publishing, the Admin API token also needs `read_publications` and `write_publications`. Without those scopes, the helper still creates/updates the products and collection, then prints a warning. In Shopify admin, publish `Freedom Phone`, `Patriot Phone`, and the `Phones` collection under each object's Publishing / Sales channels panel.
+
 3. Follow the setup notes:
 
 ```bash
@@ -191,12 +193,13 @@ Theme Editor path:
 1. Online Store -> Themes -> Customize.
 2. Open Home page.
 3. Select `IP video hero`.
-4. Choose the uploaded video in the `Hero video` setting.
+4. Keep the packaged fallback video, or choose a replacement video in the `Hero video` setting.
 5. Keep or replace the fallback poster.
 
 The theme already includes:
 
 ```bash
+/Users/vilovieta/Documents/Shopify/independence-phone-theme/assets/ip-hero-video.mp4
 /Users/vilovieta/Documents/Shopify/independence-phone-theme/assets/ip-hero-video-poster.jpg
 ```
 

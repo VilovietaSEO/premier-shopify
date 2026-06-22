@@ -56,6 +56,8 @@ Create this collection:
 | --- | --- | --- |
 | Phones | `phones` | `phones` |
 
+Publish both products and the `Phones` collection to the Online Store sales channel. The setup helper can do this automatically when the Admin API token includes `read_publications` and `write_publications`; otherwise publish them from each product/collection admin page under Publishing.
+
 Create this page:
 
 | Page | Handle | Template |
@@ -115,6 +117,7 @@ Theme-ready assets:
 - `assets/ip-current-site-product-4.png`
 - `assets/ip-current-site-product-collage.png`
 - `assets/ip-independence-phone-product-crunchy.png`
+- `assets/ip-hero-video.mp4`
 - `assets/ip-hero-video-poster.jpg`
 
 Original hero video:
@@ -123,7 +126,7 @@ Original hero video:
 /Users/vilovieta/Documents/Shopify/brief-materials/assets/video/indy-phone-reel-1.mov
 ```
 
-Upload the hero video to Shopify Files or select it directly in Theme Editor for the `IP video hero` section. The theme already includes a generated poster fallback at `assets/ip-hero-video-poster.jpg`.
+The theme includes a compressed packaged hero video fallback at `assets/ip-hero-video.mp4` and a generated poster fallback at `assets/ip-hero-video-poster.jpg`. You can still replace the video in Theme Editor through the `IP video hero` section's `Hero video` setting.
 
 ## CLI Commands
 

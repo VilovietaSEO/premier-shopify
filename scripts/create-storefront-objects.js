@@ -2,6 +2,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { resolveAdminAuth } = require('./shopify-admin-auth');
 
 const root = path.resolve(__dirname, '..');
 const productsCsvPath = path.join(root, 'store-setup/products.csv');
@@ -138,6 +139,37 @@ mutation CollectionAddProducts($id: ID!, $productIds: [ID!]!) {
 }
 `;
 
+const publicationsQuery = `
+query Publications {
+  publications(first: 20) {
+    nodes {
+      id
+      name
+    }
+  }
+}
+`;
+
+const publishablePublishMutation = `
+mutation PublishablePublish($id: ID!, $input: [PublicationInput!]!) {
+  publishablePublish(id: $id, input: $input) {
+    publishable {
+      __typename
+      ... on Product {
+        id
+      }
+      ... on Collection {
+        id
+      }
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
+`;
+
 const pageByHandleQuery = `
 query PageByHandle($query: String!) {
   pages(first: 1, query: $query) {
@@ -170,13 +202,16 @@ mutation CreatePage($page: PageCreateInput!) {
 function usage(exitCode = 64) {
   console.error(`Usage:
   SHOPIFY_STORE=STORE.myshopify.com SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_... node scripts/create-storefront-objects.js
+  SHOPIFY_STORE=STORE.myshopify.com SHOPIFY_USE_CLI_SESSION=1 node scripts/create-storefront-objects.js
   node scripts/create-storefront-objects.js --dry-run
 
 Required token scopes:
   read_products, write_products, read_content, write_content or write_online_store_pages
+  read_publications and write_publications to publish products/collections to Online Store
 
 Optional:
-  SHOPIFY_ADMIN_API_VERSION=${apiVersion}`);
+  SHOPIFY_ADMIN_API_VERSION=${apiVersion}
+  SHOPIFY_ONLINE_STORE_PUBLICATION_ID=gid://shopify/Publication/...`);
   process.exit(exitCode);
 }
 
@@ -299,12 +334,16 @@ function formatUserErrors(errors) {
   return errors.map((error) => `${(error.field || []).join('.') || 'input'}: ${error.message}`).join('; ');
 }
 
-async function adminGraphql({ store, token, query, variables }) {
+function isPublicationAccessError(error) {
+  return /read_publications|write_publications|ACCESS_DENIED|Access denied/i.test(error.message);
+}
+
+async function adminGraphql({ store, auth, query, variables }) {
   const response = await fetch(`https://${store}/admin/api/${apiVersion}/graphql.json`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': token,
+      ...auth.headers,
     },
     body: JSON.stringify({ query, variables }),
   });
@@ -319,11 +358,78 @@ async function adminGraphql({ store, token, query, variables }) {
   return payload.data;
 }
 
-async function upsertProduct({ store, token, row }) {
+async function onlineStorePublicationId({ store, auth }) {
+  if (process.env.SHOPIFY_ONLINE_STORE_PUBLICATION_ID) {
+    return process.env.SHOPIFY_ONLINE_STORE_PUBLICATION_ID;
+  }
+
+  const data = await adminGraphql({
+    store,
+    auth,
+    query: publicationsQuery,
+    variables: {},
+  });
+
+  const onlineStore = data.publications.nodes.find((publication) => publication.name === 'Online Store')
+    || data.publications.nodes.find((publication) => publication.name.toLowerCase().includes('online store'));
+
+  if (!onlineStore) {
+    throw new Error('Online Store publication was not found. Set SHOPIFY_ONLINE_STORE_PUBLICATION_ID and rerun.');
+  }
+
+  return onlineStore.id;
+}
+
+async function publishToOnlineStore({ store, auth, publicationId, resourceId, label }) {
+  const result = await adminGraphql({
+    store,
+    auth,
+    query: publishablePublishMutation,
+    variables: {
+      id: resourceId,
+      input: [{ publicationId }],
+    },
+  });
+
+  const payload = result.publishablePublish;
+  if (payload.userErrors && payload.userErrors.length > 0) {
+    throw new Error(`${label} publication: ${formatUserErrors(payload.userErrors)}`);
+  }
+
+  console.log(`published ${label} to Online Store`);
+}
+
+async function publishResourcesToOnlineStore({ store, auth, resources }) {
+  let publicationId;
+  try {
+    publicationId = await onlineStorePublicationId({ store, auth });
+  } catch (error) {
+    if (!isPublicationAccessError(error)) throw error;
+    console.warn('Skipped Online Store publishing: token needs read_publications/write_publications, or set SHOPIFY_ONLINE_STORE_PUBLICATION_ID with write_publications. Publish products and collection manually in Shopify admin.');
+    return;
+  }
+
+  for (const resource of resources) {
+    try {
+      await publishToOnlineStore({
+        store,
+        auth,
+        publicationId,
+        resourceId: resource.id,
+        label: resource.label,
+      });
+    } catch (error) {
+      if (!isPublicationAccessError(error)) throw error;
+      console.warn(`Skipped ${resource.label} Online Store publishing: token needs write_publications. Publish it manually in Shopify admin.`);
+    }
+  }
+}
+
+async function upsertProduct({ store, auth, row }) {
   const handle = row['URL handle'];
   const existingData = await adminGraphql({
     store,
-    token,
+    auth,
     query: productByIdentifierQuery,
     variables: { identifier: { handle } },
   });
@@ -334,7 +440,7 @@ async function upsertProduct({ store, token, row }) {
   const mutationName = existing ? 'productUpdate' : 'productCreate';
   const result = await adminGraphql({
     store,
-    token,
+    auth,
     query: mutation,
     variables: { product: productInput },
   });
@@ -352,7 +458,7 @@ async function upsertProduct({ store, token, row }) {
 
   const variantResult = await adminGraphql({
     store,
-    token,
+    auth,
     query: productVariantUpdateMutation,
     variables: {
       productId: product.id,
@@ -369,10 +475,10 @@ async function upsertProduct({ store, token, row }) {
   return product.id;
 }
 
-async function ensurePhonesCollection({ store, token, productIds }) {
+async function ensurePhonesCollection({ store, auth, productIds }) {
   const existingData = await adminGraphql({
     store,
-    token,
+    auth,
     query: collectionByHandleQuery,
     variables: { query: 'handle:phones' },
   });
@@ -381,7 +487,7 @@ async function ensurePhonesCollection({ store, token, productIds }) {
   if (!collection) {
     const result = await adminGraphql({
       store,
-      token,
+      auth,
       query: collectionCreateMutation,
       variables: {
         input: {
@@ -409,7 +515,7 @@ async function ensurePhonesCollection({ store, token, productIds }) {
   if (missingProductIds.length > 0) {
     const addResult = await adminGraphql({
       store,
-      token,
+      auth,
       query: collectionAddProductsMutation,
       variables: {
         id: collection.id,
@@ -426,10 +532,10 @@ async function ensurePhonesCollection({ store, token, productIds }) {
   return collection.id;
 }
 
-async function ensureContactPage({ store, token }) {
+async function ensureContactPage({ store, auth }) {
   const existingData = await adminGraphql({
     store,
-    token,
+    auth,
     query: pageByHandleQuery,
     variables: { query: 'handle:contact' },
   });
@@ -441,7 +547,7 @@ async function ensureContactPage({ store, token }) {
 
   const result = await adminGraphql({
     store,
-    token,
+    auth,
     query: pageCreateMutation,
     variables: {
       page: {
@@ -471,24 +577,43 @@ async function main() {
       console.log(`- product ${product['URL handle']}: $${product.Price}, template product.independence-phone`);
     }
     console.log('- collection phones: template collection.phones');
+    console.log('- publish products and collection to Online Store when read_publications/write_publications are available');
     console.log('- page contact: template page.contact');
     return;
   }
 
   const store = normalizeStore(process.env.SHOPIFY_STORE || process.env.SHOPIFY_STORE_DOMAIN);
-  const token = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+  const auth = resolveAdminAuth();
 
-  if (!store || !store.endsWith('.myshopify.com') || !token) {
+  if (!store || !store.endsWith('.myshopify.com') || !auth) {
     usage();
   }
 
-  const productIds = [];
+  console.log(`Using Admin GraphQL auth source: ${auth.source}`);
+
+  const createdProducts = [];
   for (const row of products) {
-    productIds.push(await upsertProduct({ store, token, row }));
+    const productId = await upsertProduct({ store, auth, row });
+    createdProducts.push({
+      id: productId,
+      label: `product ${row['URL handle']}`,
+    });
   }
 
-  await ensurePhonesCollection({ store, token, productIds });
-  await ensureContactPage({ store, token });
+  const collectionId = await ensurePhonesCollection({
+    store,
+    auth,
+    productIds: createdProducts.map((product) => product.id),
+  });
+  await publishResourcesToOnlineStore({
+    store,
+    auth,
+    resources: [
+      ...createdProducts,
+      { id: collectionId, label: 'collection phones' },
+    ],
+  });
+  await ensureContactPage({ store, auth });
 }
 
 main().catch((error) => {

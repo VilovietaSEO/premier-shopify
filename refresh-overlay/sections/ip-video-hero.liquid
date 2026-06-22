@@ -1,3 +1,10 @@
+{% liquid
+  assign hero_poster = 'ip-hero-video-poster.jpg' | asset_url
+  if section.settings.poster_image != blank
+    assign hero_poster = section.settings.poster_image | image_url: width: 2200
+  endif
+%}
+
 <section class="ip-hero full-width">
   <div class="ip-hero__media" aria-hidden="true">
     {% if section.settings.hero_video != blank %}
@@ -11,26 +18,17 @@
           playsinline: true,
           class: 'ip-hero__video'
       }}
-    {% elsif section.settings.poster_image != blank %}
-      {{
-        section.settings.poster_image
-        | image_url: width: 2200
-        | image_tag:
-          class: 'ip-hero__image',
-          loading: 'eager',
-          fetchpriority: 'high',
-          sizes: '100vw'
-      }}
     {% else %}
-      <img
-        class="ip-hero__image"
-        src="{{ 'ip-hero-video-poster.jpg' | asset_url }}"
-        alt=""
-        width="2160"
-        height="3840"
-        loading="eager"
-        fetchpriority="high"
+      <video
+        class="ip-hero__video"
+        autoplay
+        loop
+        muted
+        playsinline
+        poster="{{ hero_poster }}"
       >
+        <source src="{{ 'ip-hero-video.mp4' | asset_url }}" type="video/mp4">
+      </video>
     {% endif %}
   </div>
 

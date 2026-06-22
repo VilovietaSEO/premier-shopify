@@ -2,6 +2,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { resolveAdminAuth } = require('./shopify-admin-auth');
 
 const root = path.resolve(__dirname, '..');
 const definitionsPath = path.join(root, 'store-setup/product-metafields.json');
@@ -27,6 +28,7 @@ mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
 function usage(exitCode = 64) {
   console.error(`Usage:
   SHOPIFY_STORE=STORE.myshopify.com SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_... node scripts/create-product-metafields.js
+  SHOPIFY_STORE=STORE.myshopify.com SHOPIFY_USE_CLI_SESSION=1 node scripts/create-product-metafields.js
   node scripts/create-product-metafields.js --dry-run
 
 Optional:
@@ -63,12 +65,12 @@ function isAlreadyCreated(userErrors) {
   });
 }
 
-async function createDefinition({ store, token, definition }) {
+async function createDefinition({ store, auth, definition }) {
   const response = await fetch(`https://${store}/admin/api/${apiVersion}/graphql.json`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': token,
+      ...auth.headers,
     },
     body: JSON.stringify({
       query: mutation,
@@ -112,16 +114,18 @@ async function main() {
   }
 
   const store = normalizeStore(process.env.SHOPIFY_STORE || process.env.SHOPIFY_STORE_DOMAIN);
-  const token = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+  const auth = resolveAdminAuth();
 
-  if (!store || !store.endsWith('.myshopify.com') || !token) {
+  if (!store || !store.endsWith('.myshopify.com') || !auth) {
     usage();
   }
+
+  console.log(`Using Admin GraphQL auth source: ${auth.source}`);
 
   let failed = false;
   for (const definition of definitions) {
     const label = `${definition.namespace}.${definition.key}`;
-    const result = await createDefinition({ store, token, definition });
+    const result = await createDefinition({ store, auth, definition });
 
     if (result.status === 'created') {
       console.log(`created ${label}: ${result.createdDefinition.id}`);

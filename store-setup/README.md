@@ -8,7 +8,7 @@ Files:
 - `products.csv` - two-product starter import file.
 - `LAUNCH_CHECKLIST.md` - store-by-store checklist to execute after access exists.
 - `/Users/vilovieta/Documents/Shopify/scripts/create-product-metafields.js` - Admin GraphQL helper for creating the product metafield definitions from `product-metafields.json`.
-- `/Users/vilovieta/Documents/Shopify/scripts/create-storefront-objects.js` - Admin GraphQL helper for upserting the two products, creating the `Phones` collection, and creating the `Contact` page.
+- `/Users/vilovieta/Documents/Shopify/scripts/create-storefront-objects.js` - Admin GraphQL helper for upserting the two products, creating the `Phones` collection, publishing products/collection to Online Store when publication scopes are available, and creating the `Contact` page.
 
 ## Setup Order
 
@@ -16,8 +16,9 @@ Files:
 2. Pull Refresh and apply `/Users/vilovieta/Documents/Shopify/refresh-overlay` with `/Users/vilovieta/Documents/Shopify/scripts/bootstrap-refresh-store.sh`.
 3. Create the product metafields in Shopify admin or run `/Users/vilovieta/Documents/Shopify/scripts/create-product-metafields.js`.
 4. Import `products.csv` manually or run `/Users/vilovieta/Documents/Shopify/scripts/create-storefront-objects.js`.
-5. Upload/select product images.
-6. Open Theme Editor and select the product objects in the product comparison section.
+5. Publish both products and the `Phones` collection to Online Store if the helper prints a publication-scope warning.
+6. Upload/select product images.
+7. Open Theme Editor and select the product objects in the product comparison section.
 
 ## Product Metafields
 
@@ -86,6 +87,8 @@ npm run store:objects:dry-run
 ```
 
 This helper uses current Shopify Admin GraphQL patterns verified against the `2026-04` docs: `productCreate`/`productUpdate`, `productVariantsBulkUpdate`, `collectionCreate`, `collectionAddProducts`, and `pageCreate`.
+
+Products and collections also need to be published to the Online Store channel before `/products/freedom-phone`, `/products/patriot-phone`, and `/collections/phones` resolve. The helper uses Shopify Admin GraphQL `publishablePublish` when the token includes `read_publications` and `write_publications`. If the token does not include those scopes, publish the two products and the `Phones` collection manually in Shopify admin under Publishing / Sales channels.
 
 Shopify's product CSV format requires the first line to use supported column headers, and Shopify supports product metafields in product CSV import/export after the metafields are defined. The CSV uses current column names such as `Title`, `URL handle`, `Description`, `Option1 name`, `Option1 value`, `Price`, `Product image URL`, and custom metafield columns in the `product.metafields.custom.KEY` format.
 

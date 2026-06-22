@@ -16,6 +16,7 @@ The local `independence-phone-theme` is a complete uploadable Shopify theme pack
   - `assets/ip-current-site-product-4.png`
   - `assets/ip-current-site-product-collage.png`
   - `assets/ip-independence-phone-product-crunchy.png`
+  - `assets/ip-hero-video.mp4`
   - `assets/ip-hero-video-poster.jpg`
 - Custom editable sections:
   - `sections/ip-video-hero.liquid`
@@ -110,6 +111,8 @@ Create these Shopify objects:
 - Product: `Patriot Phone`, handle `patriot-phone`, price `$149`, template `product.independence-phone`.
 - Collection: `Phones`, handle `phones`, template `collection.phones`, containing both products.
 - Page: `Contact`, handle `contact`, template `page.contact`.
+
+Publish `Freedom Phone`, `Patriot Phone`, and the `Phones` collection to the Online Store sales channel; the setup helper automates this only when the Admin API token includes `read_publications` and `write_publications`.
 
 Product data setup files:
 
