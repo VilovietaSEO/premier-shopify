@@ -51,7 +51,27 @@ Do not publish until desktop, mobile, product pages, cart, checkout, and contact
 
 ## 3. Create Product Data
 
-Create exactly these two products.
+Preferred path:
+
+1. Create product metafield definitions from:
+
+```bash
+/Users/vilovieta/Documents/Shopify/store-setup/product-metafields.json
+```
+
+2. Import the starter product CSV:
+
+```bash
+/Users/vilovieta/Documents/Shopify/store-setup/products.csv
+```
+
+3. Follow the setup notes:
+
+```bash
+/Users/vilovieta/Documents/Shopify/store-setup/README.md
+```
+
+Create exactly these two products. The theme reads `custom.product_deck`, `custom.best_for`, and `custom.specs` when present, then falls back to the canonical values below.
 
 ### Freedom Phone
 
@@ -194,6 +214,19 @@ Result:
 
 ```text
 55 files inspected with no offenses found.
+```
+
+Visual preview QA also passes locally:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+npm run preview:test
+```
+
+Result:
+
+```text
+3 passed
 ```
 
 Still required after store auth:

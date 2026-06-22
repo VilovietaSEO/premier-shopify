@@ -87,6 +87,14 @@ Create these Shopify objects:
 - Collection: `Phones`, handle `phones`, template `collection.phones`, containing both products.
 - Page: `Contact`, handle `contact`, template `page.contact`.
 
+Product data setup files:
+
+- `/Users/vilovieta/Documents/Shopify/store-setup/product-metafields.json`
+- `/Users/vilovieta/Documents/Shopify/store-setup/products.csv`
+- `/Users/vilovieta/Documents/Shopify/store-setup/README.md`
+
+The overlay sections read `custom.product_deck`, `custom.best_for`, and `custom.specs` product metafields when present, then fall back to the canonical Liquid copy.
+
 Upload/select the hero video in Theme Editor:
 
 ```bash

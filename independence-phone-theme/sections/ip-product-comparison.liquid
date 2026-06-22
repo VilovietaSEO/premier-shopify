@@ -1,6 +1,12 @@
 {% liquid
   assign freedom = section.settings.freedom_product
   assign patriot = section.settings.patriot_product
+  assign freedom_summary = freedom.metafields.custom.best_for.value | default: section.settings.freedom_summary
+  assign patriot_summary = patriot.metafields.custom.best_for.value | default: section.settings.patriot_summary
+  assign freedom_specs = freedom.metafields.custom.specs.value | strip
+  assign patriot_specs = patriot.metafields.custom.specs.value | strip
+  assign freedom_specs_list = freedom_specs | split: ';'
+  assign patriot_specs_list = patriot_specs | split: ';'
 %}
 
 <section class="ip-section">
@@ -36,12 +42,21 @@
           <h3>{{ freedom.title | default: 'Freedom Phone' }}</h3>
           <p class="ip-price">{% if freedom.price %}{{ freedom.price | money }}{% else %}$99{% endif %}</p>
         </div>
-        <p>{{ section.settings.freedom_summary }}</p>
+        <p>{{ freedom_summary }}</p>
         <ul class="ip-spec-list">
-          <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
-          <li>HD audio quality and smart noise filtering</li>
-          <li>Bluetooth 5.0, encrypted data transmission and storage</li>
-          <li>9-hour talk time, 200-hour standby battery</li>
+          {% if freedom_specs != blank %}
+            {% for spec in freedom_specs_list %}
+              {% assign spec_text = spec | strip %}
+              {% if spec_text != blank %}
+                <li>{{ spec_text }}</li>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
+            <li>HD audio quality and smart noise filtering</li>
+            <li>Bluetooth 5.0, encrypted data transmission and storage</li>
+            <li>9-hour talk time, 200-hour standby battery</li>
+          {% endif %}
         </ul>
         <div class="ip-buttons">
           <a class="ip-button" href="{% if freedom.url %}{{ freedom.url }}{% else %}/products/freedom-phone{% endif %}">
@@ -74,12 +89,21 @@
           <h3>{{ patriot.title | default: 'Patriot Phone' }}</h3>
           <p class="ip-price">{% if patriot.price %}{{ patriot.price | money }}{% else %}$149{% endif %}</p>
         </div>
-        <p>{{ section.settings.patriot_summary }}</p>
+        <p>{{ patriot_summary }}</p>
         <ul class="ip-spec-list">
-          <li>Rugged cordless Wi-Fi handset with charging base</li>
-          <li>Waterproof, dust-proof, and drop-proof up to 1.8 meters</li>
-          <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
-          <li>13-hour talk time, 300-hour standby battery</li>
+          {% if patriot_specs != blank %}
+            {% for spec in patriot_specs_list %}
+              {% assign spec_text = spec | strip %}
+              {% if spec_text != blank %}
+                <li>{{ spec_text }}</li>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <li>Rugged cordless Wi-Fi handset with charging base</li>
+            <li>Waterproof, dust-proof, and drop-proof up to 1.8 meters</li>
+            <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
+            <li>13-hour talk time, 300-hour standby battery</li>
+          {% endif %}
         </ul>
         <div class="ip-buttons">
           <a class="ip-button" href="{% if patriot.url %}{{ patriot.url }}{% else %}/products/patriot-phone{% endif %}">

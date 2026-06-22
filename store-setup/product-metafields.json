@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Product deck",
+    "namespace": "custom",
+    "key": "product_deck",
+    "ownerType": "PRODUCT",
+    "type": "single_line_text_field",
+    "description": "Short product-page deck shown above price. Theme fallback is hard-coded from source brief when blank."
+  },
+  {
+    "name": "Best for",
+    "namespace": "custom",
+    "key": "best_for",
+    "ownerType": "PRODUCT",
+    "type": "single_line_text_field",
+    "description": "Best-for statement shown in product hero and product comparison cards."
+  },
+  {
+    "name": "Specs",
+    "namespace": "custom",
+    "key": "specs",
+    "ownerType": "PRODUCT",
+    "type": "multi_line_text_field",
+    "description": "Semicolon-separated specs used by the product page and comparison cards. Keep the semicolons so CSV import and Liquid splitting stay predictable."
+  }
+]

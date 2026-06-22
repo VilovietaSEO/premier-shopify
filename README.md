@@ -9,6 +9,7 @@ Independence Phone fresh-store theme build:
 - Theme path: `/Users/vilovieta/Documents/Shopify/independence-phone-theme`
 - Refresh overlay path: `/Users/vilovieta/Documents/Shopify/refresh-overlay`
 - Refresh overlay script: `/Users/vilovieta/Documents/Shopify/scripts/apply-refresh-overlay.sh`
+- Fresh store setup data: `/Users/vilovieta/Documents/Shopify/store-setup`
 - Brief/source path: `/Users/vilovieta/Documents/Shopify/brief-materials`
 - Handoff checklist: `/Users/vilovieta/Documents/Shopify/independence-phone-theme/SHOPIFY_HANDOFF.md`
 - Goal prompt: `/Users/vilovieta/Documents/Shopify/brief-materials/strategy/goal-prompt.md`

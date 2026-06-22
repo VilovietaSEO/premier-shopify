@@ -19,6 +19,10 @@
   endif
 
   assign current_variant = product.selected_or_first_available_variant
+  assign product_deck = product.metafields.custom.product_deck.value
+  assign best_for = product.metafields.custom.best_for.value | default: fallback_best_for
+  assign custom_specs = product.metafields.custom.specs.value | strip
+  assign custom_specs_list = custom_specs | split: ';'
 %}
 
 <section class="ip-product-main">
@@ -48,7 +52,9 @@
     <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
     <h1 class="ip-heading ip-heading--medium">{{ product.title | default: fallback_title }}</h1>
     <p class="ip-lede">
-      {% if product.description != blank %}
+      {% if product_deck != blank %}
+        {{ product_deck }}
+      {% elsif product.description != blank %}
         {{ product.description | strip_html }}
       {% else %}
         {{ fallback_deck }}
@@ -65,11 +71,18 @@
 
     <div class="ip-card" style="padding: 1rem;">
       <h2 class="ip-story-card__title">Best for</h2>
-      <p>{{ fallback_best_for }}</p>
+      <p>{{ best_for }}</p>
     </div>
 
     <ul class="ip-spec-list">
-      {% if is_patriot %}
+      {% if custom_specs != blank %}
+        {% for spec in custom_specs_list %}
+          {% assign spec_text = spec | strip %}
+          {% if spec_text != blank %}
+            <li>{{ spec_text }}</li>
+          {% endif %}
+        {% endfor %}
+      {% elsif is_patriot %}
         <li>Rugged cordless Wi-Fi handset with charging base</li>
         <li>Waterproof and dust-proof, drop-proof up to 1.8 meters</li>
         <li>Non-slip, anti-scratch, anti-bacterial construction</li>
