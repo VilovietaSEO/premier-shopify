@@ -26,9 +26,21 @@ cp -R "$overlay/assets/." "$target_theme/assets/"
 cp -R "$overlay/sections/." "$target_theme/sections/"
 cp -R "$overlay/templates/." "$target_theme/templates/"
 
+if [ -d "$overlay/snippets" ]; then
+  if [ ! -d "$target_theme/snippets" ]; then
+    echo "Target does not look like a Shopify theme. Missing: snippets" >&2
+    exit 65
+  fi
+  cp -R "$overlay/snippets/." "$target_theme/snippets/"
+fi
+
 theme_layout="$target_theme/layout/theme.liquid"
 if ! grep -q "ip-theme.css" "$theme_layout"; then
   perl -0pi -e "s#(\\s*\\{\\{ content_for_header \\}\\})#    {{ 'ip-theme.css' | asset_url | stylesheet_tag }}\\n\\1#" "$theme_layout"
+fi
+
+if ! grep -q "ip-structured-data" "$theme_layout"; then
+  perl -0pi -e "s#(\\s*\\{\\{ content_for_header \\}\\})#    {% render 'ip-structured-data' %}\\n\\1#" "$theme_layout"
 fi
 
 echo "Applied Independence Phone overlay to: $target_theme"

@@ -1,0 +1,29 @@
+{%- liquid
+  assign organization_name = shop.name | default: 'Independence Phone'
+  assign organization_url = request.origin | append: routes.root_url
+  assign organization_logo = 'ip-current-site-logo.png' | asset_url | prepend: 'https:'
+  assign organization_description = shop.description | default: 'Independence Phone helps families give kids a phone without apps, browsers, social feeds, or the open internet.'
+-%}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": {{ organization_name | json }},
+    "url": {{ organization_url | json }},
+    "logo": {{ organization_logo | json }},
+    "description": {{ organization_description | strip_html | json }}
+  }
+</script>
+
+{% if request.page_type == 'index' %}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": {{ organization_name | json }},
+      "url": {{ organization_url | json }},
+      "description": "Give them a phone. Not the internet."
+    }
+  </script>
+{% endif %}

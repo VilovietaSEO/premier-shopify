@@ -9,7 +9,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-mkdir -p "$tmp_theme/assets" "$tmp_theme/sections" "$tmp_theme/templates" "$tmp_theme/layout"
+mkdir -p "$tmp_theme/assets" "$tmp_theme/sections" "$tmp_theme/snippets" "$tmp_theme/templates" "$tmp_theme/layout"
 
 cat > "$tmp_theme/layout/theme.liquid" <<'LIQUID'
 <!doctype html>
@@ -32,6 +32,7 @@ required_files=(
   "sections/ip-video-hero.liquid"
   "sections/ip-product-main.liquid"
   "sections/ip-contact-form.liquid"
+  "snippets/ip-structured-data.liquid"
   "templates/index.json"
   "templates/collection.phones.json"
   "templates/product.independence-phone.json"
@@ -48,6 +49,12 @@ done
 stylesheet_count="$(grep -c "ip-theme.css" "$tmp_theme/layout/theme.liquid" || true)"
 if [ "$stylesheet_count" -ne 1 ]; then
   echo "Expected one ip-theme.css include after repeated overlay application, found $stylesheet_count" >&2
+  exit 1
+fi
+
+structured_data_count="$(grep -c "ip-structured-data" "$tmp_theme/layout/theme.liquid" || true)"
+if [ "$structured_data_count" -ne 1 ]; then
+  echo "Expected one ip-structured-data render after repeated overlay application, found $structured_data_count" >&2
   exit 1
 fi
 

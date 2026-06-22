@@ -30,6 +30,8 @@ The local `independence-phone-theme` is a complete uploadable Shopify theme pack
   - `sections/ip-faq.liquid`
   - `sections/ip-trust-band.liquid`
   - `sections/ip-contact-form.liquid`
+- Custom snippets:
+  - `snippets/ip-structured-data.liquid`
 - Scoped templates:
   - `templates/index.json`
   - `templates/collection.phones.json`
@@ -77,10 +79,11 @@ shopify theme dev --store STORE.myshopify.com --theme REFRESH_THEME_ID
 
 ## Layout Patch
 
-The apply script copies the overlay files and inserts this stylesheet include before `{{ content_for_header }}` in `layout/theme.liquid` when missing:
+The apply script copies the overlay files and inserts these includes before `{{ content_for_header }}` in `layout/theme.liquid` when missing:
 
 ```liquid
 {{ 'ip-theme.css' | asset_url | stylesheet_tag }}
+{% render 'ip-structured-data' %}
 ```
 
 The CSS uses fallback tokens, so it can render inside Refresh even before custom Independence Phone color settings are added to Refresh's `settings_schema.json`.

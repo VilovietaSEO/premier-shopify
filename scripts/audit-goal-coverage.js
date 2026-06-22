@@ -401,6 +401,10 @@ const customTemplates = [
   'page.contact.json',
 ];
 
+const customSnippets = [
+  'ip-structured-data.liquid',
+];
+
 const themeAssets = [
   'ip-theme.css',
   'ip-current-site-logo.png',
@@ -433,6 +437,14 @@ for (const template of customTemplates) {
   );
 }
 
+for (const snippet of customSnippets) {
+  assertFile(`independence-phone-theme/snippets/${snippet}`, `theme snippet ${snippet}`);
+  assertFilesMatch(
+    `independence-phone-theme/snippets/${snippet}`,
+    `refresh-overlay/snippets/${snippet}`
+  );
+}
+
 for (const asset of themeAssets) {
   assertFile(`independence-phone-theme/assets/${asset}`, `theme asset ${asset}`);
   assertFilesMatch(`independence-phone-theme/assets/${asset}`, `refresh-overlay/assets/${asset}`);
@@ -442,6 +454,18 @@ assertExecutable('scripts/apply-refresh-overlay.sh', 'Refresh overlay script');
 assertExecutable('scripts/bootstrap-refresh-store.sh', 'Refresh store bootstrap script');
 assertExecutable('scripts/test-refresh-overlay.sh', 'Refresh overlay smoke test');
 assertFileIncludes('.gitignore', ['refresh-theme/'], 'Repo gitignore');
+assertFileIncludes('independence-phone-theme/layout/theme.liquid', [
+  "{% render 'ip-structured-data' %}",
+], 'Theme layout');
+assertFileIncludes('independence-phone-theme/snippets/ip-structured-data.liquid', [
+  '"@type": "Organization"',
+  '"@type": "WebSite"',
+  'Give them a phone. Not the internet.',
+], 'Structured data snippet');
+assertFileIncludes('scripts/apply-refresh-overlay.sh', [
+  'cp -R "$overlay/snippets/." "$target_theme/snippets/"',
+  "{% render 'ip-structured-data' %}",
+], 'Refresh overlay script');
 assertFileIncludes('scripts/bootstrap-refresh-store.sh', [
   'shopify theme pull --store "$store" --theme "$theme_id" --path "$target_theme"',
   '"$repo_root/scripts/apply-refresh-overlay.sh" "$target_theme"',
@@ -451,10 +475,15 @@ assertFileIncludes('scripts/bootstrap-refresh-store.sh', [
 assertFileIncludes('scripts/test-refresh-overlay.sh', [
   'scripts/apply-refresh-overlay.sh',
   'sections/ip-video-hero.liquid',
+  'snippets/ip-structured-data.liquid',
   'templates/product.independence-phone.json',
   'ip-theme.css',
+  'ip-structured-data',
 ], 'Refresh overlay smoke test');
 assertFile('independence-phone-theme/SHOPIFY_HANDOFF.md', 'Shopify handoff');
+assertFileIncludes('independence-phone-theme/SHOPIFY_HANDOFF.md', [
+  'Independence Phone `Organization` and home-page `WebSite` JSON-LD',
+], 'Shopify handoff');
 assertFile('independence-phone-theme/THEME_EDITOR_GUIDE.md', 'Theme Editor guide');
 assertFile('refresh-overlay/README.md', 'Refresh overlay README');
 assertFile('store-setup/README.md', 'Store setup README');
@@ -497,6 +526,7 @@ assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'For bus days, home-alone minutes, and grandparents.',
   'American-owned messaging is secondary trust',
   'Confirm add-to-cart works for both products.',
+  'Page source includes Independence Phone `Organization` and home-page `WebSite` JSON-LD.',
   'Cart shows selected service/add-on setup details.',
   'Send a test submission and confirm delivery to the store contact email.',
   'Connect the final public domain after publish approval.',
