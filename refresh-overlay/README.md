@@ -8,6 +8,7 @@ The local `independence-phone-theme` is a complete uploadable Shopify theme pack
 
 - Independence Phone assets:
   - `assets/ip-theme.css`
+  - `assets/ip-independence-phone-logo.png`
   - `assets/ip-current-site-logo.png`
   - `assets/ip-current-site-product-1.png`
   - `assets/ip-current-site-product-2.png`
@@ -123,6 +124,12 @@ Upload/select the hero video in Theme Editor:
 
 ```bash
 /Users/vilovieta/Documents/Shopify/brief-materials/assets/video/indy-phone-reel-1.mov
+```
+
+Set the Refresh header logo to the supplied-logo export:
+
+```bash
+/Users/vilovieta/Documents/Shopify/brief-materials/assets/logo/independence-phone-logo-export.png
 ```
 
 ## Claim Discipline

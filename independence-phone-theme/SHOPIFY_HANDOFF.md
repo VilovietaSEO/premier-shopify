@@ -210,6 +210,18 @@ Product title, price, images, description, and core specs should be maintained i
 
 ## 7. Navigation
 
+Set the store header logo to the supplied-logo export:
+
+```bash
+/Users/vilovieta/Documents/Shopify/brief-materials/assets/logo/independence-phone-logo-export.png
+```
+
+The local uploadable theme also includes this as:
+
+```bash
+/Users/vilovieta/Documents/Shopify/independence-phone-theme/assets/ip-independence-phone-logo.png
+```
+
 Create or update the main menu:
 
 - Home -> `/`

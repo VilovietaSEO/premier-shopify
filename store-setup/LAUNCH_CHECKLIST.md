@@ -159,6 +159,7 @@ Footer menu:
 
 Store settings:
 
+- [ ] Header logo is uploaded/selected from `/Users/vilovieta/Documents/Shopify/brief-materials/assets/logo/independence-phone-logo-export.png`.
 - [ ] Shipping is configured for `$15/phone` or the approved Shopify shipping model.
 - [ ] Taxes are configured for launch requirements.
 - [ ] Payments are configured or launch checkout behavior is explicitly approved.

@@ -263,6 +263,7 @@ const sourceAssets = [
   'brief-materials/assets/site-images/current-site-product-4.png',
   'brief-materials/assets/site-images/current-site-product-collage.png',
   'brief-materials/assets/reference-images/kid-phone-ui-reference.png',
+  'brief-materials/assets/logo/independence-phone-logo-export.png',
 ];
 
 const customSections = [
@@ -407,6 +408,7 @@ const customSnippets = [
 
 const themeAssets = [
   'ip-theme.css',
+  'ip-independence-phone-logo.png',
   'ip-current-site-logo.png',
   'ip-current-site-product-1.png',
   'ip-current-site-product-2.png',
@@ -509,6 +511,7 @@ assertFileIncludes('independence-phone-theme/sections/cart.liquid', [
 ], 'Local cart section');
 assertFileIncludes('independence-phone-theme/sections/header.liquid', [
   'aria-label="Main menu"',
+  'ip-independence-phone-logo.png',
   'routes.collections_url',
   'routes.root_url }}pages/contact',
   'aria-label="Cart"',
@@ -523,6 +526,7 @@ assertFileIncludes('independence-phone-theme/sections/footer.liquid', [
 assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'STORE.myshopify.com',
   'Shopify `Refresh` theme',
+  'brief-materials/assets/logo/independence-phone-logo-export.png',
   'scripts/bootstrap-refresh-store.sh',
   'scripts/apply-refresh-overlay.sh',
   'shopify theme dev --store STORE.myshopify.com --theme REFRESH_THEME_ID',
@@ -553,6 +557,9 @@ assertFileIncludes('visual-preview/preview.spec.js', [
   'ip-cart-properties',
   'cartPropertyRowCount',
 ], 'Visual preview test');
+assertFileIncludes('visual-preview/index.html', [
+  'ip-independence-phone-logo.png',
+], 'Visual preview page');
 assertFile('visual-preview/verification.md', 'Visual verification report');
 
 assertTemplateTypes('independence-phone-theme/templates/index.json', [

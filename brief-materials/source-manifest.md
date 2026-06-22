@@ -9,6 +9,7 @@
 | `documents/independence-phone-sow-v1.txt` | Extracted from `documents/independence-phone-sow-v1.pdf` using `pdftotext -layout` | Text extraction for quick search and planning. |
 | `documents/sow-summary.md` | Derived from the SOW PDF and text extraction | Structured scope, dependencies, pricing, and build implications. |
 | `assets/logo/independence-phone-logo.ai` | `/Users/vilovieta/Downloads/IndependencePhone_Logo.ai` | Supplied logo source file. Detected as a PDF-compatible Illustrator file. |
+| `assets/logo/independence-phone-logo-export.png` | Derived from `assets/logo/independence-phone-logo.ai` using macOS Quick Look preview export and transparent-background processing | Shopify-ready PNG logo export used by the local theme and available for upload/selection in the Refresh header. |
 | `notes/raw-client-notes.txt` | `/Users/vilovieta/.codex/attachments/32322822-82fc-4c47-8fed-d1d275371f6a/pasted-text.txt` | Raw pasted client notes, URLs, pricing, and requirements. |
 | `assets/product-images/independence-phone-product-crunchy.png` | `https://freedom-phone-2.myshopify.com/cdn/shop/files/Crunchy.png?v=1777306321&width=3840` | Extracted Shopify product image from product page. Download resolved to 1024 x 1536 PNG with no alpha channel. |
 | `research/shopify-product-page/product-page-screenshot.png` | MCP Scraper screenshot of `https://freedom-phone-2.myshopify.com/products/independence-phone?variant=62779145290099` | Product page screenshot captured during image extraction. |

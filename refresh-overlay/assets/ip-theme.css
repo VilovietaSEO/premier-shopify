@@ -915,8 +915,12 @@ header .header__title {
 }
 
 header .header__logo {
-  max-width: min(18rem, 48vw);
-  width: 100%;
+  display: block;
+  height: auto;
+  max-height: 3.3rem;
+  max-width: min(18rem, 54vw);
+  object-fit: contain;
+  width: auto;
 }
 
 header .header__menu a {
