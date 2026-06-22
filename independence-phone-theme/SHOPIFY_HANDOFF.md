@@ -226,6 +226,12 @@ Current storefront presentation:
 - Auto Attendant: `$5/mo`
 - 250th Anniversary package: `$250`, includes 1 Freedom Phone, 1 year service, and Victory Bundle
 
+Current product form behavior:
+
+- The product form captures selected service plan as a `Service plan` line-item property.
+- The product form captures selected add-ons as line-item properties named for each add-on.
+- This is purchase/setup intent capture, not a final recurring billing engine.
+
 If Rev.io or Shopify app integration requires service/add-ons as separate products, keep the storefront copy but change the cart/checkout modeling behind it. Do not turn the public catalog into a broad product grid.
 
 ## 9. Claim Discipline

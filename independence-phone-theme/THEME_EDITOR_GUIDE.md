@@ -115,8 +115,10 @@ Editable sections:
 
 - `IP product main`
   - Edit eyebrow and dynamic checkout visibility in Theme Editor.
+  - Edit service plan and add-on purchase options as blocks inside the product main section.
   - Product title, price, image, description, and add-to-cart come from Shopify product data.
   - Product deck, best-for copy, and specs come from product metafields when present.
+  - Service and add-on selections are submitted as Shopify line-item properties so setup intent is captured with the order.
 - `IP service plans`
 - `IP add-ons`
 - `IP capability table`
@@ -188,6 +190,7 @@ Edit these through the visual customizer:
 - Hero video and poster.
 - Section headings and body copy.
 - Benefit cards.
+- Product form service plan and add-on option blocks.
 - Plan cards.
 - Add-on cards.
 - FAQ rows.

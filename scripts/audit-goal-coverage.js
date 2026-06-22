@@ -322,7 +322,18 @@ const sectionSchemaRequirements = {
     requiresPreset: true,
   },
   'ip-product-main': {
-    settings: ['eyebrow', 'show_dynamic_checkout'],
+    settings: [
+      'eyebrow',
+      'purchase_options_heading',
+      'service_options_heading',
+      'addon_options_heading',
+      'purchase_options_note',
+      'show_dynamic_checkout',
+    ],
+    blocks: {
+      service_plan: ['title', 'price', 'default_selected'],
+      addon_option: ['title', 'price'],
+    },
     templateBound: true,
   },
   'ip-service-plans': {
@@ -522,6 +533,43 @@ for (const metafield of ['product_deck', 'best_for', 'specs']) {
     pass(`product main reads custom.${metafield}`);
   } else {
     fail(`product main does not read custom.${metafield}`);
+  }
+}
+for (const snippet of [
+  'properties[Service plan]',
+  'properties[{{ block.settings.title | escape }}]',
+  'service_plan',
+  'addon_option',
+]) {
+  if (productMain.includes(snippet)) {
+    pass(`product main includes purchase option snippet ${snippet}`);
+  } else {
+    fail(`product main missing purchase option snippet ${snippet}`);
+  }
+}
+
+const productTemplate = readJson('independence-phone-theme/templates/product.independence-phone.json');
+if (productTemplate) {
+  const productMainSection = productTemplate.sections && productTemplate.sections.main;
+  const expectedProductMainBlocks = {
+    monthly_service: 'service_plan',
+    annual_service: 'service_plan',
+    addon_recording: 'addon_option',
+    addon_time_conditions: 'addon_option',
+    addon_voicemail: 'addon_option',
+    addon_victory: 'addon_option',
+    addon_attendant: 'addon_option',
+  };
+
+  for (const [blockId, type] of Object.entries(expectedProductMainBlocks)) {
+    const block = productMainSection && productMainSection.blocks && productMainSection.blocks[blockId];
+    if (!block) {
+      fail(`product template main missing purchase option block ${blockId}`);
+    } else if (block.type !== type) {
+      fail(`product template main block ${blockId} has type ${block.type}, expected ${type}`);
+    } else {
+      pass(`product template main block ${blockId}: ${type}`);
+    }
   }
 }
 

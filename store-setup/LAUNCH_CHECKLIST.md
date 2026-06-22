@@ -132,6 +132,8 @@ Product pages:
 - [ ] Open `Freedom Phone` with template `product.independence-phone`.
 - [ ] Open `Patriot Phone` with template `product.independence-phone`.
 - [ ] Confirm the product image, price, specs, service copy, add-ons, and package band render.
+- [ ] Confirm the product form shows monthly/annual service choices.
+- [ ] Confirm the product form shows Call Recording, Time Conditions, Voicemail to Email, Victory Bundle, and Auto Attendant add-on choices.
 - [ ] Confirm add-to-cart works for both products.
 
 Contact page:

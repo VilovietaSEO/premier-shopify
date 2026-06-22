@@ -686,6 +686,71 @@ a {
   width: 100%;
 }
 
+.ip-product-options {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 12%, transparent);
+  border-radius: 8px;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.ip-product-options h2 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.ip-choice-group {
+  border: 0;
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  min-inline-size: 0;
+  padding: 0;
+}
+
+.ip-choice-group legend {
+  color: var(--ip-blue, #263F73);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  margin-bottom: 0.45rem;
+  padding: 0;
+  text-transform: uppercase;
+}
+
+.ip-choice {
+  align-items: flex-start;
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 12%, transparent);
+  border-radius: 6px;
+  cursor: pointer;
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 0.72rem;
+}
+
+.ip-choice input {
+  margin-top: 0.18rem;
+}
+
+.ip-choice span {
+  display: grid;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.ip-choice strong,
+.ip-choice small {
+  overflow-wrap: anywhere;
+}
+
+.ip-choice small {
+  color: var(--ip-muted, #596273);
+  font-size: 0.86rem;
+}
+
 .ip-product-form button,
 .ip-product-form input[type="submit"] {
   background: var(--ip-red, #B73532);

@@ -82,6 +82,9 @@ test.describe('Independence Phone visual preview', () => {
       await expect(page.locator('#patriot'), 'Patriot product marker should exist').toBeVisible();
       await expect(page.locator('#contact'), 'Contact marker should exist').toBeVisible();
       await expect(page.locator('.ip-product-form'), 'Both product forms should render').toHaveCount(2);
+      await expect(page.locator('.ip-product-form .ip-product-options'), 'Both product forms should expose service/add-on options').toHaveCount(2);
+      await expect(page.locator('.ip-product-form input[type="radio"]'), 'Service plan radios should render').toHaveCount(4);
+      await expect(page.locator('.ip-product-form input[type="checkbox"]'), 'Add-on checkboxes should render').toHaveCount(10);
       await expect(page.locator('.ip-contact-form'), 'Contact form should render').toHaveCount(1);
 
       const result = await page.evaluate(() => {
@@ -118,6 +121,9 @@ test.describe('Independence Phone visual preview', () => {
           bodyClientWidth: document.documentElement.clientWidth,
           sectionCount: document.querySelectorAll('.shopify-section').length,
           productFormCount: document.querySelectorAll('.ip-product-form').length,
+          productOptionsCount: document.querySelectorAll('.ip-product-form .ip-product-options').length,
+          productServiceRadioCount: document.querySelectorAll('.ip-product-form input[type="radio"]').length,
+          productAddonCheckboxCount: document.querySelectorAll('.ip-product-form input[type="checkbox"]').length,
           contactFormCount: document.querySelectorAll('.ip-contact-form').length,
           brokenImages,
           overflowing,
@@ -137,6 +143,9 @@ test.describe('Independence Phone visual preview', () => {
       expect(result.bodyScrollWidth).toBeLessThanOrEqual(result.bodyClientWidth + 2);
       expect(result.sectionCount).toBeGreaterThanOrEqual(13);
       expect(result.productFormCount).toBe(2);
+      expect(result.productOptionsCount).toBe(2);
+      expect(result.productServiceRadioCount).toBe(4);
+      expect(result.productAddonCheckboxCount).toBe(10);
       expect(result.contactFormCount).toBe(1);
       expect(result.brokenImages).toEqual([]);
       expect(result.overflowing).toEqual([]);
