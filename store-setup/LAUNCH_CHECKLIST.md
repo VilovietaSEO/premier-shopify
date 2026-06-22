@@ -196,7 +196,7 @@ Desktop and mobile:
 - [ ] Freedom Phone `/products/freedom-phone`.
 - [ ] Patriot Phone `/products/patriot-phone`.
 - [ ] Contact `/pages/contact`.
-- [ ] Page source includes Independence Phone `Organization` and home-page `WebSite` JSON-LD.
+- [ ] Page source includes Independence Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD.
 - [ ] Cart shows selected service/add-on setup details.
 - [ ] Checkout path approved for launch.
 - [ ] 404/system pages use Shopify boilerplate acceptably.

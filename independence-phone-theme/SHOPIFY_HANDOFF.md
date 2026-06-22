@@ -306,7 +306,7 @@ Still required after store auth:
 - Check `/products/freedom-phone`.
 - Check `/products/patriot-phone`.
 - Check `/pages/contact`.
-- Confirm page source includes Independence Phone `Organization` and home-page `WebSite` JSON-LD.
+- Confirm page source includes Independence Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD.
 - Confirm Theme Editor can edit section content and reorder sections.
 - Confirm add-to-cart works for both product handles.
 - Confirm contact form sends to the store contact email.

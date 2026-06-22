@@ -462,6 +462,13 @@ assertFileIncludes('independence-phone-theme/snippets/ip-structured-data.liquid'
   '"@type": "WebSite"',
   'Give them a phone. Not the internet.',
 ], 'Structured data snippet');
+assertFileIncludes('independence-phone-theme/sections/ip-faq.liquid', [
+  '"@type": "FAQPage"',
+  '"mainEntity"',
+  '"acceptedAnswer"',
+  'block.settings.question | strip_html | json',
+  'block.settings.answer | strip_html | json',
+], 'FAQ structured data section');
 assertFileIncludes('scripts/apply-refresh-overlay.sh', [
   'cp -R "$overlay/snippets/." "$target_theme/snippets/"',
   "{% render 'ip-structured-data' %}",
@@ -482,7 +489,7 @@ assertFileIncludes('scripts/test-refresh-overlay.sh', [
 ], 'Refresh overlay smoke test');
 assertFile('independence-phone-theme/SHOPIFY_HANDOFF.md', 'Shopify handoff');
 assertFileIncludes('independence-phone-theme/SHOPIFY_HANDOFF.md', [
-  'Independence Phone `Organization` and home-page `WebSite` JSON-LD',
+  'Independence Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD',
 ], 'Shopify handoff');
 assertFile('independence-phone-theme/THEME_EDITOR_GUIDE.md', 'Theme Editor guide');
 assertFile('refresh-overlay/README.md', 'Refresh overlay README');
@@ -526,7 +533,7 @@ assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'For bus days, home-alone minutes, and grandparents.',
   'American-owned messaging is secondary trust',
   'Confirm add-to-cart works for both products.',
-  'Page source includes Independence Phone `Organization` and home-page `WebSite` JSON-LD.',
+  'Page source includes Independence Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD.',
   'Cart shows selected service/add-on setup details.',
   'Send a test submission and confirm delivery to the store contact email.',
   'Connect the final public domain after publish approval.',
