@@ -10,18 +10,20 @@ Preview file:
 /Users/vilovieta/Documents/Shopify/visual-preview/index.html
 ```
 
-Run locally:
+Open directly:
+
+```bash
+open /Users/vilovieta/Documents/Shopify/visual-preview/index.html
+```
+
+Run visual QA:
 
 ```bash
 cd /Users/vilovieta/Documents/Shopify
-python3 -m http.server 4173
+npm run preview:test
 ```
 
-Open:
-
-```text
-http://127.0.0.1:4173/visual-preview/
-```
+The test opens `index.html` through a local `file://` URL by default. To test a server URL instead, set `PREVIEW_URL`.
 
 What this verifies:
 

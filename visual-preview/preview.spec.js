@@ -1,8 +1,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const { pathToFileURL } = require('node:url');
 const { test, expect } = require('@playwright/test');
 
-const baseUrl = process.env.PREVIEW_URL || 'http://127.0.0.1:4173/visual-preview/';
+const baseUrl = process.env.PREVIEW_URL || pathToFileURL(path.join(__dirname, 'index.html')).href;
 const screenshotDir = path.join(__dirname, 'screenshots');
 const reportDir = path.join(__dirname, 'reports');
 

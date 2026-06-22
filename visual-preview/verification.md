@@ -6,7 +6,6 @@ Command:
 
 ```bash
 cd /Users/vilovieta/Documents/Shopify
-python3 -m http.server 4173
 npm run preview:test
 ```
 
