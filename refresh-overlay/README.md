@@ -92,6 +92,7 @@ Product data setup files:
 - `/Users/vilovieta/Documents/Shopify/store-setup/product-metafields.json`
 - `/Users/vilovieta/Documents/Shopify/store-setup/products.csv`
 - `/Users/vilovieta/Documents/Shopify/store-setup/README.md`
+- `/Users/vilovieta/Documents/Shopify/independence-phone-theme/THEME_EDITOR_GUIDE.md`
 
 The overlay sections read `custom.product_deck`, `custom.best_for`, and `custom.specs` product metafields when present, then fall back to the canonical Liquid copy.
 

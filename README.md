@@ -12,8 +12,11 @@ Independence Phone fresh-store theme build:
 - Fresh store setup data: `/Users/vilovieta/Documents/Shopify/store-setup`
 - Brief/source path: `/Users/vilovieta/Documents/Shopify/brief-materials`
 - Handoff checklist: `/Users/vilovieta/Documents/Shopify/independence-phone-theme/SHOPIFY_HANDOFF.md`
+- Theme Editor guide: `/Users/vilovieta/Documents/Shopify/independence-phone-theme/THEME_EDITOR_GUIDE.md`
 - Goal prompt: `/Users/vilovieta/Documents/Shopify/brief-materials/strategy/goal-prompt.md`
 - GitHub remote: `https://github.com/VilovietaSEO/premier-shopify`
+
+This project targets a fresh Shopify store. The final public domain can be connected later; the build only needs the Shopify store handle and theme access before live preview/publish work can happen.
 
 Local validation currently passes:
 
@@ -30,6 +33,8 @@ npm run verify:local
 ```
 
 That command checks required goal artifacts, verifies the Shopify theme, and runs the desktop/tablet/mobile visual preview test.
+
+The local goal audit also checks that the Independence Phone sections expose the expected Theme Editor settings, blocks, presets, product templates, product metafields, and Refresh overlay matches.
 
 Refresh-base path for the fresh store:
 

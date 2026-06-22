@@ -2,6 +2,14 @@
 
 Use this after the fresh Shopify store exists.
 
+This project targets a fresh Shopify store. Connect the final public domain later; the immediate requirement is a Shopify store handle, theme access, and a non-live preview/publish workflow.
+
+Detailed Theme Editor editing guide:
+
+```bash
+/Users/vilovieta/Documents/Shopify/independence-phone-theme/THEME_EDITOR_GUIDE.md
+```
+
 ## Refresh Base Requirement
 
 Final build target: Shopify `Refresh` plus the Independence Phone overlay.
@@ -145,6 +153,32 @@ The theme already includes:
 ```bash
 /Users/vilovieta/Documents/Shopify/independence-phone-theme/assets/ip-hero-video-poster.jpg
 ```
+
+## 6A. Theme Editor Editing Boundary
+
+The client should maintain normal page content through Shopify's visual Theme Editor, not through Liquid files.
+
+Theme Editor guide:
+
+```bash
+/Users/vilovieta/Documents/Shopify/independence-phone-theme/THEME_EDITOR_GUIDE.md
+```
+
+Client-editable areas already exposed through section schemas:
+
+- Hero video, poster, headline, subheading, buttons, and proof bullets.
+- Parent/JTBD story copy and moment cards.
+- Product comparison headings, product selectors, image overrides, and summary overrides.
+- Service plan cards.
+- Add-on cards.
+- Capability table rows.
+- 250th Anniversary package band copy and CTA.
+- Smartphone/flip phone/landline comparison matrix.
+- FAQ rows.
+- Trust proof rows.
+- Contact form copy and opt-in/payment notes.
+
+Product title, price, images, description, and core specs should be maintained in Shopify products and product metafields.
 
 ## 7. Navigation
 

@@ -53,6 +53,96 @@ function readJson(filePath) {
   }
 }
 
+function extractSectionSchema(section) {
+  const filePath = `independence-phone-theme/sections/${section}.liquid`;
+  const absolute = path.join(root, filePath);
+  if (!fs.existsSync(absolute)) {
+    fail(`${section}: cannot inspect missing section schema`);
+    return null;
+  }
+
+  const source = fs.readFileSync(absolute, 'utf8');
+  const match = source.match(/{% schema %}([\s\S]*?){% endschema %}/);
+  if (!match) {
+    fail(`${section}: missing Theme Editor schema`);
+    return null;
+  }
+
+  try {
+    const schema = JSON.parse(match[1]);
+    pass(`${section}: Theme Editor schema parses`);
+    return schema;
+  } catch (error) {
+    fail(`${section}: invalid Theme Editor schema JSON (${error.message})`);
+    return null;
+  }
+}
+
+function schemaSettingIds(schema) {
+  return new Set((schema.settings || []).map((setting) => setting.id).filter(Boolean));
+}
+
+function schemaBlockByType(schema, type) {
+  return (schema.blocks || []).find((block) => block.type === type);
+}
+
+function assertSectionSchema(section, requirement) {
+  requirement = requirement || {};
+  const schema = extractSectionSchema(section);
+  if (!schema) return;
+
+  const hasSettings = Array.isArray(schema.settings) && schema.settings.length > 0;
+  const hasBlocks = Array.isArray(schema.blocks) && schema.blocks.length > 0;
+  if (hasSettings || hasBlocks) {
+    pass(`${section}: exposes editable schema surface`);
+  } else {
+    fail(`${section}: has no editable settings or blocks`);
+  }
+
+  const settingIds = schemaSettingIds(schema);
+  for (const setting of requirement.settings || []) {
+    if (settingIds.has(setting)) {
+      pass(`${section}: editable setting ${setting}`);
+    } else {
+      fail(`${section}: missing editable setting ${setting}`);
+    }
+  }
+
+  for (const [blockType, requiredSettings] of Object.entries(requirement.blocks || {})) {
+    const block = schemaBlockByType(schema, blockType);
+    if (!block) {
+      fail(`${section}: missing editable block type ${blockType}`);
+      continue;
+    }
+
+    pass(`${section}: editable block type ${blockType}`);
+    const blockSettingIds = new Set((block.settings || []).map((setting) => setting.id).filter(Boolean));
+    for (const setting of requiredSettings) {
+      if (blockSettingIds.has(setting)) {
+        pass(`${section}: block ${blockType} setting ${setting}`);
+      } else {
+        fail(`${section}: block ${blockType} missing setting ${setting}`);
+      }
+    }
+  }
+
+  if (requirement.requiresPreset) {
+    if (Array.isArray(schema.presets) && schema.presets.length > 0) {
+      pass(`${section}: can be added from Theme Editor section picker`);
+    } else {
+      fail(`${section}: missing Theme Editor preset`);
+    }
+  }
+
+  if (requirement.templateBound) {
+    if (!schema.presets) {
+      pass(`${section}: template-bound section is not exposed as a general preset`);
+    } else {
+      fail(`${section}: template-bound section should not be exposed as a general preset`);
+    }
+  }
+}
+
 function hashFile(filePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
 }
@@ -177,6 +267,108 @@ const customSections = [
   'ip-contact-form',
 ];
 
+const sectionSchemaRequirements = {
+  'ip-video-hero': {
+    settings: [
+      'hero_video',
+      'poster_image',
+      'eyebrow',
+      'heading',
+      'subheading',
+      'primary_label',
+      'primary_link',
+      'secondary_label',
+      'secondary_link',
+    ],
+    blocks: { proof: ['text'] },
+    requiresPreset: true,
+  },
+  'ip-jtbd-story': {
+    settings: ['anchor_id', 'eyebrow', 'heading', 'body', 'note'],
+    blocks: { moment: ['title', 'body'] },
+    requiresPreset: true,
+  },
+  'ip-feature-strip': {
+    settings: ['eyebrow', 'heading'],
+    blocks: { feature: ['title', 'body'] },
+    requiresPreset: true,
+  },
+  'ip-product-comparison': {
+    settings: [
+      'eyebrow',
+      'heading',
+      'body',
+      'freedom_product',
+      'freedom_image',
+      'freedom_summary',
+      'patriot_product',
+      'patriot_image',
+      'patriot_summary',
+    ],
+    requiresPreset: true,
+  },
+  'ip-product-main': {
+    settings: ['eyebrow', 'show_dynamic_checkout'],
+    templateBound: true,
+  },
+  'ip-service-plans': {
+    settings: ['eyebrow', 'heading', 'body', 'disclosure'],
+    blocks: { plan: ['label', 'title', 'price', 'body'] },
+    requiresPreset: true,
+  },
+  'ip-add-ons': {
+    settings: ['eyebrow', 'heading', 'body'],
+    blocks: { addon: ['title', 'price', 'body'] },
+    requiresPreset: true,
+  },
+  'ip-capability-table': {
+    settings: ['eyebrow', 'heading', 'body'],
+    blocks: { capability: ['capability', 'status', 'status_style', 'explanation'] },
+    requiresPreset: true,
+  },
+  'ip-package-band': {
+    settings: [
+      'eyebrow',
+      'heading',
+      'body',
+      'price_label',
+      'price',
+      'includes',
+      'disclosure',
+      'cta_label',
+      'cta_link',
+    ],
+    requiresPreset: true,
+  },
+  'ip-comparison-matrix': {
+    settings: ['eyebrow', 'heading', 'body'],
+    blocks: { row: ['feature', 'independence', 'smartphone', 'flip', 'landline'] },
+    requiresPreset: true,
+  },
+  'ip-faq': {
+    settings: ['eyebrow', 'heading', 'body', 'open_first'],
+    blocks: { faq: ['question', 'answer'] },
+    requiresPreset: true,
+  },
+  'ip-trust-band': {
+    settings: ['eyebrow', 'heading', 'body'],
+    blocks: { trust_item: ['title', 'body'] },
+    requiresPreset: true,
+  },
+  'ip-contact-form': {
+    settings: [
+      'eyebrow',
+      'heading',
+      'body',
+      'helper',
+      'button_label',
+      'opt_in_text',
+      'payment_note',
+    ],
+    requiresPreset: true,
+  },
+};
+
 const customTemplates = [
   'index.json',
   'collection.phones.json',
@@ -205,6 +397,7 @@ for (const section of customSections) {
     `independence-phone-theme/sections/${section}.liquid`,
     `refresh-overlay/sections/${section}.liquid`
   );
+  assertSectionSchema(section, sectionSchemaRequirements[section]);
 }
 
 for (const template of customTemplates) {
@@ -222,6 +415,7 @@ for (const asset of themeAssets) {
 
 assertExecutable('scripts/apply-refresh-overlay.sh', 'Refresh overlay script');
 assertFile('independence-phone-theme/SHOPIFY_HANDOFF.md', 'Shopify handoff');
+assertFile('independence-phone-theme/THEME_EDITOR_GUIDE.md', 'Theme Editor guide');
 assertFile('refresh-overlay/README.md', 'Refresh overlay README');
 assertFile('store-setup/README.md', 'Store setup README');
 assertFile('visual-preview/index.html', 'Visual preview page');
