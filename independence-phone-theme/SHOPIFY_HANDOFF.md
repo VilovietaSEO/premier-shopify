@@ -204,7 +204,20 @@ Do not market these as included unless the product/service scope changes:
 
 ## 10. Verification
 
-Already completed locally:
+Run the full local gate from the repo root:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+npm run verify:local
+```
+
+That command runs:
+
+- `npm run audit:coverage`
+- `npm run theme:check`
+- `npm run preview:test`
+
+Already completed locally as part of that gate:
 
 ```bash
 shopify theme check

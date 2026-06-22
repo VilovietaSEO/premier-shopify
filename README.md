@@ -22,6 +22,15 @@ cd /Users/vilovieta/Documents/Shopify/independence-phone-theme
 shopify theme check
 ```
 
+Run the full local gate before pushing theme changes or applying the Refresh overlay:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+npm run verify:local
+```
+
+That command checks required goal artifacts, verifies the Shopify theme, and runs the desktop/tablet/mobile visual preview test.
+
 Refresh-base path for the fresh store:
 
 1. Add Shopify `Refresh` to the new store.
