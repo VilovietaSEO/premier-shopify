@@ -1,0 +1,91 @@
+<section class="ip-section ip-section--ink ip-section--flag">
+  <div class="ip-package">
+    <div class="ip-stack">
+      {% if section.settings.eyebrow != blank %}
+        <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+      <h2 class="ip-heading ip-heading--medium ip-heading--wide">{{ section.settings.heading }}</h2>
+      <div class="ip-lede">{{ section.settings.body }}</div>
+      <div class="ip-buttons">
+        {% if section.settings.cta_label != blank %}
+          <a class="ip-button" href="{{ section.settings.cta_link | default: '/products/freedom-phone' }}">
+            {{ section.settings.cta_label }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="ip-package__price">
+      <p class="ip-kicker">{{ section.settings.price_label }}</p>
+      <strong>{{ section.settings.price }}</strong>
+      <p>{{ section.settings.includes }}</p>
+      <p class="ip-note">{{ section.settings.disclosure }}</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "IP package band",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Introductory 250th Anniversary package"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "A Freedom Phone starter package for the smartphone-free years."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>Get 1 Freedom Phone, 1 year of service, and the Victory Bundle in one introductory package.</p>"
+    },
+    {
+      "type": "text",
+      "id": "price_label",
+      "label": "Price label",
+      "default": "Package price"
+    },
+    {
+      "type": "text",
+      "id": "price",
+      "label": "Price",
+      "default": "$250"
+    },
+    {
+      "type": "textarea",
+      "id": "includes",
+      "label": "Includes",
+      "default": "1 Freedom Phone + 1 year service + Victory Bundle"
+    },
+    {
+      "type": "textarea",
+      "id": "disclosure",
+      "label": "Disclosure",
+      "default": "$73.12 savings. Taxes may apply."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA label",
+      "default": "View Freedom Phone"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "IP package band"
+    }
+  ]
+}
+{% endschema %}

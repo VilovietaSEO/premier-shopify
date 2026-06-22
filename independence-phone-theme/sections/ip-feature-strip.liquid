@@ -1,0 +1,86 @@
+<section class="ip-section ip-section--surface ip-section--tight ip-section--flag">
+  <div class="ip-strip">
+    <div class="ip-stack">
+      {% if section.settings.eyebrow != blank %}
+        <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+      <h2 class="ip-heading ip-heading--medium">{{ section.settings.heading }}</h2>
+    </div>
+    <div class="ip-strip__items">
+      {% for block in section.blocks %}
+        <div class="ip-strip__item" {{ block.shopify_attributes }}>
+          <h3>{{ block.settings.title }}</h3>
+          <p class="ip-note">{{ block.settings.body }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "IP feature strip",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "A phone that acts like a phone"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The useful part of a phone, first."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Calling"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Body",
+          "default": "Built around connection, not entertainment."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IP feature strip",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "title": "No apps",
+            "body": "No app store to negotiate."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "No web browser",
+            "body": "Designed to avoid the open internet step."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Simple service",
+            "body": "A personal phone number with clear monthly or annual service."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

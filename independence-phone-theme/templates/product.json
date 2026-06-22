@@ -1,0 +1,81 @@
+{
+  "sections": {
+    "main": {
+      "type": "ip-product-main",
+      "settings": {}
+    },
+    "plans": {
+      "type": "ip-service-plans",
+      "blocks": {
+        "monthly": {
+          "type": "plan",
+          "settings": {
+            "label": "Monthly",
+            "title": "Personal phone number + monthly service",
+            "price": "$17.76/mo",
+            "body": "<p>Simple monthly phone service for the family phone.</p>"
+          }
+        },
+        "annual": {
+          "type": "plan",
+          "settings": {
+            "label": "Annual",
+            "title": "Personal phone number + annual service",
+            "price": "$200/yr",
+            "body": "<p>Annual service saves $13.12 compared with monthly billing.</p>"
+          }
+        }
+      },
+      "block_order": ["monthly", "annual"],
+      "settings": {}
+    },
+    "addons": {
+      "type": "ip-add-ons",
+      "blocks": {
+        "recording": {
+          "type": "addon",
+          "settings": {
+            "title": "Call Recording",
+            "price": "$5/mo",
+            "body": "Record and store all calls for 90 days."
+          }
+        },
+        "time_conditions": {
+          "type": "addon",
+          "settings": {
+            "title": "Time Conditions",
+            "price": "$5/mo",
+            "body": "Set on/off times for incoming calls."
+          }
+        },
+        "voicemail": {
+          "type": "addon",
+          "settings": {
+            "title": "Voicemail to Email",
+            "price": "$5/mo",
+            "body": "Unanswered calls go to voicemail and messages are sent to email."
+          }
+        },
+        "victory": {
+          "type": "addon",
+          "settings": {
+            "title": "Victory Bundle",
+            "price": "$10/mo",
+            "body": "Call Recording, Time Conditions, and Voicemail to Email together."
+          }
+        },
+        "attendant": {
+          "type": "addon",
+          "settings": {
+            "title": "Auto Attendant",
+            "price": "$5/mo",
+            "body": "Help screen spam calls before they interrupt the family phone."
+          }
+        }
+      },
+      "block_order": ["recording", "time_conditions", "voicemail", "victory", "attendant"],
+      "settings": {}
+    }
+  },
+  "order": ["main", "plans", "addons"]
+}

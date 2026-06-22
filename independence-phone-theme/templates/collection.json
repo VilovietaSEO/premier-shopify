@@ -1,0 +1,72 @@
+{
+  "sections": {
+    "products": {
+      "type": "ip-product-comparison",
+      "settings": {
+        "eyebrow": "Choose your phone",
+        "heading": "Freedom for everyday calling. Patriot for rugged family use.",
+        "body": "<p>There are only two phone choices. Pick the handset that matches your home, then add service and optional add-ons.</p>"
+      }
+    },
+    "plans": {
+      "type": "ip-service-plans",
+      "blocks": {
+        "monthly": {
+          "type": "plan",
+          "settings": {
+            "label": "Monthly",
+            "title": "Personal phone number + monthly service",
+            "price": "$17.76/mo",
+            "body": "<p>Simple monthly phone service for the family phone.</p>"
+          }
+        },
+        "annual": {
+          "type": "plan",
+          "settings": {
+            "label": "Annual",
+            "title": "Personal phone number + annual service",
+            "price": "$200/yr",
+            "body": "<p>Annual service saves $13.12 compared with monthly billing.</p>"
+          }
+        }
+      },
+      "block_order": ["monthly", "annual"],
+      "settings": {}
+    },
+    "capabilities": {
+      "type": "ip-capability-table",
+      "blocks": {
+        "calls": {
+          "type": "capability",
+          "settings": {
+            "capability": "Calls",
+            "status": "Yes",
+            "status_style": "yes",
+            "explanation": "The product is built around calling and a personal phone number."
+          }
+        },
+        "wifi": {
+          "type": "capability",
+          "settings": {
+            "capability": "Wi-Fi handset",
+            "status": "Yes",
+            "status_style": "yes",
+            "explanation": "Both products are cordless Wi-Fi handsets with charging bases."
+          }
+        },
+        "browser": {
+          "type": "capability",
+          "settings": {
+            "capability": "Web browser",
+            "status": "No",
+            "status_style": "no",
+            "explanation": "The product is positioned as a phone without web browsing."
+          }
+        }
+      },
+      "block_order": ["calls", "wifi", "browser"],
+      "settings": {}
+    }
+  },
+  "order": ["products", "plans", "capabilities"]
+}

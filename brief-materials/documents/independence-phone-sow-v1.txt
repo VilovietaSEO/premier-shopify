@@ -1,0 +1,440 @@
+6/15/26, 11:04 PM                                  Statement of Work — IndependencePhone.com Redesign
+
+
+
+                                                         Statement of Work — IndependencePhone.com Redesign · Draft v4 · 2026-06-15
+
+
+
+      Statement of Work — IndependencePhone.com Redesign
+      Project Code: IP-WEB-2026-Q2 Client: Premier Companies (Franklin, TN) Client Contact: Jordan Grindell —
+      jordan@premiercompanies.com · 615.591.3400 x234 Builder: Andrew Ansley Date: 2026-06-15 Status: Draft v3 —
+      pending Andrew's review before sending to Jordan
+
+
+
+
+      1. Executive Summary
+
+      Redesign and rebuild of independencephone.com as a single-domain Shopify site — direct to Shopify, no WordPress
+      interim. The new site is a Conversion Rate Optimization (CRO)-optimized engine for the Independence Phone line
+      (Freedom $100 + Patriot $150, $17.76/month service) with a 250th-Anniversary brand narrative, a Search Engine
+      Optimization (SEO) foundation for organic discovery, an AI Optimization (AIO) foundation for visibility in ChatGPT /
+      Claude / Perplexity / Google AI Overviews, and page-speed + image optimization targeting sub-3-second Largest
+      Contentful Paint (LCP) on 4G mobile.
+
+      Three pages, all custom-designed:
+
+        1. Home — the main conversion page
+        2. Category — the collection page that holds Freedom and Patriot
+        3. Product — the product page template that serves both Stock Keeping Units (SKUs)
+
+      Built so Jordan can run it without a developer — page copy, product photos, FAQs, and prices are all editable through
+      Shopify's admin. Includes a written guide and recorded walkthrough video.
+
+      Fixed price: $11,000 USD · family & friends rate: $5,500 (50% off) for the same scope. Delivery: 2 weeks from
+      kickoff, gated on Jordan's inputs in §8.
+
+
+
+      2. Scope of Work
+
+      2.1 In Scope
+
+      Pages (all custom-designed, all editable through Shopify's admin):
+
+           Home — the conversion page (CRO-optimized, full IA per §3.1)
+           Category — the collection page for the Independence Phone line (collection banner, product grid, sort/filter,
+           breadcrumb, cross-sell)
+           Product — the product page template that serves both the Freedom and Patriot SKUs (lifestyle hero, features,
+           specs, FAQ, cross-sell)
+
+
+
+
+                                                                1/8
+6/15/26, 11:04 PM                                  Statement of Work — IndependencePhone.com Redesign
+
+
+
+           Lead-gen form page — Option B (form posts to the distributor Application Programming Interface (API); success
+           → confirmation page; failure → retry visible)
+
+      Pages (Shopify standard boilerplate — no custom design work):
+
+           About, Contact, Privacy Policy, Terms of Service, 404
+
+      Design + Copy:
+
+           1 hero image — AI-generated, included (rights cleared for the Independence Phone brand)
+           Product image set for Freedom and Patriot — AI-generated where current photography is unavailable
+           All on-page copy: hero, sections, Frequently Asked Questions (FAQ), product descriptions
+
+      Non-developer editability (this is a deliverable, not an afterthought):
+
+           Page copy editable through Shopify's online store editor (no code required)
+           Product photos, prices, descriptions swappable in the Shopify admin
+           FAQ items editable in a single block (no developer needed to add a question)
+           Form fields configurable from the Shopify admin
+           Written guide (PDF) covering copy, photo, and FAQ edits
+           Recorded walkthrough video (~10 minutes) covering the same
+           30 days of bug-fix support after launch (anything in scope that breaks; not new work)
+
+      Optimizations included in the base — three categories:
+
+      A. Speed & image optimization - Image conversion to WebP with fallbacks - Lazy loading on below-the-fold images -
+      Responsive image sizing ( srcset ) at 320 / 768 / 1280 / 1920 px breakpoints - Code splitting (defer non-critical
+      JavaScript) - Critical CSS inlined - Target Largest Contentful Paint (LCP) < 3s on 4G mobile - Target Cumulative Layout
+      Shift (CLS) < 0.1 - Target First Contentful Paint (FCP) < 1.8s - Lighthouse mobile scores: Performance > 85,
+      Accessibility > 90, Best Practices > 90, Search Engine Optimization > 90
+
+      B. Search Engine Optimization (SEO) + AI Optimization (AIO) foundation - Keyword research — 8–12 primary +
+      long-tail terms in the kid-safe phone / parental control category - On-page SEO: title tags, meta descriptions, H1–H6
+      hierarchy, alt text, internal linking - Schema.org structured data: Product (with Offer ), Organization ,
+       FAQPage , BreadcrumbList - sitemap.xml + robots.txt - Google Business Profile alignment (Premier
+      Companies, Franklin TN) - AI Optimization (AIO): - llms.txt (Large Language Model (LLM) crawl allowance
+      manifest, modeled on the emerging spec) - Organization + Product schema with sameAs links to social profiles
+      and Wikipedia/Wikidata entries where they exist - Source-citable FAQ block (LLMs extract answer-style content) -
+      Natural-language "About" copy with clear entity identity (LLMs cite sources with named entities) - Answer Engine
+      Optimization (AEO): short, citable answer blocks for the top 5 parent questions - Robots directives for major AI bots
+      (GPTBot, ClaudeBot, PerplexityBot, Google-Extended) — default allow with rate-limit hints - Knowledge-graph
+      alignment checklist (manual: claim/create Wikidata, trigger Google Knowledge Panel)
+
+      C. Conversion Rate Optimization (CRO) — applied to all three pages - Hero with a single primary Call to Action
+      (CTA) above the fold - Social-proof / trust-signal section (American-made, 42-year-old company, 250th Anniversary) -
+      Comparison table vs Tin Can, Gabb, Pinwheel, Troomi, Bark - FAQ objection-handling (10–12 questions on Home; per-
+
+
+
+                                                                2/8
+6/15/26, 11:04 PM                                   Statement of Work — IndependencePhone.com Redesign
+
+
+
+      SKU on Product) - Risk reversal: warranty + 30-day return policy surfaced - Mobile-first responsive design (320 / 768 /
+      1280 px breakpoints) - Multi-step form (fewer fields above the fold, optional details below) - Multiple CTAs throughout
+      each page - Speed budget enforced: < 3s mobile LCP on 4G (overlaps with §A)
+
+      Front-end / Backend handoff:
+
+           Andrew defines the data shapes the page reads (product data, pricing, stock state)
+           Andrew defines the data shape the form writes (order inquiry payload as a JavaScript Object Notation (JSON)
+           example)
+           Andrew delivers a 1-page handoff document to Jordan's API developer with both shapes in JSON
+           Front-end code is built to consume the agreed shapes — wire-up of the actual API endpoints is not in scope (see
+           §2.2). When the API is ready, swapping mock data → live data is a small, scoped iteration (estimated 2–4 hours at
+           the iteration rate).
+
+      2.2 NOT In Scope (call-out so there's no surprise)
+
+           Backend wiring, auth, retries, error handling on the distributor API
+           Payment gateway integration
+           Email marketing / drip campaigns / abandoned-cart flows
+           Blog or content publishing system
+           Ongoing SEO management, link building, content calendar
+           Shopify app subscriptions (any premium Shopify apps the site needs)
+           Hero photoshoot or product photoshoot (AI image is included; professional photography is a separate engagement)
+           Logo / brand-system redesign (existing IndependencePhone logo is used as-is)
+           Translations / multilingual site
+           Email notification setup (the lead-gen form posts to the distributor API; downstream email routing is on Jordan's
+           side)
+
+
+
+
+      3. Information Architecture
+
+      3.1 Home — section order
+
+        1. Hero — AI-generated image of kid + parents + American flag; headline; subhead; primary CTA "Order Now" or
+           "Talk to Us"
+        2. The Problem — parental concerns (screen addiction, predators, social media)
+        3. The Solution — Independence Phone: Wi-Fi-only, no social media, no browser, no app store
+        4. Product Showcase — Freedom $100, Patriot $150, feature icons
+        5. How It Works — setup, monthly service, parent dashboard
+        6. Trust Signals — American-made, 42-year-old company, multi-generational family-owned, 250th Anniversary
+        7. Comparison vs Competition — Tin Can, Gabb, Pinwheel, Troomi, Bark
+
+
+
+                                                                 3/8
+6/15/26, 11:04 PM                                         Statement of Work — IndependencePhone.com Redesign
+
+
+
+        8. Pricing — Freedom $100 + $17.76/month, Patriot $150 + $17.76/month, no-contract messaging
+        9. Frequently Asked Questions (FAQ) — 10–12 objection-handling questions
+       10. Final Call to Action (CTA) + Lead-Gen Form — Option B (form posts to distributor API; success →
+           confirmation page; failure → retry visible)
+       11. Footer — legal, contact, social
+
+      3.2 Category — section order
+
+        1. Collection banner — branded header, brief positioning line
+        2. Product grid — cards for Freedom + Patriot with image, name, price, monthly cost, primary CTA
+        3. Sort / filter — by price, by feature
+        4. Breadcrumb — Home › Phones
+        5. Cross-sell / related categories — accessories or future product lines
+        6. Footer — shared with Home
+
+      3.3 Product — section order (used for both SKUs)
+
+        1. Lifestyle hero image — Freedom or Patriot in use
+        2. Price + monthly cost — large, prominent
+        3. Primary Call to Action (CTA) — "Talk to Us" (lead-gen default; switchable to Add to Cart in admin)
+        4. Feature list with icons — Wi-Fi-only, no browser, no app store, parent dashboard, etc.
+        5. Specs — full spec table
+        6. What's in the box
+        7. Frequently Asked Questions (FAQ) — per-SKU objection handling
+        8. Cross-sell — link to the other SKU (Freedom ↔ Patriot)
+        9. Trust badges — warranty, return policy, American-made
+       10. Footer — shared with Home
+
+
+
+
+      4. 2-Week Timeline
+
+      Assumes a Monday kickoff. All days are gated on the §8 dependencies — if Jordan's inputs slip, the timeline slips 1-
+      for-1.
+
+      Week 1
+
+       Day          Andrew                                                                 Jordan
+
+       Mon          Kickoff call. Lock slogan choice (1–2 of the 19 in the brief). Start   Available for kickoff. Sends existing brand
+       (Day 1)      SEO keyword research. Start AIO audit of competitors.                  assets (logo, current copy, current photos if
+                                                                                           any).
+
+
+
+
+                                                                         4/8
+6/15/26, 11:04 PM                                       Statement of Work — IndependencePhone.com Redesign
+
+
+
+
+       Day          Andrew                                                                  Jordan
+
+       Tue          Information Architecture (IA) + wireframes for Home, Category, and      Approves wireframes.
+       (Day 2)      Product. SEO keyword research finalized. AIO audit report (1 page).
+
+       Wed          Design system (colors, type, components). Generate AI hero image.       Approves AI images (any edits bill at
+       (Day 3)      Generate AI product images for Freedom + Patriot.                       $60/hour per §6).
+
+       Thu          Build Home sections 1–6 (hero through trust signals). Start Category    —
+       (Day 4)      page (collection banner + product grid).
+
+       Fri          Build Home sections 7–11 (comparison, pricing, FAQ, CTA, form).         Reviews Home + Category draft end-of-day.
+       (Day 5)      Complete Category page. Start Product page (lifestyle hero + features
+                    + specs).
+
+
+      Week 2
+
+       Day          Andrew                                                                                           Jordan
+
+       Mon          Complete Product page (FAQ, cross-sell, trust badges). Implement schema.org markup across        —
+       (Day 6)      all 3 pages. Create llms.txt , sitemap.xml , robots.txt . Meta tags + alt text.
+                    Speed & image optimization pass.
+
+       Tue          Internal Quality Assurance (QA). Lighthouse + axe-core passes. Rev. 1 to Jordan.                 Consolidates Rev. 1
+       (Day 7)                                                                                                       feedback.
+
+       Wed          Implement Rev. 1 feedback. (Up to 2 hours of iteration time included in the base; additional     Available for
+       (Day 8)      time at $100/hour per §6.)                                                                       clarification calls.
+
+       Thu          Final SEO + AIO pass. Cross-browser QA (Chrome, Safari, Firefox, Edge, iOS Safari, Android       —
+       (Day 9)      Chrome). Accessibility (WCAG 2.1 AA) pass. Final speed budget check.
+
+       Fri          Deliver handoff document (1-pager for API developer). Recorded walkthrough video. Written        Approves for
+       (Day         edit guide (PDF). Site goes live. 30 days of bug-fix support begins.                             launch.
+       10)
+
+
+      30 days of bug-fix support is included in the base price (anything in scope that breaks; not new work). After 30 days,
+      ongoing support is at the iteration rate (§6).
+
+
+
+
+      5. Pricing & Payment
+
+      5.1 Base Price
+
+      $11,000 United States Dollars (USD) for the full scope in §2.1.
+
+      5.2 Family & Friends Rate
+
+
+
+
+                                                                       5/8
+6/15/26, 11:04 PM                                       Statement of Work — IndependencePhone.com Redesign
+
+
+
+      Premier Companies qualifies for our family & friends rate: $5,500 (50% off) — same scope, same timeline, same
+      deliverables. No code, no minimum, no fine print. The rate is applied at invoice.
+
+      The family & friends rate is non-stackable with other discounts.
+
+      5.3 Payment Terms
+
+           50% deposit ($5,500) due upon signing to reserve the kickoff date
+           50% balance ($5,500) due on launch day (Day 10)
+
+      For family & friends pricing: $2,750 deposit / $2,750 on launch.
+
+      Net-15 invoice terms. A 1.5%/month late fee applies past 30 days.
+
+      5.4 What Happens if Scope Changes
+
+           New features beyond §2.1: scoped as a change order with a fixed-price estimate before work begins.
+           Iteration hours within scope: 2 hours included; overage at the iteration rate (§6).
+           Backend wire-up (when the API is ready): quoted separately based on the actual integration spec — estimated 2–4
+           hours at the iteration rate once Jordan's API developer provides a stable endpoint and test data.
+
+
+
+
+      6. Out-of-Scope Rate Card
+
+       Work                                                                               Rate
+
+       Iterations (revisions, tweaks, additional sections within scope)                   $100/hour
+
+       Photo / video edits (edits to AI-generated images, video trim, color correction)   $60/hour
+
+       New features (anything not in §2.1)                                                Fixed-price quote per change order
+
+       Backend integration (when API is ready)                                            $100/hour, estimated 2–4 hrs
+
+       Rush delivery (< 2 weeks)                                                          +25% surcharge, subject to availability
+
+
+      Time is tracked in 0.25-hour increments and reported with each invoice. Approvals requested before time exceeds 2
+      hours in any given week.
+
+
+
+      7. Revision & Approval Process
+
+           Round 1 (Day 7): full site draft. Jordan has 1 business day to consolidate feedback.
+           Round 2 (Day 8): revisions applied. Up to 2 hours of iteration time included.
+           Round 3+ (if needed): additional rounds at the iteration rate ($100/hour) — Andrew will flag the time before
+           continuing.
+
+
+
+                                                                          6/8
+6/15/26, 11:04 PM                                   Statement of Work — IndependencePhone.com Redesign
+
+
+
+           Launch approval is the explicit go-ahead from Jordan on Day 10. Silence past Day 10 EOB = approval.
+
+
+
+
+      8. Assumptions & Dependencies
+
+      The 2-week timeline assumes:
+
+        1. Slogans chosen by Jordan by end of Day 1 (1–2 from the 19 in the original brief). If not, Andrew picks based on the
+           SEO keyword research.
+        2. Brand assets (logo, current copy, any existing product photos) provided by Jordan by Day 1 EOB.
+        3. AI images are accepted as the hero + product imagery. If Jordan requires a professional photoshoot, that's a
+           separate engagement and adds 1–2 weeks.
+        4. API documentation for product data and order submission is shared by Day 5. If unavailable, Andrew builds the
+           front-end with a documented mock data shape that Jordan's API developer fills in later (see §2.2).
+        5. Rev. 1 feedback consolidated by Jordan by Tuesday EOB of Week 2.
+        6. Form submission behavior defaults to lead-gen form (Option B). If Jordan wants Shopify checkout instead, that's a
+           scope change and quoted per §5.4.
+        7. Shopify store is provisioned and accessible to Andrew by Day 1 (theme install + collaborator access).
+
+
+
+
+      9. Approval / Sign-Off
+
+      By signing below, both parties agree to the scope, timeline, and pricing in this document.
+
+      Premier Companies
+
+      Signature: ___ Name: Jordan Grindell Date: ___
+
+      Andrew Ansley
+
+      Signature: ___ Date: ___
+
+
+
+
+      10. Contacts
+
+       Role                  Person                                          Email                          Phone
+
+       Builder               Andrew Ansley — see Andrew Ansley -             Andrew@getaistrategy.com       6153108088
+                             Personal Info
+
+       Client                Jordan Grindell                                 jordan@premiercompanies.com    615.591.3400
+                                                                                                            x234
+
+       Bcc on orders         Mark                                            mark@premiercompanies.com      —
+
+
+
+
+                                                                 7/8
+6/15/26, 11:04 PM                                  Statement of Work — IndependencePhone.com Redesign
+
+
+
+
+       Role                  Person                                          Email                           Phone
+
+       API integration       TBD — Jordan to introduce                       —                               —
+       owner
+
+
+
+
+      11. Glossary (acronyms spelled out on first use, abbreviated thereafter)
+
+           SOW — Statement of Work (this document)
+           CRO — Conversion Rate Optimization
+           SEO — Search Engine Optimization
+           AIO — AI Optimization (visibility in ChatGPT / Claude / Perplexity / Google AI Overviews)
+           AEO — Answer Engine Optimization (a sub-discipline of AIO; short citable answer blocks)
+           LLM — Large Language Model
+           FAQ — Frequently Asked Questions
+           CTA — Call to Action
+           API — Application Programming Interface
+           JSON — JavaScript Object Notation
+           SKUs — Stock Keeping Units
+           IA — Information Architecture
+           QA — Quality Assurance
+           LCP — Largest Contentful Paint (a Core Web Vital)
+           CLS — Cumulative Layout Shift (a Core Web Vital)
+           FCP — First Contentful Paint
+           WCAG — Web Content Accessibility Guidelines
+           A11y — Accessibility (a11y = "a" + 11 letters + "y")
+           BP — Best Practices
+           HTML — HyperText Markup Language
+           CSS — Cascading Style Sheets
+           URL — Uniform Resource Locator
+           USD — United States Dollars
+           EOB — End Of Business day
+
+
+
+      This Statement of Work supersedes any prior verbal or written estimates. Effective for 30 days from the date above.
+      Pricing valid through 2026-07-15.
+
+
+
+
+                                                                  8/8
+

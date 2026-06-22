@@ -1,0 +1,110 @@
+schema_version: "1.0"
+created_at: "2026-06-22"
+source: "user_request"
+project:
+  repo: "premier-shopify"
+  client_brand: "INDEPENDENCE PHONE"
+  platform_target: "Shopify"
+  current_context:
+    - "Client currently has a WordPress site."
+    - "Durable build target is Shopify after Rev.io/API readiness."
+    - "Client must be able to edit pages without high developer dependence."
+    - "Updated June 22, 2026: supplied video is intended as the hero asset."
+    - "Updated June 22, 2026: catalog should be modeled as 2 actual products with variants."
+    - "Updated June 22, 2026: American flag treatment is transparent section-level background design, not whole-page wallpaper."
+    - "SOW direction: build direct to Shopify; no WordPress interim."
+category: "shopify_theme_template_research"
+request:
+  primary_goal: "Find 10 Shopify-compatible templates/themes to choose from."
+  secondary_goal: "Build a visual local page that lets the user compare, filter, and narrow template choices."
+  decision_needed: "Select a strong base template for INDEPENDENCE PHONE before deeper Shopify build work."
+  output_format:
+    - "Structured research report"
+    - "Visual chooser page"
+    - "Template shortlist data"
+constraints:
+  budget:
+    max_usd: 300
+    ideal_usd: 50
+    preference_order:
+      - "free"
+      - "under $50"
+      - "under $300"
+  editability:
+    must_have: "Client-facing drag-and-drop or section-based editing experience."
+    acceptable_models:
+      - "Native Shopify Online Store 2.0 sections and blocks"
+      - "Shopify Theme Store theme editor compatibility"
+      - "Third-party Shopify theme that preserves Shopify section editing"
+    avoid:
+      - "Opaque page-builder data that locks content inside an app"
+      - "Theme choices that require developer edits for routine page/content changes"
+  commerce_fit:
+    must_support:
+      - "Product or package selling"
+      - "Video hero section with still fallback"
+      - "Editable landing page sections"
+      - "Home, category, product template, and lead-gen form page"
+      - "Strong hero/product storytelling"
+      - "Mobile-first presentation"
+      - "Policy/terms/privacy visibility"
+      - "SEO/AIO/AEO and performance targets from SOW"
+    nice_to_have:
+      - "Comparisons"
+      - "FAQ blocks"
+      - "Testimonials/reviews"
+      - "Bundles or promotional package sections"
+      - "Product media galleries"
+      - "Transparent flag texture/background overlay sections"
+      - "Trust badges"
+research_requirements:
+  source_types:
+    - "Shopify official themes"
+    - "Third-party Shopify theme marketplaces"
+    - "Theme provider pages"
+  minimum_candidates: 10
+  fields_to_capture:
+    - "name"
+    - "provider"
+    - "price_usd"
+    - "source_url"
+    - "demo_or_preview_url"
+    - "visual_thumbnail_or_screenshot"
+    - "editability_model"
+    - "why_it_fits"
+    - "risks"
+    - "best_use_case"
+    - "estimated_setup_complexity"
+    - "budget_band"
+    - "recommendation_rank"
+tags:
+  - "shopify"
+  - "theme_research"
+  - "template_shortlist"
+  - "drag_and_drop"
+  - "client_editable"
+  - "kids_phone"
+  - "family_safety"
+  - "independence_phone"
+  - "budget_under_300"
+  - "visual_decision_page"
+metadata:
+  user_intent: "User wants Codex to do the work end-to-end and present choices visually."
+  risk_level: "medium"
+  buying_decision: true
+  requires_current_web_research: true
+  requires_mcp_scraper: true
+  local_artifact_folder: "brief-materials/template-research"
+  mcp_research_output_root: "/Users/vilovieta/Desktop/Claude_Logs/mcp-scraper-deep-research/2026-06-22-report-shopify-editable-theme-template-shortlist"
+acceptance_criteria:
+  - "At least 10 viable theme/template options are identified."
+  - "Every option stays at or below $300 when price is available."
+  - "Free and under-$50 options are prioritized where quality is acceptable."
+  - "Each option includes a clear editability note."
+  - "A local visual chooser page exists and can be opened in a browser."
+  - "The user can narrow choices using practical filters."
+  - "Research evidence and sources are saved."
+open_questions:
+  - "Will the final Shopify store use a native Shopify theme only, or are app-based builders allowed if they create lock-in?"
+  - "Does the client prefer patriotic/flag visual intensity or a more restrained Americana retail look?"
+  - "Will Rev.io integration require specific Shopify checkout/cart constraints?"

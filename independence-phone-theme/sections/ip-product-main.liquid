@@ -1,0 +1,153 @@
+{% liquid
+  assign is_patriot = false
+  if product.handle == 'patriot-phone'
+    assign is_patriot = true
+  endif
+
+  if is_patriot
+    assign fallback_title = 'Patriot Phone'
+    assign fallback_price = '$149'
+    assign fallback_deck = 'The rugged family phone for busier homes, tougher handling, and longer days.'
+    assign fallback_best_for = 'Best for families who want rugged durability, longer battery life, and a more resilient handset.'
+    assign fallback_image = 'ip-current-site-product-2.png'
+  else
+    assign fallback_title = 'Freedom Phone'
+    assign fallback_price = '$99'
+    assign fallback_deck = 'The everyday family phone for kids who need to call home without stepping into smartphone life.'
+    assign fallback_best_for = 'Best for home, grandparents, short independence windows, and everyday family calling.'
+    assign fallback_image = 'ip-current-site-product-1.png'
+  endif
+
+  assign current_variant = product.selected_or_first_available_variant
+%}
+
+<section class="ip-product-main">
+  <div class="ip-product-main__media">
+    {% if product.featured_image %}
+      {{
+        product.featured_image
+        | image_url: width: 1100
+        | image_tag:
+          alt: product.title,
+          loading: 'eager',
+          fetchpriority: 'high'
+      }}
+    {% else %}
+      <img
+        src="{{ fallback_image | asset_url }}"
+        alt="{{ fallback_title }}"
+        width="1200"
+        height="1200"
+        loading="eager"
+        fetchpriority="high"
+      >
+    {% endif %}
+  </div>
+
+  <div class="ip-stack">
+    <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
+    <h1 class="ip-heading ip-heading--medium">{{ product.title | default: fallback_title }}</h1>
+    <p class="ip-lede">
+      {% if product.description != blank %}
+        {{ product.description | strip_html }}
+      {% else %}
+        {{ fallback_deck }}
+      {% endif %}
+    </p>
+
+    <p class="ip-price">
+      {% if product.price %}
+        {{ product.price | money }}
+      {% else %}
+        {{ fallback_price }}
+      {% endif %}
+    </p>
+
+    <div class="ip-card" style="padding: 1rem;">
+      <h2 class="ip-story-card__title">Best for</h2>
+      <p>{{ fallback_best_for }}</p>
+    </div>
+
+    <ul class="ip-spec-list">
+      {% if is_patriot %}
+        <li>Rugged cordless Wi-Fi handset with charging base</li>
+        <li>Waterproof and dust-proof, drop-proof up to 1.8 meters</li>
+        <li>Non-slip, anti-scratch, anti-bacterial construction</li>
+        <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
+        <li>Encrypted data transmission and storage</li>
+        <li>Built-in Bluetooth 5.0</li>
+        <li>13-hour talk time, 300-hour standby battery</li>
+      {% else %}
+        <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
+        <li>HD audio quality</li>
+        <li>Smart noise filtering</li>
+        <li>Encrypted data transmission and storage</li>
+        <li>Built-in Bluetooth 5.0</li>
+        <li>9-hour talk time, 200-hour standby battery</li>
+      {% endif %}
+    </ul>
+
+    {% if product != blank %}
+      {% form 'product', product, class: 'ip-product-form' %}
+        {% if product.has_only_default_variant %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+        {% else %}
+          <label for="ProductVariant-{{ section.id }}">Choose an option</label>
+          <select id="ProductVariant-{{ section.id }}" name="id">
+            {% for variant in product.variants %}
+              <option
+                value="{{ variant.id }}"
+                {% if variant == current_variant %}
+                  selected="selected"
+                {% endif %}
+              >
+                {{ variant.title }} - {{ variant.price | money }}
+              </option>
+            {% endfor %}
+          </select>
+        {% endif %}
+
+        <label for="Quantity-{{ section.id }}">Quantity</label>
+        <input id="Quantity-{{ section.id }}" type="number" name="quantity" min="1" value="1">
+
+        <button type="submit" {% unless current_variant.available %}disabled{% endunless %}>
+          {% if current_variant.available %}Add to cart{% else %}Sold out{% endif %}
+        </button>
+
+        {% if section.settings.show_dynamic_checkout %}
+          {{ form | payment_button }}
+        {% endif %}
+      {% endform %}
+    {% endif %}
+
+    <div class="ip-disclosures">
+      <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
+      <p>Shipping: $15 per phone anywhere in the USA.</p>
+      <p>All products and services are subject to federal, state, and local taxes.</p>
+      <p>Both products can present Call Recording, Time Conditions, Voicemail to Email, Victory Bundle, and Auto Attendant add-ons.</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "IP product main",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "A phone that acts like a phone"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout buttons",
+      "default": true
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

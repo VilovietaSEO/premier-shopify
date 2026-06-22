@@ -2,6 +2,23 @@
 
 Private working repository for building and operating a client Shopify storefront from the CLI while keeping the client-editable Shopify theme builder intact.
 
+## Current Project
+
+Independence Phone fresh-store theme build:
+
+- Theme path: `/Users/vilovieta/Documents/Shopify/independence-phone-theme`
+- Brief/source path: `/Users/vilovieta/Documents/Shopify/brief-materials`
+- Handoff checklist: `/Users/vilovieta/Documents/Shopify/independence-phone-theme/SHOPIFY_HANDOFF.md`
+- Goal prompt: `/Users/vilovieta/Documents/Shopify/brief-materials/strategy/goal-prompt.md`
+- GitHub remote: `https://github.com/VilovietaSEO/premier-shopify`
+
+Local validation currently passes:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify/independence-phone-theme
+shopify theme check
+```
+
 ## Operating Model
 
 Build the site as a Shopify Online Store 2.0 theme.
@@ -165,4 +182,3 @@ shopify theme check
 shopify theme open --store client-store.myshopify.com --theme THEME_ID
 shopify theme publish --store client-store.myshopify.com --theme THEME_ID
 ```
-

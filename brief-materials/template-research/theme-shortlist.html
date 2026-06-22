@@ -1,0 +1,1169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>INDEPENDENCE PHONE Theme Shortlist</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: oklch(97.6% 0.006 95);
+      --paper-2: oklch(94.2% 0.012 87);
+      --surface: oklch(99% 0.004 95);
+      --ink: oklch(20% 0.018 258);
+      --ink-2: color-mix(in oklab, var(--ink) 72%, var(--paper));
+      --ink-3: color-mix(in oklab, var(--ink) 52%, var(--paper));
+      --rule: color-mix(in oklab, var(--ink) 16%, var(--paper));
+      --accent: oklch(55% 0.18 28);
+      --blue: oklch(43% 0.13 254);
+      --green: oklch(50% 0.11 160);
+      --amber: oklch(66% 0.15 72);
+      --font-display: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+      --font-body: "Source Sans 3", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SFMono-Regular", "IBM Plex Mono", Consolas, monospace;
+      --radius: 8px;
+      --max: 1480px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-body);
+      line-height: 1.5;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .shell {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 32px 32px 56px;
+      display: grid;
+      gap: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      box-shadow: inset -5px 0 0 var(--blue), inset -8px 0 0 var(--paper);
+      border: 1px solid var(--ink);
+      flex: 0 0 auto;
+    }
+
+    .brand strong {
+      font-family: var(--font-display);
+      font-size: clamp(18px, 2vw, 26px);
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .brand span,
+    .meta-pill,
+    .eyebrow,
+    .label,
+    .tag,
+    .score-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .brand span {
+      color: var(--ink-3);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .meta-pill {
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--rule);
+      padding: 0 10px;
+      background: var(--surface);
+      color: var(--ink-2);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+      gap: 32px;
+      align-items: end;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 18px;
+      max-width: 920px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(44px, 7vw, 112px);
+      line-height: 0.94;
+      margin: 0;
+      letter-spacing: 0;
+      max-width: 11ch;
+    }
+
+    .lede {
+      font-size: clamp(17px, 1.8vw, 22px);
+      max-width: 68ch;
+      color: var(--ink-2);
+      margin: 0;
+    }
+
+    .decision-panel {
+      border: 1px solid var(--ink);
+      background: var(--surface);
+      display: grid;
+      gap: 0;
+    }
+
+    .decision-row {
+      display: grid;
+      grid-template-columns: 116px 1fr;
+      min-height: 70px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .decision-row:last-child {
+      border-bottom: 0;
+    }
+
+    .decision-k {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background: var(--paper-2);
+      border-right: 1px solid var(--rule);
+      color: var(--ink-3);
+    }
+
+    .decision-v {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1.1fr repeat(3, minmax(160px, 0.5fr)) auto;
+      gap: 12px;
+      align-items: end;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      padding: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .control {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .label {
+      color: var(--ink-3);
+    }
+
+    .control input,
+    .control select {
+      min-height: 44px;
+      width: 100%;
+      border: 1px solid var(--rule);
+      border-radius: 0;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 0 12px;
+      outline: none;
+    }
+
+    .control input:focus,
+    .control select:focus,
+    button:focus-visible,
+    .link:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    .reset {
+      min-height: 44px;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+      padding: 0 16px;
+      border-radius: 0;
+      white-space: nowrap;
+    }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .stat {
+      padding: 18px 16px;
+      border-right: 1px solid var(--rule);
+      display: grid;
+      gap: 4px;
+    }
+
+    .stat:last-child {
+      border-right: 0;
+    }
+
+    .stat strong {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1;
+    }
+
+    .stat span {
+      color: var(--ink-3);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .theme-card {
+      min-width: 0;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--surface);
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .theme-card.is-hidden {
+      display: none;
+    }
+
+    .thumb {
+      aspect-ratio: 16 / 9;
+      background: var(--paper-2);
+      border-bottom: 1px solid var(--rule);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .thumb-fallback {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+      background: color-mix(in oklab, var(--blue) 9%, var(--paper));
+      border-left: 12px solid var(--accent);
+      border-bottom: 3px solid var(--ink);
+    }
+
+    .thumb-fallback strong {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 2.5vw, 34px);
+      line-height: 1;
+      max-width: 10ch;
+    }
+
+    .rank {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      width: 40px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      border: 1px solid var(--paper);
+    }
+
+    .body {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .card-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .title-group {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .title-group h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(22px, 2.2vw, 30px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .provider {
+      color: var(--ink-3);
+      font-size: 14px;
+    }
+
+    .price {
+      min-width: 72px;
+      min-height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      background: var(--paper);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .price.free {
+      background: color-mix(in oklab, var(--green) 12%, var(--paper));
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .scorebar {
+      height: 10px;
+      border: 1px solid var(--rule);
+      background: var(--paper-2);
+      overflow: hidden;
+    }
+
+    .scorebar span {
+      display: block;
+      height: 100%;
+      background: var(--blue);
+      width: var(--score);
+    }
+
+    .score-label {
+      color: var(--ink-2);
+      white-space: nowrap;
+    }
+
+    .copy {
+      margin: 0;
+      color: var(--ink-2);
+      font-size: 15px;
+      max-width: 68ch;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--rule);
+      padding: 0 8px;
+      color: var(--ink-2);
+      background: var(--paper);
+    }
+
+    .risk-low {
+      border-color: color-mix(in oklab, var(--green) 42%, var(--rule));
+      color: var(--green);
+    }
+
+    .risk-med {
+      border-color: color-mix(in oklab, var(--amber) 42%, var(--rule));
+      color: oklch(47% 0.12 72);
+    }
+
+    .risk-high {
+      border-color: color-mix(in oklab, var(--accent) 42%, var(--rule));
+      color: var(--accent);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .link,
+    .pick {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--rule);
+      padding: 0 12px;
+      background: var(--surface);
+      color: var(--ink);
+      text-decoration: none;
+      border-radius: 0;
+    }
+
+    .pick[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--paper);
+    }
+
+    .compare {
+      position: sticky;
+      top: 90px;
+      display: grid;
+      gap: 12px;
+      border: 1px solid var(--ink);
+      background: var(--surface);
+      padding: 16px;
+    }
+
+    .compare h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    .compare-list {
+      display: grid;
+      gap: 8px;
+      min-height: 132px;
+    }
+
+    .compare-item {
+      border: 1px solid var(--rule);
+      padding: 10px;
+      display: grid;
+      gap: 3px;
+      background: var(--paper);
+    }
+
+    .compare-item strong {
+      font-size: 15px;
+    }
+
+    .compare-item span {
+      color: var(--ink-3);
+      font-size: 13px;
+    }
+
+    .note {
+      border-left: 2px solid var(--accent);
+      background: color-mix(in oklab, var(--accent) 6%, var(--paper));
+      padding: 12px;
+      color: var(--ink-2);
+      font-size: 14px;
+    }
+
+    .source-table {
+      border: 1px solid var(--rule);
+      background: var(--surface);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 880px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      background: var(--paper-2);
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    @media (max-width: 1120px) {
+      .hero,
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        position: static;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .shell {
+        padding: 24px 16px 40px;
+      }
+
+      .topbar,
+      .brand {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .meta {
+        justify-content: flex-start;
+      }
+
+      .filters {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .reset {
+        grid-column: 1 / -1;
+      }
+
+      .summary-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 540px) {
+      h1 {
+        font-size: clamp(40px, 14vw, 64px);
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .stat {
+        border-right: 0;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .stat:last-child {
+        border-bottom: 0;
+      }
+
+      .decision-row {
+        grid-template-columns: 1fr;
+      }
+
+      .decision-k {
+        border-right: 0;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .card-head {
+        grid-template-columns: 1fr;
+      }
+
+      .price {
+        width: max-content;
+      }
+    }
+
+    @media print {
+      .filters,
+      .actions,
+      .compare {
+        display: none;
+      }
+
+      .shell {
+        max-width: none;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell" data-slot="theme-shortlist">
+    <header class="topbar" data-slot="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <strong>INDEPENDENCE PHONE</strong>
+        <span>Theme shortlist</span>
+      </div>
+      <div class="meta" aria-label="Research metadata">
+        <span class="meta-pill">Budget cap $300</span>
+        <span class="meta-pill">10 options</span>
+        <span class="meta-pill">Client editable</span>
+        <span class="meta-pill">Video hero</span>
+      </div>
+    </header>
+
+    <section class="hero" data-slot="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Shopify builder decision</div>
+        <h1>Pick the base before the build.</h1>
+        <p class="lede">A narrowed set of Shopify-compatible themes for a family-safety phone brand, ranked for editability, budget, launch speed, video-hero readiness, and fit with a product-led story.</p>
+      </div>
+      <aside class="decision-panel" data-slot="decision-summary" aria-label="Recommended direction">
+        <div class="decision-row">
+          <div class="decision-k label">Default</div>
+          <div class="decision-v">Start with a free Shopify-native theme.</div>
+        </div>
+        <div class="decision-row">
+          <div class="decision-k label">Best fit</div>
+          <div class="decision-v">Spotlight or Craft for speed; Refresh for product proof.</div>
+        </div>
+        <div class="decision-row">
+          <div class="decision-k label">Hero</div>
+          <div class="decision-v">Supplied video first, still/image fallback second.</div>
+        </div>
+        <div class="decision-row">
+          <div class="decision-k label">Avoid</div>
+          <div class="decision-v">Heavy page-builder lock-in unless Shopify-native sections fail.</div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="filters" data-slot="filters" aria-label="Theme filters">
+      <label class="control">
+        <span class="label">Search</span>
+        <input id="search" type="search" autocomplete="off" placeholder="Theme, provider, fit">
+      </label>
+      <label class="control">
+        <span class="label">Budget</span>
+        <select id="budget">
+          <option value="all">All under $300</option>
+          <option value="free">Free</option>
+          <option value="under50">Under $50</option>
+          <option value="paid">Paid</option>
+        </select>
+      </label>
+      <label class="control">
+        <span class="label">Source</span>
+        <select id="source">
+          <option value="all">All sources</option>
+          <option value="shopify">Shopify official</option>
+          <option value="third-party">Third party</option>
+        </select>
+      </label>
+      <label class="control">
+        <span class="label">Risk</span>
+        <select id="risk">
+          <option value="all">All risks</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+      <button class="reset" id="reset" type="button">Reset</button>
+    </section>
+
+    <section class="summary-strip" data-slot="summary-stats" aria-label="Shortlist summary">
+      <div class="stat"><strong id="visibleCount">10</strong><span>Visible</span></div>
+      <div class="stat"><strong>8</strong><span>Free options</span></div>
+      <div class="stat"><strong>$49</strong><span>Best paid floor</span></div>
+      <div class="stat"><strong id="pickedValue">0</strong><span>Picked</span></div>
+    </section>
+
+    <section class="workspace">
+      <div class="grid" id="cards" data-slot="template-cards"></div>
+
+      <aside class="compare" data-slot="comparison-panel" aria-label="Picked themes">
+        <div class="eyebrow">Narrow list</div>
+        <h2>Picked themes</h2>
+        <div class="compare-list" id="compareList" aria-live="polite"></div>
+        <div class="note">Recommendation: shortlist two official free themes first, then use one third-party theme only as a feature reference.</div>
+      </aside>
+    </section>
+
+    <section class="source-table" data-slot="source-table" aria-label="Theme source table">
+      <table>
+        <thead>
+          <tr>
+            <th>Theme</th>
+            <th>Price</th>
+            <th>Editability</th>
+            <th>Fit</th>
+            <th>Risk</th>
+          </tr>
+        </thead>
+        <tbody id="sourceRows"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    const themes = [
+      {
+        rank: 1,
+        name: "Spotlight",
+        provider: "Shopify",
+        sourceType: "shopify",
+        price: 0,
+        priceLabel: "Free",
+        budget: "free",
+        risk: "low",
+        score: 91,
+        image: "screenshots/spotlight.png",
+        url: "https://themes.shopify.com/themes/spotlight/presets/spotlight",
+        demo: "https://themes.shopify.com/themes/spotlight/presets/spotlight",
+        editability: "Native Shopify theme editor sections and settings.",
+        fit: "Best quick-launch base for a focused product story without a large catalog.",
+        why: "Streamlined, quick to launch, low client-dependency, and easy to reshape into a single-offer storefront.",
+        risks: "May need custom sections for the 250th-anniversary package and stronger emotional proof.",
+        tags: ["video hero", "fast launch", "official", "simple", "native builder"]
+      },
+      {
+        rank: 2,
+        name: "Refresh",
+        provider: "Shopify",
+        sourceType: "shopify",
+        price: 0,
+        priceLabel: "Free",
+        budget: "free",
+        risk: "low",
+        score: 88,
+        image: "screenshots/refresh.png",
+        url: "https://themes.shopify.com/themes/refresh/presets/refresh",
+        demo: "https://themes.shopify.com/themes/refresh/presets/refresh",
+        editability: "Native Shopify theme editor sections and settings.",
+        fit: "Strong product-detail base for specs, trust, testimonials, and quality claims.",
+        why: "The product-detail emphasis maps well to phone specs, service bundle proof, FAQ, and policy visibility.",
+        risks: "Visual system will need a full brand pass to avoid a generic wellness/product feel.",
+        tags: ["video hero", "product proof", "official", "details", "native builder"]
+      },
+      {
+        rank: 3,
+        name: "Craft",
+        provider: "Shopify",
+        sourceType: "shopify",
+        price: 0,
+        priceLabel: "Free",
+        budget: "free",
+        risk: "low",
+        score: 86,
+        image: "screenshots/craft.png",
+        url: "https://themes.shopify.com/themes/craft/presets/craft",
+        demo: "https://themes.shopify.com/themes/craft/presets/craft",
+        editability: "Native Shopify theme editor sections and settings.",
+        fit: "Best official free option for a brand narrative around childhood, safety, and American ownership.",
+        why: "Storytelling sections give the product more emotional room than a pure catalog theme.",
+        risks: "Needs bolder styling for the patriotic product direction.",
+        tags: ["video hero", "storytelling", "official", "brand", "native builder"]
+      },
+      {
+        rank: 4,
+        name: "Horizon",
+        provider: "Shopify",
+        sourceType: "shopify",
+        price: 0,
+        priceLabel: "Free",
+        budget: "free",
+        risk: "medium",
+        score: 83,
+        image: "screenshots/horizon.png",
+        url: "https://themes.shopify.com/themes/horizon/presets/horizon",
+        demo: "https://themes.shopify.com/themes/horizon/presets/horizon",
+        editability: "Shopify's newer theme-block direction with nested blocks.",
+        fit: "Most flexible modern free option if current review caveats are acceptable.",
+        why: "Nested blocks and high-conversion feature set make it powerful for future Shopify editing.",
+        risks: "Current reviews mention in-app browser problems; test Facebook/Instagram traffic before choosing.",
+        tags: ["video hero", "modern", "official", "nested blocks", "test first"]
+      },
+      {
+        rank: 5,
+        name: "Dawn",
+        provider: "Shopify",
+        sourceType: "shopify",
+        price: 0,
+        priceLabel: "Free",
+        budget: "free",
+        risk: "low",
+        score: 80,
+        image: "screenshots/dawn.png",
+        url: "https://themes.shopify.com/themes/dawn/presets/dawn",
+        demo: "https://themes.shopify.com/themes/dawn/presets/dawn",
+        editability: "Native Shopify Online Store 2.0 sections and settings.",
+        fit: "Safest blank canvas if the build will be mostly custom sections.",
+        why: "Well-known foundation, image-forward, and easy to own from Shopify CLI.",
+        risks: "Plain out of the box; more design work required to avoid a generic store.",
+        tags: ["video hero", "blank canvas", "official", "stable", "native builder"]
+      },
+      {
+        rank: 6,
+        name: "Ride",
+        provider: "Shopify",
+        sourceType: "shopify",
+        price: 0,
+        priceLabel: "Free",
+        budget: "free",
+        risk: "low",
+        score: 76,
+        image: "screenshots/ride.png",
+        url: "https://themes.shopify.com/themes/ride/presets/ride",
+        demo: "https://themes.shopify.com/themes/ride/presets/ride",
+        editability: "Native Shopify theme editor sections and settings.",
+        fit: "Bolder visual energy for a rugged/Patriot-phone angle.",
+        why: "Dark backgrounds, strong type, and asymmetrical product layouts can fit hardware better than softer themes.",
+        risks: "Sports tone needs to be redirected toward family safety and Americana.",
+        tags: ["bold", "official", "hardware", "native builder"]
+      },
+      {
+        rank: 7,
+        name: "Sense",
+        provider: "Shopify",
+        sourceType: "shopify",
+        price: 0,
+        priceLabel: "Free",
+        budget: "free",
+        risk: "low",
+        score: 73,
+        image: "screenshots/sense.png",
+        url: "https://themes.shopify.com/themes/sense/presets/sense",
+        demo: "https://themes.shopify.com/themes/sense/presets/sense",
+        editability: "Native Shopify theme editor sections and settings.",
+        fit: "Useful if the final direction leans educational and trust-heavy.",
+        why: "Product understanding, testimonials, videos, and descriptions are core to the theme.",
+        risks: "Default look is too soft for INDEPENDENCE PHONE unless restyled heavily.",
+        tags: ["education", "official", "trust", "native builder"]
+      },
+      {
+        rank: 8,
+        name: "Trade",
+        provider: "Shopify",
+        sourceType: "shopify",
+        price: 0,
+        priceLabel: "Free",
+        budget: "free",
+        risk: "low",
+        score: 69,
+        image: "screenshots/trade.png",
+        url: "https://themes.shopify.com/themes/trade/presets/trade",
+        demo: "https://themes.shopify.com/themes/trade/presets/trade",
+        editability: "Native Shopify theme editor sections and settings.",
+        fit: "Operational fallback if account/order flows become more important than emotional landing-page storytelling.",
+        why: "Professional layouts and quick-order features may help if Rev.io/ordering creates a more service-plan workflow.",
+        risks: "Wholesale tone is not a natural fit for parent-facing kid-phone marketing.",
+        tags: ["operations", "official", "account flow", "native builder"]
+      },
+      {
+        rank: 9,
+        name: "Shella",
+        provider: "MPIthemes / ThemeForest",
+        sourceType: "third-party",
+        price: 49,
+        priceLabel: "$49",
+        budget: "under50",
+        risk: "medium",
+        score: 66,
+        image: "screenshots/shella.png",
+        url: "https://themeforest.net/item/shella-ultimate-fashion-responsive-shopify-theme/22804833",
+        demo: "https://themeforest.net/item/shella-ultimate-fashion-responsive-shopify-theme/22804833",
+        editability: "Third-party Shopify theme; verify Online Store 2.0 sections in install package before committing.",
+        fit: "Budget paid reference for rich landing/product sections and conversion features.",
+        why: "Low price, active change log, high sales, and strong reviews make it useful as a budget benchmark.",
+        risks: "Third-party support/update quality and code maintainability must be verified before using as the actual base.",
+        tags: ["paid", "themeforest", "conversion", "verify"]
+      },
+      {
+        rank: 10,
+        name: "Wokiee",
+        provider: "p-themes / ThemeForest",
+        sourceType: "third-party",
+        price: 49,
+        priceLabel: "$49",
+        budget: "under50",
+        risk: "medium",
+        score: 63,
+        image: "",
+        url: "https://themeforest.net/item/wokiee-multipurpose-shopify-theme/22559417",
+        demo: "https://themeforest.net/item/wokiee-multipurpose-shopify-theme/22559417",
+        editability: "Third-party Shopify theme; verify current section/block behavior before purchase.",
+        fit: "Feature-rich paid option if the client wants more prebuilt demos than official free themes offer.",
+        why: "Large sales count and strong ThemeForest review profile make it a useful comparison point under $50.",
+        risks: "More moving parts than a Shopify-native theme; client editability may be more complex.",
+        tags: ["paid", "themeforest", "feature-rich", "verify"]
+      }
+    ];
+
+    const state = {
+      search: "",
+      budget: "all",
+      source: "all",
+      risk: "all",
+      picked: new Set()
+    };
+
+    const cards = document.getElementById("cards");
+    const sourceRows = document.getElementById("sourceRows");
+    const compareList = document.getElementById("compareList");
+    const visibleCount = document.getElementById("visibleCount");
+    const pickedValue = document.getElementById("pickedValue");
+
+    const riskClass = { low: "risk-low", medium: "risk-med", high: "risk-high" };
+
+    function budgetMatches(theme) {
+      if (state.budget === "all") return true;
+      if (state.budget === "free") return theme.price === 0;
+      if (state.budget === "under50") return theme.price > 0 && theme.price < 50;
+      if (state.budget === "paid") return theme.price > 0;
+      return true;
+    }
+
+    function sourceMatches(theme) {
+      return state.source === "all" || theme.sourceType === state.source;
+    }
+
+    function riskMatches(theme) {
+      return state.risk === "all" || theme.risk === state.risk;
+    }
+
+    function searchMatches(theme) {
+      if (!state.search.trim()) return true;
+      const haystack = [
+        theme.name,
+        theme.provider,
+        theme.fit,
+        theme.why,
+        theme.risks,
+        theme.tags.join(" ")
+      ].join(" ").toLowerCase();
+      return haystack.includes(state.search.trim().toLowerCase());
+    }
+
+    function filteredThemes() {
+      return themes.filter(theme =>
+        budgetMatches(theme) &&
+        sourceMatches(theme) &&
+        riskMatches(theme) &&
+        searchMatches(theme)
+      );
+    }
+
+    function renderCards() {
+      const visible = filteredThemes();
+      visibleCount.textContent = String(visible.length);
+      cards.innerHTML = visible.map(theme => {
+        const isPicked = state.picked.has(theme.name);
+        const thumb = theme.image
+          ? `<img src="${theme.image}" alt="${theme.name} theme screenshot">`
+          : `<div class="thumb-fallback"><strong>${theme.name}</strong></div>`;
+        return `
+          <article class="theme-card" data-theme="${theme.name}" data-slot="theme-card">
+            <div class="thumb">
+              ${thumb}
+              <div class="rank">#${theme.rank}</div>
+            </div>
+            <div class="body">
+              <div class="card-head">
+                <div class="title-group">
+                  <h2>${theme.name}</h2>
+                  <div class="provider">${theme.provider}</div>
+                </div>
+                <div class="price ${theme.price === 0 ? "free" : ""}">${theme.priceLabel}</div>
+              </div>
+              <div class="score-row" aria-label="Fit score ${theme.score}">
+                <div class="scorebar" style="--score:${theme.score}%"><span></span></div>
+                <span class="score-label">${theme.score}/100</span>
+              </div>
+              <p class="copy"><strong>Fit:</strong> ${theme.fit}</p>
+              <p class="copy"><strong>Why:</strong> ${theme.why}</p>
+              <p class="copy"><strong>Risk:</strong> ${theme.risks}</p>
+              <div class="tags">
+                <span class="tag ${riskClass[theme.risk]}">${theme.risk} risk</span>
+                ${theme.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+              </div>
+              <div class="actions">
+                <button class="pick" type="button" aria-pressed="${isPicked}" data-pick="${theme.name}">
+                  ${isPicked ? "Picked" : "Pick"}
+                </button>
+                <a class="link" href="${theme.url}" target="_blank" rel="noopener">Source</a>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderTable() {
+      sourceRows.innerHTML = themes.map(theme => `
+        <tr>
+          <td><a href="${theme.url}" target="_blank" rel="noopener">${theme.name}</a><br><span class="provider">${theme.provider}</span></td>
+          <td>${theme.priceLabel}</td>
+          <td>${theme.editability}</td>
+          <td>${theme.fit}</td>
+          <td>${theme.risks}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderCompare() {
+      pickedValue.textContent = String(state.picked.size);
+      const picked = themes.filter(theme => state.picked.has(theme.name));
+      compareList.innerHTML = picked.length
+        ? picked.map(theme => `
+            <div class="compare-item">
+              <strong>${theme.name}</strong>
+              <span>${theme.priceLabel} · ${theme.provider}</span>
+              <span>${theme.fit}</span>
+            </div>
+          `).join("")
+        : `<div class="compare-item"><strong>No picks yet</strong><span>Waiting on selections.</span></div>`;
+    }
+
+    function render() {
+      renderCards();
+      renderTable();
+      renderCompare();
+    }
+
+    document.getElementById("search").addEventListener("input", event => {
+      state.search = event.target.value;
+      renderCards();
+    });
+
+    document.getElementById("budget").addEventListener("change", event => {
+      state.budget = event.target.value;
+      renderCards();
+    });
+
+    document.getElementById("source").addEventListener("change", event => {
+      state.source = event.target.value;
+      renderCards();
+    });
+
+    document.getElementById("risk").addEventListener("change", event => {
+      state.risk = event.target.value;
+      renderCards();
+    });
+
+    document.getElementById("reset").addEventListener("click", () => {
+      state.search = "";
+      state.budget = "all";
+      state.source = "all";
+      state.risk = "all";
+      document.getElementById("search").value = "";
+      document.getElementById("budget").value = "all";
+      document.getElementById("source").value = "all";
+      document.getElementById("risk").value = "all";
+      renderCards();
+    });
+
+    cards.addEventListener("click", event => {
+      const button = event.target.closest("[data-pick]");
+      if (!button) return;
+      const name = button.getAttribute("data-pick");
+      if (state.picked.has(name)) {
+        state.picked.delete(name);
+      } else {
+        state.picked.add(name);
+      }
+      renderCards();
+      renderCompare();
+    });
+
+    render();
+  </script>
+</body>
+</html>

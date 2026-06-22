@@ -1,0 +1,187 @@
+# Shopify Handoff Checklist
+
+Use this after the fresh Shopify store exists.
+
+## 1. Authenticate CLI
+
+```bash
+cd /Users/vilovieta/Documents/Shopify/independence-phone-theme
+shopify theme dev --store STORE.myshopify.com
+```
+
+If login opens a device-code flow, complete it in the browser. After auth, the command should print preview and Theme Editor URLs.
+
+## 2. Upload Or Preview Theme
+
+For a development preview:
+
+```bash
+shopify theme dev --store STORE.myshopify.com
+```
+
+For upload as a development theme:
+
+```bash
+shopify theme push --store STORE.myshopify.com
+```
+
+Do not publish until desktop, mobile, product pages, cart, checkout, and contact form behavior are approved.
+
+## 3. Create Product Data
+
+Create exactly these two products.
+
+### Freedom Phone
+
+- Title: `Freedom Phone`
+- Handle: `freedom-phone`
+- Price: `$99`
+- Template: `product.independence-phone`
+- Product type/tag suggestion: `Phone`
+- Description: `The everyday family phone for kids who need to call home without stepping into smartphone life.`
+- Features:
+  - Heavy-duty cordless Wi-Fi handset with charging base.
+  - HD audio quality.
+  - Smart noise filtering.
+  - Encrypted data transmission and storage.
+  - Built-in Bluetooth 5.0.
+  - 9-hour talk time.
+  - 200-hour standby battery.
+
+### Patriot Phone
+
+- Title: `Patriot Phone`
+- Handle: `patriot-phone`
+- Price: `$149`
+- Template: `product.independence-phone`
+- Product type/tag suggestion: `Phone`
+- Description: `The rugged family phone for busier homes, tougher handling, and longer days.`
+- Features:
+  - Rugged cordless Wi-Fi handset with charging base.
+  - Waterproof and dust-proof.
+  - Drop-proof up to 1.8 meters.
+  - Non-slip, anti-scratch, anti-bacterial construction.
+  - HD Voice, AI Noise Cancellation, and Acoustic Shield.
+  - Encrypted data transmission and storage.
+  - Built-in Bluetooth 5.0.
+  - 13-hour talk time.
+  - 300-hour standby battery.
+
+## 4. Create Collection
+
+- Title: `Phones`
+- Handle: `phones`
+- Template: `collection.phones`
+- Products:
+  - Freedom Phone.
+  - Patriot Phone.
+
+## 5. Create Contact Page
+
+- Title: `Contact`
+- Handle: `contact`
+- Template: `page.contact`
+
+## 6. Upload Hero Video
+
+Source file:
+
+```bash
+/Users/vilovieta/Documents/Shopify/brief-materials/assets/video/indy-phone-reel-1.mov
+```
+
+Theme Editor path:
+
+1. Online Store -> Themes -> Customize.
+2. Open Home page.
+3. Select `IP video hero`.
+4. Choose the uploaded video in the `Hero video` setting.
+5. Keep or replace the fallback poster.
+
+The theme already includes:
+
+```bash
+/Users/vilovieta/Documents/Shopify/independence-phone-theme/assets/ip-hero-video-poster.jpg
+```
+
+## 7. Navigation
+
+Create or update the main menu:
+
+- Home -> `/`
+- Choose Your Phone -> `/collections/phones`
+- Contact -> `/pages/contact`
+
+Footer menu:
+
+- Choose Your Phone -> `/collections/phones`
+- Contact -> `/pages/contact`
+- Privacy Policy -> `/policies/privacy-policy`
+- Terms of Service -> `/policies/terms-of-service`
+- Shipping/Returns policy if the store uses one.
+
+## 8. Service And Add-On Setup
+
+Current storefront presentation:
+
+- Monthly service: `$17.76/mo`
+- Annual service: `$200/yr`
+- Annual savings: `$13.12`
+- Shipping: `$15/phone` anywhere in the USA
+- Call Recording: `$5/mo`
+- Time Conditions: `$5/mo`
+- Voicemail to Email: `$5/mo`
+- Victory Bundle: `$10/mo`
+- Auto Attendant: `$5/mo`
+- 250th Anniversary package: `$250`, includes 1 Freedom Phone, 1 year service, and Victory Bundle
+
+If Rev.io or Shopify app integration requires service/add-ons as separate products, keep the storefront copy but change the cart/checkout modeling behind it. Do not turn the public catalog into a broad product grid.
+
+## 9. Claim Discipline
+
+Use these as supplied facts:
+
+- No apps.
+- No web browser.
+- No social feeds.
+- Cordless Wi-Fi handset with charging base.
+- Product/service/add-on prices listed above.
+- American-owned.
+- 42 years in communications.
+
+Do not market these as included unless the product/service scope changes:
+
+- SMS/texting.
+- GPS.
+- Camera.
+- Cellular mobility.
+- App support.
+- Browser support.
+- YouTube/social access.
+- 911/emergency calling.
+
+## 10. Verification
+
+Already completed locally:
+
+```bash
+shopify theme check
+```
+
+Result:
+
+```text
+55 files inspected with no offenses found.
+```
+
+Still required after store auth:
+
+- Run `shopify theme dev --store STORE.myshopify.com`.
+- Check Home desktop and mobile.
+- Check `/collections/phones` desktop and mobile.
+- Check `/products/freedom-phone`.
+- Check `/products/patriot-phone`.
+- Check `/pages/contact`.
+- Confirm Theme Editor can edit section content and reorder sections.
+- Confirm add-to-cart works for both product handles.
+- Confirm contact form sends to the store contact email.

@@ -1,0 +1,82 @@
+<footer>
+  <div class="footer__copyright">
+    &copy;
+    {{ 'now' | date: '%Y' }}
+    {{ shop.name | link_to: routes.root_url }}
+    <p>{{ section.settings.footer_note }}</p>
+  </div>
+
+  <div class="footer__links">
+    {% if section.settings.menu != blank %}
+      {% for link in section.settings.menu.links %}
+        {{ link.title | link_to: link.url }}
+      {% endfor %}
+    {% else %}
+      <a href="{{ routes.collections_url }}/phones">Choose Your Phone</a>
+      <a href="/pages/contact">Contact</a>
+      <a href="/policies/privacy-policy">Privacy</a>
+      <a href="/policies/terms-of-service">Terms</a>
+    {% endif %}
+  </div>
+
+  <div class="footer__payment">
+    {% if section.settings.show_payment_icons %}
+      {% for type in shop.enabled_payment_types %}
+        {{ type | payment_type_svg_tag }}
+      {% endfor %}
+    {% endif %}
+  </div>
+</footer>
+
+{% stylesheet %}
+  footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: 0;
+  }
+  footer a {
+    text-decoration: none;
+    color: var(--color-foreground);
+  }
+  footer .footer__links,
+  footer .footer__payment {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  footer .footer__copyright {
+    display: grid;
+    gap: 0.35rem;
+    max-width: 34rem;
+  }
+  footer .footer__copyright p {
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.9rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.footer",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "footer_note",
+      "label": "Footer note",
+      "default": "American-owned and family-focused. Built for the smartphone-free years."
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "t:labels.menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "t:labels.show_payment_icons",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

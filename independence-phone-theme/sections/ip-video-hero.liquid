@@ -1,0 +1,157 @@
+<section class="ip-hero full-width">
+  <div class="ip-hero__media" aria-hidden="true">
+    {% if section.settings.hero_video != blank %}
+      {{
+        section.settings.hero_video
+        | video_tag:
+          autoplay: true,
+          loop: true,
+          muted: true,
+          controls: false,
+          playsinline: true,
+          class: 'ip-hero__video'
+      }}
+    {% elsif section.settings.poster_image != blank %}
+      {{
+        section.settings.poster_image
+        | image_url: width: 2200
+        | image_tag:
+          class: 'ip-hero__image',
+          loading: 'eager',
+          fetchpriority: 'high',
+          sizes: '100vw'
+      }}
+    {% else %}
+      <img
+        class="ip-hero__image"
+        src="{{ 'ip-hero-video-poster.jpg' | asset_url }}"
+        alt=""
+        width="2160"
+        height="3840"
+        loading="eager"
+        fetchpriority="high"
+      >
+    {% endif %}
+  </div>
+
+  <div class="ip-hero__inner">
+    <div class="ip-hero__copy">
+      {% if section.settings.eyebrow != blank %}
+        <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h1 class="ip-heading">{{ section.settings.heading }}</h1>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <div class="ip-lede">{{ section.settings.subheading }}</div>
+      {% endif %}
+
+      {% if section.blocks.size > 0 %}
+        <ul class="ip-proof-list">
+          {% for block in section.blocks %}
+            <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <div class="ip-buttons">
+        {% if section.settings.primary_label != blank %}
+          <a class="ip-button" href="{{ section.settings.primary_link | default: '/collections/phones' }}">
+            {{ section.settings.primary_label }}
+          </a>
+        {% endif %}
+
+        {% if section.settings.secondary_label != blank %}
+          <a class="ip-button ip-button--secondary" href="{{ section.settings.secondary_link | default: '#how-it-works' }}">
+            {{ section.settings.secondary_label }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "IP video hero",
+  "settings": [
+    {
+      "type": "video",
+      "id": "hero_video",
+      "label": "Hero video"
+    },
+    {
+      "type": "image_picker",
+      "id": "poster_image",
+      "label": "Poster image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "A family phone for the smartphone-free years"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Give them a phone. Not the internet."
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Kids can call home without apps, browsers, social media, or a personal screen. Built for bus days, home-alone minutes, grandparents, and the years before a smartphone.</p>"
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Primary CTA label",
+      "default": "Choose your phone"
+    },
+    {
+      "type": "url",
+      "id": "primary_link",
+      "label": "Primary CTA link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary CTA label",
+      "default": "See how it works"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Secondary CTA link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "proof",
+      "name": "Proof bullet",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "No apps"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IP video hero",
+      "blocks": [
+        { "type": "proof", "settings": { "text": "No apps" } },
+        { "type": "proof", "settings": { "text": "No web browser" } },
+        { "type": "proof", "settings": { "text": "No social feeds" } },
+        { "type": "proof", "settings": { "text": "Simple phone service" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
