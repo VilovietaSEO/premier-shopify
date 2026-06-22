@@ -458,6 +458,12 @@ assertFile('independence-phone-theme/SHOPIFY_HANDOFF.md', 'Shopify handoff');
 assertFile('independence-phone-theme/THEME_EDITOR_GUIDE.md', 'Theme Editor guide');
 assertFile('refresh-overlay/README.md', 'Refresh overlay README');
 assertFile('store-setup/README.md', 'Store setup README');
+assertFileIncludes('independence-phone-theme/sections/cart.liquid', [
+  'item.properties',
+  'ip-cart-properties',
+  'Selected service and add-ons',
+  'Service and add-on selections are shown for setup confirmation.',
+], 'Local cart section');
 assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'STORE.myshopify.com',
   'Shopify `Refresh` theme',
@@ -478,11 +484,16 @@ assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'For bus days, home-alone minutes, and grandparents.',
   'American-owned messaging is secondary trust',
   'Confirm add-to-cart works for both products.',
+  'Cart shows selected service/add-on setup details.',
   'Send a test submission and confirm delivery to the store contact email.',
   'Connect the final public domain after publish approval.',
 ], 'Fresh store launch checklist');
 assertFile('visual-preview/index.html', 'Visual preview page');
-assertFile('visual-preview/preview.spec.js', 'Visual preview test');
+assertFileIncludes('visual-preview/preview.spec.js', [
+  'cart.review',
+  'ip-cart-properties',
+  'cartPropertyRowCount',
+], 'Visual preview test');
 assertFile('visual-preview/verification.md', 'Visual verification report');
 
 assertTemplateTypes('independence-phone-theme/templates/index.json', [

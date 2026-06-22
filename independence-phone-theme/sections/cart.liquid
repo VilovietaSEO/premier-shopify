@@ -5,29 +5,91 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
 {% endcomment %}
 
-<h1>{{ 'cart.title' | t }}</h1>
+<section class="ip-cart">
+  <div class="ip-stack">
+    <p class="ip-kicker">Order review</p>
+    <h1 class="ip-heading ip-heading--medium">{{ 'cart.title' | t }}</h1>
+  </div>
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+  {% if cart.item_count == 0 %}
+    <div class="ip-card ip-cart__empty">
+      <p>Your cart is empty.</p>
+      <a class="ip-button" href="{{ routes.collections_url }}/phones">Choose your phone</a>
+    </div>
+  {% else %}
+    <form action="{{ routes.cart_url }}" method="post" class="ip-cart__form">
+      <div class="ip-cart__items">
+        {% for item in cart.items %}
+          <article class="ip-card ip-cart-item">
+            <div class="ip-cart-item__media">
+              {% if item.image %}
+                {% render 'image', image: item.image, url: item.url, width: 360 %}
+              {% endif %}
+            </div>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+            <div class="ip-cart-item__body">
+              <div class="ip-cart-item__heading">
+                <div>
+                  <h2>{{ item.product.title }}</h2>
+                  {% unless item.product.has_only_default_variant %}
+                    <p class="ip-note">{{ item.variant.title }}</p>
+                  {% endunless %}
+                </div>
+                <p class="ip-price">{{ item.final_line_price | money }}</p>
+              </div>
+
+              {% if item.properties != empty %}
+                <dl class="ip-cart-properties" aria-label="Selected service and add-ons">
+                  {% for property in item.properties %}
+                    {% assign property_name = property.first %}
+                    {% assign property_value = property.last %}
+                    {% assign first_character = property_name | slice: 0 %}
+                    {% if property_value != blank and first_character != '_' %}
+                      <div>
+                        <dt>{{ property_name }}</dt>
+                        <dd>
+                          {% if property_value contains '/uploads/' %}
+                            <a href="{{ property_value }}">Uploaded file</a>
+                          {% else %}
+                            {{ property_value }}
+                          {% endif %}
+                        </dd>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </dl>
+              {% endif %}
+
+              <div class="ip-cart-item__actions">
+                <label for="CartQuantity-{{ forloop.index }}">Quantity</label>
+                <input
+                  id="CartQuantity-{{ forloop.index }}"
+                  type="number"
+                  name="updates[]"
+                  min="0"
+                  value="{{ item.quantity }}"
+                >
+                <a href="{{ item.url_to_remove }}">{{ 'cart.remove' | t }}</a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <div class="ip-card ip-cart__summary">
+        <h2>Order total</h2>
+        <p class="ip-price">{{ cart.total_price | money }}</p>
+        <p class="ip-note">
+          Service and add-on selections are shown for setup confirmation. Taxes, shipping, and recurring billing are finalized through the approved store setup.
+        </p>
+        <div class="ip-buttons">
+          <button type="submit" name="update">{{ 'cart.update' | t }}</button>
+          <button type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
+        </div>
+      </div>
+    </form>
+  {% endif %}
+</section>
 
 {% schema %}
 {

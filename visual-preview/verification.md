@@ -17,24 +17,25 @@ Result:
 
 The preview test now verifies:
 
-- Required scoped page markers render: Home, Choose Your Phone, Freedom product, Patriot product, Contact.
-- Required section slots render: hero, JTBD story, feature strip, product comparison, service plans, add-ons, capability table, package band, product pages, FAQ, contact, trust band.
+- Required scoped page markers render: Home, Choose Your Phone, Freedom product, Patriot product, Cart, Contact.
+- Required section slots render: hero, JTBD story, feature strip, product comparison, service plans, add-ons, capability table, package band, product pages, cart review, FAQ, contact, trust band.
 - Required positioning/product/service copy renders.
 - Two product forms render.
 - Product forms render two service/add-on option panels.
 - Product forms render four service-plan radio options across the two products.
 - Product forms render ten add-on checkboxes across the two products.
+- Cart review renders one setup-property list with three visible property rows.
 - One contact form renders.
 - All local preview images load.
 - No page-level horizontal overflow appears.
 
 Viewport checks:
 
-| Viewport | Width | Body scroll width | Section count | Product forms | Option panels | Service radios | Add-on checkboxes | Contact forms | Broken images | Overflowing elements |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Desktop | `1440px` | `1440px` | `13` | `2` | `2` | `4` | `10` | `1` | `0` | `0` |
-| Tablet | `1024px` | `1024px` | `13` | `2` | `2` | `4` | `10` | `1` | `0` | `0` |
-| Mobile | `390px` | `390px` | `13` | `2` | `2` | `4` | `10` | `1` | `0` | `0` |
+| Viewport | Width | Body scroll width | Section count | Product forms | Option panels | Service radios | Add-on checkboxes | Cart property lists | Cart property rows | Contact forms | Broken images | Overflowing elements |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Desktop | `1440px` | `1440px` | `14` | `2` | `2` | `4` | `10` | `1` | `3` | `1` | `0` | `0` |
+| Tablet | `1024px` | `1024px` | `14` | `2` | `2` | `4` | `10` | `1` | `3` | `1` | `0` | `0` |
+| Mobile | `390px` | `390px` | `14` | `2` | `2` | `4` | `10` | `1` | `3` | `1` | `0` | `0` |
 
 Screenshots were generated locally under:
 

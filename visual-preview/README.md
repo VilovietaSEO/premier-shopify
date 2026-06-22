@@ -29,13 +29,14 @@ What this verifies:
 
 - Desktop/mobile rhythm for the custom section system.
 - Hero visual treatment using the generated poster from the supplied hero video.
-- Product comparison, service, add-ons, package, capability table, FAQ, trust band, product detail, and contact form layout.
+- Product comparison, service, add-ons, package, capability table, FAQ, trust band, product detail, cart review, and contact form layout.
+- Local cart display of selected service/add-on setup details.
 - Text wrapping and horizontal overflow risk before Shopify auth exists.
 
 What this does not verify:
 
 - Shopify Theme Editor controls.
-- Shopify product data, carts, checkout, or contact form submission.
+- Shopify product data, live cart updates, checkout, or contact form submission.
 - Actual `Refresh` theme integration after pulling from a fresh store.
 
 Those checks remain in `independence-phone-theme/SHOPIFY_HANDOFF.md`.
