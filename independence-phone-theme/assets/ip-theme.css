@@ -289,9 +289,9 @@ summary:focus-visible {
 
 .ip-hero__copy {
   display: grid;
-  gap: clamp(1rem, 2vw, 1.45rem);
+  gap: 0;
   justify-items: center;
-  max-width: min(54rem, 100%);
+  max-width: min(68rem, 100%);
   text-align: center;
 }
 
@@ -301,7 +301,33 @@ summary:focus-visible {
 }
 
 .ip-hero__copy .ip-heading {
-  max-width: 100%;
+  font-size: 5.6rem;
+  line-height: 0.9;
+  max-width: 12em;
+  text-shadow: 0 0.12em 0.45em rgba(0, 0, 0, 0.34);
+}
+
+.ip-hero__copy .ip-lede {
+  font-size: 1.36rem;
+  line-height: 1.45;
+  margin-top: 1.4rem;
+  max-width: 58rem;
+  text-shadow: 0 0.1em 0.45em rgba(0, 0, 0, 0.34);
+}
+
+.ip-hero__copy .ip-lede p {
+  margin: 0;
+}
+
+.ip-hero__copy .ip-buttons {
+  justify-content: center;
+  margin-top: 2.25rem;
+}
+
+.ip-hero__copy .ip-button {
+  font-size: 1.06rem;
+  min-height: 3.35rem;
+  padding: 0.95rem 1.35rem;
 }
 
 .ip-story {
@@ -1425,6 +1451,24 @@ footer .footer__payment svg {
     justify-items: center;
     max-width: 100%;
     text-align: center;
+  }
+
+  .ip-hero__copy .ip-heading {
+    font-size: 3rem;
+    line-height: 0.94;
+    max-width: 9.4em;
+  }
+
+  .ip-hero__copy .ip-lede {
+    font-size: 1.17rem;
+    line-height: 1.48;
+    margin-top: 1.15rem;
+    max-width: 31rem;
+  }
+
+  .ip-hero__copy .ip-buttons {
+    margin-top: 1.85rem;
+    width: min(100%, 18rem);
   }
 
   .ip-grid--2,

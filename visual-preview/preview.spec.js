@@ -13,6 +13,7 @@ fs.mkdirSync(reportDir, { recursive: true });
 const viewports = [
   { name: 'desktop', width: 1440, height: 1400 },
   { name: 'tablet', width: 1024, height: 1400 },
+  { name: 'audit', width: 860, height: 853 },
   { name: 'mobile', width: 390, height: 1400 },
 ];
 
@@ -108,9 +109,17 @@ async function collectRouteReport(page) {
 
     const footer = document.querySelector('footer');
     const trust = document.querySelector('[data-slot="trust"]');
+    const heroHeading = document.querySelector('.ip-hero__copy .ip-heading');
+    const heroLede = document.querySelector('.ip-hero__copy .ip-lede');
+    const heroButtons = document.querySelector('.ip-hero__copy .ip-buttons');
     const footerStyles = footer ? getComputedStyle(footer) : null;
     const footerRuleStyles = footer ? getComputedStyle(footer, '::before') : null;
     const trustStyles = trust ? getComputedStyle(trust) : null;
+    const heroHeadingStyles = heroHeading ? getComputedStyle(heroHeading) : null;
+    const heroLedeStyles = heroLede ? getComputedStyle(heroLede) : null;
+    const heroButtonTopGap = heroLede && heroButtons
+      ? Math.round(heroButtons.getBoundingClientRect().top - heroLede.getBoundingClientRect().bottom)
+      : null;
 
     return {
       route: document.documentElement.dataset.previewRoute,
@@ -141,6 +150,9 @@ async function collectRouteReport(page) {
       footerRuleHeight: Math.round(parseFloat(footerRuleStyles?.height || '0')),
       trustBackgroundColor: trustStyles?.backgroundColor || '',
       trustBackgroundLuminance: trustStyles ? luminance(trustStyles.backgroundColor) : null,
+      heroHeadingFontSize: heroHeadingStyles ? parseFloat(heroHeadingStyles.fontSize) : null,
+      heroLedeFontSize: heroLedeStyles ? parseFloat(heroLedeStyles.fontSize) : null,
+      heroButtonTopGap,
       overflowing,
     };
   });
@@ -194,6 +206,9 @@ test.describe('Independence Phone visual preview', () => {
       expect(homeReport.heroVideoCount).toBe(1);
       expect(homeReport.heroPosterImageCount).toBe(0);
       expect(homeReport.heroForegroundCount).toBe(0);
+      expect(homeReport.heroHeadingFontSize).toBeGreaterThanOrEqual(viewport.name === 'mobile' ? 47 : 88);
+      expect(homeReport.heroLedeFontSize).toBeGreaterThanOrEqual(viewport.name === 'mobile' ? 18 : 21);
+      expect(homeReport.heroButtonTopGap).toBeGreaterThanOrEqual(viewport.name === 'mobile' ? 28 : 34);
       expect(homeReport.visibleFeatureIconImageCount).toBe(3);
       expect(homeReport.visibleFeatureIconSvgCount).toBe(0);
       expect(homeReport.visibleProductMainCount).toBe(0);

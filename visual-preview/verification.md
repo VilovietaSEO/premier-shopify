@@ -12,7 +12,7 @@ npm run preview:test
 Result:
 
 ```text
-3 passed
+4 passed
 ```
 
 The preview test now verifies:
@@ -20,6 +20,7 @@ The preview test now verifies:
 - Required hash routes render separately: Home, Freedom product, Patriot product, Cart, Contact.
 - The Home route renders hero, feature strip, product comparison, JTBD story, package band, FAQ, and trust.
 - The Home route does not render product-detail sections, product forms, cart setup details, or the contact form.
+- The Home hero uses a larger dedicated heading and lede scale, including the 860px audit viewport from browser review.
 - The Freedom and Patriot product routes each render exactly one product detail section with one product form, two carousel thumbnails, two service radio options, and five add-on checkboxes.
 - Cart and Contact render in their own routes without product ordering forms.
 - The Cart route renders as a standalone cart page with a cart heading, product area, order summary, subtotal/shipping rows, and continue-shopping link.
@@ -38,6 +39,7 @@ Viewport checks:
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Desktop | `home` | `1440px` | `1440px` | `7` | `0` | `0` | `0` | `0` | `0` | `0` | `0` |
 | Desktop | `freedom` | `1440px` | `1440px` | `1` | `1` | `2` | `5` | `0` | `0` | `0` | `0` |
+| Audit | `home` | `860px` | `860px` | `7` | `0` | `0` | `0` | `0` | `0` | `0` | `0` |
 | Mobile | `home` | `390px` | `390px` | `7` | `0` | `0` | `0` | `0` | `0` | `0` | `0` |
 | Mobile | `freedom` | `390px` | `390px` | `1` | `1` | `2` | `5` | `0` | `0` | `0` | `0` |
 
