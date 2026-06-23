@@ -82,7 +82,9 @@ test.describe('Independence Phone visual preview', () => {
       await expect(page.locator('#contact'), 'Contact anchor should exist').toBeVisible();
       await expect(page.locator('.ip-product-form'), 'Both product forms should render').toHaveCount(2);
       await expect(page.locator('.ip-product-form .ip-product-options'), 'Both product forms should expose service/add-on options').toHaveCount(2);
-      await expect(page.locator('.ip-hero__foreground img'), 'Hero foreground phone layer should render').toHaveCount(1);
+      await expect(page.locator('.ip-hero video.ip-hero__video'), 'Hero should render as a video').toHaveCount(1);
+      await expect(page.locator('.ip-hero img.ip-hero__image'), 'Hero should not fall back to a poster image in the preview').toHaveCount(0);
+      await expect(page.locator('.ip-hero__foreground'), 'Hero should not render a foreground phone layer').toHaveCount(0);
       await expect(page.locator('.preview-mini-header details'), 'Preview header should expose a small-screen drawer').toHaveCount(1);
       await expect(page.locator('.ip-product-form input[type="radio"]'), 'Service plan radios should render').toHaveCount(4);
       await expect(page.locator('.ip-product-form input[type="checkbox"]'), 'Add-on checkboxes should render').toHaveCount(10);
@@ -130,6 +132,9 @@ test.describe('Independence Phone visual preview', () => {
           bodyScrollWidth: document.documentElement.scrollWidth,
           bodyClientWidth: document.documentElement.clientWidth,
           sectionCount: document.querySelectorAll('.shopify-section').length,
+          heroVideoCount: document.querySelectorAll('.ip-hero video.ip-hero__video').length,
+          heroPosterImageCount: document.querySelectorAll('.ip-hero img.ip-hero__image').length,
+          heroForegroundCount: document.querySelectorAll('.ip-hero__foreground').length,
           productFormCount: document.querySelectorAll('.ip-product-form').length,
           productOptionsCount: document.querySelectorAll('.ip-product-form .ip-product-options').length,
           productServiceRadioCount: document.querySelectorAll('.ip-product-form input[type="radio"]').length,
@@ -155,6 +160,9 @@ test.describe('Independence Phone visual preview', () => {
 
       expect(result.bodyScrollWidth).toBeLessThanOrEqual(result.bodyClientWidth + 2);
       expect(result.sectionCount).toBeGreaterThanOrEqual(11);
+      expect(result.heroVideoCount).toBe(1);
+      expect(result.heroPosterImageCount).toBe(0);
+      expect(result.heroForegroundCount).toBe(0);
       expect(result.productFormCount).toBe(2);
       expect(result.productOptionsCount).toBe(2);
       expect(result.productServiceRadioCount).toBe(4);

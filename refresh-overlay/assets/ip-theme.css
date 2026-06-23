@@ -261,8 +261,8 @@ summary:focus-visible {
 
 .ip-hero__media::after {
   background:
-    linear-gradient(90deg, rgba(12, 17, 28, 0.86) 0%, rgba(12, 17, 28, 0.64) 34%, rgba(12, 17, 28, 0.22) 68%),
-    linear-gradient(180deg, rgba(12, 17, 28, 0.18), rgba(12, 17, 28, 0.7));
+    linear-gradient(180deg, rgba(12, 17, 28, 0.34), rgba(12, 17, 28, 0.78)),
+    linear-gradient(90deg, rgba(12, 17, 28, 0.54), rgba(12, 17, 28, 0.28) 50%, rgba(12, 17, 28, 0.54));
   content: "";
 }
 
@@ -275,9 +275,10 @@ summary:focus-visible {
 }
 
 .ip-hero__inner {
-  align-items: end;
+  align-items: center;
   color: #fff;
   display: grid;
+  justify-items: center;
   min-height: min(760px, calc(100svh - 4rem));
   padding-block: clamp(4rem, 10vw, 8rem);
   padding-inline: clamp(1.25rem, 5vw, 5rem);
@@ -289,9 +290,9 @@ summary:focus-visible {
 .ip-hero__copy {
   display: grid;
   gap: clamp(1rem, 2vw, 1.45rem);
-  justify-items: start;
-  max-width: min(42rem, calc(100% - clamp(0rem, 18vw, 20rem)));
-  text-align: left;
+  justify-items: center;
+  max-width: min(54rem, 100%);
+  text-align: center;
 }
 
 .ip-hero__copy .ip-kicker,
@@ -301,24 +302,6 @@ summary:focus-visible {
 
 .ip-hero__copy .ip-heading {
   max-width: 100%;
-}
-
-.ip-hero__foreground {
-  bottom: max(-6rem, -9vw);
-  display: grid;
-  filter: drop-shadow(0 2rem 2.5rem rgba(0, 0, 0, 0.34));
-  pointer-events: none;
-  position: absolute;
-  right: clamp(0.25rem, 5vw, 7rem);
-  width: clamp(14rem, 28vw, 31rem);
-  z-index: 3;
-}
-
-.ip-hero__foreground img {
-  height: auto;
-  transform: rotate(-2deg);
-  transform-origin: 50% 80%;
-  width: 100%;
 }
 
 .ip-story {
@@ -480,12 +463,6 @@ summary:focus-visible {
 }
 
 @supports (animation-timeline: view()) {
-  .ip-hero__foreground {
-    animation: ip-hero-float linear both;
-    animation-range: exit 0% exit 80%;
-    animation-timeline: view();
-  }
-
   .ip-strip__item {
     animation: ip-feature-rise linear both;
     animation-range: entry 10% cover 38%;
@@ -506,13 +483,6 @@ summary:focus-visible {
     animation-timeline: view();
     stroke-dasharray: 42;
     stroke-dashoffset: 42;
-  }
-}
-
-@keyframes ip-hero-float {
-  to {
-    opacity: 0.72;
-    transform: translateY(4rem) rotate(2deg);
   }
 }
 
@@ -1328,15 +1298,6 @@ footer a {
     min-height: 18rem;
   }
 
-  .ip-hero__copy {
-    max-width: min(38rem, calc(100% - 12rem));
-  }
-
-  .ip-hero__foreground {
-    opacity: 0.84;
-    right: -1.5rem;
-    width: clamp(12rem, 32vw, 22rem);
-  }
 }
 
 @media (max-width: 720px) {
@@ -1352,7 +1313,7 @@ footer a {
   }
 
   .ip-hero__inner {
-    align-items: end;
+    align-items: center;
     padding-block: clamp(4rem, 14vw, 6rem);
     padding-inline: clamp(1.2rem, 6vw, 2rem);
   }
@@ -1361,10 +1322,6 @@ footer a {
     justify-items: center;
     max-width: 100%;
     text-align: center;
-  }
-
-  .ip-hero__foreground {
-    display: none;
   }
 
   .ip-grid--2,

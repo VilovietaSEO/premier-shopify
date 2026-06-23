@@ -288,14 +288,13 @@ const sectionSchemaRequirements = {
     settings: ['enabled', 'text', 'link'],
     requiresPreset: true,
   },
-  'ip-video-hero': {
-    settings: [
-      'hero_video',
-      'poster_image',
-      'foreground_image',
-      'heading',
-      'subheading',
-      'primary_label',
+	  'ip-video-hero': {
+	    settings: [
+	      'hero_video',
+	      'poster_image',
+	      'heading',
+	      'subheading',
+	      'primary_label',
       'primary_link',
     ],
     requiresPreset: true,

@@ -52,18 +52,6 @@
       </div>
     </div>
   </div>
-
-  <div class="ip-hero__foreground" aria-hidden="true">
-    {% if section.settings.foreground_image != blank %}
-      {{
-        section.settings.foreground_image
-        | image_url: width: 900
-        | image_tag: alt: '', loading: 'eager'
-      }}
-    {% else %}
-      <img src="{{ 'ip-phone-cutout-freedom.png' | asset_url }}" alt="" width="599" height="1029" loading="eager">
-    {% endif %}
-  </div>
 </section>
 
 {% schema %}
@@ -79,11 +67,6 @@
       "type": "image_picker",
       "id": "poster_image",
       "label": "Poster image"
-    },
-    {
-      "type": "image_picker",
-      "id": "foreground_image",
-      "label": "Foreground phone image"
     },
     {
       "type": "text",
