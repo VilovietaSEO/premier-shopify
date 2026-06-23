@@ -39,17 +39,6 @@
         </div>
       {% endfor %}
     </div>
-    <div class="ip-strip__media" aria-hidden="true">
-      {% if section.settings.phone_image != blank %}
-        {{
-          section.settings.phone_image
-          | image_url: width: 520
-          | image_tag: loading: 'lazy'
-        }}
-      {% else %}
-        <img src="{{ 'ip-current-site-product-1.png' | asset_url }}" alt="" width="1200" height="1200" loading="lazy">
-      {% endif %}
-    </div>
   </div>
 </section>
 
@@ -68,11 +57,6 @@
       "id": "heading",
       "label": "Heading",
       "default": "Real phone tools without smartphone drama."
-    },
-    {
-      "type": "image_picker",
-      "id": "phone_image",
-      "label": "Phone image"
     }
   ],
   "blocks": [
