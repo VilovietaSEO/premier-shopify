@@ -72,7 +72,6 @@ async function collectRouteReport(page) {
     const skipSelector = [
       '.ip-capability',
       '.ip-matrix',
-      '.preview-mini-header__drawer',
       '.ip-hero__foreground',
       '.ip-story-card',
       'img',
@@ -112,7 +111,7 @@ async function collectRouteReport(page) {
     const footer = document.querySelector('footer');
     const previewHeader = document.querySelector('.preview-mini-header');
     const previewHeaderLogo = document.querySelector('.preview-mini-header img');
-    const previewHeaderNav = document.querySelector('.preview-mini-header nav');
+    const previewHeaderActions = document.querySelector('.preview-mini-header__actions');
     const trust = document.querySelector('[data-slot="trust"]');
     const heroHeading = document.querySelector('.ip-hero__copy .ip-heading');
     const heroLede = document.querySelector('.ip-hero__copy .ip-lede');
@@ -140,7 +139,7 @@ async function collectRouteReport(page) {
       previewHeaderHeight: Math.round(previewHeader?.getBoundingClientRect().height || 0),
       previewLogoHeight: Math.round(previewHeaderLogo?.getBoundingClientRect().height || 0),
       previewHeaderLogoCenterDelta: centerDelta(previewHeaderLogo, previewHeader),
-      previewHeaderNavCenterDelta: centerDelta(previewHeaderNav, previewHeader),
+      previewHeaderActionsCenterDelta: centerDelta(previewHeaderActions, previewHeader),
       visibleSlots,
       visibleSectionCount: [...document.querySelectorAll('.shopify-section')].filter((section) => isVisible(section)).length,
       heroVideoCount: [...document.querySelectorAll('.ip-hero video.ip-hero__video')].filter((element) => isVisible(element)).length,
@@ -193,9 +192,7 @@ function expectSharedLayout(report, viewportName) {
   expect(report.previewHeaderHeight).toBeLessThanOrEqual(viewportName === 'mobile' ? 62 : 66);
   expect(report.previewLogoHeight).toBeLessThanOrEqual(viewportName === 'mobile' ? 34 : 39);
   expect(Math.abs(report.previewHeaderLogoCenterDelta)).toBeLessThanOrEqual(1.25);
-  if (viewportName !== 'mobile') {
-    expect(Math.abs(report.previewHeaderNavCenterDelta)).toBeLessThanOrEqual(1);
-  }
+  expect(Math.abs(report.previewHeaderActionsCenterDelta)).toBeLessThanOrEqual(1);
   expect(report.footerBackgroundLuminance).toBeGreaterThan(0.86);
   expect(report.footerRuleHeight).toBeGreaterThanOrEqual(3);
   expect(report.brokenImages).toEqual([]);
@@ -248,6 +245,10 @@ test.describe('Independence Phone visual preview', () => {
       await expect(page.locator('[data-slot="product.patriot"]')).toBeHidden();
       await expect(page.locator('[data-slot="cart.review"]')).toBeHidden();
       await expect(page.locator('[data-slot="contact.form"]')).toBeHidden();
+      await expect(page.locator('.preview-mini-header').getByText('Home', { exact: true })).toHaveCount(0);
+      await expect(page.locator('.preview-mini-header').getByText('Choose Your Phone', { exact: true })).toHaveCount(0);
+      await expect(page.locator('.preview-mini-header__icon-link[aria-label="Contact"]')).toBeVisible();
+      await expect(page.locator('.preview-mini-header__icon-link[aria-label="Cart"]')).toBeVisible();
       await expect(page.locator('[data-cart-count]').first()).toBeHidden();
       await expect(page.locator('[data-slot="products.compare"] a[href="?route=freedom"]')).toHaveCount(1);
       await expect(page.locator('[data-slot="products.compare"] a[href="?route=patriot"]')).toHaveCount(1);

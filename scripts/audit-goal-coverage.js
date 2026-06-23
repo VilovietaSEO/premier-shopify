@@ -545,11 +545,12 @@ assertFileIncludes('independence-phone-theme/templates/cart.json', [
   'addon_attendant',
 ], 'Cart template add-on blocks');
 assertFileIncludes('independence-phone-theme/sections/header.liquid', [
-  'aria-label="Main menu"',
   'ip-independence-phone-logo.png',
-  'routes.collections_url',
   'routes.root_url }}pages/contact',
+  'icon-contact.svg',
+  'aria-label="Store actions"',
   'aria-label="Cart"',
+  'data-cart-count',
 ], 'Local header section');
 assertFileIncludes('independence-phone-theme/sections/footer.liquid', [
   'aria-label="Footer menu"',

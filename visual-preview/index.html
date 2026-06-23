@@ -70,11 +70,12 @@
         width: auto;
       }
 
-      .preview-mini-header nav {
+      .preview-mini-header__actions {
         align-items: center;
         display: flex;
         flex-wrap: wrap;
-        gap: clamp(0.8rem, 2vw, 1.25rem);
+        gap: 0.45rem;
+        margin-left: auto;
         min-height: var(--ip-preview-header-row);
       }
 
@@ -87,6 +88,31 @@
         text-decoration: none;
       }
 
+      .preview-mini-header__icon-link {
+        border: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 12%, transparent);
+        border-radius: 6px;
+        color: var(--color-foreground);
+        height: 2.75rem;
+        min-height: 2.75rem;
+        position: relative;
+        transition:
+          border-color 160ms ease,
+          color 160ms ease,
+          background-color 160ms ease;
+        width: 2.75rem;
+      }
+
+      .preview-mini-header__icon-link:hover {
+        background: color-mix(in srgb, var(--ip-blue, #263F73) 5%, #fff);
+        border-color: color-mix(in srgb, var(--ip-blue, #263F73) 36%, transparent);
+        color: var(--ip-blue, #263F73);
+      }
+
+      .preview-mini-header__icon-link svg {
+        height: 1.35rem;
+        width: 1.35rem;
+      }
+
       .preview-mini-header sup[data-cart-count] {
         align-items: center;
         background: var(--ip-red, #B73532);
@@ -97,74 +123,12 @@
         font-weight: 900;
         justify-content: center;
         line-height: 1;
-        margin-left: 0.28rem;
         min-height: 1.12rem;
         min-width: 1.12rem;
+        position: absolute;
+        right: -0.32rem;
+        top: 0.22rem;
         padding: 0 0.32rem;
-      }
-
-      .preview-mini-header details {
-        align-items: center;
-        justify-content: center;
-        display: none;
-        margin-left: auto;
-        min-height: var(--ip-preview-header-row);
-      }
-
-      .preview-mini-header summary {
-        align-items: center;
-        border: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 14%, transparent);
-        border-radius: 6px;
-        cursor: pointer;
-        display: inline-flex;
-        height: 2.75rem;
-        justify-content: center;
-        list-style: none;
-        width: 2.75rem;
-      }
-
-      .preview-mini-header summary::-webkit-details-marker {
-        display: none;
-      }
-
-      .preview-mini-header__lines,
-      .preview-mini-header__lines::before,
-      .preview-mini-header__lines::after {
-        background: currentcolor;
-        border-radius: 999px;
-        content: "";
-        display: block;
-        height: 2px;
-        position: relative;
-        width: 1.15rem;
-      }
-
-      .preview-mini-header__lines::before,
-      .preview-mini-header__lines::after {
-        left: 0;
-        position: absolute;
-      }
-
-      .preview-mini-header__lines::before {
-        transform: translateY(-6px);
-      }
-
-      .preview-mini-header__lines::after {
-        transform: translateY(6px);
-      }
-
-      .preview-mini-header__drawer {
-        background: #fff;
-        border: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 12%, transparent);
-        border-radius: 8px;
-        display: grid;
-        gap: 0.25rem;
-        left: var(--page-margin);
-        padding: 0.55rem;
-        position: absolute;
-        right: var(--page-margin);
-        top: calc(100% + 0.55rem);
-        z-index: 35;
       }
 
       .preview-field-button {
@@ -194,12 +158,9 @@
           transform: translateY(0.1rem);
         }
 
-        .preview-mini-header nav {
-          display: none;
-        }
-
-        .preview-mini-header details {
-          display: flex;
+        .preview-mini-header__actions {
+          flex-wrap: nowrap;
+          gap: 0.35rem;
         }
       }
     </style>
@@ -260,21 +221,20 @@
       <a href="./index.html" aria-label="Independence Phone">
         <img src="../independence-phone-theme/assets/ip-independence-phone-logo.png" alt="Independence Phone" width="1562" height="422">
       </a>
-      <nav aria-label="Store navigation">
-        <a href="./index.html">Home</a>
-        <a href="./index.html#choose">Choose Your Phone</a>
-        <a href="?route=cart">Cart <sup data-cart-count hidden>0</sup></a>
-        <a href="?route=contact">Contact</a>
+      <nav class="preview-mini-header__actions" aria-label="Store actions">
+        <a class="preview-mini-header__icon-link" href="?route=contact" aria-label="Contact">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M3.25 5.75A1.75 1.75 0 0 1 5 4h10a1.75 1.75 0 0 1 1.75 1.75v8.5A1.75 1.75 0 0 1 15 16H5a1.75 1.75 0 0 1-1.75-1.75z" />
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="m4 6 6 5 6-5" />
+          </svg>
+        </a>
+        <a class="preview-mini-header__icon-link" href="?route=cart" aria-label="Cart">
+          <sup data-cart-count hidden>0</sup>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M3.392 6.875h13.216v8.016c0 .567-.224 1.112-.624 1.513-.4.402-.941.627-1.506.627H5.522a2.13 2.13 0 0 1-1.506-.627 2.15 2.15 0 0 1-.624-1.513zM8.818 2.969h2.333c.618 0 1.211.247 1.649.686a2.35 2.35 0 0 1 .683 1.658v1.562H6.486V5.313c0-.622.246-1.218.683-1.658a2.33 2.33 0 0 1 1.65-.686" />
+          </svg>
+        </a>
       </nav>
-      <details>
-        <summary aria-label="Open menu"><span class="preview-mini-header__lines" aria-hidden="true"></span></summary>
-        <div class="preview-mini-header__drawer" aria-label="Store navigation">
-          <a href="./index.html">Home</a>
-          <a href="./index.html#choose">Choose Your Phone</a>
-          <a href="?route=cart">Cart <sup data-cart-count hidden>0</sup></a>
-          <a href="?route=contact">Contact</a>
-        </div>
-      </details>
     </header>
 
     <main class="ip-main">
