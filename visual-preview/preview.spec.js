@@ -133,6 +133,9 @@ test.describe('Independence Phone visual preview', () => {
 	        return {
           bodyScrollWidth: document.documentElement.scrollWidth,
           bodyClientWidth: document.documentElement.clientWidth,
+          previewRibbonCount: document.querySelectorAll('.preview-ribbon').length,
+          previewHeaderHeight: Math.round(document.querySelector('.preview-mini-header')?.getBoundingClientRect().height || 0),
+          previewLogoHeight: Math.round(document.querySelector('.preview-mini-header img')?.getBoundingClientRect().height || 0),
           sectionCount: document.querySelectorAll('.shopify-section').length,
           heroVideoCount: document.querySelectorAll('.ip-hero video.ip-hero__video').length,
           heroPosterImageCount: document.querySelectorAll('.ip-hero img.ip-hero__image').length,
@@ -163,6 +166,9 @@ test.describe('Independence Phone visual preview', () => {
       );
 
       expect(result.bodyScrollWidth).toBeLessThanOrEqual(result.bodyClientWidth + 2);
+      expect(result.previewRibbonCount).toBe(0);
+      expect(result.previewHeaderHeight).toBeLessThanOrEqual(viewport.name === 'mobile' ? 62 : 66);
+      expect(result.previewLogoHeight).toBeLessThanOrEqual(viewport.name === 'mobile' ? 34 : 39);
       expect(result.sectionCount).toBeGreaterThanOrEqual(11);
       expect(result.heroVideoCount).toBe(1);
       expect(result.heroPosterImageCount).toBe(0);

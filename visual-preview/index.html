@@ -35,14 +35,14 @@
         display: flex;
         gap: 1rem;
         justify-content: space-between;
-        padding: 1rem var(--page-margin);
+        min-height: 3.75rem;
+        padding: 0.45rem var(--page-margin);
       }
 
       .preview-mini-header img {
         display: block;
-        height: auto;
-        max-height: 3.3rem;
-        max-width: min(18rem, 54vw);
+        height: 2.1rem;
+        max-width: min(12.75rem, 48vw);
         object-fit: contain;
         width: auto;
       }
@@ -135,6 +135,13 @@
           align-items: center;
           flex-direction: row;
           flex-wrap: nowrap;
+          min-height: 3.5rem;
+          padding-block: 0.45rem;
+        }
+
+        .preview-mini-header img {
+          height: 1.95rem;
+          max-width: min(11.25rem, 46vw);
         }
 
         .preview-mini-header nav {

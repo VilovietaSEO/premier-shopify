@@ -1175,7 +1175,7 @@ summary:focus-visible {
 header {
   background: color-mix(in srgb, var(--ip-paper, #fff) 88%, #fff);
   border-bottom: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 10%, transparent);
-  min-height: 4.75rem;
+  min-height: 4rem;
   padding-inline: var(--page-margin);
   position: sticky;
   top: 0;
@@ -1195,9 +1195,8 @@ header a {
 
 header .header__logo {
   display: block;
-  height: auto;
-  max-height: 3.3rem;
-  max-width: min(18rem, 54vw);
+  height: 2.1rem;
+  max-width: min(12.75rem, 48vw);
   object-fit: contain;
   width: auto;
 }
@@ -1339,8 +1338,8 @@ footer a {
     flex-wrap: nowrap;
     gap: 0.45rem;
     height: auto;
-    min-height: 4.75rem;
-    padding-block: 0.55rem;
+    min-height: 3.5rem;
+    padding-block: 0.45rem;
   }
 
   header .header__icons {
@@ -1354,7 +1353,8 @@ footer a {
   }
 
   header .header__logo {
-    max-width: min(13rem, 42vw);
+    height: 1.95rem;
+    max-width: min(11.25rem, 46vw);
   }
 
   .ip-capability {
