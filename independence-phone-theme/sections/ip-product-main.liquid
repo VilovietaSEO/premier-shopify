@@ -10,12 +10,14 @@
     assign fallback_deck = 'The rugged family phone for busier homes, tougher handling, and longer days.'
     assign fallback_best_for = 'Best for families who want rugged durability, longer battery life, and a more resilient handset.'
     assign fallback_image = 'ip-current-site-product-2.png'
+    assign fallback_gallery_image = 'ip-current-site-product-1.png'
   else
     assign fallback_title = 'Freedom Phone'
     assign fallback_price = '$99'
     assign fallback_deck = 'The everyday family phone for kids who need to call home without stepping into smartphone life.'
     assign fallback_best_for = 'Best for home, grandparents, short independence windows, and everyday family calling.'
     assign fallback_image = 'ip-current-site-product-1.png'
+    assign fallback_gallery_image = 'ip-current-site-product-3.png'
   endif
 
   assign current_variant = product.selected_or_first_available_variant
@@ -43,25 +45,116 @@
 %}
 
 <section class="ip-product-main">
-  <div class="ip-product-main__media">
-    {% if product.featured_image %}
-      {{
-        product.featured_image
-        | image_url: width: 1100
-        | image_tag:
-          alt: product.title,
-          loading: 'eager',
-          fetchpriority: 'high'
-      }}
-    {% else %}
-      <img
-        src="{{ fallback_image | asset_url }}"
-        alt="{{ fallback_title }}"
-        width="1200"
-        height="1200"
-        loading="eager"
-        fetchpriority="high"
-      >
+  <div class="ip-product-main__gallery" data-product-gallery>
+    <div class="ip-product-main__media" aria-live="polite">
+      {% if product.media.size > 0 %}
+        {% for media in product.media %}
+          {% assign media_alt = media.alt | default: product.title | default: fallback_title %}
+          <figure
+            class="ip-product-main__slide{% if forloop.first %} is-active{% endif %}"
+            data-gallery-slide="{{ forloop.index0 }}"
+            {% unless forloop.first %}
+              hidden
+            {% endunless %}
+          >
+            {% case media.media_type %}
+              {% when 'image' %}
+                {{
+                  media
+                  | image_url: width: 1400
+                  | image_tag:
+                    alt: media_alt,
+                    loading: 'eager',
+                    fetchpriority: 'high',
+                    sizes: '(min-width: 990px) 54vw, 100vw'
+                }}
+              {% when 'video' %}
+                {{ media | video_tag: controls: true, image_size: '1400x', class: 'ip-product-main__video' }}
+              {% when 'external_video' %}
+                {{ media | external_video_tag: class: 'ip-product-main__external-video' }}
+              {% else %}
+                {% if media.preview_image %}
+                  {{
+                    media.preview_image
+                    | image_url: width: 1400
+                    | image_tag:
+                      alt: media_alt,
+                      loading: 'eager',
+                      fetchpriority: 'high',
+                      sizes: '(min-width: 990px) 54vw, 100vw'
+                  }}
+                {% endif %}
+            {% endcase %}
+          </figure>
+        {% endfor %}
+      {% else %}
+        <figure class="ip-product-main__slide is-active" data-gallery-slide="0">
+          <img
+            src="{{ fallback_image | asset_url }}"
+            alt="{{ fallback_title }}"
+            width="1200"
+            height="1200"
+            loading="eager"
+            fetchpriority="high"
+          >
+        </figure>
+        <figure class="ip-product-main__slide" data-gallery-slide="1" hidden>
+          <img
+            src="{{ fallback_gallery_image | asset_url }}"
+            alt="{{ fallback_title }} alternate product image"
+            width="1200"
+            height="1200"
+            loading="lazy"
+          >
+        </figure>
+      {% endif %}
+    </div>
+
+    {% if product.media.size > 1 %}
+      <div class="ip-product-main__thumbs" aria-label="{{ product.title | default: fallback_title }} media">
+        {% for media in product.media %}
+          <button
+            class="ip-product-main__thumb{% if forloop.first %} is-active{% endif %}"
+            type="button"
+            data-gallery-thumb="{{ forloop.index0 }}"
+            aria-label="Show {{ product.title | default: fallback_title }} media {{ forloop.index }}"
+            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+          >
+            {% if media.preview_image %}
+              {{
+                media.preview_image
+                | image_url: width: 220
+                | image_tag:
+                  alt: '',
+                  loading: 'lazy'
+              }}
+            {% else %}
+              <span>{{ media.media_type | replace: '_', ' ' }}</span>
+            {% endif %}
+          </button>
+        {% endfor %}
+      </div>
+    {% elsif product.media.size == 0 %}
+      <div class="ip-product-main__thumbs" aria-label="{{ fallback_title }} media">
+        <button
+          class="ip-product-main__thumb is-active"
+          type="button"
+          data-gallery-thumb="0"
+          aria-label="Show {{ fallback_title }} media 1"
+          aria-pressed="true"
+        >
+          <img src="{{ fallback_image | asset_url }}" alt="" width="220" height="220" loading="lazy">
+        </button>
+        <button
+          class="ip-product-main__thumb"
+          type="button"
+          data-gallery-thumb="1"
+          aria-label="Show {{ fallback_title }} media 2"
+          aria-pressed="false"
+        >
+          <img src="{{ fallback_gallery_image | asset_url }}" alt="" width="220" height="220" loading="lazy">
+        </button>
+      </div>
     {% endif %}
   </div>
 
@@ -224,6 +317,58 @@
     </div>
   </div>
 </section>
+
+<script>
+  (() => {
+    if (window.__ipProductGalleryReady) return;
+    window.__ipProductGalleryReady = true;
+
+    const setActive = (gallery, nextIndex) => {
+      const slides = [...gallery.querySelectorAll('[data-gallery-slide]')];
+      const thumbs = [...gallery.querySelectorAll('[data-gallery-thumb]')];
+      if (!slides.length) return;
+
+      const safeIndex = (nextIndex + slides.length) % slides.length;
+      slides.forEach((slide, index) => {
+        const active = index === safeIndex;
+        slide.hidden = !active;
+        slide.classList.toggle('is-active', active);
+      });
+      thumbs.forEach((thumb, index) => {
+        const active = index === safeIndex;
+        thumb.classList.toggle('is-active', active);
+        thumb.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+    };
+
+    document.addEventListener('click', (event) => {
+      const thumb = event.target.closest('[data-gallery-thumb]');
+      if (!thumb) return;
+
+      const gallery = thumb.closest('[data-product-gallery]');
+      if (!gallery) return;
+
+      setActive(gallery, Number(thumb.dataset.galleryThumb || 0));
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+
+      const gallery = event.target.closest('[data-product-gallery]');
+      if (!gallery) return;
+
+      const thumbs = [...gallery.querySelectorAll('[data-gallery-thumb]')];
+      if (!thumbs.length) return;
+
+      const current = thumbs.findIndex((thumb) => thumb.classList.contains('is-active'));
+      const delta = event.key === 'ArrowRight' ? 1 : -1;
+      const next = (current + delta + thumbs.length) % thumbs.length;
+      event.preventDefault();
+      setActive(gallery, next);
+      thumbs[next].focus();
+    });
+  })();
+</script>
 
 {% schema %}
 {

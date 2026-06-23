@@ -75,27 +75,28 @@
         "feature_1": {
           "type": "feature",
           "settings": {
-            "title": "No apps",
-            "body": "No app store to negotiate."
+            "title": "Calls stay central",
+            "body": "The product job is simple family reachability."
           }
         },
         "feature_2": {
           "type": "feature",
           "settings": {
-            "title": "No web browser",
-            "body": "Designed to avoid the open internet step."
+            "title": "Clear service",
+            "body": "A personal number with monthly or annual service."
           }
         },
         "feature_3": {
           "type": "feature",
           "settings": {
-            "title": "Simple service",
-            "body": "A personal phone number with clear monthly or annual service."
+            "title": "Two handset choices",
+            "body": "Everyday or rugged, without changing the core promise."
           }
         }
       },
       "block_order": ["feature_1", "feature_2", "feature_3"],
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
     "products": {
       "type": "ip-product-comparison",
@@ -171,7 +172,8 @@
         }
       },
       "block_order": ["recording", "time_conditions", "voicemail", "victory", "attendant"],
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
     "capabilities": {
       "type": "ip-capability-table",
@@ -223,7 +225,8 @@
         }
       },
       "block_order": ["calls", "wifi", "browser", "apps", "unsupported"],
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
     "package": {
       "type": "ip-package-band",
@@ -276,7 +279,8 @@
         }
       },
       "block_order": ["primary_job", "apps", "browser", "cost"],
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
     "faq": {
       "type": "ip-faq",

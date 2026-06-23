@@ -7,19 +7,19 @@
     <div class="ip-lede">{{ section.settings.body }}</div>
   </div>
 
-  <div class="ip-capability" style="margin-top: 2rem;">
-    <div class="ip-capability__row">
-      <div class="ip-capability__cell ip-capability__head">Capability</div>
-      <div class="ip-capability__cell ip-capability__head">Status</div>
-      <div class="ip-capability__cell ip-capability__head">How to explain it</div>
+  <div class="ip-capability" style="margin-top: 2rem;" role="table" aria-label="{{ section.settings.heading | escape }}">
+    <div class="ip-capability__row" role="row">
+      <div class="ip-capability__cell ip-capability__head" role="columnheader">Capability</div>
+      <div class="ip-capability__cell ip-capability__head" role="columnheader">Status</div>
+      <div class="ip-capability__cell ip-capability__head" role="columnheader">How to explain it</div>
     </div>
     {% for block in section.blocks %}
-      <div class="ip-capability__row" {{ block.shopify_attributes }}>
-        <div class="ip-capability__cell"><strong>{{ block.settings.capability }}</strong></div>
-        <div class="ip-capability__cell">
+      <div class="ip-capability__row" role="row" {{ block.shopify_attributes }}>
+        <div class="ip-capability__cell" role="cell"><strong>{{ block.settings.capability }}</strong></div>
+        <div class="ip-capability__cell" role="cell">
           <span class="ip-status ip-status--{{ block.settings.status_style }}">{{ block.settings.status }}</span>
         </div>
-        <div class="ip-capability__cell">{{ block.settings.explanation }}</div>
+        <div class="ip-capability__cell" role="cell">{{ block.settings.explanation }}</div>
       </div>
     {% endfor %}
   </div>
