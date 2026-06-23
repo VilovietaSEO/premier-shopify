@@ -22,6 +22,7 @@ The preview test now verifies:
 - The Home route does not render product-detail sections, product forms, cart setup details, or the contact form.
 - The Freedom and Patriot product routes each render exactly one product detail section with one product form, two carousel thumbnails, two service radio options, and five add-on checkboxes.
 - Cart and Contact render in their own routes without product ordering forms.
+- The Cart route renders as a standalone cart page with a cart heading, product area, order summary, subtotal/shipping rows, and continue-shopping link.
 - Required positioning/product/service copy renders.
 - The preview-only navigation ribbon is absent; the deal banner and primary header are the only top navigation layers.
 - The preview header and logo stay compact, with the logo constrained by height while preserving its source aspect ratio.

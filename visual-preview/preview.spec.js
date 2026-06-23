@@ -232,6 +232,10 @@ test.describe('Independence Phone visual preview', () => {
       expect(cartReport.visibleCartPropertyRowCount).toBeGreaterThanOrEqual(3);
       expect(cartReport.visibleContactFormCount).toBe(0);
       await expect(page.locator('[data-slot="cart.review"]')).toBeVisible();
+      await expect(page.locator('[data-slot="cart.review"]').getByText('Your cart', { exact: true })).toBeVisible();
+      await expect(page.locator('[data-slot="cart.review"]').getByText('Order summary', { exact: true })).toBeVisible();
+      await expect(page.locator('[data-slot="cart.review"]').getByText('Subtotal', { exact: true })).toBeVisible();
+      await expect(page.locator('[data-slot="cart.review"]').getByText('Continue shopping', { exact: true })).toBeVisible();
       await expect(page.locator('.ip-cart-properties').getByText('Monthly service - $17.76/mo')).toBeVisible();
       await expect(page.locator('.ip-cart-properties').getByText('Victory Bundle')).toBeVisible();
 

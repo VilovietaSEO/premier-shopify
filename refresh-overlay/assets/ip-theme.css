@@ -1054,31 +1054,51 @@ summary:focus-visible {
 
 .ip-cart {
   display: grid;
-  gap: 2rem;
-  padding-block: clamp(2.5rem, 6vw, 5rem);
+  gap: clamp(1.25rem, 3vw, 2rem);
+  margin-inline: auto;
+  max-width: 74rem;
+  padding-block: clamp(2rem, 6vw, 4.5rem);
+  width: 100%;
 }
 
 .ip-cart__empty,
 .ip-cart__summary,
 .ip-cart-item {
-  padding: clamp(1rem, 3vw, 1.35rem);
+  padding: clamp(1rem, 3vw, 1.5rem);
 }
 
 .ip-cart__form {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.34fr);
+  align-items: start;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(19rem, 0.38fr);
+}
+
+.ip-cart__header {
+  max-width: 48rem;
 }
 
 .ip-cart__items {
   display: grid;
+  gap: 0.85rem;
+}
+
+.ip-cart__table-head {
+  color: var(--ip-muted, #596273);
+  display: grid;
+  font-size: 0.78rem;
+  font-weight: 900;
   gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  letter-spacing: 0;
+  padding-inline: 0.15rem;
+  text-transform: uppercase;
 }
 
 .ip-cart-item {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: minmax(7rem, 0.22fr) minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 1.25rem);
+  grid-template-columns: minmax(7.5rem, 0.2fr) minmax(0, 1fr);
 }
 
 .ip-cart-item__media {
@@ -1155,6 +1175,31 @@ summary:focus-visible {
   top: 6rem;
 }
 
+.ip-cart__totals {
+  border-block: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 12%, transparent);
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding-block: 1rem;
+}
+
+.ip-cart__totals > div {
+  align-items: start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.ip-cart__totals dt {
+  color: var(--ip-muted, #596273);
+}
+
+.ip-cart__totals dd {
+  font-weight: 900;
+  margin: 0;
+  text-align: right;
+}
+
 .ip-cart__summary button {
   background: var(--ip-red, #B73532);
   border: 0;
@@ -1170,6 +1215,12 @@ summary:focus-visible {
   background: transparent;
   border: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 20%, transparent);
   color: var(--ip-ink, #172033);
+}
+
+.ip-cart__continue {
+  color: var(--ip-blue, #263F73);
+  font-weight: 900;
+  justify-self: start;
 }
 
 header {
@@ -1313,6 +1364,18 @@ footer a {
 	  .ip-strip__items {
 	    grid-template-columns: 1fr;
 	  }
+
+  .ip-cart__table-head {
+    display: none;
+  }
+
+  .ip-cart-item__actions {
+    align-items: stretch;
+  }
+
+  .ip-cart-item__actions input {
+    width: 100%;
+  }
 
   .ip-strip {
     grid-template-columns: 1fr;

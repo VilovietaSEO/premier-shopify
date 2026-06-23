@@ -6,9 +6,10 @@
 {% endcomment %}
 
 <section class="ip-cart">
-  <div class="ip-stack">
+  <div class="ip-stack ip-cart__header">
     <p class="ip-kicker">Order review</p>
-    <h1 class="ip-heading ip-heading--medium">{{ 'cart.title' | t }}</h1>
+    <h1 class="ip-heading ip-heading--medium">Your cart</h1>
+    <p class="ip-note">Review your phone, service choices, and add-ons before checkout.</p>
   </div>
 
   {% if cart.item_count == 0 %}
@@ -19,6 +20,10 @@
   {% else %}
     <form action="{{ routes.cart_url }}" method="post" class="ip-cart__form">
       <div class="ip-cart__items">
+        <div class="ip-cart__table-head" aria-hidden="true">
+          <span>Product</span>
+          <span>Total</span>
+        </div>
         {% for item in cart.items %}
           <article class="ip-card ip-cart-item">
             <div class="ip-cart-item__media">
@@ -77,8 +82,17 @@
       </div>
 
       <div class="ip-card ip-cart__summary">
-        <h2>Order total</h2>
-        <p class="ip-price">{{ cart.total_price | money }}</p>
+        <h2>Order summary</h2>
+        <dl class="ip-cart__totals">
+          <div>
+            <dt>Subtotal</dt>
+            <dd>{{ cart.total_price | money }}</dd>
+          </div>
+          <div>
+            <dt>Shipping</dt>
+            <dd>Calculated at checkout</dd>
+          </div>
+        </dl>
         <p class="ip-note">
           Service and add-on selections are shown for setup confirmation. Taxes, shipping, and recurring billing are finalized through the approved store setup.
         </p>
@@ -86,6 +100,7 @@
           <button type="submit" name="update">{{ 'cart.update' | t }}</button>
           <button type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
         </div>
+        <a class="ip-cart__continue" href="{{ routes.collections_url }}/phones">Continue shopping</a>
       </div>
     </form>
   {% endif %}
