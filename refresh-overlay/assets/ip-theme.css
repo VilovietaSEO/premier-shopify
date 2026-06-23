@@ -301,14 +301,14 @@ summary:focus-visible {
 }
 
 .ip-hero__copy .ip-heading {
-  font-size: 5.6rem;
+  font-size: 5.04rem;
   line-height: 0.9;
   max-width: 12em;
   text-shadow: 0 0.12em 0.45em rgba(0, 0, 0, 0.34);
 }
 
 .ip-hero__copy .ip-lede {
-  font-size: 1.36rem;
+  font-size: 1.224rem;
   line-height: 1.45;
   margin-top: 1.4rem;
   max-width: 58rem;
@@ -1475,13 +1475,13 @@ footer .footer__payment svg {
   }
 
   .ip-hero__copy .ip-heading {
-    font-size: 3rem;
+    font-size: 2.7rem;
     line-height: 0.94;
     max-width: 9.4em;
   }
 
   .ip-hero__copy .ip-lede {
-    font-size: 1.17rem;
+    font-size: 1.053rem;
     line-height: 1.48;
     margin-top: 1.15rem;
     max-width: 31rem;

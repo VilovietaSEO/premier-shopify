@@ -211,8 +211,8 @@ test.describe('Independence Phone visual preview', () => {
       expect(homeReport.heroVideoCount).toBe(1);
       expect(homeReport.heroPosterImageCount).toBe(0);
       expect(homeReport.heroForegroundCount).toBe(0);
-      expect(homeReport.heroHeadingFontSize).toBeGreaterThanOrEqual(viewport.name === 'mobile' ? 47 : 88);
-      expect(homeReport.heroLedeFontSize).toBeGreaterThanOrEqual(viewport.name === 'mobile' ? 18 : 21);
+      expect(homeReport.heroHeadingFontSize).toBeGreaterThanOrEqual(viewport.name === 'mobile' ? 43 : 80);
+      expect(homeReport.heroLedeFontSize).toBeGreaterThanOrEqual(viewport.name === 'mobile' ? 16.8 : 19.5);
       expect(homeReport.heroButtonTopGap).toBeGreaterThanOrEqual(viewport.name === 'mobile' ? 28 : 34);
       expect(homeReport.visibleFeatureIconImageCount).toBe(3);
       expect(homeReport.visibleFeatureIconSvgCount).toBe(0);
