@@ -17,15 +17,14 @@ Result:
 
 The preview test now verifies:
 
-- Required scoped page markers render: Home, Choose Your Phone, Freedom product, Patriot product, Cart, Contact.
-- Required section slots render: hero, JTBD story, feature strip, product comparison, service plans, add-ons, capability table, package band, product pages, cart review, FAQ, contact, trust band.
+- Required hash routes render separately: Home, Freedom product, Patriot product, Cart, Contact.
+- The Home route renders hero, feature strip, product comparison, JTBD story, package band, FAQ, and trust.
+- The Home route does not render product-detail sections, product forms, cart setup details, or the contact form.
+- The Freedom and Patriot product routes each render exactly one product detail section with one product form, two carousel thumbnails, two service radio options, and five add-on checkboxes.
+- Cart and Contact render in their own routes without product ordering forms.
 - Required positioning/product/service copy renders.
 - The preview-only navigation ribbon is absent; the deal banner and primary header are the only top navigation layers.
 - The preview header and logo stay compact, with the logo constrained by height while preserving its source aspect ratio.
-- Two product forms render.
-- Product forms render two service/add-on option panels.
-- Product forms render four service-plan radio options across the two products.
-- Product forms render ten add-on checkboxes across the two products.
 - Cart review renders one setup-property list with three visible property rows.
 - One contact form renders.
 - All local preview images load.
@@ -33,11 +32,12 @@ The preview test now verifies:
 
 Viewport checks:
 
-| Viewport | Width | Body scroll width | Section count | Product forms | Option panels | Service radios | Add-on checkboxes | Cart property lists | Cart property rows | Contact forms | Broken images | Overflowing elements |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Desktop | `1440px` | `1440px` | `14` | `2` | `2` | `4` | `10` | `1` | `3` | `1` | `0` | `0` |
-| Tablet | `1024px` | `1024px` | `14` | `2` | `2` | `4` | `10` | `1` | `3` | `1` | `0` | `0` |
-| Mobile | `390px` | `390px` | `14` | `2` | `2` | `4` | `10` | `1` | `3` | `1` | `0` | `0` |
+| Viewport | Route | Width | Body scroll width | Visible sections | Product forms | Service radios | Add-on checkboxes | Cart property lists | Contact forms | Broken images | Overflowing elements |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Desktop | `home` | `1440px` | `1440px` | `7` | `0` | `0` | `0` | `0` | `0` | `0` | `0` |
+| Desktop | `freedom` | `1440px` | `1440px` | `1` | `1` | `2` | `5` | `0` | `0` | `0` | `0` |
+| Mobile | `home` | `390px` | `390px` | `7` | `0` | `0` | `0` | `0` | `0` | `0` | `0` |
+| Mobile | `freedom` | `390px` | `390px` | `1` | `1` | `2` | `5` | `0` | `0` | `0` | `0` |
 
 Screenshots were generated locally under:
 

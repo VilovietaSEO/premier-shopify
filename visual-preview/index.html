@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-preview-route="home">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,6 +26,18 @@
         padding: 0.8rem var(--page-margin);
         text-align: center;
         text-transform: uppercase;
+      }
+
+      [data-preview-pages] {
+        display: none;
+      }
+
+      html[data-preview-route="home"] [data-preview-pages~="home"],
+      html[data-preview-route="freedom"] [data-preview-pages~="freedom"],
+      html[data-preview-route="patriot"] [data-preview-pages~="patriot"],
+      html[data-preview-route="cart"] [data-preview-pages~="cart"],
+      html[data-preview-route="contact"] [data-preview-pages~="contact"] {
+        display: grid;
       }
 
       .preview-mini-header {
@@ -153,6 +165,38 @@
         }
       }
     </style>
+    <script>
+      (() => {
+        const standaloneRoutes = new Set(["freedom", "patriot", "cart", "contact"]);
+
+        const getPreviewRoute = () => {
+          const hash = window.location.hash.replace("#", "");
+          return standaloneRoutes.has(hash) ? hash : "home";
+        };
+
+        const syncPreviewRoute = (shouldScroll = false) => {
+          document.documentElement.dataset.previewRoute = getPreviewRoute();
+
+          if (!shouldScroll) return;
+
+          window.requestAnimationFrame(() => {
+            const hash = window.location.hash.replace("#", "");
+            const target = hash ? document.getElementById(hash) : document.getElementById("home");
+
+            if (target && target.offsetParent !== null) {
+              target.scrollIntoView({ block: "start" });
+              return;
+            }
+
+            window.scrollTo({ top: 0, left: 0 });
+          });
+        };
+
+        syncPreviewRoute();
+        window.addEventListener("hashchange", () => syncPreviewRoute(true));
+        window.addEventListener("DOMContentLoaded", () => syncPreviewRoute(true));
+      })();
+    </script>
   </head>
   <body>
     <section class="ip-announcement" aria-label="Store announcement">
@@ -183,7 +227,7 @@
     </header>
 
     <main class="ip-main">
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="home">
         <section id="home" class="ip-hero full-width" data-slot="home.hero">
           <div class="ip-hero__media" aria-hidden="true">
             <video class="ip-hero__video" autoplay loop muted playsinline poster="../independence-phone-theme/assets/ip-hero-video-poster.jpg">
@@ -204,7 +248,7 @@
         </section>
       </div>
 
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="home">
         <section class="ip-section ip-section--surface ip-section--tight ip-section--flag ip-feature-strip full-width" data-slot="home.feature-strip">
           <div class="ip-strip">
             <div class="ip-stack ip-strip__copy">
@@ -232,7 +276,7 @@
         </section>
       </div>
 
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="home">
         <section id="choose" class="ip-section" data-slot="products.compare">
           <div class="ip-stack">
             <p class="ip-kicker">Two phones. One simple decision.</p>
@@ -283,7 +327,7 @@
         </section>
       </div>
 
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="home">
         <section id="how-it-works" class="ip-section ip-story" data-slot="home.jtbd">
           <div class="ip-story__intro">
             <div class="ip-stack">
@@ -322,7 +366,7 @@
         </section>
       </div>
 
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="home">
         <section class="ip-section ip-section--ink ip-section--flag" data-slot="package">
           <div class="ip-package">
             <div class="ip-stack">
@@ -341,7 +385,7 @@
         </section>
       </div>
 
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="freedom">
         <section id="freedom" class="ip-product-main" data-slot="product.freedom">
           <div class="ip-product-main__gallery" data-product-gallery>
             <div class="ip-product-main__media" aria-live="polite">
@@ -411,7 +455,7 @@
         </section>
       </div>
 
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="patriot">
         <section id="patriot" class="ip-product-main" data-slot="product.patriot">
           <div class="ip-product-main__gallery" data-product-gallery>
             <div class="ip-product-main__media" aria-live="polite">
@@ -482,7 +526,7 @@
         </section>
       </div>
 
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="cart">
         <section id="cart" class="ip-cart" data-slot="cart.review">
           <div class="ip-stack">
             <p class="ip-kicker">Order review</p>
@@ -528,7 +572,7 @@
         </section>
       </div>
 
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="home">
         <section class="ip-section ip-section--surface" data-slot="faq">
           <div class="ip-stack">
             <p class="ip-kicker">FAQ</p>
@@ -542,7 +586,7 @@
         </section>
       </div>
 
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="contact">
         <section id="contact" class="ip-section" data-slot="contact.form">
           <div class="ip-contact">
             <div class="ip-stack">
@@ -576,7 +620,7 @@
         </section>
       </div>
 
-      <div class="shopify-section">
+      <div class="shopify-section" data-preview-pages="home">
         <section class="ip-section ip-section--ink ip-section--flag" data-slot="trust">
           <div class="ip-trust">
             <div class="ip-stack">

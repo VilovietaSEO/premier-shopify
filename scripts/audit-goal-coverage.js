@@ -582,10 +582,12 @@ assertFile('visual-preview/index.html', 'Visual preview page');
 assertFileIncludes('visual-preview/preview.spec.js', [
   'cart.review',
   'ip-cart-properties',
-  'cartPropertyRowCount',
+  'visibleCartPropertyRowCount',
+  'visibleProductFormCount',
 ], 'Visual preview test');
 assertFileIncludes('visual-preview/index.html', [
   'ip-independence-phone-logo.png',
+  'data-preview-pages',
 ], 'Visual preview page');
 assertFile('visual-preview/verification.md', 'Visual verification report');
 

@@ -2,7 +2,7 @@
 
 This is a local-only visual QA harness for the Independence Phone Shopify build.
 
-It exists because Shopify Theme Editor preview requires a fresh store and Shopify auth. Until that store exists, this file gives us a browser-renderable approximation of the four scoped pages using the same Independence Phone CSS and image assets.
+It exists because Shopify Theme Editor preview requires a fresh store and Shopify auth. Until that store exists, this file gives us a browser-renderable approximation of the scoped pages using the same Independence Phone CSS and image assets.
 
 Preview file:
 
@@ -14,6 +14,16 @@ Open directly:
 
 ```bash
 open /Users/vilovieta/Documents/Shopify/visual-preview/index.html
+```
+
+The preview is hash-routed so page contexts do not bleed together:
+
+```bash
+/visual-preview/index.html#home
+/visual-preview/index.html#freedom
+/visual-preview/index.html#patriot
+/visual-preview/index.html#cart
+/visual-preview/index.html#contact
 ```
 
 Run visual QA:
@@ -29,7 +39,9 @@ What this verifies:
 
 - Desktop/mobile rhythm for the custom section system.
 - Hero visual treatment using the generated poster from the supplied hero video.
-- Product comparison, service, add-ons, package, capability table, FAQ, trust band, product detail, cart review, and contact form layout.
+- Home landing page layout without product-detail ordering forms.
+- Product comparison, package, FAQ, trust band, product detail, cart review, and contact form layout in their correct preview routes.
+- Product detail pages keep the carousel thumbnails, service choices, and add-on options isolated from the landing page.
 - Local cart display of selected service/add-on setup details.
 - Text wrapping and horizontal overflow risk before Shopify auth exists.
 
