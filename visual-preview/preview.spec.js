@@ -85,6 +85,7 @@ test.describe('Independence Phone visual preview', () => {
       await expect(page.locator('.ip-hero video.ip-hero__video'), 'Hero should render as a video').toHaveCount(1);
       await expect(page.locator('.ip-hero img.ip-hero__image'), 'Hero should not fall back to a poster image in the preview').toHaveCount(0);
       await expect(page.locator('.ip-hero__foreground'), 'Hero should not render a foreground phone layer').toHaveCount(0);
+      await expect(page.locator('.preview-ribbon'), 'Preview-only navigation ribbon should not render').toHaveCount(0);
       await expect(page.locator('.ip-feature-strip .ip-strip__icon img'), 'Feature cards should use custom icon image assets').toHaveCount(3);
       await expect(page.locator('.ip-feature-strip .ip-strip__icon svg'), 'Feature cards should not use generic inline SVG icons').toHaveCount(0);
       await expect(page.locator('.preview-mini-header details'), 'Preview header should expose a small-screen drawer').toHaveCount(1);
@@ -99,7 +100,6 @@ test.describe('Independence Phone visual preview', () => {
         const skipSelector = [
           '.ip-capability',
           '.ip-matrix',
-          '.preview-ribbon',
           '.preview-mini-header__drawer',
           '.ip-hero__foreground',
           '.ip-story-card',

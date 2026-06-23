@@ -20,6 +20,7 @@ The preview test now verifies:
 - Required scoped page markers render: Home, Choose Your Phone, Freedom product, Patriot product, Cart, Contact.
 - Required section slots render: hero, JTBD story, feature strip, product comparison, service plans, add-ons, capability table, package band, product pages, cart review, FAQ, contact, trust band.
 - Required positioning/product/service copy renders.
+- The preview-only navigation ribbon is absent; the deal banner and primary header are the only top navigation layers.
 - Two product forms render.
 - Product forms render two service/add-on option panels.
 - Product forms render four service-plan radio options across the two products.
