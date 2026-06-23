@@ -25,7 +25,15 @@
           <span>Total</span>
         </div>
         {% for item in cart.items %}
-          <article class="ip-card ip-cart-item">
+          {% assign cart_line_index = forloop.index %}
+          {% assign service_plan_value = '' %}
+          {% for property in item.properties %}
+            {% if property.first == 'Service plan' and property.last != blank %}
+              {% assign service_plan_value = property.last %}
+            {% endif %}
+          {% endfor %}
+
+          <article class="ip-card ip-cart-item" data-cart-line-item>
             <div class="ip-cart-item__media">
               {% if item.image %}
                 {% render 'image', image: item.image, url: item.url, width: 360 %}
@@ -43,26 +51,74 @@
                 <p class="ip-price" data-cart-line-price="{{ forloop.index }}">{{ item.final_line_price | money }}</p>
               </div>
 
-              {% if item.properties != empty %}
-                <dl class="ip-cart-properties" aria-label="Selected service and add-ons">
-                  {% for property in item.properties %}
-                    {% assign property_name = property.first %}
-                    {% assign property_value = property.last %}
-                    {% assign first_character = property_name | slice: 0 %}
-                    {% if property_value != blank and first_character != '_' %}
-                      <div>
-                        <dt>{{ property_name }}</dt>
-                        <dd>
-                          {% if property_value contains '/uploads/' %}
-                            <a href="{{ property_value }}">Uploaded file</a>
-                          {% else %}
-                            {{ property_value }}
+              <dl
+                class="ip-cart-properties"
+                aria-label="Selected service and add-ons"
+                data-cart-properties
+                {% if item.properties == empty %}
+                  hidden
+                {% endif %}
+              >
+                {% for property in item.properties %}
+                  {% assign property_name = property.first %}
+                  {% assign property_value = property.last %}
+                  {% assign first_character = property_name | slice: 0 %}
+                  {% if property_value != blank and first_character != '_' %}
+                    <div>
+                      <dt>{{ property_name }}</dt>
+                      <dd>
+                        {% if property_value contains '/uploads/' %}
+                          <a href="{{ property_value }}">Uploaded file</a>
+                        {% else %}
+                          {{ property_value }}
+                        {% endif %}
+                      </dd>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </dl>
+
+              {% assign addon_blocks = section.blocks | where: 'type', 'addon_option' %}
+              {% if addon_blocks.size > 0 %}
+                <div
+                  class="ip-cart-addons"
+                  data-cart-addon-selector
+                  data-cart-line="{{ forloop.index }}"
+                  data-service-name="Service plan"
+                  data-service-value="{{ service_plan_value | escape }}"
+                >
+                  <h3>{{ section.settings.addon_options_heading }}</h3>
+                  <div class="ip-cart-addons__grid">
+                    {% for block in addon_blocks %}
+                      {% assign addon_selected = false %}
+                      {% for property in item.properties %}
+                        {% if property.first == block.settings.title and property.last != blank %}
+                          {% assign addon_selected = true %}
+                        {% endif %}
+                      {% endfor %}
+                      {% assign addon_input_id = 'CartAddon-' | append: cart_line_index | append: '-' | append: forloop.index %}
+                      <label class="ip-choice" for="{{ addon_input_id }}" {{ block.shopify_attributes }}>
+                        <input
+                          id="{{ addon_input_id }}"
+                          type="checkbox"
+                          data-cart-addon-option
+                          data-property-name="{{ block.settings.title | escape }}"
+                          data-property-value="{{ block.settings.price | escape }}"
+                          {% if addon_selected %}
+                            checked
                           {% endif %}
-                        </dd>
-                      </div>
-                    {% endif %}
-                  {% endfor %}
-                </dl>
+                        >
+                        <span>
+                          <strong>{{ block.settings.title }}</strong>
+                          <small>{{ block.settings.price }}</small>
+                        </span>
+                      </label>
+                    {% endfor %}
+                  </div>
+                  {% if section.settings.addon_options_note != blank %}
+                    <p class="ip-form-note">{{ section.settings.addon_options_note }}</p>
+                  {% endif %}
+                </div>
               {% endif %}
 
               <div class="ip-cart-item__actions">
@@ -112,6 +168,39 @@
 {% schema %}
 {
   "name": "t:general.cart",
-  "settings": []
+  "settings": [
+    {
+      "type": "text",
+      "id": "addon_options_heading",
+      "label": "Add-on options heading",
+      "default": "Available add-ons"
+    },
+    {
+      "type": "textarea",
+      "id": "addon_options_note",
+      "label": "Add-on options note",
+      "default": "Add-ons are saved with this phone line so setup can be confirmed after checkout."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "addon_option",
+      "name": "Add-on option",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Call Recording"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price",
+          "default": "$5/mo"
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}

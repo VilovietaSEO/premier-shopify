@@ -155,6 +155,8 @@ async function collectRouteReport(page) {
       visibleFeatureIconSvgCount: [...document.querySelectorAll('.ip-feature-strip .ip-strip__icon svg')].filter((element) => isVisible(element)).length,
       visiblePreviewCartEmptyCount: [...document.querySelectorAll('[data-preview-cart-empty]')].filter((element) => isVisible(element)).length,
       visiblePreviewCartFormCount: [...document.querySelectorAll('[data-preview-cart]')].filter((element) => isVisible(element)).length,
+      visibleCartAddonSelectorCount: [...document.querySelectorAll('[data-cart-addon-selector]')].filter((element) => isVisible(element)).length,
+      visibleCartAddonOptionCount: [...document.querySelectorAll('[data-cart-addon-option]')].filter((element) => isVisible(element)).length,
       visibleCartPropertyListCount: [...document.querySelectorAll('.ip-cart-properties')].filter((element) => isVisible(element)).length,
       visibleCartPropertyRowCount: [...document.querySelectorAll('.ip-cart-properties > div')].filter((element) => isVisible(element)).length,
       visibleContactFormCount: [...document.querySelectorAll('.ip-contact-form')].filter((element) => isVisible(element)).length,
@@ -328,9 +330,21 @@ test.describe('Independence Phone visual preview', () => {
         await expect(page.locator('[data-preview-cart-title]')).toHaveText(productRoute.heading);
         await expect(page.locator('[data-slot="cart.review"] [data-cart-line-price]')).toHaveText(productRoute.expectedLinePrice);
         await expect(page.locator('[data-slot="cart.review"] [data-cart-subtotal]')).toHaveText(productRoute.expectedLinePrice);
+        await expect(page.locator('[data-cart-addon-selector]')).toBeVisible();
+        await expect(page.locator('[data-cart-addon-option]')).toHaveCount(5);
+        for (const addonName of ['Call Recording', 'Time Conditions', 'Voicemail to Email', 'Victory Bundle', 'Auto Attendant']) {
+          await expect(page.locator('[data-cart-addon-selector]').getByText(addonName, { exact: true })).toBeVisible();
+        }
         for (const property of productRoute.expectedProperties) {
           await expect(page.locator('.ip-cart-properties').getByText(property, { exact: false })).toBeVisible();
         }
+
+        const cartAddon = page.locator('[data-cart-addon-option][data-property-name="Auto Attendant"]');
+        await cartAddon.check();
+        await expect(page.locator('.ip-cart-properties').getByText('Auto Attendant', { exact: true })).toBeVisible();
+        await expect(page.locator('[data-slot="cart.review"] [data-cart-status]')).toContainText('Cart add-ons updated.');
+        await cartAddon.uncheck();
+        await expect(page.locator('.ip-cart-properties').getByText('Auto Attendant', { exact: true })).toHaveCount(0);
 
         await page.locator('[data-preview-remove]').click();
         await expect(page.locator('[data-preview-cart]')).toBeHidden();
@@ -352,6 +366,8 @@ test.describe('Independence Phone visual preview', () => {
       expect(cartReport.visibleProductFormCount).toBe(0);
       expect(cartReport.visiblePreviewCartEmptyCount).toBe(1);
       expect(cartReport.visiblePreviewCartFormCount).toBe(0);
+      expect(cartReport.visibleCartAddonSelectorCount).toBe(0);
+      expect(cartReport.visibleCartAddonOptionCount).toBe(0);
       expect(cartReport.visibleCartPropertyListCount).toBe(0);
       expect(cartReport.visibleCartPropertyRowCount).toBe(0);
       expect(cartReport.visibleContactFormCount).toBe(0);

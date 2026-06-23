@@ -1218,6 +1218,27 @@ summary:focus-visible {
   overflow-wrap: anywhere;
 }
 
+.ip-cart-addons {
+  border-top: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 10%, transparent);
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.ip-cart-addons h3 {
+  color: var(--ip-blue, #263F73);
+  font-size: 0.86rem;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.ip-cart-addons__grid {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .ip-cart__summary {
   align-self: start;
   display: grid;
@@ -1504,6 +1525,7 @@ footer .footer__payment svg {
   .ip-plan-grid,
   .ip-addon-grid,
   .ip-cart-item,
+  .ip-cart-addons__grid,
   .ip-cart-properties > div,
 	  .ip-story__cards,
 	  .ip-strip__items {

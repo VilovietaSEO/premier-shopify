@@ -608,9 +608,35 @@
                     </div>
                     <p class="ip-price" data-cart-line-price="1">$99</p>
                   </div>
-                  <dl class="ip-cart-properties" aria-label="Selected service and add-ons" data-preview-cart-properties>
+                  <dl class="ip-cart-properties" aria-label="Selected service and add-ons" data-preview-cart-properties data-cart-properties>
                     <div><dt>Service plan</dt><dd>Monthly service - $17.76/mo</dd></div>
                   </dl>
+                  <div class="ip-cart-addons" data-cart-addon-selector data-cart-line="1" data-service-name="Service plan" data-service-value="Monthly service - $17.76/mo">
+                    <h3>Available add-ons</h3>
+                    <div class="ip-cart-addons__grid">
+                      <label class="ip-choice" for="preview-cart-recording">
+                        <input id="preview-cart-recording" type="checkbox" data-cart-addon-option data-property-name="Call Recording" data-property-value="$5/mo">
+                        <span><strong>Call Recording</strong><small>$5/mo</small></span>
+                      </label>
+                      <label class="ip-choice" for="preview-cart-time">
+                        <input id="preview-cart-time" type="checkbox" data-cart-addon-option data-property-name="Time Conditions" data-property-value="$5/mo">
+                        <span><strong>Time Conditions</strong><small>$5/mo</small></span>
+                      </label>
+                      <label class="ip-choice" for="preview-cart-voicemail">
+                        <input id="preview-cart-voicemail" type="checkbox" data-cart-addon-option data-property-name="Voicemail to Email" data-property-value="$5/mo">
+                        <span><strong>Voicemail to Email</strong><small>$5/mo</small></span>
+                      </label>
+                      <label class="ip-choice" for="preview-cart-victory">
+                        <input id="preview-cart-victory" type="checkbox" data-cart-addon-option data-property-name="Victory Bundle" data-property-value="$10/mo">
+                        <span><strong>Victory Bundle</strong><small>$10/mo</small></span>
+                      </label>
+                      <label class="ip-choice" for="preview-cart-attendant">
+                        <input id="preview-cart-attendant" type="checkbox" data-cart-addon-option data-property-name="Auto Attendant" data-property-value="$5/mo">
+                        <span><strong>Auto Attendant</strong><small>$5/mo</small></span>
+                      </label>
+                    </div>
+                    <p class="ip-form-note">Add-ons are saved with this phone line so setup can be confirmed after checkout.</p>
+                  </div>
                   <div class="ip-cart-item__actions">
                     <label for="preview-cart-qty">Quantity</label>
                     <input id="preview-cart-qty" type="number" min="0" value="1" data-cart-quantity data-cart-line="1">

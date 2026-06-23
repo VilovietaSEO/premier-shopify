@@ -43,7 +43,7 @@ What this verifies:
 - Product comparison, package, FAQ, trust band, product detail, cart review, and contact form layout in their correct preview routes.
 - Product detail pages keep the carousel thumbnails, service choices, and add-on options isolated from the landing page.
 - Local cart display of selected service/add-on setup details.
-- Preview cart empty state, cart count, add-to-cart, remove, and quantity/subtotal updates for both phone models.
+- Preview cart empty state, cart count, add-to-cart, remove, quantity/subtotal updates, and always-visible cart add-on controls for both phone models.
 - Text wrapping and horizontal overflow risk before Shopify auth exists.
 
 What this does not verify:

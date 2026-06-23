@@ -11,6 +11,50 @@
   "sections": {
     "main": {
       "type": "cart",
+      "blocks": {
+        "addon_recording": {
+          "type": "addon_option",
+          "settings": {
+            "title": "Call Recording",
+            "price": "$5/mo"
+          }
+        },
+        "addon_time_conditions": {
+          "type": "addon_option",
+          "settings": {
+            "title": "Time Conditions",
+            "price": "$5/mo"
+          }
+        },
+        "addon_voicemail": {
+          "type": "addon_option",
+          "settings": {
+            "title": "Voicemail to Email",
+            "price": "$5/mo"
+          }
+        },
+        "addon_victory": {
+          "type": "addon_option",
+          "settings": {
+            "title": "Victory Bundle",
+            "price": "$10/mo"
+          }
+        },
+        "addon_attendant": {
+          "type": "addon_option",
+          "settings": {
+            "title": "Auto Attendant",
+            "price": "$5/mo"
+          }
+        }
+      },
+      "block_order": [
+        "addon_recording",
+        "addon_time_conditions",
+        "addon_voicemail",
+        "addon_victory",
+        "addon_attendant"
+      ],
       "settings": {}
     }
   },

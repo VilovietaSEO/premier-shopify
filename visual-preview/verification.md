@@ -26,6 +26,8 @@ The preview test now verifies:
 - Cart and Contact render in their own routes without product ordering forms.
 - The Cart route renders as a standalone cart page with a true empty-cart state when no preview item has been added.
 - Product add-to-cart updates the preview cart count, carries the selected phone model into the cart, and updates line totals/subtotal live.
+- Cart review always shows all five add-on options for the active phone line, with selected add-ons checked.
+- Cart add-on checkbox changes update the selected setup-property summary live.
 - Preview cart remove clears the cart item and returns the Cart route to the empty state.
 - Required positioning/product/service copy renders.
 - The preview-only navigation ribbon is absent; the deal banner and primary header are the only top navigation layers.

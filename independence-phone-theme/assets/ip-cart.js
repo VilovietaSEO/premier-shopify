@@ -113,6 +113,7 @@
     previewCart.quantity = Math.max(0, Number(quantity) || 0);
     const total = previewCart.price * previewCart.quantity;
     const hasItems = previewCart.quantity > 0;
+    const serviceProperty = previewCart.properties.find((property) => property.name === 'Service plan');
 
     setCartCount(previewCart.quantity);
     document.querySelectorAll('[data-preview-cart-empty]').forEach((empty) => {
@@ -137,16 +138,14 @@
       price.textContent = formatMoney(total, previewCart.currency);
     });
     document.querySelectorAll('[data-preview-cart-properties]').forEach((list) => {
-      list.hidden = previewCart.properties.length === 0;
-      list.replaceChildren(...previewCart.properties.map((property) => {
-        const row = document.createElement('div');
-        const term = document.createElement('dt');
-        const detail = document.createElement('dd');
-        term.textContent = property.name;
-        detail.textContent = property.value;
-        row.append(term, detail);
-        return row;
-      }));
+      renderPropertyList(list, previewCart.properties);
+    });
+    document.querySelectorAll('[data-cart-addon-selector]').forEach((selector) => {
+      if (serviceProperty) {
+        selector.dataset.serviceName = serviceProperty.name;
+        selector.dataset.serviceValue = serviceProperty.value;
+      }
+      syncAddonSelector(selector, previewCart.properties);
     });
     savePreviewCart();
   };
@@ -158,7 +157,28 @@
     return { title, price };
   };
 
-  const getPreviewProperties = (form) => {
+  const renderPropertyList = (list, properties) => {
+    if (!list) return;
+    list.hidden = properties.length === 0;
+    list.replaceChildren(...properties.map((property) => {
+      const row = document.createElement('div');
+      const term = document.createElement('dt');
+      const detail = document.createElement('dd');
+      term.textContent = property.name;
+      detail.textContent = property.value;
+      row.append(term, detail);
+      return row;
+    }));
+  };
+
+  const syncAddonSelector = (selector, properties) => {
+    const selectedNames = new Set(properties.map((property) => property.name));
+    selector.querySelectorAll('[data-cart-addon-option]').forEach((input) => {
+      input.checked = selectedNames.has(input.dataset.propertyName);
+    });
+  };
+
+  const getProductFormProperties = (form) => {
     const service = form.querySelector('.ip-choice-group input[type="radio"]:checked');
     const properties = [];
     if (service) {
@@ -180,13 +200,37 @@
     return properties;
   };
 
+  const getCartAddonProperties = (selector) => {
+    const properties = [];
+    const serviceName = selector.dataset.serviceName || 'Service plan';
+    const serviceValue = selector.dataset.serviceValue || '';
+
+    if (serviceValue) {
+      properties.push({ name: serviceName, value: serviceValue });
+    }
+
+    selector.querySelectorAll('[data-cart-addon-option]:checked').forEach((input) => {
+      properties.push({
+        name: input.dataset.propertyName,
+        value: input.dataset.propertyValue || 'Selected',
+      });
+    });
+
+    return properties;
+  };
+
+  const propertiesToObject = (properties) => properties.reduce((next, property) => {
+    if (property.name && property.value) next[property.name] = property.value;
+    return next;
+  }, {});
+
   const addPreviewProduct = (form, submitter) => {
     previewCart.title = form.dataset.productTitle || previewCart.title;
     previewCart.price = Number(form.dataset.productPriceCents || previewCart.price);
     previewCart.currency = form.dataset.productCurrency || previewCart.currency;
     previewCart.imageSrc = form.dataset.productImageSrc || previewCart.imageSrc;
     previewCart.imageAlt = form.dataset.productImageAlt || previewCart.title;
-    previewCart.properties = getPreviewProperties(form);
+    previewCart.properties = getProductFormProperties(form);
     previewCart.quantity = Math.max(1, Number(form.querySelector('[name="quantity"]')?.value || 1));
     updatePreviewCart(previewCart.quantity);
     setStatus(form, `Added ${previewCart.quantity} ${previewCart.title}${previewCart.quantity === 1 ? '' : 's'} to cart.`);
@@ -195,6 +239,41 @@
       window.setTimeout(() => {
         submitter.textContent = 'Add to cart';
       }, 1600);
+    }
+  };
+
+  const updatePreviewAddons = (input) => {
+    const selector = input.closest('[data-cart-addon-selector]');
+    if (!selector) return;
+    previewCart.properties = getCartAddonProperties(selector);
+    updatePreviewCart(previewCart.quantity);
+    setStatus(selector.closest('[data-preview-cart]'), 'Cart add-ons updated.');
+  };
+
+  const updateCartAddons = async (input) => {
+    const selector = input.closest('[data-cart-addon-selector]');
+    const form = input.closest('[data-cart-form]');
+    const lineItem = input.closest('[data-cart-line-item]');
+    const line = Number(selector?.dataset.cartLine || 0);
+    const quantity = Math.max(0, Number(lineItem?.querySelector('[data-cart-quantity]')?.value || 1));
+    const properties = getCartAddonProperties(selector);
+    if (!line) return;
+
+    setBusy(form, true);
+    try {
+      const cart = await fetchJson(endpoint('cart/change.js'), {
+        body: JSON.stringify({ line, quantity, properties: propertiesToObject(properties) }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      });
+      renderCart(cart);
+      renderPropertyList(lineItem?.querySelector('[data-cart-properties]'), properties);
+      setStatus(form, 'Cart add-ons updated.');
+    } catch (error) {
+      setStatus(form, error.message, 'error');
+      input.checked = !input.checked;
+    } finally {
+      setBusy(form, false);
     }
   };
 
@@ -261,6 +340,16 @@
   });
 
   document.addEventListener('change', (event) => {
+    const addon = event.target.closest('[data-cart-addon-option]');
+    if (addon) {
+      if (addon.closest('[data-preview-cart]')) {
+        updatePreviewAddons(addon);
+        return;
+      }
+      updateCartAddons(addon);
+      return;
+    }
+
     const input = event.target.closest('[data-cart-quantity]');
     if (!input) return;
 

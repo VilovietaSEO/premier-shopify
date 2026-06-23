@@ -530,9 +530,20 @@ assertFile('store-setup/README.md', 'Store setup README');
 assertFileIncludes('independence-phone-theme/sections/cart.liquid', [
   'item.properties',
   'ip-cart-properties',
+  'ip-cart-addons',
+  'data-cart-addon-selector',
+  'data-cart-addon-option',
   'Selected service and add-ons',
+  'Available add-ons',
   'Service and add-on selections are shown for setup confirmation.',
 ], 'Local cart section');
+assertFileIncludes('independence-phone-theme/templates/cart.json', [
+  'addon_recording',
+  'addon_time_conditions',
+  'addon_voicemail',
+  'addon_victory',
+  'addon_attendant',
+], 'Cart template add-on blocks');
 assertFileIncludes('independence-phone-theme/sections/header.liquid', [
   'aria-label="Main menu"',
   'ip-independence-phone-logo.png',
@@ -582,6 +593,8 @@ assertFile('visual-preview/index.html', 'Visual preview page');
 assertFileIncludes('visual-preview/preview.spec.js', [
   'cart.review',
   'ip-cart-properties',
+  'visibleCartAddonOptionCount',
+  'Auto Attendant',
   'visibleCartPropertyRowCount',
   'visibleProductFormCount',
 ], 'Visual preview test');
