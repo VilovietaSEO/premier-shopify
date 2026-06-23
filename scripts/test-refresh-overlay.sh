@@ -28,6 +28,7 @@ LIQUID
 
 required_files=(
   "assets/ip-theme.css"
+	  "assets/ip-cart.js"
 	  "assets/ip-hero-video.mp4"
 	  "assets/ip-hero-video-poster.jpg"
 	  "sections/ip-announcement-banner.liquid"
@@ -51,6 +52,12 @@ done
 stylesheet_count="$(grep -c "ip-theme.css" "$tmp_theme/layout/theme.liquid" || true)"
 if [ "$stylesheet_count" -ne 1 ]; then
   echo "Expected one ip-theme.css include after repeated overlay application, found $stylesheet_count" >&2
+  exit 1
+fi
+
+cart_script_count="$(grep -c "ip-cart.js" "$tmp_theme/layout/theme.liquid" || true)"
+if [ "$cart_script_count" -ne 1 ]; then
+  echo "Expected one ip-cart.js include after repeated overlay application, found $cart_script_count" >&2
   exit 1
 fi
 

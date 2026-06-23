@@ -187,6 +187,9 @@ test.describe('Independence Phone visual preview', () => {
   for (const viewport of viewports) {
     test(`${viewport.name} keeps home, product, cart, and contact previews isolated`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.addInitScript(() => {
+        window.sessionStorage.removeItem('ipPreviewCart');
+      });
 
       await openPreviewRoute(page, 'home', 'home');
       await triggerLazyImages(page);
@@ -229,6 +232,7 @@ test.describe('Independence Phone visual preview', () => {
       await expect(page.locator('[data-slot="product.patriot"]')).toBeHidden();
       await expect(page.locator('[data-slot="cart.review"]')).toBeHidden();
       await expect(page.locator('[data-slot="contact.form"]')).toBeHidden();
+      await expect(page.locator('[data-cart-count]').first()).toBeHidden();
       await expect(page.locator('[data-slot="products.compare"] a[href="?route=freedom"]')).toHaveCount(1);
       await expect(page.locator('[data-slot="products.compare"] a[href="?route=patriot"]')).toHaveCount(1);
       await expect(page.locator('a[href="#freedom"], a[href="#patriot"]')).toHaveCount(0);
@@ -269,8 +273,17 @@ test.describe('Independence Phone visual preview', () => {
         await expect(page.locator(`[data-slot="${productRoute.slot}"] .ip-product-main__thumb img`)).toHaveCount(2);
         await expect(page.locator(`[data-slot="${productRoute.slot}"] .ip-product-form`)).toBeVisible();
         await expect(page.locator(`[data-slot="${productRoute.slot}"]`).getByText(productRoute.heading, { exact: true })).toBeVisible();
+
+        if (productRoute.hash === 'freedom') {
+          await page.locator(`[data-slot="${productRoute.slot}"] .ip-product-form [name="quantity"]`).fill('2');
+          await page.locator(`[data-slot="${productRoute.slot}"] [data-add-to-cart-button]`).click();
+          await expect(page.locator(`[data-slot="${productRoute.slot}"] [data-cart-status]`)).toContainText('Added 2 Freedom Phones to cart.');
+          await expect(page.locator('[data-cart-count]').first()).toHaveText('2');
+          await page.evaluate(() => window.sessionStorage.removeItem('ipPreviewCart'));
+        }
       }
 
+      await page.evaluate(() => window.sessionStorage.removeItem('ipPreviewCart'));
       await openPreviewRoute(page, 'cart');
       await triggerLazyImages(page);
 
@@ -292,6 +305,11 @@ test.describe('Independence Phone visual preview', () => {
       await expect(page.locator('[data-slot="cart.review"]').getByText('Continue shopping', { exact: true })).toBeVisible();
       await expect(page.locator('.ip-cart-properties').getByText('Monthly service - $17.76/mo')).toBeVisible();
       await expect(page.locator('.ip-cart-properties').getByText('Victory Bundle')).toBeVisible();
+      await page.locator('[data-slot="cart.review"] [data-cart-quantity]').fill('2');
+      await page.locator('[data-slot="cart.review"] [data-cart-quantity]').dispatchEvent('change');
+      await expect(page.locator('[data-slot="cart.review"] [data-cart-line-price]')).toHaveText('$198.00');
+      await expect(page.locator('[data-slot="cart.review"] [data-cart-subtotal]')).toHaveText('$198.00');
+      await expect(page.locator('[data-cart-count]').first()).toHaveText('2');
 
       await openPreviewRoute(page, 'contact');
       await triggerLazyImages(page);

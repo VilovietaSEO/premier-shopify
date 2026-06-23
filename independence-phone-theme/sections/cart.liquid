@@ -18,7 +18,7 @@
       <a class="ip-button" href="{{ routes.collections_url }}/phones">Choose your phone</a>
     </div>
   {% else %}
-    <form action="{{ routes.cart_url }}" method="post" class="ip-cart__form">
+    <form action="{{ routes.cart_url }}" method="post" class="ip-cart__form" data-cart-form>
       <div class="ip-cart__items">
         <div class="ip-cart__table-head" aria-hidden="true">
           <span>Product</span>
@@ -40,7 +40,7 @@
                     <p class="ip-note">{{ item.variant.title }}</p>
                   {% endunless %}
                 </div>
-                <p class="ip-price">{{ item.final_line_price | money }}</p>
+                <p class="ip-price" data-cart-line-price="{{ forloop.index }}">{{ item.final_line_price | money }}</p>
               </div>
 
               {% if item.properties != empty %}
@@ -72,6 +72,8 @@
                   type="number"
                   name="updates[]"
                   min="0"
+                  data-cart-quantity
+                  data-cart-line="{{ forloop.index }}"
                   value="{{ item.quantity }}"
                 >
                 <a href="{{ item.url_to_remove }}">{{ 'cart.remove' | t }}</a>
@@ -86,7 +88,7 @@
         <dl class="ip-cart__totals">
           <div>
             <dt>Subtotal</dt>
-            <dd>{{ cart.total_price | money }}</dd>
+            <dd data-cart-subtotal>{{ cart.total_price | money }}</dd>
           </div>
           <div>
             <dt>Shipping</dt>
@@ -96,6 +98,7 @@
         <p class="ip-note">
           Service and add-on selections are shown for setup confirmation. Taxes, shipping, and recurring billing are finalized through the approved store setup.
         </p>
+        <p class="ip-form-note" data-cart-status aria-live="polite" hidden></p>
         <div class="ip-buttons">
           <button type="submit" name="update">{{ 'cart.update' | t }}</button>
           <button type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>

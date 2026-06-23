@@ -870,6 +870,27 @@ summary:focus-visible {
   font-size: 0.86rem;
 }
 
+.ip-form-note[data-cart-status] {
+  background: color-mix(in srgb, var(--ip-blue, #263F73) 8%, #fff);
+  border: 1px solid color-mix(in srgb, var(--ip-blue, #263F73) 16%, transparent);
+  border-radius: 6px;
+  color: var(--ip-blue, #263F73);
+  font-weight: 800;
+  padding: 0.75rem;
+}
+
+.ip-form-note[data-cart-status][data-state="error"] {
+  background: color-mix(in srgb, var(--ip-red, #B73532) 8%, #fff);
+  border-color: color-mix(in srgb, var(--ip-red, #B73532) 18%, transparent);
+  color: var(--ip-red, #B73532);
+}
+
+.ip-product-form[aria-busy="true"] button,
+.ip-cart__form[aria-busy="true"] button {
+  cursor: progress;
+  opacity: 0.72;
+}
+
 .ip-product-main {
   align-items: start;
   display: grid;

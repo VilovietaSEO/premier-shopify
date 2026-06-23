@@ -43,12 +43,13 @@ What this verifies:
 - Product comparison, package, FAQ, trust band, product detail, cart review, and contact form layout in their correct preview routes.
 - Product detail pages keep the carousel thumbnails, service choices, and add-on options isolated from the landing page.
 - Local cart display of selected service/add-on setup details.
+- Preview cart count, add-to-cart, and quantity/subtotal updates.
 - Text wrapping and horizontal overflow risk before Shopify auth exists.
 
 What this does not verify:
 
 - Shopify Theme Editor controls.
-- Shopify product data, live cart updates, checkout, or contact form submission.
+- Shopify product data, actual checkout completion, or contact form submission.
 - Actual `Refresh` theme integration after pulling from a fresh store.
 
 Those checks remain in `independence-phone-theme/SHOPIFY_HANDOFF.md`.

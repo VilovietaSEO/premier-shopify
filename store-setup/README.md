@@ -122,6 +122,13 @@ Required collection:
 - Handle: `phones`
 - Template: `collection.phones`
 
+## Cart and Recurring Billing Boundary
+
+- Normal cart behavior does not require a Shopify app. The theme uses Shopify's native cart form plus Ajax cart endpoints for add-to-cart, live cart count, and quantity/subtotal updates.
+- The current product form captures monthly/annual service and add-ons as line-item properties so the order carries setup intent.
+- Line-item properties do not create recurring charges. If Independence Phone wants monthly service and add-ons to bill directly through Shopify checkout, configure selling plans through Shopify Subscriptions or another subscription app, then update the product form to submit the applicable `selling_plan` IDs.
+- Recurring add-ons should be modeled as subscription products/variants or app-managed subscription options, not only checkbox properties.
+
 ## Canonical Product Data
 
 ### Freedom Phone

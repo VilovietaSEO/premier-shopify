@@ -299,9 +299,18 @@
           </div>
         {% endif %}
 
-        <button type="submit" {% unless current_variant.available %}disabled{% endunless %}>
+        <button
+          type="submit"
+          data-add-to-cart-button
+          data-default-text="{% if current_variant.available %}Add to cart{% else %}Sold out{% endif %}"
+          {% unless current_variant.available %}
+            disabled
+          {% endunless %}
+        >
           {% if current_variant.available %}Add to cart{% else %}Sold out{% endif %}
         </button>
+
+        <p class="ip-form-note" data-cart-status aria-live="polite" hidden></p>
 
         {% if section.settings.show_dynamic_checkout %}
           {{ form | payment_button }}

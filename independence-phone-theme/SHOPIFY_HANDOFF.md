@@ -277,6 +277,8 @@ Current product form behavior:
 - The product form captures selected service plan as a `Service plan` line-item property.
 - The product form captures selected add-ons as line-item properties named for each add-on.
 - This is purchase/setup intent capture, not a final recurring billing engine.
+- Native cart count, add-to-cart, quantity update, and checkout routing are theme-native and do not require a Shopify app.
+- True recurring billing through Shopify checkout requires selling plans from Shopify Subscriptions or another subscription app. At that point, service and add-ons need selling plan IDs or subscription products/variants instead of only line-item property checkboxes.
 
 If Rev.io or Shopify app integration requires service/add-ons as separate products, keep the storefront copy but change the cart/checkout modeling behind it. Do not turn the public catalog into a broad product grid.
 

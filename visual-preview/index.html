@@ -6,6 +6,7 @@
     <title>Independence Phone Visual Preview</title>
     <link rel="stylesheet" href="../independence-phone-theme/assets/critical.css">
     <link rel="stylesheet" href="../independence-phone-theme/assets/ip-theme.css">
+    <script src="../independence-phone-theme/assets/ip-cart.js" defer></script>
     <style>
       :root {
         --font-primary--family: "Work Sans", "Trebuchet MS", Arial, sans-serif;
@@ -225,7 +226,7 @@
       <nav aria-label="Store navigation">
         <a href="./index.html">Home</a>
         <a href="./index.html#choose">Choose Your Phone</a>
-        <a href="?route=cart">Cart</a>
+        <a href="?route=cart">Cart <sup data-cart-count hidden>0</sup></a>
         <a href="?route=contact">Contact</a>
       </nav>
       <details>
@@ -233,7 +234,7 @@
         <div class="preview-mini-header__drawer" aria-label="Store navigation">
           <a href="./index.html">Home</a>
           <a href="./index.html#choose">Choose Your Phone</a>
-          <a href="?route=cart">Cart</a>
+          <a href="?route=cart">Cart <sup data-cart-count hidden>0</sup></a>
           <a href="?route=contact">Contact</a>
         </div>
       </details>
@@ -432,9 +433,9 @@
               <li>Built-in Bluetooth 5.0</li>
               <li>9-hour talk time, 200-hour standby battery</li>
             </ul>
-            <form class="ip-product-form">
+            <form class="ip-product-form" data-preview-product-form data-product-title="Freedom Phone" data-product-price-cents="9900" data-product-currency="USD">
               <label for="freedom-qty">Quantity</label>
-              <input id="freedom-qty" type="number" min="1" value="1">
+              <input id="freedom-qty" type="number" name="quantity" min="1" value="1">
               <div class="ip-product-options">
                 <h2>Choose service and add-ons</h2>
                 <fieldset class="ip-choice-group">
@@ -458,7 +459,8 @@
                 </fieldset>
                 <p class="ip-form-note">Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout.</p>
               </div>
-              <button type="button">Add to cart</button>
+              <button type="submit" data-add-to-cart-button data-default-text="Add to cart">Add to cart</button>
+              <p class="ip-form-note" data-cart-status aria-live="polite" hidden></p>
             </form>
             <div class="ip-disclosures">
               <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
@@ -503,9 +505,9 @@
               <li>Built-in Bluetooth 5.0</li>
               <li>13-hour talk time, 300-hour standby battery</li>
             </ul>
-            <form class="ip-product-form">
+            <form class="ip-product-form" data-preview-product-form data-product-title="Patriot Phone" data-product-price-cents="14900" data-product-currency="USD">
               <label for="patriot-qty">Quantity</label>
-              <input id="patriot-qty" type="number" min="1" value="1">
+              <input id="patriot-qty" type="number" name="quantity" min="1" value="1">
               <div class="ip-product-options">
                 <h2>Choose service and add-ons</h2>
                 <fieldset class="ip-choice-group">
@@ -529,7 +531,8 @@
                 </fieldset>
                 <p class="ip-form-note">Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout.</p>
               </div>
-              <button type="button">Add to cart</button>
+              <button type="submit" data-add-to-cart-button data-default-text="Add to cart">Add to cart</button>
+              <p class="ip-form-note" data-cart-status aria-live="polite" hidden></p>
             </form>
             <div class="ip-disclosures">
               <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
@@ -546,7 +549,7 @@
             <h1 class="ip-heading ip-heading--medium">Your cart</h1>
             <p class="ip-note">Review your phone, service choices, and add-ons before checkout.</p>
           </div>
-          <form class="ip-cart__form">
+          <form class="ip-cart__form" data-preview-cart>
             <div class="ip-cart__items">
               <div class="ip-cart__table-head" aria-hidden="true">
                 <span>Product</span>
@@ -559,10 +562,10 @@
                 <div class="ip-cart-item__body">
                   <div class="ip-cart-item__heading">
                     <div>
-                      <h2>Freedom Phone</h2>
+                      <h2 data-preview-cart-title>Freedom Phone</h2>
                       <p class="ip-note">Default Title</p>
                     </div>
-                    <p class="ip-price">$99</p>
+                    <p class="ip-price" data-cart-line-price="1">$99</p>
                   </div>
                   <dl class="ip-cart-properties" aria-label="Selected service and add-ons">
                     <div><dt>Service plan</dt><dd>Monthly service - $17.76/mo</dd></div>
@@ -571,8 +574,8 @@
                   </dl>
                   <div class="ip-cart-item__actions">
                     <label for="preview-cart-qty">Quantity</label>
-                    <input id="preview-cart-qty" type="number" min="0" value="1">
-                    <a href="#cart">Remove</a>
+                    <input id="preview-cart-qty" type="number" min="0" value="1" data-cart-quantity data-cart-line="1">
+                    <a href="?route=cart" data-preview-remove>Remove</a>
                   </div>
                 </div>
               </article>
@@ -580,10 +583,11 @@
             <div class="ip-card ip-cart__summary">
               <h2>Order summary</h2>
               <dl class="ip-cart__totals">
-                <div><dt>Subtotal</dt><dd>$99</dd></div>
+                <div><dt>Subtotal</dt><dd data-cart-subtotal>$99</dd></div>
                 <div><dt>Shipping</dt><dd>Calculated at checkout</dd></div>
               </dl>
               <p class="ip-note">Service and add-on selections are shown for setup confirmation. Taxes, shipping, and recurring billing are finalized through the approved store setup.</p>
+              <p class="ip-form-note" data-cart-status aria-live="polite" hidden></p>
               <div class="ip-buttons">
                 <button type="button" name="update">Update</button>
                 <button type="button" name="checkout">Checkout</button>
