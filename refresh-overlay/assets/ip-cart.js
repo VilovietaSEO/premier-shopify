@@ -8,7 +8,10 @@
   const previewStorageKey = 'ipPreviewCart';
   const previewCart = {
     currency: 'USD',
+    imageAlt: 'Freedom Phone',
+    imageSrc: '',
     price: 9900,
+    properties: [],
     quantity: 0,
     title: 'Freedom Phone',
   };
@@ -76,7 +79,10 @@
       const saved = JSON.parse(window.sessionStorage?.getItem(previewStorageKey) || 'null');
       if (!saved) return;
       previewCart.currency = saved.currency || previewCart.currency;
+      previewCart.imageAlt = saved.imageAlt || previewCart.imageAlt;
+      previewCart.imageSrc = saved.imageSrc || previewCart.imageSrc;
       previewCart.price = Number(saved.price || previewCart.price);
+      previewCart.properties = Array.isArray(saved.properties) ? saved.properties : [];
       previewCart.quantity = Math.max(0, Number(saved.quantity || 0));
       previewCart.title = saved.title || previewCart.title;
     } catch (_error) {
@@ -106,10 +112,21 @@
   const updatePreviewCart = (quantity = previewCart.quantity) => {
     previewCart.quantity = Math.max(0, Number(quantity) || 0);
     const total = previewCart.price * previewCart.quantity;
+    const hasItems = previewCart.quantity > 0;
 
     setCartCount(previewCart.quantity);
+    document.querySelectorAll('[data-preview-cart-empty]').forEach((empty) => {
+      empty.hidden = hasItems;
+    });
+    document.querySelectorAll('[data-preview-cart]').forEach((cart) => {
+      cart.hidden = !hasItems;
+    });
     document.querySelectorAll('[data-preview-cart-title]').forEach((title) => {
       title.textContent = previewCart.title;
+    });
+    document.querySelectorAll('[data-preview-cart-image]').forEach((image) => {
+      if (previewCart.imageSrc) image.src = previewCart.imageSrc;
+      image.alt = previewCart.imageAlt || previewCart.title;
     });
     document.querySelectorAll('[data-cart-quantity]').forEach((input) => {
       if (input.closest('[data-preview-cart]')) {
@@ -119,13 +136,57 @@
     document.querySelectorAll('[data-cart-line-price], [data-cart-subtotal]').forEach((price) => {
       price.textContent = formatMoney(total, previewCart.currency);
     });
+    document.querySelectorAll('[data-preview-cart-properties]').forEach((list) => {
+      list.hidden = previewCart.properties.length === 0;
+      list.replaceChildren(...previewCart.properties.map((property) => {
+        const row = document.createElement('div');
+        const term = document.createElement('dt');
+        const detail = document.createElement('dd');
+        term.textContent = property.name;
+        detail.textContent = property.value;
+        row.append(term, detail);
+        return row;
+      }));
+    });
     savePreviewCart();
+  };
+
+  const getChoiceDetails = (input) => {
+    const label = input.closest('label');
+    const title = label?.querySelector('strong')?.textContent?.trim() || input.value;
+    const price = label?.querySelector('small')?.textContent?.trim() || '';
+    return { title, price };
+  };
+
+  const getPreviewProperties = (form) => {
+    const service = form.querySelector('.ip-choice-group input[type="radio"]:checked');
+    const properties = [];
+    if (service) {
+      const details = getChoiceDetails(service);
+      properties.push({
+        name: service.closest('fieldset')?.querySelector('legend')?.textContent?.trim() || 'Service plan',
+        value: [details.title, details.price].filter(Boolean).join(' - '),
+      });
+    }
+
+    form.querySelectorAll('.ip-choice-group input[type="checkbox"]:checked').forEach((input) => {
+      const details = getChoiceDetails(input);
+      properties.push({
+        name: details.title,
+        value: details.price || input.value || 'Selected',
+      });
+    });
+
+    return properties;
   };
 
   const addPreviewProduct = (form, submitter) => {
     previewCart.title = form.dataset.productTitle || previewCart.title;
     previewCart.price = Number(form.dataset.productPriceCents || previewCart.price);
     previewCart.currency = form.dataset.productCurrency || previewCart.currency;
+    previewCart.imageSrc = form.dataset.productImageSrc || previewCart.imageSrc;
+    previewCart.imageAlt = form.dataset.productImageAlt || previewCart.title;
+    previewCart.properties = getPreviewProperties(form);
     previewCart.quantity = Math.max(1, Number(form.querySelector('[name="quantity"]')?.value || 1));
     updatePreviewCart(previewCart.quantity);
     setStatus(form, `Added ${previewCart.quantity} ${previewCart.title}${previewCart.quantity === 1 ? '' : 's'} to cart.`);
@@ -221,9 +282,6 @@
 
   if (document.querySelector('[data-preview-cart]')) {
     loadPreviewCart();
-    if (document.documentElement.dataset.previewRoute === 'cart' && previewCart.quantity === 0) {
-      previewCart.quantity = 1;
-    }
     updatePreviewCart(previewCart.quantity);
   }
 })();

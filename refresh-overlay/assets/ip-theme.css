@@ -9,6 +9,10 @@ body {
   line-height: 1.55;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .ip-main {
   background: var(--ip-paper, #fff);
 }

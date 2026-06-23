@@ -153,6 +153,8 @@ async function collectRouteReport(page) {
       visibleProductAddonCheckboxCount: [...document.querySelectorAll('.ip-product-form input[type="checkbox"]')].filter((element) => isVisible(element)).length,
       visibleFeatureIconImageCount: [...document.querySelectorAll('.ip-feature-strip .ip-strip__icon img')].filter((element) => isVisible(element)).length,
       visibleFeatureIconSvgCount: [...document.querySelectorAll('.ip-feature-strip .ip-strip__icon svg')].filter((element) => isVisible(element)).length,
+      visiblePreviewCartEmptyCount: [...document.querySelectorAll('[data-preview-cart-empty]')].filter((element) => isVisible(element)).length,
+      visiblePreviewCartFormCount: [...document.querySelectorAll('[data-preview-cart]')].filter((element) => isVisible(element)).length,
       visibleCartPropertyListCount: [...document.querySelectorAll('.ip-cart-properties')].filter((element) => isVisible(element)).length,
       visibleCartPropertyRowCount: [...document.querySelectorAll('.ip-cart-properties > div')].filter((element) => isVisible(element)).length,
       visibleContactFormCount: [...document.querySelectorAll('.ip-contact-form')].filter((element) => isVisible(element)).length,
@@ -202,9 +204,6 @@ test.describe('Independence Phone visual preview', () => {
   for (const viewport of viewports) {
     test(`${viewport.name} keeps home, product, cart, and contact previews isolated`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await page.addInitScript(() => {
-        window.sessionStorage.removeItem('ipPreviewCart');
-      });
 
       await openPreviewRoute(page, 'home', 'home');
       await triggerLazyImages(page);
@@ -256,11 +255,31 @@ test.describe('Independence Phone visual preview', () => {
       await expect(page.getByText('Questions parents ask before choosing a simpler phone.', { exact: true })).toBeVisible();
 
       const productRoutes = [
-        { hash: 'freedom', slot: 'product.freedom', hiddenSlot: 'product.patriot', heading: 'Freedom Phone' },
-        { hash: 'patriot', slot: 'product.patriot', hiddenSlot: 'product.freedom', heading: 'Patriot Phone' },
+        {
+          hash: 'freedom',
+          slot: 'product.freedom',
+          hiddenSlot: 'product.patriot',
+          heading: 'Freedom Phone',
+          quantity: '2',
+          expectedLinePrice: '$198.00',
+          selectedAddons: ['#freedom-recording', '#freedom-victory'],
+          expectedProperties: ['Monthly service - $17.76/mo', 'Call Recording', 'Victory Bundle'],
+        },
+        {
+          hash: 'patriot',
+          slot: 'product.patriot',
+          hiddenSlot: 'product.freedom',
+          heading: 'Patriot Phone',
+          quantity: '1',
+          expectedLinePrice: '$149.00',
+          selectedService: '#patriot-annual',
+          selectedAddons: ['#patriot-time'],
+          expectedProperties: ['Annual service - $200/yr', 'Time Conditions'],
+        },
       ];
 
       for (const productRoute of productRoutes) {
+        await page.evaluate(() => window.sessionStorage.removeItem('ipPreviewCart'));
         await openPreviewRoute(page, productRoute.hash);
         await triggerLazyImages(page);
 
@@ -289,13 +308,34 @@ test.describe('Independence Phone visual preview', () => {
         await expect(page.locator(`[data-slot="${productRoute.slot}"] .ip-product-form`)).toBeVisible();
         await expect(page.locator(`[data-slot="${productRoute.slot}"]`).getByText(productRoute.heading, { exact: true })).toBeVisible();
 
-        if (productRoute.hash === 'freedom') {
-          await page.locator(`[data-slot="${productRoute.slot}"] .ip-product-form [name="quantity"]`).fill('2');
-          await page.locator(`[data-slot="${productRoute.slot}"] [data-add-to-cart-button]`).click();
-          await expect(page.locator(`[data-slot="${productRoute.slot}"] [data-cart-status]`)).toContainText('Added 2 Freedom Phones to cart.');
-          await expect(page.locator('[data-cart-count]').first()).toHaveText('2');
-          await page.evaluate(() => window.sessionStorage.removeItem('ipPreviewCart'));
+        if (productRoute.selectedService) {
+          await page.locator(productRoute.selectedService).check();
         }
+
+        for (const addon of productRoute.selectedAddons) {
+          await page.locator(addon).check();
+        }
+
+        await page.locator(`[data-slot="${productRoute.slot}"] .ip-product-form [name="quantity"]`).fill(productRoute.quantity);
+        await page.locator(`[data-slot="${productRoute.slot}"] [data-add-to-cart-button]`).click();
+        await expect(page.locator(`[data-slot="${productRoute.slot}"] [data-cart-status]`)).toContainText(`Added ${productRoute.quantity} ${productRoute.heading}${productRoute.quantity === '1' ? '' : 's'} to cart.`);
+        await expect(page.locator('[data-cart-count]').first()).toHaveText(productRoute.quantity);
+
+        await openPreviewRoute(page, 'cart');
+        await triggerLazyImages(page);
+        await expect(page.locator('[data-preview-cart-empty]')).toBeHidden();
+        await expect(page.locator('[data-preview-cart]')).toBeVisible();
+        await expect(page.locator('[data-preview-cart-title]')).toHaveText(productRoute.heading);
+        await expect(page.locator('[data-slot="cart.review"] [data-cart-line-price]')).toHaveText(productRoute.expectedLinePrice);
+        await expect(page.locator('[data-slot="cart.review"] [data-cart-subtotal]')).toHaveText(productRoute.expectedLinePrice);
+        for (const property of productRoute.expectedProperties) {
+          await expect(page.locator('.ip-cart-properties').getByText(property, { exact: false })).toBeVisible();
+        }
+
+        await page.locator('[data-preview-remove]').click();
+        await expect(page.locator('[data-preview-cart]')).toBeHidden();
+        await expect(page.locator('[data-preview-cart-empty]')).toBeVisible();
+        await expect(page.locator('[data-cart-count]').first()).toBeHidden();
       }
 
       await page.evaluate(() => window.sessionStorage.removeItem('ipPreviewCart'));
@@ -310,21 +350,17 @@ test.describe('Independence Phone visual preview', () => {
       expect(cartReport.visibleSlots).toEqual(['cart.review']);
       expect(cartReport.visibleProductMainCount).toBe(0);
       expect(cartReport.visibleProductFormCount).toBe(0);
-      expect(cartReport.visibleCartPropertyListCount).toBe(1);
-      expect(cartReport.visibleCartPropertyRowCount).toBeGreaterThanOrEqual(3);
+      expect(cartReport.visiblePreviewCartEmptyCount).toBe(1);
+      expect(cartReport.visiblePreviewCartFormCount).toBe(0);
+      expect(cartReport.visibleCartPropertyListCount).toBe(0);
+      expect(cartReport.visibleCartPropertyRowCount).toBe(0);
       expect(cartReport.visibleContactFormCount).toBe(0);
       await expect(page.locator('[data-slot="cart.review"]')).toBeVisible();
       await expect(page.locator('[data-slot="cart.review"]').getByText('Your cart', { exact: true })).toBeVisible();
-      await expect(page.locator('[data-slot="cart.review"]').getByText('Order summary', { exact: true })).toBeVisible();
-      await expect(page.locator('[data-slot="cart.review"]').getByText('Subtotal', { exact: true })).toBeVisible();
-      await expect(page.locator('[data-slot="cart.review"]').getByText('Continue shopping', { exact: true })).toBeVisible();
-      await expect(page.locator('.ip-cart-properties').getByText('Monthly service - $17.76/mo')).toBeVisible();
-      await expect(page.locator('.ip-cart-properties').getByText('Victory Bundle')).toBeVisible();
-      await page.locator('[data-slot="cart.review"] [data-cart-quantity]').fill('2');
-      await page.locator('[data-slot="cart.review"] [data-cart-quantity]').dispatchEvent('change');
-      await expect(page.locator('[data-slot="cart.review"] [data-cart-line-price]')).toHaveText('$198.00');
-      await expect(page.locator('[data-slot="cart.review"] [data-cart-subtotal]')).toHaveText('$198.00');
-      await expect(page.locator('[data-cart-count]').first()).toHaveText('2');
+      await expect(page.locator('[data-preview-cart-empty]').getByText('Your cart is empty.', { exact: true })).toBeVisible();
+      await expect(page.locator('[data-preview-cart-empty]').getByText('Choose your phone', { exact: true })).toBeVisible();
+      await expect(page.locator('[data-preview-cart]')).toBeHidden();
+      await expect(page.locator('[data-cart-count]').first()).toBeHidden();
 
       await openPreviewRoute(page, 'contact');
       await triggerLazyImages(page);

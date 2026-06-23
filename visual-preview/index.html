@@ -87,6 +87,22 @@
         text-decoration: none;
       }
 
+      .preview-mini-header sup[data-cart-count] {
+        align-items: center;
+        background: var(--ip-red, #B73532);
+        border-radius: 999px;
+        color: #fff;
+        display: inline-flex;
+        font-size: 0.68rem;
+        font-weight: 900;
+        justify-content: center;
+        line-height: 1;
+        margin-left: 0.28rem;
+        min-height: 1.12rem;
+        min-width: 1.12rem;
+        padding: 0 0.32rem;
+      }
+
       .preview-mini-header details {
         align-items: center;
         justify-content: center;
@@ -454,7 +470,7 @@
               <li>Built-in Bluetooth 5.0</li>
               <li>9-hour talk time, 200-hour standby battery</li>
             </ul>
-            <form class="ip-product-form" data-preview-product-form data-product-title="Freedom Phone" data-product-price-cents="9900" data-product-currency="USD">
+            <form class="ip-product-form" data-preview-product-form data-product-title="Freedom Phone" data-product-price-cents="9900" data-product-currency="USD" data-product-image-src="../independence-phone-theme/assets/ip-current-site-product-1.png" data-product-image-alt="Freedom Phone">
               <label for="freedom-qty">Quantity</label>
               <input id="freedom-qty" type="number" name="quantity" min="1" value="1">
               <div class="ip-product-options">
@@ -526,7 +542,7 @@
               <li>Built-in Bluetooth 5.0</li>
               <li>13-hour talk time, 300-hour standby battery</li>
             </ul>
-            <form class="ip-product-form" data-preview-product-form data-product-title="Patriot Phone" data-product-price-cents="14900" data-product-currency="USD">
+            <form class="ip-product-form" data-preview-product-form data-product-title="Patriot Phone" data-product-price-cents="14900" data-product-currency="USD" data-product-image-src="../independence-phone-theme/assets/ip-current-site-product-2.png" data-product-image-alt="Patriot Phone">
               <label for="patriot-qty">Quantity</label>
               <input id="patriot-qty" type="number" name="quantity" min="1" value="1">
               <div class="ip-product-options">
@@ -570,7 +586,11 @@
             <h1 class="ip-heading ip-heading--medium">Your cart</h1>
             <p class="ip-note">Review your phone, service choices, and add-ons before checkout.</p>
           </div>
-          <form class="ip-cart__form" data-preview-cart>
+          <div class="ip-card ip-cart__empty" data-preview-cart-empty>
+            <p>Your cart is empty.</p>
+            <a class="ip-button" href="./index.html#choose">Choose your phone</a>
+          </div>
+          <form class="ip-cart__form" data-preview-cart hidden>
             <div class="ip-cart__items">
               <div class="ip-cart__table-head" aria-hidden="true">
                 <span>Product</span>
@@ -578,7 +598,7 @@
               </div>
               <article class="ip-card ip-cart-item">
                 <div class="ip-cart-item__media">
-                  <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Freedom Phone" width="1200" height="1200">
+                  <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Freedom Phone" width="1200" height="1200" data-preview-cart-image>
                 </div>
                 <div class="ip-cart-item__body">
                   <div class="ip-cart-item__heading">
@@ -588,10 +608,8 @@
                     </div>
                     <p class="ip-price" data-cart-line-price="1">$99</p>
                   </div>
-                  <dl class="ip-cart-properties" aria-label="Selected service and add-ons">
+                  <dl class="ip-cart-properties" aria-label="Selected service and add-ons" data-preview-cart-properties>
                     <div><dt>Service plan</dt><dd>Monthly service - $17.76/mo</dd></div>
-                    <div><dt>Call Recording</dt><dd>$5/mo</dd></div>
-                    <div><dt>Victory Bundle</dt><dd>$10/mo</dd></div>
                   </dl>
                   <div class="ip-cart-item__actions">
                     <label for="preview-cart-qty">Quantity</label>
