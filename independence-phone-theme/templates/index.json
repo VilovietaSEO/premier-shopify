@@ -51,6 +51,7 @@
           "type": "feature",
           "settings": {
             "title": "Auto Attendant Call Screening",
+            "icon": "shield_check",
             "body": "Help screen unwanted calls before they interrupt the family phone."
           }
         },
@@ -58,6 +59,7 @@
           "type": "feature",
           "settings": {
             "title": "Call Recording",
+            "icon": "microphone",
             "body": "Keep a 90-day call record when your family needs extra visibility."
           }
         },
@@ -65,6 +67,7 @@
           "type": "feature",
           "settings": {
             "title": "Programmable On/Off Phone Times",
+            "icon": "clock",
             "body": "Set times for when incoming calls can ring through."
           }
         }

@@ -8,15 +8,28 @@
     </div>
     <div class="ip-strip__items">
       {% for block in section.blocks %}
+        {% liquid
+          assign icon_name = block.settings.icon
+          if icon_name == blank
+            case forloop.index
+              when 1
+                assign icon_name = 'shield_check'
+              when 2
+                assign icon_name = 'microphone'
+              else
+                assign icon_name = 'clock'
+            endcase
+          endif
+        %}
         <div class="ip-strip__item" {{ block.shopify_attributes }}>
           <span class="ip-strip__icon" aria-hidden="true">
-            {% case forloop.index %}
-              {% when 1 %}
-                <img src="{{ 'ip-tool-icon-auto-attendant.svg' | asset_url }}" alt="" width="64" height="64" loading="lazy">
-              {% when 2 %}
-                <img src="{{ 'ip-tool-icon-call-recording.svg' | asset_url }}" alt="" width="64" height="64" loading="lazy">
+            {% case icon_name %}
+              {% when 'microphone' %}
+                {{ 'ip-tool-icon-call-recording.svg' | inline_asset_content }}
+              {% when 'clock' %}
+                {{ 'ip-tool-icon-phone-times.svg' | inline_asset_content }}
               {% else %}
-                <img src="{{ 'ip-tool-icon-phone-times.svg' | asset_url }}" alt="" width="64" height="64" loading="lazy">
+                {{ 'ip-tool-icon-auto-attendant.svg' | inline_asset_content }}
             {% endcase %}
           </span>
           <h3>{{ block.settings.title }}</h3>
@@ -60,6 +73,26 @@
           "id": "body",
           "label": "Body",
           "default": "Built around connection, not entertainment."
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "shield_check",
+          "options": [
+            {
+              "value": "shield_check",
+              "label": "Shield check"
+            },
+            {
+              "value": "microphone",
+              "label": "Microphone"
+            },
+            {
+              "value": "clock",
+              "label": "Clock"
+            }
+          ]
         }
       ]
     }
@@ -72,6 +105,7 @@
           "type": "feature",
           "settings": {
             "title": "Auto Attendant Call Screening",
+            "icon": "shield_check",
             "body": "Help screen unwanted calls before they interrupt the family phone."
           }
         },
@@ -79,6 +113,7 @@
           "type": "feature",
           "settings": {
             "title": "Call Recording",
+            "icon": "microphone",
             "body": "Keep a 90-day call record when your family needs extra visibility."
           }
         },
@@ -86,6 +121,7 @@
           "type": "feature",
           "settings": {
             "title": "Programmable On/Off Phone Times",
+            "icon": "clock",
             "body": "Set times for when incoming calls can ring through."
           }
         }

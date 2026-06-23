@@ -306,7 +306,7 @@ const sectionSchemaRequirements = {
   },
   'ip-feature-strip': {
     settings: ['eyebrow', 'heading'],
-    blocks: { feature: ['title', 'body'] },
+    blocks: { feature: ['title', 'body', 'icon'] },
     requiresPreset: true,
   },
   'ip-product-comparison': {
@@ -428,6 +428,13 @@ const themeAssets = [
   'ip-story-grandparents.png',
   'ip-story-before-smartphone.png',
   'ip-product-gallery.js',
+  'icon-account.svg',
+  'icon-contact.svg',
+  'icon-cart.svg',
+  'ip-tool-icon-auto-attendant.svg',
+  'ip-tool-icon-call-recording.svg',
+  'ip-tool-icon-phone-times.svg',
+  'heroicons-license.txt',
 ];
 
 for (const file of sourceFiles) assertFile(file, `brief source ${file}`);
@@ -557,6 +564,33 @@ assertFileIncludes('independence-phone-theme/sections/header.liquid', [
   'aria-label="Cart"',
   'data-cart-count',
 ], 'Local header section');
+assertFileIncludes('independence-phone-theme/sections/ip-feature-strip.liquid', [
+  'block.settings.icon',
+  'inline_asset_content',
+  'ip-tool-icon-auto-attendant.svg',
+  'ip-tool-icon-call-recording.svg',
+  'ip-tool-icon-phone-times.svg',
+], 'Feature strip editable icon blocks');
+assertFileIncludes('independence-phone-theme/templates/index.json', [
+  '"icon": "shield_check"',
+  '"icon": "microphone"',
+  '"icon": "clock"',
+], 'Home template feature strip icon defaults');
+assertFileIncludes('independence-phone-theme/assets/ip-tool-icon-auto-attendant.svg', [
+  'viewBox="0 0 24 24"',
+  'currentColor',
+  'M9 12.75',
+], 'Heroicons shield-check asset');
+assertFileIncludes('independence-phone-theme/assets/ip-tool-icon-call-recording.svg', [
+  'viewBox="0 0 24 24"',
+  'currentColor',
+  'M12 18.75',
+], 'Heroicons microphone asset');
+assertFileIncludes('independence-phone-theme/assets/ip-tool-icon-phone-times.svg', [
+  'viewBox="0 0 24 24"',
+  'currentColor',
+  'M12 6v6h4.5',
+], 'Heroicons clock asset');
 assertFileIncludes('independence-phone-theme/sections/footer.liquid', [
   'aria-label="Footer menu"',
   'routes.collections_url',

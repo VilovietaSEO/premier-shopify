@@ -460,11 +460,15 @@ summary:focus-visible {
   width: 3rem;
 }
 
-.ip-strip__icon img {
+.ip-strip__icon img,
+.ip-strip__icon svg {
   display: block;
   height: 2.2rem;
-  object-fit: contain;
   width: 2.2rem;
+}
+
+.ip-strip__icon svg {
+  stroke-width: 1.5;
 }
 
 .ip-strip__item h3 {
