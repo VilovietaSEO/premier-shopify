@@ -53,6 +53,42 @@
             "title": "Auto Attendant",
             "price": "$5/mo"
           }
+        },
+        "info_best_for": {
+          "type": "info_accordion",
+          "settings": {
+            "title": "Best for",
+            "source": "best_for",
+            "body": "",
+            "open_by_default": true
+          }
+        },
+        "info_specs": {
+          "type": "info_accordion",
+          "settings": {
+            "title": "Specs",
+            "source": "specs",
+            "body": "",
+            "open_by_default": false
+          }
+        },
+        "info_service_addons": {
+          "type": "info_accordion",
+          "settings": {
+            "title": "Service and add-ons",
+            "source": "service_addons",
+            "body": "<p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>",
+            "open_by_default": false
+          }
+        },
+        "info_shipping_setup": {
+          "type": "info_accordion",
+          "settings": {
+            "title": "Shipping and setup",
+            "source": "shipping_setup",
+            "body": "<p>Shipping: $15 per phone anywhere in the USA.</p><p>All products and services are subject to federal, state, and local taxes.</p><p>Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout.</p>",
+            "open_by_default": false
+          }
         }
       },
       "block_order": [
@@ -62,9 +98,15 @@
         "addon_time_conditions",
         "addon_voicemail",
         "addon_victory",
-        "addon_attendant"
+        "addon_attendant",
+        "info_best_for",
+        "info_specs",
+        "info_service_addons",
+        "info_shipping_setup"
       ],
-      "settings": {}
+      "settings": {
+        "product_info_heading": "Product information"
+      }
     },
     "plans": {
       "type": "ip-service-plans",

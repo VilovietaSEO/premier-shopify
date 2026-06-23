@@ -329,12 +329,14 @@ const sectionSchemaRequirements = {
       'purchase_options_heading',
       'service_options_heading',
       'addon_options_heading',
+      'product_info_heading',
       'purchase_options_note',
       'show_dynamic_checkout',
     ],
     blocks: {
       service_plan: ['title', 'price', 'default_selected'],
       addon_option: ['title', 'price'],
+      info_accordion: ['title', 'source', 'body', 'open_by_default'],
     },
     templateBound: true,
   },
@@ -425,6 +427,7 @@ const themeAssets = [
   'ip-story-home-alone.png',
   'ip-story-grandparents.png',
   'ip-story-before-smartphone.png',
+  'ip-product-gallery.js',
 ];
 
 for (const file of sourceFiles) assertFile(file, `brief source ${file}`);
@@ -662,6 +665,8 @@ for (const snippet of [
   'properties[{{ block.settings.title | escape }}]',
   'service_plan',
   'addon_option',
+  'info_accordion',
+  'product_info_heading',
   'data-gallery-open',
   'ip-product-accordions',
   'ip-product-accordion',
@@ -692,6 +697,10 @@ if (productTemplate) {
     addon_voicemail: 'addon_option',
     addon_victory: 'addon_option',
     addon_attendant: 'addon_option',
+    info_best_for: 'info_accordion',
+    info_specs: 'info_accordion',
+    info_service_addons: 'info_accordion',
+    info_shipping_setup: 'info_accordion',
   };
 
   for (const [blockId, type] of Object.entries(expectedProductMainBlocks)) {

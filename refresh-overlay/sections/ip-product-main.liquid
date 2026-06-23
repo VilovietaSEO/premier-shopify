@@ -28,6 +28,7 @@
   assign custom_specs_list = custom_specs | split: ';'
   assign service_option_count = 0
   assign addon_option_count = 0
+  assign product_info_block_count = 0
   assign default_service_index = 0
 
   for block in section.blocks
@@ -41,6 +42,8 @@
       endif
     elsif block.type == 'addon_option'
       assign addon_option_count = addon_option_count | plus: 1
+    elsif block.type == 'info_accordion'
+      assign product_info_block_count = product_info_block_count | plus: 1
     endif
   endfor
 %}
@@ -313,73 +316,100 @@
       {% endform %}
     {% endif %}
 
-    <div class="ip-product-accordions" aria-label="Product information">
-      <h2>Product information</h2>
+    {% if product_info_block_count > 0 %}
+      <div class="ip-product-accordions" aria-label="{{ section.settings.product_info_heading | escape }}">
+        {% if section.settings.product_info_heading != blank %}
+          <h2>{{ section.settings.product_info_heading }}</h2>
+        {% endif %}
 
-      <details class="ip-product-accordion" open>
-        <summary>Best for</summary>
-        <div class="ip-product-accordion__body">
-          <p>{{ best_for }}</p>
-        </div>
-      </details>
-
-      <details class="ip-product-accordion">
-        <summary>Specs</summary>
-        <div class="ip-product-accordion__body">
-          <ul class="ip-spec-list">
-            {% if custom_specs != blank %}
-              {% for spec in custom_specs_list %}
-                {% assign spec_text = spec | strip %}
-                {% if spec_text != blank %}
-                  <li>{{ spec_text }}</li>
-                {% endif %}
-              {% endfor %}
-            {% elsif is_patriot %}
-              <li>Rugged cordless Wi-Fi handset with charging base</li>
-              <li>Waterproof and dust-proof, drop-proof up to 1.8 meters</li>
-              <li>Non-slip, anti-scratch, anti-bacterial construction</li>
-              <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
-              <li>Encrypted data transmission and storage</li>
-              <li>Built-in Bluetooth 5.0</li>
-              <li>13-hour talk time, 300-hour standby battery</li>
-            {% else %}
-              <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
-              <li>HD audio quality</li>
-              <li>Smart noise filtering</li>
-              <li>Encrypted data transmission and storage</li>
-              <li>Built-in Bluetooth 5.0</li>
-              <li>9-hour talk time, 200-hour standby battery</li>
-            {% endif %}
-          </ul>
-        </div>
-      </details>
-
-      <details class="ip-product-accordion">
-        <summary>Service and add-ons</summary>
-        <div class="ip-product-accordion__body">
-          <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
-          <ul class="ip-addon-list">
-            {% for block in section.blocks %}
-              {% if block.type == 'addon_option' %}
-                <li>
-                  <strong>{{ block.settings.title }}</strong>
-                  <span>{{ block.settings.price }}</span>
-                </li>
+        {% for block in section.blocks %}
+          {% if block.type == 'info_accordion' %}
+            <details
+              class="ip-product-accordion"
+              {% if block.settings.open_by_default %}
+                open
               {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
-      </details>
+              {{ block.shopify_attributes }}
+            >
+              <summary>{{ block.settings.title }}</summary>
+              <div class="ip-product-accordion__body">
+                {% case block.settings.source %}
+                  {% when 'best_for' %}
+                    {% if block.settings.body != blank %}
+                      {{ block.settings.body }}
+                    {% else %}
+                      <p>{{ best_for }}</p>
+                    {% endif %}
 
-      <details class="ip-product-accordion">
-        <summary>Shipping and setup</summary>
-        <div class="ip-product-accordion__body">
-          <p>Shipping: $15 per phone anywhere in the USA.</p>
-          <p>All products and services are subject to federal, state, and local taxes.</p>
-          <p>Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout.</p>
-        </div>
-      </details>
-    </div>
+                  {% when 'specs' %}
+                    {% if block.settings.body != blank %}
+                      {{ block.settings.body }}
+                    {% endif %}
+                    <ul class="ip-spec-list">
+                      {% if custom_specs != blank %}
+                        {% for spec in custom_specs_list %}
+                          {% assign spec_text = spec | strip %}
+                          {% if spec_text != blank %}
+                            <li>{{ spec_text }}</li>
+                          {% endif %}
+                        {% endfor %}
+                      {% elsif is_patriot %}
+                        <li>Rugged cordless Wi-Fi handset with charging base</li>
+                        <li>Waterproof and dust-proof, drop-proof up to 1.8 meters</li>
+                        <li>Non-slip, anti-scratch, anti-bacterial construction</li>
+                        <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
+                        <li>Encrypted data transmission and storage</li>
+                        <li>Built-in Bluetooth 5.0</li>
+                        <li>13-hour talk time, 300-hour standby battery</li>
+                      {% else %}
+                        <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
+                        <li>HD audio quality</li>
+                        <li>Smart noise filtering</li>
+                        <li>Encrypted data transmission and storage</li>
+                        <li>Built-in Bluetooth 5.0</li>
+                        <li>9-hour talk time, 200-hour standby battery</li>
+                      {% endif %}
+                    </ul>
+
+                  {% when 'service_addons' %}
+                    {% if block.settings.body != blank %}
+                      {{ block.settings.body }}
+                    {% else %}
+                      <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
+                    {% endif %}
+                    {% if addon_option_count > 0 %}
+                      <ul class="ip-addon-list">
+                        {% for addon_block in section.blocks %}
+                          {% if addon_block.type == 'addon_option' %}
+                            <li>
+                              <strong>{{ addon_block.settings.title }}</strong>
+                              <span>{{ addon_block.settings.price }}</span>
+                            </li>
+                          {% endif %}
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+
+                  {% when 'shipping_setup' %}
+                    {% if block.settings.body != blank %}
+                      {{ block.settings.body }}
+                    {% else %}
+                      <p>Shipping: $15 per phone anywhere in the USA.</p>
+                      <p>All products and services are subject to federal, state, and local taxes.</p>
+                      <p>Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout.</p>
+                    {% endif %}
+
+                  {% else %}
+                    {% if block.settings.body != blank %}
+                      {{ block.settings.body }}
+                    {% endif %}
+                {% endcase %}
+              </div>
+            </details>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
 </section>
 
@@ -410,6 +440,12 @@
       "id": "addon_options_heading",
       "label": "Add-on options heading",
       "default": "Optional add-ons"
+    },
+    {
+      "type": "text",
+      "id": "product_info_heading",
+      "label": "Product information heading",
+      "default": "Product information"
     },
     {
       "type": "textarea",
@@ -464,6 +500,57 @@
           "id": "price",
           "label": "Price",
           "default": "$5/mo"
+        }
+      ]
+    },
+    {
+      "type": "info_accordion",
+      "name": "Product info accordion",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Product information"
+        },
+        {
+          "type": "select",
+          "id": "source",
+          "label": "Content source",
+          "default": "custom",
+          "options": [
+            {
+              "value": "best_for",
+              "label": "Best for metafield"
+            },
+            {
+              "value": "specs",
+              "label": "Specs metafield"
+            },
+            {
+              "value": "service_addons",
+              "label": "Service and add-ons"
+            },
+            {
+              "value": "shipping_setup",
+              "label": "Shipping and setup"
+            },
+            {
+              "value": "custom",
+              "label": "Custom rich text"
+            }
+          ]
+        },
+        {
+          "type": "richtext",
+          "id": "body",
+          "label": "Body"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_by_default",
+          "label": "Open by default",
+          "default": false
         }
       ]
     }
