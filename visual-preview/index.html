@@ -170,18 +170,31 @@
         const standaloneRoutes = new Set(["freedom", "patriot", "cart", "contact"]);
 
         const getPreviewRoute = () => {
+          const route = new URLSearchParams(window.location.search).get("route");
+          if (standaloneRoutes.has(route)) return route;
+
           const hash = window.location.hash.replace("#", "");
           return standaloneRoutes.has(hash) ? hash : "home";
         };
 
         const syncPreviewRoute = (shouldScroll = false) => {
-          document.documentElement.dataset.previewRoute = getPreviewRoute();
+          const route = getPreviewRoute();
+          const hash = window.location.hash.replace("#", "");
+
+          if (standaloneRoutes.has(hash) && !new URLSearchParams(window.location.search).has("route")) {
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.set("route", hash);
+            cleanUrl.hash = "";
+            window.history.replaceState(null, "", cleanUrl);
+          }
+
+          document.documentElement.dataset.previewRoute = route;
 
           if (!shouldScroll) return;
 
           window.requestAnimationFrame(() => {
             const hash = window.location.hash.replace("#", "");
-            const target = hash ? document.getElementById(hash) : document.getElementById("home");
+            const target = route === "home" && hash ? document.getElementById(hash) : null;
 
             if (target && target.offsetParent !== null) {
               target.scrollIntoView({ block: "start" });
@@ -206,22 +219,22 @@
     </section>
 
     <header class="preview-mini-header">
-      <a href="#home" aria-label="Independence Phone">
+      <a href="./index.html" aria-label="Independence Phone">
         <img src="../independence-phone-theme/assets/ip-independence-phone-logo.png" alt="Independence Phone" width="1562" height="422">
       </a>
       <nav aria-label="Store navigation">
-        <a href="#home">Home</a>
-        <a href="#choose">Choose Your Phone</a>
-        <a href="#cart">Cart</a>
-        <a href="#contact">Contact</a>
+        <a href="./index.html">Home</a>
+        <a href="./index.html#choose">Choose Your Phone</a>
+        <a href="?route=cart">Cart</a>
+        <a href="?route=contact">Contact</a>
       </nav>
       <details>
         <summary aria-label="Open menu"><span class="preview-mini-header__lines" aria-hidden="true"></span></summary>
         <div class="preview-mini-header__drawer" aria-label="Store navigation">
-          <a href="#home">Home</a>
-          <a href="#choose">Choose Your Phone</a>
-          <a href="#cart">Cart</a>
-          <a href="#contact">Contact</a>
+          <a href="./index.html">Home</a>
+          <a href="./index.html#choose">Choose Your Phone</a>
+          <a href="?route=cart">Cart</a>
+          <a href="?route=contact">Contact</a>
         </div>
       </details>
     </header>
@@ -300,7 +313,7 @@
                   <li>Bluetooth 5.0, encrypted data transmission and storage</li>
                   <li>9-hour talk time, 200-hour standby battery</li>
                 </ul>
-                <div class="ip-buttons"><a class="ip-button" href="#freedom">View Freedom Phone</a></div>
+                <div class="ip-buttons"><a class="ip-button" href="?route=freedom">View Freedom Phone</a></div>
               </div>
             </article>
 
@@ -320,7 +333,7 @@
                   <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
                   <li>13-hour talk time, 300-hour standby battery</li>
                 </ul>
-                <div class="ip-buttons"><a class="ip-button" href="#patriot">View Patriot Phone</a></div>
+                <div class="ip-buttons"><a class="ip-button" href="?route=patriot">View Patriot Phone</a></div>
               </div>
             </article>
           </div>
@@ -373,7 +386,7 @@
               <p class="ip-kicker">Introductory 250th Anniversary package</p>
               <h2 class="ip-heading ip-heading--medium ip-heading--wide">A Freedom Phone starter package for the smartphone-free years.</h2>
               <div class="ip-lede"><p>Get 1 Freedom Phone, 1 year of service, and the Victory Bundle in one introductory package.</p></div>
-              <div class="ip-buttons"><a class="ip-button" href="#freedom">View Freedom Phone</a></div>
+              <div class="ip-buttons"><a class="ip-button" href="?route=freedom">View Freedom Phone</a></div>
             </div>
             <div class="ip-package__price">
               <p class="ip-kicker">Package price</p>
@@ -575,7 +588,7 @@
                 <button type="button" name="update">Update</button>
                 <button type="button" name="checkout">Checkout</button>
               </div>
-              <a class="ip-cart__continue" href="#choose">Continue shopping</a>
+              <a class="ip-cart__continue" href="./index.html#choose">Continue shopping</a>
             </div>
           </form>
         </section>
@@ -649,15 +662,15 @@
 
     <footer>
       <div class="footer__copyright">
-        <a class="footer__brand" href="#home">Independence Phone</a>
+        <a class="footer__brand" href="./index.html">Independence Phone</a>
         <small>&copy; 2026</small>
         <p>American-owned and family-focused. Built for the smartphone-free years.</p>
       </div>
       <nav class="footer__links" aria-label="Footer menu">
-        <a href="#choose">Choose Your Phone</a>
-        <a href="#contact">Contact</a>
-        <a href="#home">Privacy</a>
-        <a href="#home">Terms</a>
+        <a href="./index.html#choose">Choose Your Phone</a>
+        <a href="?route=contact">Contact</a>
+        <a href="./index.html">Privacy</a>
+        <a href="./index.html">Terms</a>
       </nav>
     </footer>
   </body>

@@ -17,9 +17,11 @@ const viewports = [
   { name: 'mobile', width: 390, height: 1400 },
 ];
 
-const routeUrl = (hash) => {
-  const [url] = baseUrl.split('#');
-  return `${url}#${hash}`;
+const routeUrl = (route) => {
+  const [rawUrl] = baseUrl.split('#');
+  const url = new URL(rawUrl);
+  url.searchParams.set('route', route);
+  return url.href;
 };
 
 async function openPreviewRoute(page, hash, expectedRoute = hash) {
@@ -227,6 +229,9 @@ test.describe('Independence Phone visual preview', () => {
       await expect(page.locator('[data-slot="product.patriot"]')).toBeHidden();
       await expect(page.locator('[data-slot="cart.review"]')).toBeHidden();
       await expect(page.locator('[data-slot="contact.form"]')).toBeHidden();
+      await expect(page.locator('[data-slot="products.compare"] a[href="?route=freedom"]')).toHaveCount(1);
+      await expect(page.locator('[data-slot="products.compare"] a[href="?route=patriot"]')).toHaveCount(1);
+      await expect(page.locator('a[href="#freedom"], a[href="#patriot"]')).toHaveCount(0);
       await expect(page.getByText('Give them a phone. Not the internet.', { exact: true })).toBeVisible();
       await expect(page.getByText('Auto Attendant Call Screening', { exact: true })).toBeVisible();
       await expect(page.getByText('Questions parents ask before choosing a simpler phone.', { exact: true })).toBeVisible();
@@ -253,6 +258,8 @@ test.describe('Independence Phone visual preview', () => {
         expect(productReport.visibleProductAddonCheckboxCount).toBe(5);
         expect(productReport.visibleCartPropertyListCount).toBe(0);
         expect(productReport.visibleContactFormCount).toBe(0);
+        expect(new URL(page.url()).searchParams.get('route')).toBe(productRoute.hash);
+        expect(new URL(page.url()).hash).toBe('');
 
         await expect(page.locator(`[data-slot="${productRoute.slot}"]`)).toBeVisible();
         await expect(page.locator(`[data-slot="${productRoute.hiddenSlot}"]`)).toBeHidden();

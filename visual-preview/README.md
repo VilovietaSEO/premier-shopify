@@ -16,14 +16,14 @@ Open directly:
 open /Users/vilovieta/Documents/Shopify/visual-preview/index.html
 ```
 
-The preview is hash-routed so page contexts do not bleed together:
+The preview is routed so page contexts do not bleed together. Home section jumps can still use hashes, but product, cart, and contact contexts use route parameters so they do not behave like in-page jump links:
 
 ```bash
-/visual-preview/index.html#home
-/visual-preview/index.html#freedom
-/visual-preview/index.html#patriot
-/visual-preview/index.html#cart
-/visual-preview/index.html#contact
+/visual-preview/index.html
+/visual-preview/index.html?route=freedom
+/visual-preview/index.html?route=patriot
+/visual-preview/index.html?route=cart
+/visual-preview/index.html?route=contact
 ```
 
 Run visual QA:

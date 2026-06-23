@@ -17,7 +17,8 @@ Result:
 
 The preview test now verifies:
 
-- Required hash routes render separately: Home, Freedom product, Patriot product, Cart, Contact.
+- Required preview routes render separately: Home, Freedom product, Patriot product, Cart, Contact.
+- Product page CTAs use preview route URLs instead of `#freedom` or `#patriot` jump links.
 - The Home route renders hero, feature strip, product comparison, JTBD story, package band, FAQ, and trust.
 - The Home route does not render product-detail sections, product forms, cart setup details, or the contact form.
 - The Home hero uses a larger dedicated heading and lede scale, including the 860px audit viewport from browser review.
