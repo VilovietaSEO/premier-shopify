@@ -110,6 +110,9 @@ async function collectRouteReport(page) {
       .map((card) => getComputedStyle(card).backgroundImage);
 
     const footer = document.querySelector('footer');
+    const previewHeader = document.querySelector('.preview-mini-header');
+    const previewHeaderLogo = document.querySelector('.preview-mini-header img');
+    const previewHeaderNav = document.querySelector('.preview-mini-header nav');
     const trust = document.querySelector('[data-slot="trust"]');
     const heroHeading = document.querySelector('.ip-hero__copy .ip-heading');
     const heroLede = document.querySelector('.ip-hero__copy .ip-lede');
@@ -122,14 +125,22 @@ async function collectRouteReport(page) {
     const heroButtonTopGap = heroLede && heroButtons
       ? Math.round(heroButtons.getBoundingClientRect().top - heroLede.getBoundingClientRect().bottom)
       : null;
+    const centerDelta = (inner, outer) => {
+      if (!inner || !outer || !isVisible(inner) || !isVisible(outer)) return null;
+      const innerRect = inner.getBoundingClientRect();
+      const outerRect = outer.getBoundingClientRect();
+      return Number(((innerRect.top + (innerRect.height / 2)) - (outerRect.top + (outerRect.height / 2))).toFixed(2));
+    };
 
     return {
       route: document.documentElement.dataset.previewRoute,
       bodyScrollWidth: document.documentElement.scrollWidth,
       bodyClientWidth: document.documentElement.clientWidth,
       previewRibbonCount: document.querySelectorAll('.preview-ribbon').length,
-      previewHeaderHeight: Math.round(document.querySelector('.preview-mini-header')?.getBoundingClientRect().height || 0),
-      previewLogoHeight: Math.round(document.querySelector('.preview-mini-header img')?.getBoundingClientRect().height || 0),
+      previewHeaderHeight: Math.round(previewHeader?.getBoundingClientRect().height || 0),
+      previewLogoHeight: Math.round(previewHeaderLogo?.getBoundingClientRect().height || 0),
+      previewHeaderLogoCenterDelta: centerDelta(previewHeaderLogo, previewHeader),
+      previewHeaderNavCenterDelta: centerDelta(previewHeaderNav, previewHeader),
       visibleSlots,
       visibleSectionCount: [...document.querySelectorAll('.shopify-section')].filter((section) => isVisible(section)).length,
       heroVideoCount: [...document.querySelectorAll('.ip-hero video.ip-hero__video')].filter((element) => isVisible(element)).length,
@@ -177,6 +188,10 @@ function expectSharedLayout(report, viewportName) {
   expect(report.previewRibbonCount).toBe(0);
   expect(report.previewHeaderHeight).toBeLessThanOrEqual(viewportName === 'mobile' ? 62 : 66);
   expect(report.previewLogoHeight).toBeLessThanOrEqual(viewportName === 'mobile' ? 34 : 39);
+  expect(Math.abs(report.previewHeaderLogoCenterDelta)).toBeLessThanOrEqual(1.25);
+  if (viewportName !== 'mobile') {
+    expect(Math.abs(report.previewHeaderNavCenterDelta)).toBeLessThanOrEqual(1);
+  }
   expect(report.footerBackgroundLuminance).toBeGreaterThan(0.86);
   expect(report.footerRuleHeight).toBeGreaterThanOrEqual(3);
   expect(report.brokenImages).toEqual([]);

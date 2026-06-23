@@ -42,38 +42,57 @@
       }
 
       .preview-mini-header {
+        --ip-preview-header-row: 3.75rem;
         align-items: center;
         background: color-mix(in srgb, var(--ip-paper, #fff) 88%, #fff);
         border-bottom: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 10%, transparent);
         display: flex;
-        gap: 1rem;
+        gap: clamp(0.75rem, 2vw, 1.25rem);
         justify-content: space-between;
-        min-height: 3.75rem;
-        padding: 0.45rem var(--page-margin);
+        min-height: var(--ip-preview-header-row);
+        padding: 0 var(--page-margin);
+      }
+
+      .preview-mini-header > a:first-child {
+        align-items: center;
+        display: inline-flex;
+        flex: 0 1 auto;
+        min-height: var(--ip-preview-header-row);
+        padding-block: 0;
       }
 
       .preview-mini-header img {
         display: block;
-        height: 2.1rem;
+        height: 2.25rem;
         max-width: min(12.75rem, 48vw);
         object-fit: contain;
+        transform: translateY(0.1rem);
         width: auto;
       }
 
       .preview-mini-header nav {
+        align-items: center;
         display: flex;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: clamp(0.8rem, 2vw, 1.25rem);
+        min-height: var(--ip-preview-header-row);
       }
 
       .preview-mini-header a {
+        align-items: center;
+        display: inline-flex;
         font-weight: 800;
+        min-height: var(--ip-preview-header-row);
+        padding-block: 0;
         text-decoration: none;
       }
 
       .preview-mini-header details {
+        align-items: center;
+        justify-content: center;
         display: none;
         margin-left: auto;
+        min-height: var(--ip-preview-header-row);
       }
 
       .preview-mini-header summary {
@@ -145,16 +164,18 @@
 
       @media (max-width: 720px) {
         .preview-mini-header {
+          --ip-preview-header-row: 3.5rem;
           align-items: center;
           flex-direction: row;
           flex-wrap: nowrap;
           min-height: 3.5rem;
-          padding-block: 0.45rem;
+          padding-block: 0;
         }
 
         .preview-mini-header img {
-          height: 1.95rem;
+          height: 2.05rem;
           max-width: min(11.25rem, 46vw);
+          transform: translateY(0.1rem);
         }
 
         .preview-mini-header nav {
@@ -162,7 +183,7 @@
         }
 
         .preview-mini-header details {
-          display: block;
+          display: flex;
         }
       }
     </style>
