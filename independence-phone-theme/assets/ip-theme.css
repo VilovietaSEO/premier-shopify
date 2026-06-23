@@ -398,8 +398,8 @@ summary:focus-visible {
 
 .ip-feature-strip {
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.82)),
-    url("ip-bg-flag-subtle.png") center / cover no-repeat;
+    linear-gradient(90deg, rgba(255, 255, 255, 0.99) 0%, rgba(255, 255, 255, 0.96) 46%, rgba(255, 255, 255, 0.88) 100%),
+    url("ip-bg-flag-subtle.png") right center / cover no-repeat;
   overflow: hidden;
 }
 
