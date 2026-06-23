@@ -425,19 +425,16 @@ summary:focus-visible {
   border-radius: 999px;
   color: var(--ip-blue, #263F73);
   display: inline-flex;
-  height: 2.35rem;
+  height: 3rem;
   justify-content: center;
-  width: 2.35rem;
+  width: 3rem;
 }
 
-.ip-strip__icon svg {
-  fill: none;
-  height: 1.25rem;
-  stroke: currentcolor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
-  width: 1.25rem;
+.ip-strip__icon img {
+  display: block;
+  height: 2.2rem;
+  object-fit: contain;
+  width: 2.2rem;
 }
 
 .ip-strip__item h3 {

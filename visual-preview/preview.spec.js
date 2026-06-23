@@ -85,6 +85,8 @@ test.describe('Independence Phone visual preview', () => {
       await expect(page.locator('.ip-hero video.ip-hero__video'), 'Hero should render as a video').toHaveCount(1);
       await expect(page.locator('.ip-hero img.ip-hero__image'), 'Hero should not fall back to a poster image in the preview').toHaveCount(0);
       await expect(page.locator('.ip-hero__foreground'), 'Hero should not render a foreground phone layer').toHaveCount(0);
+      await expect(page.locator('.ip-feature-strip .ip-strip__icon img'), 'Feature cards should use custom icon image assets').toHaveCount(3);
+      await expect(page.locator('.ip-feature-strip .ip-strip__icon svg'), 'Feature cards should not use generic inline SVG icons').toHaveCount(0);
       await expect(page.locator('.preview-mini-header details'), 'Preview header should expose a small-screen drawer').toHaveCount(1);
       await expect(page.locator('.ip-product-form input[type="radio"]'), 'Service plan radios should render').toHaveCount(4);
       await expect(page.locator('.ip-product-form input[type="checkbox"]'), 'Add-on checkboxes should render').toHaveCount(10);
@@ -135,6 +137,8 @@ test.describe('Independence Phone visual preview', () => {
           heroVideoCount: document.querySelectorAll('.ip-hero video.ip-hero__video').length,
           heroPosterImageCount: document.querySelectorAll('.ip-hero img.ip-hero__image').length,
           heroForegroundCount: document.querySelectorAll('.ip-hero__foreground').length,
+          featureIconImageCount: document.querySelectorAll('.ip-feature-strip .ip-strip__icon img').length,
+          featureIconSvgCount: document.querySelectorAll('.ip-feature-strip .ip-strip__icon svg').length,
           productFormCount: document.querySelectorAll('.ip-product-form').length,
           productOptionsCount: document.querySelectorAll('.ip-product-form .ip-product-options').length,
           productServiceRadioCount: document.querySelectorAll('.ip-product-form input[type="radio"]').length,
@@ -163,6 +167,8 @@ test.describe('Independence Phone visual preview', () => {
       expect(result.heroVideoCount).toBe(1);
       expect(result.heroPosterImageCount).toBe(0);
       expect(result.heroForegroundCount).toBe(0);
+      expect(result.featureIconImageCount).toBe(3);
+      expect(result.featureIconSvgCount).toBe(0);
       expect(result.productFormCount).toBe(2);
       expect(result.productOptionsCount).toBe(2);
       expect(result.productServiceRadioCount).toBe(4);
