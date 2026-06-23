@@ -43,6 +43,10 @@ if ! grep -q "ip-cart.js" "$theme_layout"; then
   perl -0pi -e "s#(\\s*\\{\\{ content_for_header \\}\\})#    <script src=\"{{ 'ip-cart.js' | asset_url }}\" defer></script>\\n\\1#" "$theme_layout"
 fi
 
+if ! grep -q "ip-product-gallery.js" "$theme_layout"; then
+  perl -0pi -e "s#(\\s*\\{\\{ content_for_header \\}\\})#    <script src=\"{{ 'ip-product-gallery.js' | asset_url }}\" defer></script>\\n\\1#" "$theme_layout"
+fi
+
 if ! grep -q "ip-structured-data" "$theme_layout"; then
   perl -0pi -e "s#(\\s*\\{\\{ content_for_header \\}\\})#    {% render 'ip-structured-data' %}\\n\\1#" "$theme_layout"
 fi

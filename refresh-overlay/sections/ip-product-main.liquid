@@ -21,6 +21,7 @@
   endif
 
   assign current_variant = product.selected_or_first_available_variant
+  assign product_title = product.title | default: fallback_title
   assign product_deck = product.metafields.custom.product_deck.value
   assign best_for = product.metafields.custom.best_for.value | default: fallback_best_for
   assign custom_specs = product.metafields.custom.specs.value | strip
@@ -45,14 +46,20 @@
 %}
 
 <section class="ip-product-main">
-  <div class="ip-product-main__gallery" data-product-gallery>
+  <div class="ip-product-main__gallery" data-product-gallery data-gallery-title="{{ product_title | escape }}">
     <div class="ip-product-main__media" aria-live="polite">
       {% if product.media.size > 0 %}
         {% for media in product.media %}
-          {% assign media_alt = media.alt | default: product.title | default: fallback_title %}
+          {% assign media_alt = media.alt | default: product_title %}
           <figure
             class="ip-product-main__slide{% if forloop.first %} is-active{% endif %}"
             data-gallery-slide="{{ forloop.index0 }}"
+            {% if media.media_type == 'image' %}
+              data-gallery-open
+              role="button"
+              tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+              aria-label="Open {{ media_alt | escape }} full view"
+            {% endif %}
             {% unless forloop.first %}
               hidden
             {% endunless %}
@@ -88,7 +95,14 @@
           </figure>
         {% endfor %}
       {% else %}
-        <figure class="ip-product-main__slide is-active" data-gallery-slide="0">
+        <figure
+          class="ip-product-main__slide is-active"
+          data-gallery-slide="0"
+          data-gallery-open
+          role="button"
+          tabindex="0"
+          aria-label="Open {{ fallback_title }} full view"
+        >
           <img
             src="{{ fallback_image | asset_url }}"
             alt="{{ fallback_title }}"
@@ -98,7 +112,15 @@
             fetchpriority="high"
           >
         </figure>
-        <figure class="ip-product-main__slide" data-gallery-slide="1" hidden>
+        <figure
+          class="ip-product-main__slide"
+          data-gallery-slide="1"
+          data-gallery-open
+          role="button"
+          tabindex="-1"
+          aria-label="Open {{ fallback_title }} alternate product image full view"
+          hidden
+        >
           <img
             src="{{ fallback_gallery_image | asset_url }}"
             alt="{{ fallback_title }} alternate product image"
@@ -156,11 +178,15 @@
         </button>
       </div>
     {% endif %}
+
+    <button class="ip-product-main__full-view" type="button" data-gallery-open>
+      Click to see full view
+    </button>
   </div>
 
-  <div class="ip-stack">
+  <div class="ip-product-main__summary ip-stack">
     <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
-    <h1 class="ip-heading ip-heading--medium">{{ product.title | default: fallback_title }}</h1>
+    <h1 class="ip-heading ip-heading--medium">{{ product_title }}</h1>
     <p class="ip-lede">
       {% if product_deck != blank %}
         {{ product_deck }}
@@ -178,37 +204,6 @@
         {{ fallback_price }}
       {% endif %}
     </p>
-
-    <div class="ip-card" style="padding: 1rem;">
-      <h2 class="ip-story-card__title">Best for</h2>
-      <p>{{ best_for }}</p>
-    </div>
-
-    <ul class="ip-spec-list">
-      {% if custom_specs != blank %}
-        {% for spec in custom_specs_list %}
-          {% assign spec_text = spec | strip %}
-          {% if spec_text != blank %}
-            <li>{{ spec_text }}</li>
-          {% endif %}
-        {% endfor %}
-      {% elsif is_patriot %}
-        <li>Rugged cordless Wi-Fi handset with charging base</li>
-        <li>Waterproof and dust-proof, drop-proof up to 1.8 meters</li>
-        <li>Non-slip, anti-scratch, anti-bacterial construction</li>
-        <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
-        <li>Encrypted data transmission and storage</li>
-        <li>Built-in Bluetooth 5.0</li>
-        <li>13-hour talk time, 300-hour standby battery</li>
-      {% else %}
-        <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
-        <li>HD audio quality</li>
-        <li>Smart noise filtering</li>
-        <li>Encrypted data transmission and storage</li>
-        <li>Built-in Bluetooth 5.0</li>
-        <li>9-hour talk time, 200-hour standby battery</li>
-      {% endif %}
-    </ul>
 
     {% if product != blank %}
       {% form 'product', product, class: 'ip-product-form' %}
@@ -318,66 +313,75 @@
       {% endform %}
     {% endif %}
 
-    <div class="ip-disclosures">
-      <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
-      <p>Shipping: $15 per phone anywhere in the USA.</p>
-      <p>All products and services are subject to federal, state, and local taxes.</p>
-      <p>Both products can present Call Recording, Time Conditions, Voicemail to Email, Victory Bundle, and Auto Attendant add-ons.</p>
+    <div class="ip-product-accordions" aria-label="Product information">
+      <h2>Product information</h2>
+
+      <details class="ip-product-accordion" open>
+        <summary>Best for</summary>
+        <div class="ip-product-accordion__body">
+          <p>{{ best_for }}</p>
+        </div>
+      </details>
+
+      <details class="ip-product-accordion">
+        <summary>Specs</summary>
+        <div class="ip-product-accordion__body">
+          <ul class="ip-spec-list">
+            {% if custom_specs != blank %}
+              {% for spec in custom_specs_list %}
+                {% assign spec_text = spec | strip %}
+                {% if spec_text != blank %}
+                  <li>{{ spec_text }}</li>
+                {% endif %}
+              {% endfor %}
+            {% elsif is_patriot %}
+              <li>Rugged cordless Wi-Fi handset with charging base</li>
+              <li>Waterproof and dust-proof, drop-proof up to 1.8 meters</li>
+              <li>Non-slip, anti-scratch, anti-bacterial construction</li>
+              <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
+              <li>Encrypted data transmission and storage</li>
+              <li>Built-in Bluetooth 5.0</li>
+              <li>13-hour talk time, 300-hour standby battery</li>
+            {% else %}
+              <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
+              <li>HD audio quality</li>
+              <li>Smart noise filtering</li>
+              <li>Encrypted data transmission and storage</li>
+              <li>Built-in Bluetooth 5.0</li>
+              <li>9-hour talk time, 200-hour standby battery</li>
+            {% endif %}
+          </ul>
+        </div>
+      </details>
+
+      <details class="ip-product-accordion">
+        <summary>Service and add-ons</summary>
+        <div class="ip-product-accordion__body">
+          <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
+          <ul class="ip-addon-list">
+            {% for block in section.blocks %}
+              {% if block.type == 'addon_option' %}
+                <li>
+                  <strong>{{ block.settings.title }}</strong>
+                  <span>{{ block.settings.price }}</span>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </details>
+
+      <details class="ip-product-accordion">
+        <summary>Shipping and setup</summary>
+        <div class="ip-product-accordion__body">
+          <p>Shipping: $15 per phone anywhere in the USA.</p>
+          <p>All products and services are subject to federal, state, and local taxes.</p>
+          <p>Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout.</p>
+        </div>
+      </details>
     </div>
   </div>
 </section>
-
-<script>
-  (() => {
-    if (window.__ipProductGalleryReady) return;
-    window.__ipProductGalleryReady = true;
-
-    const setActive = (gallery, nextIndex) => {
-      const slides = [...gallery.querySelectorAll('[data-gallery-slide]')];
-      const thumbs = [...gallery.querySelectorAll('[data-gallery-thumb]')];
-      if (!slides.length) return;
-
-      const safeIndex = (nextIndex + slides.length) % slides.length;
-      slides.forEach((slide, index) => {
-        const active = index === safeIndex;
-        slide.hidden = !active;
-        slide.classList.toggle('is-active', active);
-      });
-      thumbs.forEach((thumb, index) => {
-        const active = index === safeIndex;
-        thumb.classList.toggle('is-active', active);
-        thumb.setAttribute('aria-pressed', active ? 'true' : 'false');
-      });
-    };
-
-    document.addEventListener('click', (event) => {
-      const thumb = event.target.closest('[data-gallery-thumb]');
-      if (!thumb) return;
-
-      const gallery = thumb.closest('[data-product-gallery]');
-      if (!gallery) return;
-
-      setActive(gallery, Number(thumb.dataset.galleryThumb || 0));
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-
-      const gallery = event.target.closest('[data-product-gallery]');
-      if (!gallery) return;
-
-      const thumbs = [...gallery.querySelectorAll('[data-gallery-thumb]')];
-      if (!thumbs.length) return;
-
-      const current = thumbs.findIndex((thumb) => thumb.classList.contains('is-active'));
-      const delta = event.key === 'ArrowRight' ? 1 : -1;
-      const next = (current + delta + thumbs.length) % thumbs.length;
-      event.preventDefault();
-      setActive(gallery, next);
-      thumbs[next].focus();
-    });
-  })();
-</script>
 
 {% schema %}
 {

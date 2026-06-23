@@ -481,6 +481,7 @@ assertFileIncludes('scripts/create-storefront-objects.js', [
 assertFileIncludes('.gitignore', ['refresh-theme/'], 'Repo gitignore');
 assertFileIncludes('independence-phone-theme/layout/theme.liquid', [
   "{% render 'ip-structured-data' %}",
+  'ip-product-gallery.js',
 ], 'Theme layout');
 assertFileIncludes('independence-phone-theme/snippets/ip-structured-data.liquid', [
   '"@type": "Organization"',
@@ -496,6 +497,7 @@ assertFileIncludes('independence-phone-theme/sections/ip-faq.liquid', [
 ], 'FAQ structured data section');
 assertFileIncludes('scripts/apply-refresh-overlay.sh', [
   'cp -R "$overlay/snippets/." "$target_theme/snippets/"',
+  'ip-product-gallery.js',
   "{% render 'ip-structured-data' %}",
 ], 'Refresh overlay script');
 assertFileIncludes('scripts/bootstrap-refresh-store.sh', [
@@ -660,6 +662,9 @@ for (const snippet of [
   'properties[{{ block.settings.title | escape }}]',
   'service_plan',
   'addon_option',
+  'data-gallery-open',
+  'ip-product-accordions',
+  'ip-product-accordion',
 ]) {
   if (productMain.includes(snippet)) {
     pass(`product main includes purchase option snippet ${snippet}`);
@@ -667,6 +672,14 @@ for (const snippet of [
     fail(`product main missing purchase option snippet ${snippet}`);
   }
 }
+
+assertFileIncludes('independence-phone-theme/assets/ip-product-gallery.js', [
+  'data-gallery-lightbox',
+  'ArrowLeft',
+  'ArrowRight',
+  'pointerdown',
+  'data-gallery-open',
+], 'Product gallery script');
 
 const productTemplate = readJson('independence-phone-theme/templates/product.independence-phone.json');
 if (productTemplate) {

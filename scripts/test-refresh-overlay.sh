@@ -29,6 +29,7 @@ LIQUID
 required_files=(
   "assets/ip-theme.css"
 	  "assets/ip-cart.js"
+	  "assets/ip-product-gallery.js"
 	  "assets/ip-hero-video.mp4"
 	  "assets/ip-hero-video-poster.jpg"
 	  "sections/ip-announcement-banner.liquid"
@@ -58,6 +59,12 @@ fi
 cart_script_count="$(grep -c "ip-cart.js" "$tmp_theme/layout/theme.liquid" || true)"
 if [ "$cart_script_count" -ne 1 ]; then
   echo "Expected one ip-cart.js include after repeated overlay application, found $cart_script_count" >&2
+  exit 1
+fi
+
+gallery_script_count="$(grep -c "ip-product-gallery.js" "$tmp_theme/layout/theme.liquid" || true)"
+if [ "$gallery_script_count" -ne 1 ]; then
+  echo "Expected one ip-product-gallery.js include after repeated overlay application, found $gallery_script_count" >&2
   exit 1
 fi
 

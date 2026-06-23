@@ -150,6 +150,8 @@ async function collectRouteReport(page) {
       visibleProductOptionsCount: [...document.querySelectorAll('.ip-product-form .ip-product-options')].filter((element) => isVisible(element)).length,
       visibleProductServiceRadioCount: [...document.querySelectorAll('.ip-product-form input[type="radio"]')].filter((element) => isVisible(element)).length,
       visibleProductAddonCheckboxCount: [...document.querySelectorAll('.ip-product-form input[type="checkbox"]')].filter((element) => isVisible(element)).length,
+      visibleProductAccordionCount: [...document.querySelectorAll('.ip-product-accordion')].filter((element) => isVisible(element)).length,
+      visibleProductFullViewButtonCount: [...document.querySelectorAll('.ip-product-main__full-view')].filter((element) => isVisible(element)).length,
       visibleFeatureIconImageCount: [...document.querySelectorAll('.ip-feature-strip .ip-strip__icon img')].filter((element) => isVisible(element)).length,
       visibleFeatureIconSvgCount: [...document.querySelectorAll('.ip-feature-strip .ip-strip__icon svg')].filter((element) => isVisible(element)).length,
       visiblePreviewCartEmptyCount: [...document.querySelectorAll('[data-preview-cart-empty]')].filter((element) => isVisible(element)).length,
@@ -297,6 +299,8 @@ test.describe('Independence Phone visual preview', () => {
         expect(productReport.visibleProductOptionsCount).toBe(1);
         expect(productReport.visibleProductServiceRadioCount).toBe(2);
         expect(productReport.visibleProductAddonCheckboxCount).toBe(5);
+        expect(productReport.visibleProductAccordionCount).toBe(4);
+        expect(productReport.visibleProductFullViewButtonCount).toBe(1);
         expect(productReport.visibleCartPropertyListCount).toBe(0);
         expect(productReport.visibleContactFormCount).toBe(0);
         expect(new URL(page.url()).searchParams.get('route')).toBe(productRoute.hash);
@@ -310,6 +314,25 @@ test.describe('Independence Phone visual preview', () => {
         await expect(page.locator(`[data-slot="${productRoute.slot}"] .ip-product-main__thumb img`)).toHaveCount(2);
         await expect(page.locator(`[data-slot="${productRoute.slot}"] .ip-product-form`)).toBeVisible();
         await expect(page.locator(`[data-slot="${productRoute.slot}"]`).getByText(productRoute.heading, { exact: true })).toBeVisible();
+        await expect(page.locator(`[data-slot="${productRoute.slot}"] .ip-product-accordions`).getByText('Product information', { exact: true })).toBeVisible();
+        await expect(page.locator(`[data-slot="${productRoute.slot}"] .ip-product-accordion summary`)).toHaveCount(4);
+
+        const productGallery = page.locator(`[data-slot="${productRoute.slot}"] [data-product-gallery]`);
+        await expect(productGallery.locator('[data-gallery-open]').first()).toBeVisible();
+        const galleryLightbox = page.locator('[data-gallery-lightbox]');
+        if (await galleryLightbox.count()) {
+          await expect(galleryLightbox).toBeHidden();
+        } else {
+          await expect(galleryLightbox).toHaveCount(0);
+        }
+        await productGallery.locator('.ip-product-main__full-view').click();
+        await expect(galleryLightbox).toBeVisible();
+        await expect(galleryLightbox.locator('img')).toBeVisible();
+        await page.keyboard.press('ArrowRight');
+        await expect(productGallery.locator('[data-gallery-thumb="1"]')).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.locator('[data-gallery-lightbox-count]')).toHaveText('2 / 2');
+        await page.keyboard.press('Escape');
+        await expect(galleryLightbox).toBeHidden();
 
         if (productRoute.selectedService) {
           await page.locator(productRoute.selectedService).check();
