@@ -1265,10 +1265,29 @@ header shopify-account {
 }
 
 footer {
-  background: var(--ip-ink, #172033);
-  color: var(--ip-paper, #fff);
+  background: var(--ip-paper, #fff);
+  border-top: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 10%, transparent);
+  color: var(--ip-ink, #172033);
+  display: grid;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  grid-template-columns: minmax(0, 1fr) auto;
   margin-top: 0;
-  padding: 2rem var(--page-margin);
+  padding: clamp(1.5rem, 4vw, 2.5rem) var(--page-margin);
+  position: relative;
+}
+
+footer::before {
+  background:
+    linear-gradient(
+      90deg,
+      var(--ip-red, #B73532) 0 34%,
+      var(--ip-paper, #fff) 34% 66%,
+      var(--ip-blue, #263F73) 66% 100%
+    );
+  content: "";
+  height: 4px;
+  inset: 0 0 auto;
+  position: absolute;
 }
 
 footer a {
@@ -1276,6 +1295,62 @@ footer a {
   align-items: center;
   display: inline-flex;
   min-height: 2.75rem;
+  text-decoration: none;
+}
+
+footer .footer__copyright {
+  display: grid;
+  gap: 0.3rem;
+  grid-row: 1 / span 2;
+  max-width: 42rem;
+}
+
+footer .footer__brand {
+  color: var(--ip-blue, #263F73);
+  font-size: 1rem;
+  font-weight: 900;
+  justify-self: start;
+  min-height: auto;
+}
+
+footer .footer__copyright small {
+  color: color-mix(in srgb, var(--ip-ink, #172033) 58%, var(--ip-paper, #fff));
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+footer .footer__copyright p {
+  color: var(--ip-muted, #596273);
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+footer .footer__links,
+footer .footer__payment {
+  align-content: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  grid-column: 2;
+  justify-content: flex-end;
+}
+
+footer .footer__payment:empty {
+  display: none;
+}
+
+footer .footer__links a {
+  font-weight: 800;
+}
+
+footer .footer__links a:hover {
+  color: var(--ip-red, #B73532);
+}
+
+footer .footer__payment svg {
+  display: block;
+  height: 1.35rem;
+  width: auto;
 }
 
 .shopify-section:has(.ip-hero) {
@@ -1486,8 +1561,18 @@ footer a {
   }
 
   footer {
-    display: grid;
+    grid-template-columns: 1fr;
     gap: 1rem;
+  }
+
+  footer .footer__links,
+  footer .footer__payment {
+    grid-column: auto;
+    justify-content: flex-start;
+  }
+
+  footer .footer__copyright {
+    grid-row: auto;
   }
 }
 

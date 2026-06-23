@@ -1,8 +1,7 @@
 <footer>
   <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}
+    <a class="footer__brand" href="{{ routes.root_url }}">{{ shop.name }}</a>
+    <small>&copy; {{ 'now' | date: '%Y' }}</small>
     <p>{{ section.settings.footer_note }}</p>
   </div>
 
@@ -27,34 +26,6 @@
     {% endif %}
   </div>
 </footer>
-
-{% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    gap: 2rem;
-    margin-top: 0;
-  }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
-  }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  footer .footer__copyright {
-    display: grid;
-    gap: 0.35rem;
-    max-width: 34rem;
-  }
-  footer .footer__copyright p {
-    color: rgba(255, 255, 255, 0.68);
-    font-size: 0.9rem;
-  }
-{% endstylesheet %}
 
 {% schema %}
 {

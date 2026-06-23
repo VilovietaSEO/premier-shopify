@@ -48,6 +48,24 @@ async function collectRouteReport(page) {
       return element.offsetParent !== null && rect.width > 0 && rect.height > 0;
     };
 
+    const rgbFromColor = (color) => {
+      const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (!match) return null;
+      return match.slice(1, 4).map(Number);
+    };
+
+    const luminance = (color) => {
+      const rgb = rgbFromColor(color);
+      if (!rgb) return null;
+
+      const [r, g, b] = rgb.map((value) => {
+        const channel = value / 255;
+        return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+      });
+
+      return (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
+    };
+
     const skipSelector = [
       '.ip-capability',
       '.ip-matrix',
@@ -88,6 +106,12 @@ async function collectRouteReport(page) {
       .filter((card) => isVisible(card))
       .map((card) => getComputedStyle(card).backgroundImage);
 
+    const footer = document.querySelector('footer');
+    const trust = document.querySelector('[data-slot="trust"]');
+    const footerStyles = footer ? getComputedStyle(footer) : null;
+    const footerRuleStyles = footer ? getComputedStyle(footer, '::before') : null;
+    const trustStyles = trust ? getComputedStyle(trust) : null;
+
     return {
       route: document.documentElement.dataset.previewRoute,
       bodyScrollWidth: document.documentElement.scrollWidth,
@@ -112,6 +136,11 @@ async function collectRouteReport(page) {
       visibleContactFormCount: [...document.querySelectorAll('.ip-contact-form')].filter((element) => isVisible(element)).length,
       brokenImages,
       storyCardBackgrounds,
+      footerBackgroundColor: footerStyles?.backgroundColor || '',
+      footerBackgroundLuminance: footerStyles ? luminance(footerStyles.backgroundColor) : null,
+      footerRuleHeight: Math.round(parseFloat(footerRuleStyles?.height || '0')),
+      trustBackgroundColor: trustStyles?.backgroundColor || '',
+      trustBackgroundLuminance: trustStyles ? luminance(trustStyles.backgroundColor) : null,
       overflowing,
     };
   });
@@ -134,6 +163,8 @@ function expectSharedLayout(report, viewportName) {
   expect(report.previewRibbonCount).toBe(0);
   expect(report.previewHeaderHeight).toBeLessThanOrEqual(viewportName === 'mobile' ? 62 : 66);
   expect(report.previewLogoHeight).toBeLessThanOrEqual(viewportName === 'mobile' ? 34 : 39);
+  expect(report.footerBackgroundLuminance).toBeGreaterThan(0.86);
+  expect(report.footerRuleHeight).toBeGreaterThanOrEqual(3);
   expect(report.brokenImages).toEqual([]);
   expect(report.overflowing).toEqual([]);
 }
@@ -169,6 +200,7 @@ test.describe('Independence Phone visual preview', () => {
       expect(homeReport.visibleProductFormCount).toBe(0);
       expect(homeReport.visibleCartPropertyListCount).toBe(0);
       expect(homeReport.visibleContactFormCount).toBe(0);
+      expect(homeReport.trustBackgroundLuminance).toBeLessThan(0.08);
       expect(homeReport.storyCardBackgrounds).toHaveLength(4);
       expect(homeReport.storyCardBackgrounds.every((background) => background.includes('url('))).toBe(true);
       expect(homeReport.storyCardBackgrounds.join(' ')).toContain('ip-story-bus-days.png');

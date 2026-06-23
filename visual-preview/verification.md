@@ -26,6 +26,7 @@ The preview test now verifies:
 - Required positioning/product/service copy renders.
 - The preview-only navigation ribbon is absent; the deal banner and primary header are the only top navigation layers.
 - The preview header and logo stay compact, with the logo constrained by height while preserving its source aspect ratio.
+- The footer stays visually separated from the dark trust band with a light background and a visible patriotic divider rule.
 - Cart review renders one setup-property list with three visible property rows.
 - One contact form renders.
 - All local preview images load.
@@ -58,5 +59,5 @@ shopify theme check
 Result:
 
 ```text
-55 files inspected with no offenses found.
+57 files inspected with no offenses found.
 ```
