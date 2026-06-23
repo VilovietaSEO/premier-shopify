@@ -46,7 +46,7 @@ Online Store -> Themes -> Customize -> Home page
 Editable sections:
 
 - `IP video hero`
-  - Edit hero video, fallback poster, eyebrow, headline, subheading, primary button, secondary button, and proof bullets.
+  - Edit hero video, fallback poster, eyebrow, headline, subheading, and primary button.
   - Use `/Users/vilovieta/Documents/Shopify/brief-materials/assets/video/indy-phone-reel-1.mov` as the hero video.
 - `IP JTBD story`
   - Edit parent-focused story copy and family moments.

@@ -267,6 +267,7 @@ const sourceAssets = [
 ];
 
 const customSections = [
+  'ip-announcement-banner',
   'ip-video-hero',
   'ip-jtbd-story',
   'ip-feature-strip',
@@ -283,19 +284,20 @@ const customSections = [
 ];
 
 const sectionSchemaRequirements = {
+  'ip-announcement-banner': {
+    settings: ['enabled', 'text', 'link'],
+    requiresPreset: true,
+  },
   'ip-video-hero': {
     settings: [
       'hero_video',
       'poster_image',
-      'eyebrow',
+      'foreground_image',
       'heading',
       'subheading',
       'primary_label',
       'primary_link',
-      'secondary_label',
-      'secondary_link',
     ],
-    blocks: { proof: ['text'] },
     requiresPreset: true,
   },
   'ip-jtbd-story': {
@@ -418,6 +420,12 @@ const themeAssets = [
   'ip-independence-phone-product-crunchy.png',
   'ip-hero-video.mp4',
   'ip-hero-video-poster.jpg',
+  'ip-phone-cutout-freedom.png',
+  'ip-bg-flag-subtle.png',
+  'ip-story-bus-days.png',
+  'ip-story-home-alone.png',
+  'ip-story-grandparents.png',
+  'ip-story-before-smartphone.png',
 ];
 
 for (const file of sourceFiles) assertFile(file, `brief source ${file}`);
@@ -498,8 +506,9 @@ assertFileIncludes('scripts/bootstrap-refresh-store.sh', [
   'shopify theme dev --store "$store" --theme "$theme_id"',
 ], 'Refresh store bootstrap script');
 assertFileIncludes('scripts/test-refresh-overlay.sh', [
-  'scripts/apply-refresh-overlay.sh',
-  'sections/ip-video-hero.liquid',
+	  'scripts/apply-refresh-overlay.sh',
+	  'sections/ip-announcement-banner.liquid',
+	  'sections/ip-video-hero.liquid',
   'snippets/ip-structured-data.liquid',
   'templates/product.independence-phone.json',
   'ip-theme.css',

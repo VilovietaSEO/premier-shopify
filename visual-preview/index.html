@@ -82,6 +82,67 @@
         text-decoration: none;
       }
 
+      .preview-mini-header details {
+        display: none;
+        margin-left: auto;
+      }
+
+      .preview-mini-header summary {
+        align-items: center;
+        border: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 14%, transparent);
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-flex;
+        height: 2.75rem;
+        justify-content: center;
+        list-style: none;
+        width: 2.75rem;
+      }
+
+      .preview-mini-header summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .preview-mini-header__lines,
+      .preview-mini-header__lines::before,
+      .preview-mini-header__lines::after {
+        background: currentcolor;
+        border-radius: 999px;
+        content: "";
+        display: block;
+        height: 2px;
+        position: relative;
+        width: 1.15rem;
+      }
+
+      .preview-mini-header__lines::before,
+      .preview-mini-header__lines::after {
+        left: 0;
+        position: absolute;
+      }
+
+      .preview-mini-header__lines::before {
+        transform: translateY(-6px);
+      }
+
+      .preview-mini-header__lines::after {
+        transform: translateY(6px);
+      }
+
+      .preview-mini-header__drawer {
+        background: #fff;
+        border: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 12%, transparent);
+        border-radius: 8px;
+        display: grid;
+        gap: 0.25rem;
+        left: var(--page-margin);
+        padding: 0.55rem;
+        position: absolute;
+        right: var(--page-margin);
+        top: calc(100% + 0.55rem);
+        z-index: 35;
+      }
+
       .preview-field-button {
         background: var(--ip-red, #B73532);
         border: 0;
@@ -100,8 +161,17 @@
         }
 
         .preview-mini-header {
-          align-items: flex-start;
-          flex-direction: column;
+          align-items: center;
+          flex-direction: row;
+          flex-wrap: nowrap;
+        }
+
+        .preview-mini-header nav {
+          display: none;
+        }
+
+        .preview-mini-header details {
+          display: block;
         }
       }
     </style>
@@ -116,6 +186,12 @@
       <a href="#contact">Contact</a>
     </div>
 
+    <section class="ip-announcement" aria-label="Store announcement">
+      <div class="ip-announcement__inner">
+        <p>Introductory 250th Anniversary package: Freedom Phone + 1 year service + Victory Bundle for $250.</p>
+      </div>
+    </section>
+
     <header class="preview-mini-header">
       <a href="#home" aria-label="Independence Phone">
         <img src="../independence-phone-theme/assets/ip-independence-phone-logo.png" alt="Independence Phone" width="1562" height="422">
@@ -126,102 +202,73 @@
         <a href="#cart">Cart</a>
         <a href="#contact">Contact</a>
       </nav>
+      <details>
+        <summary aria-label="Open menu"><span class="preview-mini-header__lines" aria-hidden="true"></span></summary>
+        <div class="preview-mini-header__drawer" aria-label="Store navigation">
+          <a href="#home">Home</a>
+          <a href="#choose">Choose Your Phone</a>
+          <a href="#cart">Cart</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </details>
     </header>
 
     <main class="ip-main">
-      <div id="home" class="preview-page-marker">Home /</div>
-
       <div class="shopify-section">
-        <section class="ip-hero full-width" data-slot="home.hero">
+        <section id="home" class="ip-hero full-width" data-slot="home.hero">
           <div class="ip-hero__media" aria-hidden="true">
             <img class="ip-hero__image" src="../independence-phone-theme/assets/ip-hero-video-poster.jpg" alt="" width="2160" height="3840" loading="eager">
           </div>
           <div class="ip-hero__inner">
             <div class="ip-hero__copy">
-              <p class="ip-kicker">A family phone for the smartphone-free years</p>
               <h1 class="ip-heading">Give them a phone. Not the internet.</h1>
               <div class="ip-lede">
                 <p>Kids can call home without apps, browsers, social media, or a personal screen. Built for bus days, home-alone minutes, grandparents, and the years before a smartphone.</p>
               </div>
-              <ul class="ip-proof-list">
-                <li>No apps</li>
-                <li>No web browser</li>
-                <li>No social feeds</li>
-                <li>Simple phone service</li>
-              </ul>
-              <div class="ip-buttons">
-                <a class="ip-button" href="#choose">Choose your phone</a>
-                <a class="ip-button ip-button--secondary" href="#how-it-works">See how it works</a>
-              </div>
+	              <div class="ip-buttons">
+	                <a class="ip-button" href="#choose">Choose your phone</a>
+	              </div>
             </div>
+          </div>
+          <div class="ip-hero__foreground" aria-hidden="true">
+            <img src="../independence-phone-theme/assets/ip-phone-cutout-freedom.png" alt="" width="599" height="1029" loading="eager">
           </div>
         </section>
       </div>
 
       <div class="shopify-section">
-        <section id="how-it-works" class="ip-section ip-story" data-slot="home.jtbd">
-          <div class="ip-story__intro">
-            <div class="ip-stack">
-              <p class="ip-kicker">Reachable without scrollable</p>
-              <h2 class="ip-heading ip-heading--medium ip-heading--wide">They need reachability. They do not need the whole internet yet.</h2>
-            </div>
-            <div class="ip-stack">
-              <div class="ip-lede">
-                <p>The first phone decision usually starts with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation.</p>
-              </div>
-              <p class="ip-note">Independence Phone gives families the calling layer first.</p>
-            </div>
-          </div>
-          <div class="ip-story__cards">
-            <article class="ip-card ip-story-card">
-              <h3 class="ip-story-card__title">Bus days</h3>
-              <div class="ip-story-card__body"><p>A simple way to call home before and after school without adding a smartphone.</p></div>
-            </article>
-            <article class="ip-card ip-story-card">
-              <h3 class="ip-story-card__title">Home-alone minutes</h3>
-              <div class="ip-story-card__body"><p>More independence for short windows while parents stay one call away.</p></div>
-            </article>
-            <article class="ip-card ip-story-card">
-              <h3 class="ip-story-card__title">Grandparents</h3>
-              <div class="ip-story-card__body"><p>A familiar phone experience that makes family calls feel easy again.</p></div>
-            </article>
-            <article class="ip-card ip-story-card">
-              <h3 class="ip-story-card__title">Before the smartphone</h3>
-              <div class="ip-story-card__body"><p>A calmer first step for families delaying apps, browsers, and social feeds.</p></div>
-            </article>
-          </div>
-        </section>
-      </div>
-
-      <div class="shopify-section">
-        <section class="ip-section ip-section--surface ip-section--tight ip-section--flag" data-slot="home.feature-strip">
+        <section class="ip-section ip-section--surface ip-section--tight ip-section--flag ip-feature-strip full-width" data-slot="home.feature-strip">
           <div class="ip-strip">
-            <div class="ip-stack">
-              <p class="ip-kicker">A phone that acts like a phone</p>
-              <h2 class="ip-heading ip-heading--medium">The useful part of a phone, first.</h2>
+            <div class="ip-stack ip-strip__copy">
+              <p class="ip-kicker">Parent tools that feel immediately useful</p>
+              <h2 class="ip-heading ip-heading--medium">Real phone tools without smartphone drama.</h2>
             </div>
             <div class="ip-strip__items">
               <div class="ip-strip__item">
-                <h3>No apps</h3>
-                <p class="ip-note">No app store to negotiate.</p>
+                <span class="ip-strip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 9a7 7 0 0 1 14 0v3a4 4 0 0 1-4 4h-2" /><path d="M9 16H8a3 3 0 0 1-3-3v-2" /><path d="M13 18h2" /><path d="M9 8h6" /></svg></span>
+                <h3>Auto Attendant Call Screening</h3>
+                <p class="ip-note">Help screen unwanted calls before they interrupt the family phone.</p>
               </div>
               <div class="ip-strip__item">
-                <h3>No web browser</h3>
-                <p class="ip-note">Designed to avoid the open internet step.</p>
+                <span class="ip-strip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="7" /><circle cx="12" cy="12" r="2.4" /><path d="M12 5v2" /><path d="M12 17v2" /></svg></span>
+                <h3>Call Recording</h3>
+                <p class="ip-note">Keep a 90-day call record when your family needs extra visibility.</p>
               </div>
               <div class="ip-strip__item">
-                <h3>Simple service</h3>
-                <p class="ip-note">A personal phone number with clear monthly or annual service.</p>
+                <span class="ip-strip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="7" /><path d="M12 8v4l3 2" /><path d="M7 4 5 6" /><path d="M17 4l2 2" /></svg></span>
+                <h3>Programmable On/Off Phone Times</h3>
+                <p class="ip-note">Set times for when incoming calls can ring through.</p>
               </div>
+            </div>
+            <div class="ip-strip__media" aria-hidden="true">
+              <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="" width="1200" height="1200" loading="lazy">
             </div>
           </div>
         </section>
       </div>
 
-      <div id="choose" class="preview-page-marker">Choose Your Phone /collections/phones</div>
-
       <div class="shopify-section">
-        <section class="ip-section" data-slot="products.compare">
+        <section id="choose" class="ip-section" data-slot="products.compare">
           <div class="ip-stack">
             <p class="ip-kicker">Two phones. One simple decision.</p>
             <h2 class="ip-heading ip-heading--medium ip-heading--wide">Choose the everyday model or the rugged model.</h2>
@@ -272,66 +319,40 @@
       </div>
 
       <div class="shopify-section">
-        <section class="ip-section ip-section--surface" data-slot="service.plans">
-          <div class="ip-stack">
-            <p class="ip-kicker">Simple service</p>
-            <h2 class="ip-heading ip-heading--medium ip-heading--wide">Personal phone service, priced clearly.</h2>
-            <div class="ip-lede"><p>Each phone pairs with a personal phone number and phone service. Choose the monthly plan or pay annually.</p></div>
-          </div>
-          <div class="ip-plan-grid" style="margin-top: 2rem;">
-            <article class="ip-card ip-plan-card">
-              <p class="ip-plan-card__label">Monthly</p>
-              <h3>Personal phone number + monthly service</h3>
-              <p class="ip-price">$17.76/mo</p>
-              <div><p>Simple monthly phone service for the family phone.</p></div>
-            </article>
-            <article class="ip-card ip-plan-card">
-              <p class="ip-plan-card__label">Annual</p>
-              <h3>Personal phone number + annual service</h3>
-              <p class="ip-price">$200/yr</p>
-              <div><p>Annual service saves $13.12 compared with monthly billing.</p></div>
-            </article>
-          </div>
-          <div class="ip-disclosures">
-            <p>Shipping is $15 per phone anywhere in the USA. All products and services are subject to federal, state, and local taxes.</p>
-          </div>
-        </section>
-      </div>
-
-      <div class="shopify-section">
-        <section class="ip-section" data-slot="addons">
-          <div class="ip-stack">
-            <p class="ip-kicker">Optional add-ons</p>
-            <h2 class="ip-heading ip-heading--medium ip-heading--wide">Choose only the features your family needs.</h2>
-            <div class="ip-lede"><p>Both phones can present the same optional add-ons during the purchase flow.</p></div>
-          </div>
-          <div class="ip-addon-grid" style="margin-top: 2rem;">
-            <article class="ip-card ip-addon-card"><p class="ip-addon-card__label">$5/mo</p><h3>Call Recording</h3><p class="ip-note">Record and store all calls for 90 days.</p></article>
-            <article class="ip-card ip-addon-card"><p class="ip-addon-card__label">$5/mo</p><h3>Time Conditions</h3><p class="ip-note">Set on/off times for incoming calls.</p></article>
-            <article class="ip-card ip-addon-card"><p class="ip-addon-card__label">$5/mo</p><h3>Voicemail to Email</h3><p class="ip-note">Unanswered calls go to voicemail and messages are sent to email.</p></article>
-            <article class="ip-card ip-addon-card"><p class="ip-addon-card__label">$10/mo</p><h3>Victory Bundle</h3><p class="ip-note">Call Recording, Time Conditions, and Voicemail to Email together.</p></article>
-            <article class="ip-card ip-addon-card"><p class="ip-addon-card__label">$5/mo</p><h3>Auto Attendant</h3><p class="ip-note">Help screen spam calls before they interrupt the family phone.</p></article>
-          </div>
-        </section>
-      </div>
-
-      <div class="shopify-section">
-        <section class="ip-section" data-slot="capabilities">
-          <div class="ip-stack">
-            <p class="ip-kicker">Plain answers</p>
-            <h2 class="ip-heading ip-heading--medium ip-heading--wide">What it does, and what it is not trying to be.</h2>
-            <div class="ip-lede"><p>If a feature is not in the supplied launch specs, do not market it as included.</p></div>
-          </div>
-          <div class="ip-capability" style="margin-top: 2rem;">
-            <div class="ip-capability__row">
-              <div class="ip-capability__cell ip-capability__head">Capability</div>
-              <div class="ip-capability__cell ip-capability__head">Status</div>
-              <div class="ip-capability__cell ip-capability__head">How to explain it</div>
+        <section id="how-it-works" class="ip-section ip-story" data-slot="home.jtbd">
+          <div class="ip-story__intro">
+            <div class="ip-stack">
+              <p class="ip-kicker">Reachable without scrollable</p>
+              <h2 class="ip-heading ip-heading--medium ip-heading--wide">They need reachability. They do not need the whole internet yet.</h2>
             </div>
-            <div class="ip-capability__row"><div class="ip-capability__cell"><strong>Calls</strong></div><div class="ip-capability__cell"><span class="ip-status ip-status--yes">Yes</span></div><div class="ip-capability__cell">The product is built around calling and a personal phone number.</div></div>
-            <div class="ip-capability__row"><div class="ip-capability__cell"><strong>Wi-Fi handset</strong></div><div class="ip-capability__cell"><span class="ip-status ip-status--yes">Yes</span></div><div class="ip-capability__cell">Both products are cordless Wi-Fi handsets with charging bases.</div></div>
-            <div class="ip-capability__row"><div class="ip-capability__cell"><strong>Web browser</strong></div><div class="ip-capability__cell"><span class="ip-status ip-status--no">No</span></div><div class="ip-capability__cell">The product is positioned as a phone without web browsing.</div></div>
-            <div class="ip-capability__row"><div class="ip-capability__cell"><strong>SMS, GPS, camera, cellular mobility</strong></div><div class="ip-capability__cell"><span class="ip-status ip-status--plain">Not in supplied specs</span></div><div class="ip-capability__cell">Do not market these as included unless the product/service scope changes.</div></div>
+            <div class="ip-stack">
+              <div class="ip-lede">
+                <p>The first phone decision usually starts with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation.</p>
+              </div>
+              <p class="ip-note">Independence Phone gives families the calling layer first.</p>
+            </div>
+          </div>
+          <div class="ip-story__solution">
+            <h3>The useful part of a phone, first.</h3>
+            <div class="ip-lede"><p>Independence Phone is built for families who want communication before distraction. It gives kids a simple way to call while helping parents delay the smartphone step until the family is ready.</p></div>
+          </div>
+          <div class="ip-story__cards">
+            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('ip-story-bus-days.png');">
+              <h3 class="ip-story-card__title">Bus days</h3>
+              <div class="ip-story-card__body"><p>A simple way to call home before and after school without adding a smartphone.</p></div>
+            </article>
+            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('ip-story-home-alone.png');">
+              <h3 class="ip-story-card__title">Home-alone minutes</h3>
+              <div class="ip-story-card__body"><p>More independence for short windows while parents stay one call away.</p></div>
+            </article>
+            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('ip-story-grandparents.png');">
+              <h3 class="ip-story-card__title">Grandparents</h3>
+              <div class="ip-story-card__body"><p>A familiar phone experience that makes family calls feel easy again.</p></div>
+            </article>
+            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('ip-story-before-smartphone.png');">
+              <h3 class="ip-story-card__title">Before the smartphone</h3>
+              <div class="ip-story-card__body"><p>A calmer first step for families delaying apps, browsers, and social feeds.</p></div>
+            </article>
           </div>
         </section>
       </div>
@@ -355,10 +376,8 @@
         </section>
       </div>
 
-      <div id="freedom" class="preview-page-marker">Product /products/freedom-phone</div>
-
       <div class="shopify-section">
-        <section class="ip-product-main" data-slot="product.freedom">
+        <section id="freedom" class="ip-product-main" data-slot="product.freedom">
           <div class="ip-product-main__gallery" data-product-gallery>
             <div class="ip-product-main__media" aria-live="polite">
               <figure class="ip-product-main__slide is-active" data-gallery-slide="0">
@@ -427,10 +446,8 @@
         </section>
       </div>
 
-      <div id="patriot" class="preview-page-marker">Product /products/patriot-phone</div>
-
       <div class="shopify-section">
-        <section class="ip-product-main" data-slot="product.patriot">
+        <section id="patriot" class="ip-product-main" data-slot="product.patriot">
           <div class="ip-product-main__gallery" data-product-gallery>
             <div class="ip-product-main__media" aria-live="polite">
               <figure class="ip-product-main__slide is-active" data-gallery-slide="0">
@@ -500,10 +517,8 @@
         </section>
       </div>
 
-      <div id="cart" class="preview-page-marker">Cart /cart</div>
-
       <div class="shopify-section">
-        <section class="ip-cart" data-slot="cart.review">
+        <section id="cart" class="ip-cart" data-slot="cart.review">
           <div class="ip-stack">
             <p class="ip-kicker">Order review</p>
             <h1 class="ip-heading ip-heading--medium">Cart</h1>
@@ -562,10 +577,8 @@
         </section>
       </div>
 
-      <div id="contact" class="preview-page-marker">Contact /pages/contact</div>
-
       <div class="shopify-section">
-        <section class="ip-section" data-slot="contact.form">
+        <section id="contact" class="ip-section" data-slot="contact.form">
           <div class="ip-contact">
             <div class="ip-stack">
               <p class="ip-kicker">Need help choosing?</p>

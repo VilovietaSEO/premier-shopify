@@ -34,24 +34,12 @@
 
   <div class="ip-hero__inner">
     <div class="ip-hero__copy">
-      {% if section.settings.eyebrow != blank %}
-        <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
-      {% endif %}
-
       {% if section.settings.heading != blank %}
         <h1 class="ip-heading">{{ section.settings.heading }}</h1>
       {% endif %}
 
       {% if section.settings.subheading != blank %}
         <div class="ip-lede">{{ section.settings.subheading }}</div>
-      {% endif %}
-
-      {% if section.blocks.size > 0 %}
-        <ul class="ip-proof-list">
-          {% for block in section.blocks %}
-            <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
-          {% endfor %}
-        </ul>
       {% endif %}
 
       <div class="ip-buttons">
@@ -61,13 +49,20 @@
           </a>
         {% endif %}
 
-        {% if section.settings.secondary_label != blank %}
-          <a class="ip-button ip-button--secondary" href="{{ section.settings.secondary_link | default: '#how-it-works' }}">
-            {{ section.settings.secondary_label }}
-          </a>
-        {% endif %}
       </div>
     </div>
+  </div>
+
+  <div class="ip-hero__foreground" aria-hidden="true">
+    {% if section.settings.foreground_image != blank %}
+      {{
+        section.settings.foreground_image
+        | image_url: width: 900
+        | image_tag: alt: '', loading: 'eager'
+      }}
+    {% else %}
+      <img src="{{ 'ip-phone-cutout-freedom.png' | asset_url }}" alt="" width="599" height="1029" loading="eager">
+    {% endif %}
   </div>
 </section>
 
@@ -86,10 +81,9 @@
       "label": "Poster image"
     },
     {
-      "type": "text",
-      "id": "eyebrow",
-      "label": "Eyebrow",
-      "default": "A family phone for the smartphone-free years"
+      "type": "image_picker",
+      "id": "foreground_image",
+      "label": "Foreground phone image"
     },
     {
       "type": "text",
@@ -113,42 +107,11 @@
       "type": "url",
       "id": "primary_link",
       "label": "Primary CTA link"
-    },
-    {
-      "type": "text",
-      "id": "secondary_label",
-      "label": "Secondary CTA label",
-      "default": "See how it works"
-    },
-    {
-      "type": "url",
-      "id": "secondary_link",
-      "label": "Secondary CTA link"
-    }
-  ],
-  "blocks": [
-    {
-      "type": "proof",
-      "name": "Proof bullet",
-      "settings": [
-        {
-          "type": "text",
-          "id": "text",
-          "label": "Text",
-          "default": "No apps"
-        }
-      ]
     }
   ],
   "presets": [
     {
-      "name": "IP video hero",
-      "blocks": [
-        { "type": "proof", "settings": { "text": "No apps" } },
-        { "type": "proof", "settings": { "text": "No web browser" } },
-        { "type": "proof", "settings": { "text": "No social feeds" } },
-        { "type": "proof", "settings": { "text": "Simple phone service" } }
-      ]
+      "name": "IP video hero"
     }
   ]
 }

@@ -1,0 +1,43 @@
+{% if section.settings.enabled %}
+  <section class="ip-announcement" aria-label="Store announcement">
+    <div class="ip-announcement__inner">
+      {% if section.settings.text != blank %}
+        {% if section.settings.link != blank %}
+          <a href="{{ section.settings.link }}">{{ section.settings.text }}</a>
+        {% else %}
+          <p>{{ section.settings.text }}</p>
+        {% endif %}
+      {% endif %}
+    </div>
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "IP announcement banner",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Show announcement banner",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Banner text",
+      "default": "Introductory 250th Anniversary package: Freedom Phone + 1 year service + Victory Bundle for $250."
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Optional link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "IP announcement banner"
+    }
+  ]
+}
+{% endschema %}

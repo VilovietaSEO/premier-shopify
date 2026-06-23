@@ -158,7 +158,7 @@ shopify theme package
 
 Client-editable in Theme Editor:
 
-- Hero video/poster, headline, copy, CTAs, proof bullets.
+- Hero video/poster, headline, copy, and primary CTA.
 - JTBD cards and feature strip.
 - Product comparison copy and fallback images.
 - Service plans and add-ons.

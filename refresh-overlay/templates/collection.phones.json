@@ -31,7 +31,8 @@
         }
       },
       "block_order": ["monthly", "annual"],
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
     "addons": {
       "type": "ip-add-ons",
@@ -78,7 +79,8 @@
         }
       },
       "block_order": ["recording", "time_conditions", "voicemail", "victory", "attendant"],
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
     "capabilities": {
       "type": "ip-capability-table",
@@ -139,7 +141,8 @@
         }
       },
       "block_order": ["calls", "wifi", "browser", "apps", "unsupported", "spam"],
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
     "package": {
       "type": "ip-package-band",

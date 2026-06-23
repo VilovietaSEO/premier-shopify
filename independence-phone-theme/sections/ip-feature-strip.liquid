@@ -1,6 +1,6 @@
-<section class="ip-section ip-section--surface ip-section--tight ip-section--flag">
+<section class="ip-section ip-section--surface ip-section--tight ip-section--flag ip-feature-strip full-width">
   <div class="ip-strip">
-    <div class="ip-stack">
+    <div class="ip-stack ip-strip__copy">
       {% if section.settings.eyebrow != blank %}
         <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
       {% endif %}
@@ -9,10 +9,46 @@
     <div class="ip-strip__items">
       {% for block in section.blocks %}
         <div class="ip-strip__item" {{ block.shopify_attributes }}>
+          <span class="ip-strip__icon" aria-hidden="true">
+            {% case forloop.index %}
+              {% when 1 %}
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M5 9a7 7 0 0 1 14 0v3a4 4 0 0 1-4 4h-2" />
+                  <path d="M9 16H8a3 3 0 0 1-3-3v-2" />
+                  <path d="M13 18h2" />
+                  <path d="M9 8h6" />
+                </svg>
+              {% when 2 %}
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="12" r="7" />
+                  <circle cx="12" cy="12" r="2.4" />
+                  <path d="M12 5v2" />
+                  <path d="M12 17v2" />
+                </svg>
+              {% else %}
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="12" r="7" />
+                  <path d="M12 8v4l3 2" />
+                  <path d="M7 4 5 6" />
+                  <path d="M17 4l2 2" />
+                </svg>
+            {% endcase %}
+          </span>
           <h3>{{ block.settings.title }}</h3>
           <p class="ip-note">{{ block.settings.body }}</p>
         </div>
       {% endfor %}
+    </div>
+    <div class="ip-strip__media" aria-hidden="true">
+      {% if section.settings.phone_image != blank %}
+        {{
+          section.settings.phone_image
+          | image_url: width: 520
+          | image_tag: loading: 'lazy'
+        }}
+      {% else %}
+        <img src="{{ 'ip-current-site-product-1.png' | asset_url }}" alt="" width="1200" height="1200" loading="lazy">
+      {% endif %}
     </div>
   </div>
 </section>
@@ -25,13 +61,18 @@
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow",
-      "default": "A phone that acts like a phone"
+      "default": "Parent tools that feel immediately useful"
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "The useful part of a phone, first."
+      "default": "Real phone tools without smartphone drama."
+    },
+    {
+      "type": "image_picker",
+      "id": "phone_image",
+      "label": "Phone image"
     }
   ],
   "blocks": [
@@ -61,22 +102,22 @@
         {
           "type": "feature",
           "settings": {
-            "title": "No apps",
-            "body": "No app store to negotiate."
+            "title": "Auto Attendant Call Screening",
+            "body": "Help screen unwanted calls before they interrupt the family phone."
           }
         },
         {
           "type": "feature",
           "settings": {
-            "title": "No web browser",
-            "body": "Designed to avoid the open internet step."
+            "title": "Call Recording",
+            "body": "Keep a 90-day call record when your family needs extra visibility."
           }
         },
         {
           "type": "feature",
           "settings": {
-            "title": "Simple service",
-            "body": "A personal phone number with clear monthly or annual service."
+            "title": "Programmable On/Off Phone Times",
+            "body": "Set times for when incoming calls can ring through."
           }
         }
       ]

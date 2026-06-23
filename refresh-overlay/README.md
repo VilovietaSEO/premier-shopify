@@ -20,6 +20,7 @@ The local `independence-phone-theme` is a complete uploadable Shopify theme pack
   - `assets/ip-hero-video-poster.jpg`
 - Custom editable sections:
   - `sections/ip-video-hero.liquid`
+  - `sections/ip-announcement-banner.liquid`
   - `sections/ip-jtbd-story.liquid`
   - `sections/ip-feature-strip.liquid`
   - `sections/ip-product-comparison.liquid`

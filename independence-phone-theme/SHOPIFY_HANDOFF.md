@@ -215,7 +215,7 @@ Theme Editor guide:
 
 Client-editable areas already exposed through section schemas:
 
-- Hero video, poster, headline, subheading, buttons, and proof bullets.
+- Hero video, poster, headline, subheading, and primary button.
 - Parent/JTBD story copy and moment cards.
 - Product comparison headings, product selectors, image overrides, and summary overrides.
 - Service plan cards.

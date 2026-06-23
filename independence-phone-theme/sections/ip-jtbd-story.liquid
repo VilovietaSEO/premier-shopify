@@ -14,10 +14,37 @@
     </div>
   </div>
 
+  {% if section.settings.solution_heading != blank or section.settings.solution_body != blank %}
+    <div class="ip-story__solution">
+      {% if section.settings.solution_heading != blank %}
+        <h3>{{ section.settings.solution_heading }}</h3>
+      {% endif %}
+      {% if section.settings.solution_body != blank %}
+        <div class="ip-lede">{{ section.settings.solution_body }}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+
   {% if section.blocks.size > 0 %}
     <div class="ip-story__cards">
       {% for block in section.blocks %}
-        <article class="ip-card ip-story-card" {{ block.shopify_attributes }}>
+        {% liquid
+          assign fallback_card_bg = 'ip-story-bus-days.png' | asset_url
+          case forloop.index
+            when 2
+              assign fallback_card_bg = 'ip-story-home-alone.png' | asset_url
+            when 3
+              assign fallback_card_bg = 'ip-story-grandparents.png' | asset_url
+            when 4
+              assign fallback_card_bg = 'ip-story-before-smartphone.png' | asset_url
+          endcase
+
+          assign card_bg = fallback_card_bg
+          if block.settings.image != blank
+            assign card_bg = block.settings.image | image_url: width: 900
+          endif
+        %}
+        <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('{{ card_bg }}');" {{ block.shopify_attributes }}>
           <h3 class="ip-story-card__title">{{ block.settings.title }}</h3>
           <div class="ip-story-card__body">{{ block.settings.body }}</div>
         </article>
@@ -59,6 +86,18 @@
       "id": "note",
       "label": "Small note",
       "default": "Independence Phone gives families the calling layer first."
+    },
+    {
+      "type": "text",
+      "id": "solution_heading",
+      "label": "Solution heading",
+      "default": "The useful part of a phone, first."
+    },
+    {
+      "type": "richtext",
+      "id": "solution_body",
+      "label": "Solution body",
+      "default": "<p>Independence Phone is built for families who want communication before distraction. It gives kids a simple way to call while helping parents delay the smartphone step until the family is ready.</p>"
     }
   ],
   "blocks": [
@@ -66,6 +105,11 @@
       "type": "moment",
       "name": "Family moment",
       "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Background image"
+        },
         {
           "type": "text",
           "id": "title",
