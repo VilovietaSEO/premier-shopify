@@ -180,7 +180,7 @@
   });
 
   document.addEventListener('pointerdown', (event) => {
-    const zone = event.target.closest('.ip-product-main__media, [data-gallery-lightbox-media]');
+    const zone = event.target.closest('.ip-product-main__media, .ip-product-card__media, [data-gallery-lightbox-media]');
     if (!zone) return;
     const gallery = activeGallery || zone.closest(gallerySelector);
     if (!gallery) return;

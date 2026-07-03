@@ -4,3 +4,6 @@ playwright-report/
 visual-preview/screenshots/
 visual-preview/reports/
 refresh-theme/
+tmp/
+.DS_Store
+*.swp

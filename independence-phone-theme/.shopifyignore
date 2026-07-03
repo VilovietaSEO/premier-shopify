@@ -11,3 +11,22 @@
 #
 # Ignore templates and sections with a regular expression:
 #   /(templates|sections)/.*\.json/
+
+# Local/editor artifacts
+.DS_Store
+*.swp
+*.swo
+
+# Repository documentation and packaged exports
+README.md
+SHOPIFY_HANDOFF.md
+THEME_EDITOR_GUIDE.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+LICENSE.md
+*.zip
+
+# Git and local tooling metadata
+.gitattributes
+.gitignore
+.theme-check.yml

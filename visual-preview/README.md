@@ -2,7 +2,7 @@
 
 This is a local-only visual QA harness for the Independence Phone Shopify build.
 
-It exists because Shopify Theme Editor preview requires a fresh store and Shopify auth. Until that store exists, this file gives us a browser-renderable approximation of the scoped pages using the same Independence Phone CSS and image assets.
+It exists because Shopify Theme Editor preview requires a fresh store and Shopify auth. Until that store exists, this file gives us a browser-renderable approximation of the scoped pages using the same theme CSS and image assets.
 
 Preview file:
 
@@ -10,19 +10,13 @@ Preview file:
 /Users/vilovieta/Documents/Shopify/visual-preview/index.html
 ```
 
-Open directly:
-
-```bash
-open /Users/vilovieta/Documents/Shopify/visual-preview/index.html
-```
-
-The preview is routed so page contexts do not bleed together. Home section jumps can still use hashes, but product, cart, and contact contexts use route parameters so they do not behave like in-page jump links:
+Preview routes:
 
 ```bash
 /visual-preview/index.html
-/visual-preview/index.html?route=freedom
-/visual-preview/index.html?route=patriot
+/visual-preview/index.html?route=order
 /visual-preview/index.html?route=cart
+/visual-preview/index.html?route=faq
 /visual-preview/index.html?route=contact
 ```
 
@@ -37,19 +31,16 @@ The test opens `index.html` through a local `file://` URL by default. To test a 
 
 What this verifies:
 
-- Desktop/mobile rhythm for the custom section system.
-- Hero visual treatment using the generated poster from the supplied hero video.
-- Home landing page layout without product-detail ordering forms.
-- Product comparison, package, FAQ, trust band, product detail, cart review, and contact form layout in their correct preview routes.
-- Product detail pages keep the carousel thumbnails, service choices, and add-on options isolated from the landing page.
-- Local cart display of selected service/add-on setup details.
-- Preview cart empty state, cart count, add-to-cart, remove, quantity/subtotal updates, and always-visible cart add-on controls for both phone models.
-- Text wrapping and horizontal overflow risk before Shopify auth exists.
+- Home route with bounded video hero, $17.76/mo price callout, Order Now CTA, feature strip, four use-case image cards, and FAQ.
+- Order route with Patriot Package, Classic/Rugged phone choice, monthly/annual plan choice, add-on bundle, individual add-ons, savings descriptors, and policy checkbox.
+- Preview cart display of selected setup details, estimated savings, legal checkbox, and always-visible cart add-on controls.
+- FAQ and Contact as standalone routes.
+- Text wrapping, image loading, and horizontal overflow risk before Shopify auth exists.
 
 What this does not verify:
 
 - Shopify Theme Editor controls.
-- Shopify product data, actual checkout completion, or contact form submission.
+- Shopify product data, actual checkout completion, subscription billing, or contact form submission.
 - Actual `Refresh` theme integration after pulling from a fresh store.
 
 Those checks remain in `independence-phone-theme/SHOPIFY_HANDOFF.md`.

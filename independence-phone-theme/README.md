@@ -1,6 +1,6 @@
-# Independence Phone Shopify Theme
+# Patriot Phone Shopify Theme
 
-Fresh-store Shopify Online Store 2.0 theme for Independence Phone.
+Fresh-store Shopify Online Store 2.0 theme for Patriot Phone.
 
 Local path:
 
@@ -17,7 +17,7 @@ Canonical source folder:
 ## Build Status
 
 - Theme scaffold exists locally.
-- Independence Phone sections and JSON templates are implemented.
+- Patriot Phone sections and JSON templates are implemented.
 - Product, service, add-on, package, and trust copy use the provided source facts.
 - `shopify theme check` passes with no offenses.
 - Store preview/push waits on fresh-store Shopify auth.
@@ -47,8 +47,8 @@ Create these Shopify products:
 
 | Product | Price | Handle | Template |
 | --- | ---: | --- | --- |
-| Freedom Phone | `$99` | `freedom-phone` | `independence-phone` |
-| Patriot Phone | `$149` | `patriot-phone` | `independence-phone` |
+| Classic Phone | `$100` | `standard-phone` | `independence-phone` |
+| Rugged Phone | `$150` | `rugged-phone` | `independence-phone` |
 
 Create this collection:
 
@@ -58,19 +58,32 @@ Create this collection:
 
 Publish both products and the `Phones` collection to the Online Store sales channel. The setup helper can do this automatically when the Admin API token includes `read_publications` and `write_publications`; otherwise publish them from each product/collection admin page under Publishing.
 
-Create this page:
+Create these pages:
 
 | Page | Handle | Template |
 | --- | --- | --- |
+| Order Now | `order-now` | `order` |
+| FAQ | `faq` | `faq` |
 | Contact | `contact` | `contact` |
 
 Primary URLs:
 
 - `/`
+- `/collections/all`
 - `/collections/phones`
-- `/products/freedom-phone`
-- `/products/patriot-phone`
+- `/pages/order-now`
+- `/pages/faq`
+- `/products/standard-phone`
+- `/products/rugged-phone`
 - `/pages/contact`
+
+Automatic raw Markdown `llms.txt` is not a Shopify page. Use `/Users/vilovieta/Documents/Shopify/llms/automatic-llms.js` behind a root/proxy route for:
+
+- `/llms.txt`
+- `/products/standard-phone/llms.txt`
+- `/products/rugged-phone/llms.txt`
+- `/collections/all/llms.txt`
+- `/a/llms.txt?path=/pages/faq` when using Shopify app proxy routing
 
 ## Theme Files
 
@@ -96,6 +109,7 @@ Main templates:
 - `templates/collection.phones.json`
 - `templates/product.independence-phone.json`
 - `templates/page.contact.json`
+- `templates/robots.txt.liquid`
 
 Fallback branded templates:
 
@@ -163,11 +177,12 @@ Client-editable in Theme Editor:
 - Product comparison copy and fallback images.
 - Service plans and add-ons.
 - Capability table rows.
-- 250th Anniversary package copy.
+- Patriot Package copy.
 - Comparison matrix rows.
 - FAQ rows.
 - Trust band rows.
 - Contact form support copy.
+- LLM summary page copy.
 - Theme colors in Theme settings.
 
 Developer-owned:

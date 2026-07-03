@@ -1,4 +1,4 @@
-<header>
+<header class="full-width">
   <h2 class="header__title">
     <a href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
       {% if section.settings.logo != blank %}
@@ -36,7 +36,7 @@
 
 {% stylesheet %}
   header {
-    --ip-header-row: 3.75rem;
+    --ip-header-row: 4.5rem;
     align-items: center;
     display: flex;
     gap: clamp(0.75rem, 2vw, 1.25rem);
@@ -91,13 +91,15 @@
   header .header__icon-link,
   header shopify-account {
     align-items: center;
-    border: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 12%, transparent);
-    border-radius: 6px;
-    color: var(--color-foreground);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    color: var(--ip-red, #B73532);
     display: inline-flex;
     height: 2.75rem;
     justify-content: center;
     min-height: 2.75rem;
+    position: relative;
     width: 2.75rem;
   }
   header .header__icon-link svg,
@@ -107,12 +109,11 @@
   }
   header .header__icon-link:hover,
   header shopify-account:hover {
-    border-color: color-mix(in srgb, var(--ip-blue, #263F73) 36%, transparent);
-    color: var(--ip-blue, #263F73);
+    color: color-mix(in srgb, var(--ip-red, #B73532) 82%, #172033);
   }
   @media (max-width: 820px) {
     header {
-      --ip-header-row: 3.5rem;
+      --ip-header-row: 4rem;
     }
     header .header__icons {
       gap: 0.35rem;

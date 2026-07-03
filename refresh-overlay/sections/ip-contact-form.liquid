@@ -12,17 +12,26 @@
     </div>
 
     <div class="ip-card" style="padding: clamp(1rem, 3vw, 1.5rem);">
-      {% form 'contact', class: 'ip-contact-form' %}
-        {% if form.posted_successfully? %}
-          <p class="ip-kicker">Message sent</p>
-          <p>Thanks. We received your question and will follow up.</p>
-        {% endif %}
+      {% assign crm_endpoint = section.settings.crm_endpoint_url | strip %}
 
-        {% if form.errors %}
-          <div class="ip-form-note">
-            {{ form.errors | default_errors }}
-          </div>
-        {% endif %}
+      {% capture contact_fields %}
+        <input type="hidden" name="crm[form_name]" value="contact">
+        <input type="hidden" name="crm[record_type]" value="lead">
+        <input type="hidden" name="crm[source_type]" value="contact_form">
+        <input type="hidden" name="crm[lead_type]" value="contact_form">
+        <input type="hidden" name="crm[tags]" value="lead,contact_form,product_interest">
+        <input type="hidden" name="crm[source_url]" value="{{ canonical_url | escape }}" data-crm-source-url>
+        <input type="hidden" name="crm[source_path]" value="{{ request.path | escape }}">
+        <input type="hidden" name="crm[referrer]" value="" data-crm-referrer>
+        <input type="hidden" name="crm[utm_source]" value="" data-crm-utm="utm_source">
+        <input type="hidden" name="crm[utm_medium]" value="" data-crm-utm="utm_medium">
+        <input type="hidden" name="crm[utm_campaign]" value="" data-crm-utm="utm_campaign">
+        <input type="hidden" name="crm[return_to]" value="{{ request.path | append: '?crm=received' | escape }}">
+
+        <div class="ip-field ip-honeypot" aria-hidden="true">
+          <label for="ContactWebsite-{{ section.id }}">Website</label>
+          <input id="ContactWebsite-{{ section.id }}" type="text" name="company_website" tabindex="-1" autocomplete="off">
+        </div>
 
         <div class="ip-grid ip-grid--2">
           <div class="ip-field">
@@ -74,23 +83,44 @@
             <label for="ContactProduct-{{ section.id }}">Interested product</label>
             <select id="ContactProduct-{{ section.id }}" name="contact[Interested product]">
               <option value="">Select one</option>
-              <option>Freedom Phone</option>
-              <option>Patriot Phone</option>
-              <option>250th Anniversary package</option>
+              <option>Classic Phone</option>
+              <option>Rugged Phone</option>
+              <option>Patriot Package</option>
               <option>Not sure yet</option>
             </select>
           </div>
         </div>
 
-        <div class="ip-field">
-          <label for="ContactPlan-{{ section.id }}">Preferred service plan</label>
-          <select id="ContactPlan-{{ section.id }}" name="contact[Preferred service plan]">
-            <option value="">Select one</option>
-            <option>Monthly service - $17.76/mo</option>
-            <option>Annual service - $200/yr</option>
-            <option>Not sure yet</option>
-          </select>
+        <div class="ip-grid ip-grid--2">
+          <div class="ip-field">
+            <label for="ContactPlan-{{ section.id }}">Preferred service plan</label>
+            <select id="ContactPlan-{{ section.id }}" name="contact[Preferred service plan]">
+              <option value="">Select one</option>
+              <option>Monthly service - $17.76/mo</option>
+              <option>Annual service - $200/yr</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+
+          <div class="ip-field">
+            <label for="ContactPackage-{{ section.id }}">Patriot Package interest</label>
+            <select id="ContactPackage-{{ section.id }}" name="contact[Patriot Package interest]">
+              <option value="">Select one</option>
+              <option>Interested in Patriot Package</option>
+              <option>Phone only for now</option>
+              <option>Need help deciding</option>
+            </select>
+          </div>
         </div>
+
+        <fieldset class="ip-field ip-fieldset">
+          <legend>Selected add-ons</legend>
+          <label><input type="checkbox" name="contact[Selected add-ons]" value="Call Recording"> Call Recording</label>
+          <label><input type="checkbox" name="contact[Selected add-ons]" value="Quiet Hours"> Quiet Hours</label>
+          <label><input type="checkbox" name="contact[Selected add-ons]" value="Voicemail to Email"> Voicemail to Email</label>
+          <label><input type="checkbox" name="contact[Selected add-ons]" value="Auto Attendant"> Auto Attendant</label>
+          <label><input type="checkbox" name="contact[Selected add-ons]" value="Add-on Bundle"> Add-on Bundle</label>
+        </fieldset>
 
         <div class="ip-field">
           <label for="ContactMessage-{{ section.id }}">Questions</label>
@@ -102,13 +132,60 @@
           {{ section.settings.opt_in_text }}
         </label>
 
-        <button type="submit">{{ section.settings.button_label }}</button>
+        <label class="ip-form-note">
+          <input type="checkbox" name="contact[Privacy and terms consent]" value="Yes" required>
+          I agree to the <a href="{{ routes.root_url }}policies/privacy-policy">Privacy Policy</a> and <a href="{{ routes.root_url }}policies/terms-of-service">Terms and Conditions</a>.
+        </label>
+      {% endcapture %}
 
-        <p class="ip-form-note">{{ section.settings.payment_note }}</p>
-      {% endform %}
+      {% if crm_endpoint != blank %}
+        <form method="post" action="{{ crm_endpoint | escape }}" class="ip-contact-form" data-crm-capture="true">
+          <p class="ip-form-note" data-crm-success hidden>Thanks. We received your question and will follow up.</p>
+          {{ contact_fields }}
+          <button type="submit">{{ section.settings.button_label }}</button>
+          <p class="ip-form-note">{{ section.settings.payment_note }}</p>
+        </form>
+      {% else %}
+        {% form 'contact', class: 'ip-contact-form' %}
+          {% if form.posted_successfully? %}
+            <p class="ip-kicker">Message sent</p>
+            <p>Thanks. We received your question and will follow up.</p>
+          {% endif %}
+
+          {% if form.errors %}
+            <div class="ip-form-note">
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+
+          {{ contact_fields }}
+          <button type="submit">{{ section.settings.button_label }}</button>
+          <p class="ip-form-note">{{ section.settings.payment_note }}</p>
+        {% endform %}
+      {% endif %}
     </div>
   </div>
 </section>
+
+<script>
+  (() => {
+    const forms = document.querySelectorAll('[data-crm-capture="true"]');
+    const params = new URLSearchParams(window.location.search);
+
+    forms.forEach((form) => {
+      const source = form.querySelector('[data-crm-source-url]');
+      const referrer = form.querySelector('[data-crm-referrer]');
+      const success = form.querySelector('[data-crm-success]');
+
+      if (source) source.value = window.location.href;
+      if (referrer) referrer.value = document.referrer || '';
+      form.querySelectorAll('[data-crm-utm]').forEach((input) => {
+        input.value = params.get(input.dataset.crmUtm) || '';
+      });
+      if (success && params.get('crm') === 'received') success.hidden = false;
+    });
+  })();
+</script>
 
 {% schema %}
 {
@@ -130,7 +207,7 @@
       "type": "richtext",
       "id": "body",
       "label": "Body",
-      "default": "<p>Ask about Freedom Phone, Patriot Phone, service, add-ons, the 250th Anniversary package, or launch updates.</p>"
+      "default": "<p>Ask about Classic Phone, Rugged Phone, service, add-ons, the Patriot Package, or launch updates.</p>"
     },
     {
       "type": "textarea",
@@ -143,6 +220,12 @@
       "id": "button_label",
       "label": "Button label",
       "default": "Send my question"
+    },
+    {
+      "type": "url",
+      "id": "crm_endpoint_url",
+      "label": "CRM endpoint URL",
+      "info": "Optional. When set, this form posts to the CRM capture endpoint instead of Shopify's native contact email form."
     },
     {
       "type": "textarea",

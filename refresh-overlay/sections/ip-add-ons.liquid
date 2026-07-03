@@ -13,6 +13,9 @@
         <p class="ip-addon-card__label">{{ block.settings.price }}</p>
         <h3>{{ block.settings.title }}</h3>
         <p class="ip-note">{{ block.settings.body }}</p>
+        {% if block.settings.included_label != blank %}
+          <p class="ip-included-label">{{ block.settings.included_label }}</p>
+        {% endif %}
       </article>
     {% endfor %}
   </div>
@@ -62,7 +65,13 @@
           "type": "textarea",
           "id": "body",
           "label": "Body",
-          "default": "Record and store all calls for 90 days."
+          "default": "Access to 90 days of recorded calls."
+        },
+        {
+          "type": "text",
+          "id": "included_label",
+          "label": "Included label",
+          "default": "Included in the Patriot Package"
         }
       ]
     }
@@ -76,15 +85,17 @@
           "settings": {
             "title": "Call Recording",
             "price": "$5/mo",
-            "body": "Record and store all calls for 90 days."
+            "body": "Access to 90 days of recorded calls.",
+            "included_label": "Included in the Patriot Package"
           }
         },
         {
           "type": "addon",
           "settings": {
-            "title": "Time Conditions",
+            "title": "Quiet Hours",
             "price": "$5/mo",
-            "body": "Set on/off times for incoming calls."
+            "body": "Set times for when to receive incoming calls.",
+            "included_label": "Included in the Patriot Package"
           }
         },
         {
@@ -92,15 +103,17 @@
           "settings": {
             "title": "Voicemail to Email",
             "price": "$5/mo",
-            "body": "Unanswered calls go to voicemail and messages are sent to email."
+            "body": "Voicemail messages are sent to email as audio and transcription.",
+            "included_label": "Included in the Patriot Package"
           }
         },
         {
           "type": "addon",
           "settings": {
-            "title": "Victory Bundle",
+            "title": "Add-on Bundle",
             "price": "$10/mo",
-            "body": "Call Recording, Time Conditions, and Voicemail to Email together."
+            "body": "Includes all add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant. Saves $10/mo.",
+            "included_label": "Included in the Patriot Package"
           }
         },
         {
@@ -108,7 +121,8 @@
           "settings": {
             "title": "Auto Attendant",
             "price": "$5/mo",
-            "body": "Help screen spam calls before they interrupt the family phone."
+            "body": "Filter unwanted spam calls.",
+            "included_label": "Included in the Patriot Package"
           }
         }
       ]

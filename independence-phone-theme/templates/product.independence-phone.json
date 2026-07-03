@@ -8,6 +8,7 @@
           "settings": {
             "title": "Monthly service",
             "price": "$17.76/mo",
+            "billing_product": "monthly-service",
             "default_selected": true
           }
         },
@@ -16,6 +17,7 @@
           "settings": {
             "title": "Annual service",
             "price": "$200/yr",
+            "billing_product": "annual-service",
             "default_selected": false
           }
         },
@@ -23,35 +25,40 @@
           "type": "addon_option",
           "settings": {
             "title": "Call Recording",
-            "price": "$5/mo"
+            "price": "$5/mo",
+            "billing_product": "call-recording"
           }
         },
-        "addon_time_conditions": {
+        "addon_quiet_hours": {
           "type": "addon_option",
           "settings": {
-            "title": "Time Conditions",
-            "price": "$5/mo"
+            "title": "Quiet Hours",
+            "price": "$5/mo",
+            "billing_product": "family-quiet-hours"
           }
         },
         "addon_voicemail": {
           "type": "addon_option",
           "settings": {
             "title": "Voicemail to Email",
-            "price": "$5/mo"
+            "price": "$5/mo",
+            "billing_product": "voicemail-to-email"
           }
         },
-        "addon_victory": {
+        "addon_bundle": {
           "type": "addon_option",
           "settings": {
-            "title": "Victory Bundle",
-            "price": "$10/mo"
+            "title": "Add-on Bundle",
+            "price": "$10/mo; includes all add-ons; saves $10/mo",
+            "billing_product": "add-on-bundle"
           }
         },
         "addon_attendant": {
           "type": "addon_option",
           "settings": {
             "title": "Auto Attendant",
-            "price": "$5/mo"
+            "price": "$5/mo",
+            "billing_product": "auto-attendant"
           }
         },
         "info_best_for": {
@@ -77,7 +84,7 @@
           "settings": {
             "title": "Service and add-ons",
             "source": "service_addons",
-            "body": "<p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>",
+            "body": "<p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p><p>The Add-on Bundle includes Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant for $10/mo.</p>",
             "open_by_default": false
           }
         },
@@ -86,7 +93,7 @@
           "settings": {
             "title": "Shipping and setup",
             "source": "shipping_setup",
-            "body": "<p>Shipping: $15 per phone anywhere in the USA.</p><p>All products and services are subject to federal, state, and local taxes.</p><p>Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout.</p>",
+            "body": "<p>Shipping: $15 per phone anywhere in the USA.</p><p>All products and services are subject to federal, state, and local taxes.</p><p>Service and add-on selections are captured with the order and added as billing items when the matching products are configured.</p>",
             "open_by_default": false
           }
         }
@@ -95,9 +102,9 @@
         "monthly_service",
         "annual_service",
         "addon_recording",
-        "addon_time_conditions",
+        "addon_quiet_hours",
         "addon_voicemail",
-        "addon_victory",
+        "addon_bundle",
         "addon_attendant",
         "info_best_for",
         "info_specs",
@@ -105,7 +112,8 @@
         "info_shipping_setup"
       ],
       "settings": {
-        "product_info_heading": "Product information"
+        "product_info_heading": "Product Details",
+        "show_dynamic_checkout": false
       }
     },
     "plans": {
@@ -145,10 +153,10 @@
             "body": "Record and store all calls for 90 days."
           }
         },
-        "time_conditions": {
+        "quiet_hours": {
           "type": "addon",
           "settings": {
-            "title": "Time Conditions",
+            "title": "Quiet Hours",
             "price": "$5/mo",
             "body": "Set on/off times for incoming calls."
           }
@@ -161,12 +169,12 @@
             "body": "Unanswered calls go to voicemail and messages are sent to email."
           }
         },
-        "victory": {
+        "bundle": {
           "type": "addon",
           "settings": {
-            "title": "Victory Bundle",
+            "title": "Add-on Bundle",
             "price": "$10/mo",
-            "body": "Call Recording, Time Conditions, and Voicemail to Email together."
+            "body": "Includes all add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant. Saves $10/mo."
           }
         },
         "attendant": {
@@ -178,7 +186,7 @@
           }
         }
       },
-      "block_order": ["recording", "time_conditions", "voicemail", "victory", "attendant"],
+      "block_order": ["recording", "quiet_hours", "voicemail", "bundle", "attendant"],
       "settings": {},
       "disabled": true
     },
@@ -247,7 +255,7 @@
     "package": {
       "type": "ip-package-band",
       "settings": {
-        "cta_link": "/products/freedom-phone"
+        "cta_link": "/collections/all"
       }
     },
     "faq": {
@@ -257,7 +265,7 @@
           "type": "faq",
           "settings": {
             "question": "Does it have internet?",
-            "answer": "<p>Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>"
+            "answer": "<p>Patriot Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>"
           }
         },
         "monthly": {
@@ -271,7 +279,7 @@
           "type": "faq",
           "settings": {
             "question": "Can I add the same add-ons to either phone?",
-            "answer": "<p>Yes. Both product pages should present Call Recording, Time Conditions, Voicemail to Email, Victory Bundle, and Auto Attendant.</p>"
+            "answer": "<p>Yes. Both product pages should present Call Recording, Quiet Hours, Voicemail to Email, the Add-on Bundle, and Auto Attendant.</p>"
           }
         }
       },

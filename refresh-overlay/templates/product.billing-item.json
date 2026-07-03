@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "ip-billing-item",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

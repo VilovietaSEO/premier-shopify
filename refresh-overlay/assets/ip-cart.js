@@ -8,12 +8,12 @@
   const previewStorageKey = 'ipPreviewCart';
   const previewCart = {
     currency: 'USD',
-    imageAlt: 'Freedom Phone',
+    imageAlt: 'Classic Phone',
     imageSrc: '',
-    price: 9900,
+    price: 10000,
     properties: [],
     quantity: 0,
-    title: 'Freedom Phone',
+    title: 'Classic Phone',
   };
 
   const formatMoney = (cents, currency = 'USD') =>
@@ -21,6 +21,12 @@
       currency,
       style: 'currency',
     }).format((Number(cents) || 0) / 100);
+
+  const propertyNameFromInput = (input) => {
+    const match = input.name?.match(/^properties\[(.+)]$/);
+    if (match) return match[1];
+    return input.closest('fieldset')?.querySelector('legend')?.textContent?.trim() || input.name || 'Option';
+  };
 
   const setCartCount = (count) => {
     document.querySelectorAll('[data-cart-count]').forEach((badge) => {
@@ -74,6 +80,222 @@
 
   const getCart = () => fetchJson(endpoint('cart.js'));
 
+  const fetchCredentialsFor = (url) => {
+    try {
+      return new URL(url, window.location.href).origin === window.location.origin ? 'same-origin' : 'omit';
+    } catch (_error) {
+      return 'same-origin';
+    }
+  };
+
+  const propertyEntriesFromCart = (properties = {}) => {
+    if (Array.isArray(properties)) {
+      return properties
+        .map((property) => ({
+          name: String(property.name || property.key || '').trim(),
+          value: String(property.value ?? '').trim(),
+        }))
+        .filter((property) => property.name);
+    }
+
+    if (typeof properties === 'object' && properties !== null) {
+      return Object.entries(properties)
+        .map(([name, value]) => ({
+          name: String(name).trim(),
+          value: String(value ?? '').trim(),
+        }))
+        .filter((property) => property.name);
+    }
+
+    return [];
+  };
+
+  const cartPropertyValue = (properties, name) => {
+    const match = propertyEntriesFromCart(properties).find((property) => property.name === name);
+    return match?.value || '';
+  };
+
+  const visibleCartProperties = (properties) =>
+    propertyEntriesFromCart(properties).filter((property) => !property.name.startsWith('_'));
+
+  const cartLineRole = (item) => {
+    const role = cartPropertyValue(item.properties, '_setup_role');
+    if (role) return role;
+    if (cartPropertyValue(item.properties, '_setup_parent') === 'true') return 'billing';
+    if (cartPropertyValue(item.properties, 'Phone')) return 'phone';
+    return 'product';
+  };
+
+  const normalizeCheckoutLine = (item, index) => {
+    const properties = item.properties || {};
+    return {
+      line_index: index + 1,
+      key: item.key || '',
+      role: cartLineRole(item),
+      setup_id: cartPropertyValue(properties, '_setup_id'),
+      setup_parent: cartPropertyValue(properties, '_setup_parent') === 'true',
+      setup_billing_name: cartPropertyValue(properties, '_setup_billing_name'),
+      setup_billing_value: cartPropertyValue(properties, '_setup_billing_value'),
+      setup_phone: cartPropertyValue(properties, '_setup_phone'),
+      shopify_product_id: item.product_id || '',
+      shopify_variant_id: item.variant_id || item.id || '',
+      shopify_handle: item.handle || '',
+      sku: item.sku || '',
+      title: item.product_title || item.title || '',
+      variant_title: item.variant_title || '',
+      quantity: Number(item.quantity || 0),
+      unit_price_cents: Number(item.final_price ?? item.price ?? 0),
+      final_line_price_cents: Number(item.final_line_price ?? item.line_price ?? 0),
+      currency: document.documentElement.dataset.cartCurrency || 'USD',
+      requires_shipping: Boolean(item.requires_shipping),
+      taxable: Boolean(item.taxable),
+      visible_properties: visibleCartProperties(properties),
+    };
+  };
+
+  const setupSummaryFromLines = (lines) => {
+    const phone = lines.find((line) => line.role === 'phone' || !line.setup_parent);
+    const service = lines.find((line) => line.role === 'service');
+    const packageLine = lines.find((line) => line.role === 'package');
+    const addons = lines.filter((line) => ['addon', 'addon_bundle'].includes(line.role));
+
+    return {
+      phone: phone?.title || phone?.setup_phone || '',
+      service: service?.setup_billing_value || service?.title || '',
+      package: packageLine?.setup_billing_value || '',
+      add_ons: addons.map((line) => line.setup_billing_name || line.title).filter(Boolean),
+    };
+  };
+
+  const buildCheckoutHandoffPayload = (cart, form) => {
+    const acceptedPolicy = form.querySelector('input[name="attributes[Policy agreement]"]:checked');
+    const lines = (cart.items || []).map(normalizeCheckoutLine);
+    const groups = new Map();
+    const ungroupedLines = [];
+
+    for (const line of lines) {
+      if (!line.setup_id) {
+        ungroupedLines.push(line);
+        continue;
+      }
+      if (!groups.has(line.setup_id)) {
+        groups.set(line.setup_id, {
+          setup_id: line.setup_id,
+          quantity: line.quantity,
+          lines: [],
+        });
+      }
+      const group = groups.get(line.setup_id);
+      group.lines.push(line);
+      if (line.role === 'phone' || !line.setup_parent) {
+        group.quantity = line.quantity;
+        group.phone_line = line;
+      }
+    }
+
+    const setups = [...groups.values()].map((group) => ({
+      ...group,
+      summary: setupSummaryFromLines(group.lines),
+    }));
+
+    return {
+      schema: 'independence_phone.revio_checkout.v1',
+      source: 'shopify-theme-cart',
+      occurred_at: new Date().toISOString(),
+      source_url: window.location.href,
+      referrer: document.referrer || '',
+      consent: {
+        privacy_terms_accepted: Boolean(acceptedPolicy),
+        policy_agreement: acceptedPolicy?.value || '',
+      },
+      customer: {},
+      cart: {
+        token: cart.token || '',
+        currency: cart.currency || document.documentElement.dataset.cartCurrency || 'USD',
+        item_count: cartDisplayCount(cart),
+        raw_item_count: cart.item_count || 0,
+        total_price_cents: Number(cart.total_price || 0),
+        items_subtotal_price_cents: Number(cart.items_subtotal_price || 0),
+        total_discount_cents: Number(cart.total_discount || 0),
+      },
+      setup_count: setups.length,
+      setups,
+      lines,
+      ungrouped_lines: ungroupedLines,
+    };
+  };
+
+  const submitCheckoutHandoff = async (form, submitter) => {
+    const handoffUrl = String(form.dataset.revioCheckoutUrl || '').trim();
+    if (!handoffUrl || submitter?.name !== 'checkout') return false;
+
+    if (!form.reportValidity()) return true;
+
+    setBusy(form, true);
+    try {
+      const cart = await getCart();
+      const payload = buildCheckoutHandoffPayload(cart, form);
+      const response = await fetch(handoffUrl, {
+        body: JSON.stringify(payload),
+        credentials: fetchCredentialsFor(handoffUrl),
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      });
+
+      if (response.redirected && response.url) {
+        window.location.assign(response.url);
+        return true;
+      }
+
+      const contentType = response.headers.get('content-type') || '';
+      const data = contentType.includes('application/json') ? await response.json() : { message: await response.text() };
+
+      if (!response.ok || data.ok === false) {
+        const message = data.errors?.join(', ') || data.message || 'Checkout handoff failed.';
+        throw new Error(message);
+      }
+
+      const redirectUrl = data.redirect_url || data.checkout_url || '';
+      if (redirectUrl) {
+        window.location.assign(redirectUrl);
+        return true;
+      }
+
+      setStatus(form, 'Checkout details received. We will confirm the next step shortly.');
+      return true;
+    } catch (error) {
+      setStatus(form, error.message, 'error');
+      return true;
+    } finally {
+      setBusy(form, false);
+    }
+  };
+
+  const createSetupId = () => {
+    if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+    return `setup-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  };
+
+  const isSetupChild = (properties = {}) => {
+    if (Array.isArray(properties)) {
+      return properties.some((property) =>
+        property.name === '_setup_parent' && String(property.value) === 'true'
+      );
+    }
+    return String(properties._setup_parent || '') === 'true';
+  };
+
+  const cartDisplayCount = (cart) => {
+    if (!Array.isArray(cart.items)) return cart.item_count || 0;
+    return cart.items.reduce((count, item) => {
+      if (isSetupChild(item.properties)) return count;
+      return count + (Number(item.quantity) || 0);
+    }, 0);
+  };
+
   const loadPreviewCart = () => {
     try {
       const saved = JSON.parse(window.sessionStorage?.getItem(previewStorageKey) || 'null');
@@ -96,7 +318,7 @@
 
   const renderCart = (cart) => {
     const currency = cart.currency || document.documentElement.dataset.cartCurrency || 'USD';
-    setCartCount(cart.item_count || 0);
+    setCartCount(cartDisplayCount(cart));
 
     document.querySelectorAll('[data-cart-subtotal]').forEach((subtotal) => {
       subtotal.textContent = formatMoney(cart.total_price, currency);
@@ -140,6 +362,7 @@
     document.querySelectorAll('[data-preview-cart-properties]').forEach((list) => {
       renderPropertyList(list, previewCart.properties);
     });
+    updateCartSavings();
     document.querySelectorAll('[data-cart-addon-selector]').forEach((selector) => {
       if (serviceProperty) {
         selector.dataset.serviceName = serviceProperty.name;
@@ -154,7 +377,10 @@
     const label = input.closest('label');
     const title = label?.querySelector('strong')?.textContent?.trim() || input.value;
     const price = label?.querySelector('small')?.textContent?.trim() || '';
-    return { title, price };
+    const value = input.value && input.value !== 'on'
+      ? input.value
+      : [title, price].filter(Boolean).join(' - ');
+    return { title, price, value };
   };
 
   const renderPropertyList = (list, properties) => {
@@ -171,6 +397,44 @@
     }));
   };
 
+  const calculateSavings = (properties) => {
+    const text = properties.map((property) => `${property.name} ${property.value}`).join(' ');
+    if (/Patriot Package/i.test(text)) {
+      return { year: 30312, month: 0 };
+    }
+
+    let year = 0;
+    let month = 0;
+
+    for (const match of text.matchAll(/saves?\s*\$([0-9]+(?:\.[0-9]{1,2})?)\s*\/?\s*(?:yr|year)/gi)) {
+      year += Math.round(Number(match[1]) * 100);
+    }
+
+    for (const match of text.matchAll(/saves?\s*\$([0-9]+(?:\.[0-9]{1,2})?)\s*\/?\s*(?:mo|month)/gi)) {
+      month += Math.round(Number(match[1]) * 100);
+    }
+
+    return { year, month };
+  };
+
+  const formatSavings = ({ year, month }, currency = 'USD') => {
+    const parts = [];
+    if (year > 0) parts.push(`${formatMoney(year, currency)}/yr`);
+    if (month > 0) parts.push(`${formatMoney(month, currency)}/mo`);
+    return parts.length ? parts.join(' + ') : '$0';
+  };
+
+  const updateCartSavings = () => {
+    const properties = [...document.querySelectorAll('.ip-cart-properties > div')].map((row) => ({
+      name: row.querySelector('dt')?.textContent?.trim() || '',
+      value: row.querySelector('dd')?.textContent?.trim() || '',
+    }));
+    const currency = previewCart.currency || document.documentElement.dataset.cartCurrency || 'USD';
+    document.querySelectorAll('[data-cart-savings]').forEach((target) => {
+      target.textContent = formatSavings(calculateSavings(properties), currency);
+    });
+  };
+
   const syncAddonSelector = (selector, properties) => {
     const selectedNames = new Set(properties.map((property) => property.name));
     selector.querySelectorAll('[data-cart-addon-option]').forEach((input) => {
@@ -179,21 +443,22 @@
   };
 
   const getProductFormProperties = (form) => {
-    const service = form.querySelector('.ip-choice-group input[type="radio"]:checked');
     const properties = [];
-    if (service) {
-      const details = getChoiceDetails(service);
-      properties.push({
-        name: service.closest('fieldset')?.querySelector('legend')?.textContent?.trim() || 'Service plan',
-        value: [details.title, details.price].filter(Boolean).join(' - '),
-      });
-    }
 
-    form.querySelectorAll('.ip-choice-group input[type="checkbox"]:checked').forEach((input) => {
+    form.querySelectorAll('.ip-choice-group input[type="radio"]:checked').forEach((input) => {
       const details = getChoiceDetails(input);
       properties.push({
-        name: details.title,
-        value: details.price || input.value || 'Selected',
+        name: propertyNameFromInput(input),
+        value: details.value,
+      });
+    });
+
+    form.querySelectorAll('.ip-choice-group input[type="checkbox"]:checked').forEach((input) => {
+      if (input.disabled) return;
+      const details = getChoiceDetails(input);
+      properties.push({
+        name: propertyNameFromInput(input),
+        value: details.value,
       });
     });
 
@@ -224,6 +489,71 @@
     return next;
   }, {});
 
+  const submittedProperties = (form) => {
+    const properties = [];
+    const formData = new FormData(form);
+    for (const [name, value] of formData.entries()) {
+      const match = String(name).match(/^properties\[(.+)]$/);
+      if (!match || String(value || '').trim() === '') continue;
+      properties.push({ name: match[1], value: String(value) });
+    }
+    return properties;
+  };
+
+  const selectedBillingInputs = (form) => {
+    const packageInput = form.querySelector('[data-order-package]:checked');
+    const inputs = [...form.querySelectorAll('[data-billing-variant]:checked')]
+      .filter((input) => !input.disabled && String(input.dataset.billingVariant || '').trim() !== '');
+    if (packageInput && String(packageInput.dataset.billingVariant || '').trim() !== '') {
+      return [packageInput];
+    }
+    return inputs;
+  };
+
+  const buildSetupCartPayload = (form) => {
+    const billingInputs = selectedBillingInputs(form);
+    if (billingInputs.length === 0) return null;
+
+    const formData = new FormData(form);
+    const variantId = String(formData.get('id') || '').trim();
+    if (!variantId) return null;
+
+    const quantity = Math.max(1, Number(formData.get('quantity') || 1));
+    const setupId = createSetupId();
+    const phoneTitle = form.dataset.productTitle ||
+      form.querySelector('[data-order-phone]:checked')?.dataset.orderTitle ||
+      form.querySelector('input[name="properties[Phone]"]')?.value ||
+      form.closest('section')?.querySelector('h1, h2')?.textContent?.trim() ||
+      'Phone setup';
+    const setupProperties = propertiesToObject(submittedProperties(form));
+    setupProperties._setup_id = setupId;
+    setupProperties._setup_role = 'phone';
+
+    const items = [{
+      id: variantId,
+      quantity,
+      properties: setupProperties,
+    }];
+
+    for (const input of billingInputs) {
+      const details = getChoiceDetails(input);
+      items.push({
+        id: input.dataset.billingVariant,
+        quantity,
+        properties: {
+          _setup_id: setupId,
+          _setup_parent: 'true',
+          _setup_role: input.dataset.billingRole || 'billing',
+          _setup_billing_name: propertyNameFromInput(input),
+          _setup_billing_value: details.value,
+          _setup_phone: phoneTitle,
+        },
+      });
+    }
+
+    return { items };
+  };
+
   const addPreviewProduct = (form, submitter) => {
     previewCart.title = form.dataset.productTitle || previewCart.title;
     previewCart.price = Number(form.dataset.productPriceCents || previewCart.price);
@@ -240,6 +570,79 @@
         submitter.textContent = 'Add to cart';
       }, 1600);
     }
+  };
+
+  const updateOrderBuilder = (form) => {
+    if (!form) return;
+    let phone = form.querySelector('[data-order-phone]:checked');
+    const packageInput = form.querySelector('[data-order-package]');
+    const annual = form.querySelector('[data-order-annual]');
+    const bundle = form.querySelector('[data-order-bundle]');
+    const addonInputs = [...form.querySelectorAll('[data-order-addon]')];
+    const variantInput = form.querySelector('[data-order-variant-id]');
+
+    if (packageInput?.checked) {
+      const classicPhone = form.querySelector('[data-order-phone][data-order-title="Classic Phone"]');
+      if (classicPhone) classicPhone.checked = true;
+      if (annual) annual.checked = true;
+      if (bundle) bundle.checked = true;
+      phone = classicPhone || phone;
+    }
+
+    if (bundle?.checked) {
+      addonInputs.forEach((input) => {
+        input.checked = false;
+        input.disabled = true;
+      });
+    } else {
+      addonInputs.forEach((input) => {
+        input.disabled = false;
+      });
+    }
+
+    if (phone) {
+      if (variantInput && phone.dataset.orderVariant) {
+        variantInput.value = phone.dataset.orderVariant;
+      }
+      form.dataset.productTitle = phone.dataset.orderTitle || 'Selected phone';
+      form.dataset.productPriceCents = phone.dataset.orderPriceCents || '0';
+      form.dataset.productCurrency = 'USD';
+      form.dataset.productImageSrc = phone.dataset.orderImage || '';
+      form.dataset.productImageAlt = phone.dataset.orderTitle || 'Selected phone';
+    }
+
+    const service = form.querySelector('input[name="properties[Service plan]"]:checked');
+    const selectedAddons = [
+      ...(bundle?.checked ? [bundle] : []),
+      ...addonInputs.filter((input) => input.checked && !input.disabled),
+    ];
+    const savings = packageInput?.checked
+      ? { year: Number(packageInput.dataset.orderSavingsYear || 0), month: 0 }
+      : {
+          year: Number(annual?.checked ? annual.dataset.orderSavingsYear || 0 : 0),
+          month: selectedAddons.reduce((total, input) => total + Number(input.dataset.orderSavingsMonth || 0), 0),
+        };
+    const phonePrice = phone ? formatMoney(Number(phone.dataset.orderPriceCents || 0)) : '$0';
+    const serviceDetails = service ? getChoiceDetails(service) : null;
+    const addonText = selectedAddons.length
+      ? selectedAddons.map((input) => getChoiceDetails(input).title).join(', ')
+      : 'None selected';
+
+    form.querySelectorAll('[data-order-summary-title]').forEach((target) => {
+      target.textContent = form.dataset.productTitle || 'Selected phone';
+    });
+    form.querySelectorAll('[data-order-summary-phone]').forEach((target) => {
+      target.textContent = phonePrice;
+    });
+    form.querySelectorAll('[data-order-summary-service]').forEach((target) => {
+      target.textContent = serviceDetails ? [serviceDetails.title, serviceDetails.price].filter(Boolean).join(' - ') : 'Not selected';
+    });
+    form.querySelectorAll('[data-order-summary-addons]').forEach((target) => {
+      target.textContent = addonText;
+    });
+    form.querySelectorAll('[data-order-summary-savings]').forEach((target) => {
+      target.textContent = formatSavings(savings);
+    });
   };
 
   const updatePreviewAddons = (input) => {
@@ -268,6 +671,7 @@
       });
       renderCart(cart);
       renderPropertyList(lineItem?.querySelector('[data-cart-properties]'), properties);
+      updateCartSavings();
       setStatus(form, 'Cart add-ons updated.');
     } catch (error) {
       setStatus(form, error.message, 'error');
@@ -278,13 +682,22 @@
   };
 
   const addProduct = async (form, submitter) => {
-    const formData = new FormData(form);
+    const setupPayload = buildSetupCartPayload(form);
+    const formData = setupPayload ? null : new FormData(form);
     setBusy(form, true);
     try {
-      await fetchJson(endpoint('cart/add.js'), {
-        body: formData,
-        method: 'POST',
-      });
+      if (setupPayload) {
+        await fetchJson(endpoint('cart/add.js'), {
+          body: JSON.stringify(setupPayload),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        });
+      } else {
+        await fetchJson(endpoint('cart/add.js'), {
+          body: formData,
+          method: 'POST',
+        });
+      }
       const cart = await getCart();
       renderCart(cart);
       setStatus(form, 'Added to cart. You can review your order from the cart.');
@@ -303,17 +716,39 @@
 
   const updateCartLine = async (input) => {
     const form = input.closest('[data-cart-form]');
+    const lineItem = input.closest('[data-cart-line-item]');
     const line = Number(input.dataset.cartLine || 0);
     const quantity = Math.max(0, Number(input.value) || 0);
     if (!line) return;
 
     setBusy(form, true);
     try {
-      const cart = await fetchJson(endpoint('cart/change.js'), {
-        body: JSON.stringify({ line, quantity }),
-        headers: { 'Content-Type': 'application/json' },
-        method: 'POST',
-      });
+      const setupId = lineItem?.dataset.setupId || '';
+      const isParent = setupId && lineItem?.dataset.setupParent !== 'true';
+      const cartKey = lineItem?.dataset.cartKey || '';
+      const siblingChildren = isParent
+        ? [...form.querySelectorAll('[data-cart-line-item][data-setup-parent="true"]')]
+            .filter((child) => child.dataset.setupId === setupId)
+        : [];
+      const cart = isParent && cartKey
+        ? await fetchJson(endpoint('cart/update.js'), {
+            body: JSON.stringify({
+              updates: Object.fromEntries([
+                [cartKey, quantity],
+                ...siblingChildren
+                  .map((child) => child.dataset.cartKey || '')
+                  .filter(Boolean)
+                  .map((key) => [key, quantity]),
+              ]),
+            }),
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+          })
+        : await fetchJson(endpoint('cart/change.js'), {
+            body: JSON.stringify({ line, quantity }),
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+          });
       renderCart(cart);
       setStatus(form, 'Cart updated.');
       if (quantity === 0 || cart.item_count === 0) {
@@ -327,11 +762,22 @@
   };
 
   document.addEventListener('submit', (event) => {
+    const cartForm = event.target.closest('[data-cart-form]');
+    if (cartForm && event.submitter?.name === 'checkout') {
+      const hasHandoff = String(cartForm.dataset.revioCheckoutUrl || '').trim() !== '';
+      if (hasHandoff) {
+        event.preventDefault();
+        submitCheckoutHandoff(cartForm, event.submitter);
+      }
+      return;
+    }
+
     const form = event.target.closest('.ip-product-form');
     const submitter = event.submitter;
     if (!form || !submitter?.matches('[data-add-to-cart-button]')) return;
 
     event.preventDefault();
+    if (!form.reportValidity()) return;
     if (form.matches('[data-preview-product-form]')) {
       addPreviewProduct(form, submitter);
       return;
@@ -340,6 +786,11 @@
   });
 
   document.addEventListener('change', (event) => {
+    const orderInput = event.target.closest('[data-order-form] input');
+    if (orderInput) {
+      updateOrderBuilder(orderInput.closest('[data-order-form]'));
+    }
+
     const addon = event.target.closest('[data-cart-addon-option]');
     if (addon) {
       if (addon.closest('[data-preview-cart]')) {
@@ -361,6 +812,25 @@
   });
 
   document.addEventListener('click', (event) => {
+    const soundButton = event.target.closest('[data-hero-sound-toggle]');
+    if (soundButton) {
+      const hero = soundButton.closest('[data-hero-video]');
+      const video = hero?.querySelector('video');
+      if (video) {
+        video.muted = false;
+        video.removeAttribute('muted');
+        video.volume = 1;
+        video.loop = false;
+        video.controls = true;
+        video.currentTime = 0;
+        video.play().catch(() => {});
+        soundButton.classList.add('is-playing');
+        soundButton.setAttribute('aria-pressed', 'true');
+        soundButton.setAttribute('aria-label', 'Video sound is on');
+      }
+      return;
+    }
+
     const remove = event.target.closest('[data-preview-remove]');
     if (!remove) return;
 
@@ -373,4 +843,7 @@
     loadPreviewCart();
     updatePreviewCart(previewCart.quantity);
   }
+
+  document.querySelectorAll('[data-order-form]').forEach(updateOrderBuilder);
+  updateCartSavings();
 })();

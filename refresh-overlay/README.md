@@ -1,6 +1,6 @@
-# Independence Phone Refresh Overlay
+# Patriot Phone Refresh Overlay
 
-This folder is the portable Independence Phone customization layer for a real Shopify Refresh theme.
+This folder is the portable Patriot Phone customization layer for a real Shopify Refresh theme.
 
 The local `independence-phone-theme` is a complete uploadable Shopify theme package. This overlay exists because the active project direction says to use Shopify Refresh as the base theme, and Refresh is normally installed or pulled from a Shopify store rather than initialized directly by `shopify theme init`.
 
@@ -24,6 +24,7 @@ The local `independence-phone-theme` is a complete uploadable Shopify theme pack
   - `sections/ip-jtbd-story.liquid`
   - `sections/ip-feature-strip.liquid`
   - `sections/ip-product-comparison.liquid`
+  - `sections/ip-order-builder.liquid`
   - `sections/ip-product-main.liquid`
   - `sections/ip-service-plans.liquid`
   - `sections/ip-add-ons.liquid`
@@ -33,13 +34,22 @@ The local `independence-phone-theme` is a complete uploadable Shopify theme pack
   - `sections/ip-faq.liquid`
   - `sections/ip-trust-band.liquid`
   - `sections/ip-contact-form.liquid`
+- Scoped Refresh overrides:
+  - `sections/cart.liquid`
+  - `sections/footer.liquid`
 - Custom snippets:
   - `snippets/ip-structured-data.liquid`
 - Scoped templates:
   - `templates/index.json`
+  - `templates/cart.json`
+  - `templates/collection.json`
   - `templates/collection.phones.json`
+  - `templates/product.json`
   - `templates/product.independence-phone.json`
+  - `templates/page.order.json`
+  - `templates/page.faq.json`
   - `templates/page.contact.json`
+  - `templates/robots.txt.liquid`
 
 It intentionally does not include Refresh's native theme files. Pull those from the fresh Shopify store after installing Refresh.
 
@@ -108,12 +118,16 @@ The CSS uses fallback tokens, so it can render inside Refresh even before custom
 
 Create these Shopify objects:
 
-- Product: `Freedom Phone`, handle `freedom-phone`, price `$99`, template `product.independence-phone`.
-- Product: `Patriot Phone`, handle `patriot-phone`, price `$149`, template `product.independence-phone`.
+- Product: `Classic Phone`, handle `standard-phone`, price `$100`, template `product.independence-phone`.
+- Product: `Rugged Phone`, handle `rugged-phone`, price `$150`, template `product.independence-phone`.
 - Collection: `Phones`, handle `phones`, template `collection.phones`, containing both products.
+- Page: `Order Now`, handle `order-now`, template `page.order`.
+- Page: `FAQ`, handle `faq`, template `page.faq`.
 - Page: `Contact`, handle `contact`, template `page.contact`.
 
-Publish `Freedom Phone`, `Patriot Phone`, and the `Phones` collection to the Online Store sales channel; the setup helper automates this only when the Admin API token includes `read_publications` and `write_publications`.
+Do not create a manual `LLMs` Shopify page for `llms.txt`. Automatic raw Markdown output is generated outside the theme by `/Users/vilovieta/Documents/Shopify/llms/automatic-llms.js`; deploy that behind root `/llms.txt` through an edge/proxy/custom-domain route, or use Shopify app proxy routing for `/a/llms.txt`.
+
+Publish `Classic Phone`, `Rugged Phone`, and the `Phones` collection to the Online Store sales channel; the setup helper automates this only when the Admin API token includes `read_publications` and `write_publications`.
 
 Product data setup files:
 

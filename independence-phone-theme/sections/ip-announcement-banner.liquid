@@ -1,11 +1,11 @@
 {% if section.settings.enabled %}
-  <section class="ip-announcement" aria-label="Store announcement">
+  <section class="ip-announcement full-width" aria-label="Store announcement">
     <div class="ip-announcement__inner">
       {% if section.settings.text != blank %}
         {% if section.settings.link != blank %}
-          <a href="{{ section.settings.link }}">{{ section.settings.text }}</a>
+          <a href="{{ section.settings.link }}">{{ section.settings.text | newline_to_br }}</a>
         {% else %}
-          <p>{{ section.settings.text }}</p>
+          <p>{{ section.settings.text | newline_to_br }}</p>
         {% endif %}
       {% endif %}
     </div>
@@ -23,10 +23,10 @@
       "default": true
     },
     {
-      "type": "text",
+      "type": "textarea",
       "id": "text",
       "label": "Banner text",
-      "default": "Introductory 250th Anniversary package: Freedom Phone + 1 year service + Victory Bundle for $250."
+      "default": "Take advantage of our limited offer honoring the 250th anniversary of America\nPatriot Package Includes: Classic Phone, 1 Year phone service, all 4 add on's for only $250! a savings of $303.12"
     },
     {
       "type": "url",

@@ -1,4 +1,4 @@
-<section class="ip-section ip-section--surface">
+<section class="ip-section ip-section--surface ip-service-plans{% if section.settings.compact_layout %} ip-service-plans--compact{% endif %}">
   <div class="ip-stack">
     {% if section.settings.eyebrow != blank %}
       <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
@@ -7,7 +7,7 @@
     <div class="ip-lede">{{ section.settings.body }}</div>
   </div>
 
-  <div class="ip-plan-grid" style="margin-top: 2rem;">
+  <div class="ip-plan-grid ip-plan-grid--service">
     {% for block in section.blocks %}
       <article class="ip-card ip-plan-card" {{ block.shopify_attributes }}>
         <p class="ip-plan-card__label">{{ block.settings.label }}</p>
@@ -52,6 +52,12 @@
       "id": "disclosure",
       "label": "Disclosure",
       "default": "Shipping is $15 per phone anywhere in the USA. All products and services are subject to federal, state, and local taxes."
+    },
+    {
+      "type": "checkbox",
+      "id": "compact_layout",
+      "label": "Use compact collection spacing",
+      "default": false
     }
   ],
   "blocks": [

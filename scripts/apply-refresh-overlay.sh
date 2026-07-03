@@ -51,5 +51,9 @@ if ! grep -q "ip-structured-data" "$theme_layout"; then
   perl -0pi -e "s#(\\s*\\{\\{ content_for_header \\}\\})#    {% render 'ip-structured-data' %}\\n\\1#" "$theme_layout"
 fi
 
-echo "Applied Independence Phone overlay to: $target_theme"
+if ! grep -q "product.template_suffix == 'billing-item'" "$theme_layout"; then
+  perl -0pi -e "s#(\\s*\\{% render 'ip-structured-data' %\\})#    {% if template.name == 'product' and product.template_suffix == 'billing-item' %}\\n      <meta name=\"robots\" content=\"noindex,nofollow\">\\n    {% endif %}\\n\\1#" "$theme_layout"
+fi
+
+echo "Applied Patriot Phone overlay to: $target_theme"
 echo "Run from that theme directory next: shopify theme check"

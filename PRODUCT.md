@@ -10,7 +10,7 @@ Parents and family decision-makers who want a first phone or family contact devi
 
 ## Product Purpose
 
-Independence Phone is a Shopify storefront for a simpler family phone offer. Success means visitors quickly understand the core promise, choose between Freedom Phone and Patriot Phone, understand service and add-ons, and contact or purchase without unsupported feature assumptions.
+Patriot Phone is a Shopify storefront for a simpler family phone offer. Success means visitors quickly understand the core promise, click Order Now, choose between Classic Phone and Rugged Phone on the purchase page, understand service and add-ons, and contact or purchase without unsupported feature assumptions.
 
 ## Brand Personality
 

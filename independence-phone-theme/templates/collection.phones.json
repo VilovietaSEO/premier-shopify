@@ -4,8 +4,10 @@
       "type": "ip-product-comparison",
       "settings": {
         "eyebrow": "Choose your phone",
-        "heading": "Freedom for everyday calling. Patriot for rugged family use.",
-        "body": "<p>There are only two phone choices. Pick the handset that matches your home, then add service and optional add-ons.</p>"
+        "heading": "Standard for everyday calling. Rugged for tougher family use.",
+        "body": "<p>There are only two phone choices. Pick the handset that matches your home, then add service and optional add-ons.</p>",
+        "freedom_product": "standard-phone",
+        "patriot_product": "rugged-phone"
       }
     },
     "plans": {
@@ -45,10 +47,10 @@
             "body": "Record and store all calls for 90 days."
           }
         },
-        "time_conditions": {
+        "quiet_hours": {
           "type": "addon",
           "settings": {
-            "title": "Time Conditions",
+            "title": "Quiet Hours",
             "price": "$5/mo",
             "body": "Set on/off times for incoming calls."
           }
@@ -61,12 +63,12 @@
             "body": "Unanswered calls go to voicemail and messages are sent to email."
           }
         },
-        "victory": {
+        "bundle": {
           "type": "addon",
           "settings": {
-            "title": "Victory Bundle",
+            "title": "Add-on Bundle",
             "price": "$10/mo",
-            "body": "Call Recording, Time Conditions, and Voicemail to Email together."
+            "body": "Includes all add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant. Saves $10/mo."
           }
         },
         "attendant": {
@@ -78,7 +80,7 @@
           }
         }
       },
-      "block_order": ["recording", "time_conditions", "voicemail", "victory", "attendant"],
+      "block_order": ["recording", "quiet_hours", "voicemail", "bundle", "attendant"],
       "settings": {},
       "disabled": true
     },
@@ -147,7 +149,7 @@
     "package": {
       "type": "ip-package-band",
       "settings": {
-        "cta_link": "/products/freedom-phone"
+        "cta_link": "/collections/all"
       }
     },
     "faq": {
@@ -163,8 +165,8 @@
         "difference": {
           "type": "faq",
           "settings": {
-            "question": "What is the difference between Freedom Phone and Patriot Phone?",
-            "answer": "<p>Freedom Phone is the everyday heavy-duty Wi-Fi handset. Patriot Phone is the rugged model with waterproof and dust-proof construction, drop protection up to 1.8 meters, and longer battery life.</p>"
+            "question": "What is the difference between Classic Phone and Rugged Phone?",
+            "answer": "<p>Classic Phone is the everyday heavy-duty Wi-Fi handset. Rugged Phone is the model with waterproof and dust-proof construction, drop protection up to 1.8 meters, and longer battery life.</p>"
           }
         }
       },

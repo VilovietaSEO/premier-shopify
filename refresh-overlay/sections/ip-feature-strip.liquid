@@ -34,6 +34,9 @@
           </span>
           <h3>{{ block.settings.title }}</h3>
           <p class="ip-note">{{ block.settings.body }}</p>
+          {% if block.settings.included_label != blank %}
+            <p class="ip-included-label">{{ block.settings.included_label }}</p>
+          {% endif %}
         </div>
       {% endfor %}
     </div>
@@ -48,13 +51,13 @@
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow",
-      "default": "Parent tools that feel immediately useful"
+      "default": ""
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Real phone tools without smartphone drama."
+      "default": "Real phone service without smartphone drama."
     }
   ],
   "blocks": [
@@ -73,6 +76,12 @@
           "id": "body",
           "label": "Body",
           "default": "Built around connection, not entertainment."
+        },
+        {
+          "type": "text",
+          "id": "included_label",
+          "label": "Included label",
+          "default": "Included in the Patriot Package"
         },
         {
           "type": "select",
@@ -104,9 +113,10 @@
         {
           "type": "feature",
           "settings": {
-            "title": "Auto Attendant Call Screening",
+            "title": "Auto Attendant",
             "icon": "shield_check",
-            "body": "Help screen unwanted calls before they interrupt the family phone."
+            "body": "Filter unwanted spam calls.",
+            "included_label": "Included in the Patriot Package"
           }
         },
         {
@@ -114,15 +124,26 @@
           "settings": {
             "title": "Call Recording",
             "icon": "microphone",
-            "body": "Keep a 90-day call record when your family needs extra visibility."
+            "body": "Access to 90 days of recorded calls.",
+            "included_label": "Included in the Patriot Package"
           }
         },
         {
           "type": "feature",
           "settings": {
-            "title": "Programmable On/Off Phone Times",
+            "title": "Quiet Hours",
             "icon": "clock",
-            "body": "Set times for when incoming calls can ring through."
+            "body": "Set times for when to receive incoming calls.",
+            "included_label": "Included in the Patriot Package"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Voicemail to Email",
+            "icon": "microphone",
+            "body": "Voicemail messages are sent to email as audio and transcription.",
+            "included_label": "Included in the Patriot Package"
           }
         }
       ]

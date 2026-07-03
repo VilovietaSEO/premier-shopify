@@ -18,6 +18,12 @@
         --style-border-radius-inputs: 6px;
       }
 
+      @media (max-width: 360px) {
+        :root {
+          --page-margin: 0.875rem;
+        }
+      }
+
       .preview-page-marker {
         background: #fff;
         border-block: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 12%, transparent);
@@ -35,10 +41,12 @@
       }
 
       html[data-preview-route="home"] [data-preview-pages~="home"],
-      html[data-preview-route="freedom"] [data-preview-pages~="freedom"],
-      html[data-preview-route="patriot"] [data-preview-pages~="patriot"],
+      html[data-preview-route="order"] [data-preview-pages~="order"],
+      html[data-preview-route="standard"] [data-preview-pages~="standard"],
+      html[data-preview-route="rugged"] [data-preview-pages~="rugged"],
       html[data-preview-route="cart"] [data-preview-pages~="cart"],
-      html[data-preview-route="contact"] [data-preview-pages~="contact"] {
+      html[data-preview-route="contact"] [data-preview-pages~="contact"],
+      html[data-preview-route="faq"] [data-preview-pages~="faq"] {
         display: grid;
       }
 
@@ -90,10 +98,14 @@
       }
 
       .preview-mini-header__icon-link {
-        border: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 12%, transparent);
-        border-radius: 6px;
-        color: var(--color-foreground);
+        align-items: center;
+        background: transparent;
+        border: 0;
+        border-radius: 999px;
+        color: var(--ip-red, #B73532);
+        display: inline-flex;
         height: 2.75rem;
+        justify-content: center;
         min-height: 2.75rem;
         position: relative;
         transition:
@@ -104,9 +116,7 @@
       }
 
       .preview-mini-header__icon-link:hover {
-        background: color-mix(in srgb, var(--ip-blue, #263F73) 5%, #fff);
-        border-color: color-mix(in srgb, var(--ip-blue, #263F73) 36%, transparent);
-        color: var(--ip-blue, #263F73);
+        color: color-mix(in srgb, var(--ip-red, #B73532) 82%, #172033);
       }
 
       .preview-mini-header__icon-link svg {
@@ -127,7 +137,7 @@
         min-height: 1.12rem;
         min-width: 1.12rem;
         position: absolute;
-        right: -0.32rem;
+        right: 0;
         top: 0.22rem;
         padding: 0 0.32rem;
       }
@@ -163,11 +173,12 @@
           flex-wrap: nowrap;
           gap: 0.35rem;
         }
+
       }
     </style>
     <script>
       (() => {
-        const standaloneRoutes = new Set(["freedom", "patriot", "cart", "contact"]);
+        const standaloneRoutes = new Set(["order", "standard", "rugged", "cart", "contact", "faq"]);
 
         const getPreviewRoute = () => {
           const route = new URLSearchParams(window.location.search).get("route");
@@ -212,9 +223,9 @@
     </script>
   </head>
   <body>
-    <section class="ip-announcement" aria-label="Store announcement">
+    <section class="ip-announcement full-width" aria-label="Store announcement">
       <div class="ip-announcement__inner">
-        <p>Introductory 250th Anniversary package: Freedom Phone + 1 year service + Victory Bundle for $250.</p>
+        <p>Take advantage of our limited offer honoring the 250th anniversary of America<br>Patriot Package Includes: Classic Phone, 1 Year phone service, all 4 add on's for only $250! a savings of $303.12</p>
       </div>
     </section>
 
@@ -239,20 +250,29 @@
 
     <main class="ip-main">
       <div class="shopify-section" data-preview-pages="home">
-        <section id="home" class="ip-hero full-width" data-slot="home.hero">
-          <div class="ip-hero__media" aria-hidden="true">
+        <section id="home" class="ip-hero full-width" data-slot="home.hero" data-hero-video>
+          <div class="ip-hero__media">
             <video class="ip-hero__video" autoplay loop muted playsinline poster="../independence-phone-theme/assets/ip-hero-video-poster.jpg">
               <source src="../independence-phone-theme/assets/ip-hero-video.mp4" type="video/mp4">
             </video>
           </div>
+          <button class="ip-hero__sound" type="button" data-hero-sound-toggle aria-label="Turn video sound on" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M11 5 6.5 9H3v6h3.5l4.5 4V5Z"></path>
+              <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+              <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+            </svg>
+          </button>
           <div class="ip-hero__inner">
+            <p class="ip-hero__proof">42 years in business, American owned, Family Focused</p>
             <div class="ip-hero__copy">
               <h1 class="ip-heading">Give them a phone. Not the internet.</h1>
               <div class="ip-lede">
-                <p>Kids can call home without apps, browsers, social media, or a personal screen. Built for bus days, home-alone minutes, grandparents, and the years before a smartphone.</p>
+                <p>Children can call home without apps, browsers, social media, or a personal screen. Built for bus days, home-alone minutes, grandparents, and the years before a smartphone.</p>
               </div>
+              <p class="ip-hero__price">$17.76/mo</p>
 	              <div class="ip-buttons">
-	                <a class="ip-button" href="#choose">Choose your phone</a>
+	                <a class="ip-button" href="?route=order">Order now</a>
 	              </div>
             </div>
           </div>
@@ -263,8 +283,7 @@
         <section class="ip-section ip-section--surface ip-section--tight ip-section--flag ip-feature-strip full-width" data-slot="home.feature-strip">
           <div class="ip-strip">
             <div class="ip-stack ip-strip__copy">
-              <p class="ip-kicker">Parent tools that feel immediately useful</p>
-              <h2 class="ip-heading ip-heading--medium">Real phone tools without smartphone drama.</h2>
+              <h2 class="ip-heading ip-heading--medium">Real phone service without smartphone drama.</h2>
             </div>
             <div class="ip-strip__items">
               <div class="ip-strip__item">
@@ -273,8 +292,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"></path>
                   </svg>
                 </span>
-                <h3>Auto Attendant Call Screening</h3>
-                <p class="ip-note">Help screen unwanted calls before they interrupt the family phone.</p>
+                <h3>Auto Attendant</h3>
+                <p class="ip-note">Filter unwanted spam calls.</p>
+                <p class="ip-included-label">Included in the Patriot Package</p>
               </div>
               <div class="ip-strip__item">
                 <span class="ip-strip__icon" aria-hidden="true">
@@ -283,7 +303,8 @@
                   </svg>
                 </span>
                 <h3>Call Recording</h3>
-                <p class="ip-note">Keep a 90-day call record when your family needs extra visibility.</p>
+                <p class="ip-note">Access to 90 days of recorded calls.</p>
+                <p class="ip-included-label">Included in the Patriot Package</p>
               </div>
               <div class="ip-strip__item">
                 <span class="ip-strip__icon" aria-hidden="true">
@@ -291,15 +312,26 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
                   </svg>
                 </span>
-                <h3>Programmable On/Off Phone Times</h3>
-                <p class="ip-note">Set times for when incoming calls can ring through.</p>
+                <h3>Quiet Hours</h3>
+                <p class="ip-note">Set times for when to receive incoming calls.</p>
+                <p class="ip-included-label">Included in the Patriot Package</p>
+              </div>
+              <div class="ip-strip__item">
+                <span class="ip-strip__icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z"></path>
+                  </svg>
+                </span>
+                <h3>Voicemail to Email</h3>
+                <p class="ip-note">Voicemail messages are sent to email as audio and transcription.</p>
+                <p class="ip-included-label">Included in the Patriot Package</p>
               </div>
             </div>
           </div>
         </section>
       </div>
 
-      <div class="shopify-section" data-preview-pages="home">
+      <div class="shopify-section" data-preview-pages="collection">
         <section id="choose" class="ip-section" data-slot="products.compare">
           <div class="ip-stack">
             <p class="ip-kicker">Two phones. One simple decision.</p>
@@ -309,12 +341,12 @@
           <div class="ip-products" style="margin-top: 2rem;">
             <article class="ip-card ip-product-card">
               <div class="ip-product-card__image">
-                <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Freedom Phone" width="1200" height="1200" loading="lazy">
+                <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Classic Phone" width="1200" height="1200" loading="lazy">
               </div>
               <div class="ip-product-card__body">
                 <div class="ip-product-card__meta">
-                  <h3>Freedom Phone</h3>
-                  <p class="ip-price">$99</p>
+                  <h3>Classic Phone</h3>
+                  <p class="ip-price">$100</p>
                 </div>
                 <p>Best for home, grandparents, short independence windows, and everyday family calling.</p>
                 <ul class="ip-spec-list">
@@ -323,18 +355,18 @@
                   <li>Bluetooth 5.0, encrypted data transmission and storage</li>
                   <li>9-hour talk time, 200-hour standby battery</li>
                 </ul>
-                <div class="ip-buttons"><a class="ip-button" href="?route=freedom">View Freedom Phone</a></div>
+                <div class="ip-buttons"><a class="ip-button" href="?route=standard">View Classic Phone</a></div>
               </div>
             </article>
 
             <article class="ip-card ip-product-card">
               <div class="ip-product-card__image">
-                <img src="../independence-phone-theme/assets/ip-current-site-product-2.png" alt="Patriot Phone" width="1200" height="1200" loading="lazy">
+                <img src="../independence-phone-theme/assets/ip-current-site-product-2.png" alt="Rugged Phone" width="1200" height="1200" loading="lazy">
               </div>
               <div class="ip-product-card__body">
                 <div class="ip-product-card__meta">
-                  <h3>Patriot Phone</h3>
-                  <p class="ip-price">$149</p>
+                  <h3>Rugged Phone</h3>
+                  <p class="ip-price">$150</p>
                 </div>
                 <p>Best for families who want rugged durability, longer battery life, and a more resilient handset.</p>
                 <ul class="ip-spec-list">
@@ -343,7 +375,7 @@
                   <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
                   <li>13-hour talk time, 300-hour standby battery</li>
                 </ul>
-                <div class="ip-buttons"><a class="ip-button" href="?route=patriot">View Patriot Phone</a></div>
+                <div class="ip-buttons"><a class="ip-button" href="?route=rugged">View Rugged Phone</a></div>
               </div>
             </article>
           </div>
@@ -354,76 +386,140 @@
         <section id="how-it-works" class="ip-section ip-story" data-slot="home.jtbd">
           <div class="ip-story__intro">
             <div class="ip-stack">
-              <p class="ip-kicker">Reachable without scrollable</p>
-              <h2 class="ip-heading ip-heading--medium ip-heading--wide">They need reachability. They do not need the whole internet yet.</h2>
+              <h2 class="ip-heading ip-heading--medium ip-heading--wide">Children need reachability. They do not need the whole internet yet.</h2>
             </div>
             <div class="ip-stack">
               <div class="ip-lede">
-                <p>The first phone decision usually starts with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation.</p>
+                <p>The "First Phone" decision should start with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation. Independence Phone is built for parents who want communication before distraction. It gives children a simple way to call while helping parents delay the smartphone step until the child is ready.</p>
               </div>
-              <p class="ip-note">Independence Phone gives families the calling layer first.</p>
             </div>
           </div>
-          <div class="ip-story__solution">
-            <h3>The useful part of a phone, first.</h3>
-            <div class="ip-lede"><p>Independence Phone is built for families who want communication before distraction. It gives kids a simple way to call while helping parents delay the smartphone step until the family is ready.</p></div>
-          </div>
           <div class="ip-story__cards">
-            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('ip-story-bus-days.png');">
+            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('../independence-phone-theme/assets/ip-current-site-product-1.png');">
               <h3 class="ip-story-card__title">Bus days</h3>
-              <div class="ip-story-card__body"><p>A simple way to call home before and after school without adding a smartphone.</p></div>
+              <div class="ip-story-card__body"><p>A simple way to call home before and after school without needing a smartphone.</p></div>
             </article>
-            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('ip-story-home-alone.png');">
+            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('../independence-phone-theme/assets/ip-current-site-product-1.png');">
               <h3 class="ip-story-card__title">Home-alone minutes</h3>
-              <div class="ip-story-card__body"><p>More independence for short windows while parents stay one call away.</p></div>
+              <div class="ip-story-card__body"><p>More independence for short windows while parents are only one call away.</p></div>
             </article>
-            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('ip-story-grandparents.png');">
+            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('../independence-phone-theme/assets/ip-current-site-product-1.png');">
               <h3 class="ip-story-card__title">Grandparents</h3>
               <div class="ip-story-card__body"><p>A familiar phone experience that makes family calls feel easy again.</p></div>
             </article>
-            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('ip-story-before-smartphone.png');">
+            <article class="ip-card ip-story-card" style="--ip-card-bg-image: url('../independence-phone-theme/assets/ip-current-site-product-1.png');">
               <h3 class="ip-story-card__title">Before the smartphone</h3>
-              <div class="ip-story-card__body"><p>A calmer first step for families delaying apps, browsers, and social feeds.</p></div>
+              <div class="ip-story-card__body"><p>A calmer first step until the child is ready for apps, browsers, and social feeds.</p></div>
             </article>
           </div>
-        </section>
-      </div>
-
-      <div class="shopify-section" data-preview-pages="home">
-        <section class="ip-section ip-section--ink ip-section--flag" data-slot="package">
-          <div class="ip-package">
-            <div class="ip-stack">
-              <p class="ip-kicker">Introductory 250th Anniversary package</p>
-              <h2 class="ip-heading ip-heading--medium ip-heading--wide">A Freedom Phone starter package for the smartphone-free years.</h2>
-              <div class="ip-lede"><p>Get 1 Freedom Phone, 1 year of service, and the Victory Bundle in one introductory package.</p></div>
-              <div class="ip-buttons"><a class="ip-button" href="?route=freedom">View Freedom Phone</a></div>
-            </div>
-            <div class="ip-package__price">
-              <p class="ip-kicker">Package price</p>
-              <strong>$250</strong>
-              <p>1 Freedom Phone + 1 year service + Victory Bundle</p>
-              <p class="ip-note">$73.12 savings. Taxes may apply.</p>
-            </div>
+          <div class="ip-story__cta">
+            <a class="ip-button" href="?route=order">Order now</a>
           </div>
         </section>
       </div>
 
-      <div class="shopify-section" data-preview-pages="freedom">
-        <section id="freedom" class="ip-product-main" data-slot="product.freedom">
-          <div class="ip-product-main__gallery" data-product-gallery data-gallery-title="Freedom Phone">
+      <div class="shopify-section" data-preview-pages="order">
+        <section class="ip-section ip-order-builder" data-order-builder data-slot="order.builder">
+          <div class="ip-order-builder__header ip-stack">
+            <p class="ip-kicker">Order now</p>
+            <h1 class="ip-heading ip-heading--medium ip-heading--wide">Build your Independence Phone setup.</h1>
+            <div class="ip-lede"><p>Start with the Patriot Package, or choose your phone, plan, and add-ons below.</p></div>
+          </div>
+
+          <form class="ip-product-form ip-order-builder__form" data-order-form data-preview-product-form>
+            <input type="hidden" name="id" value="preview-standard" data-order-variant-id>
+            <input type="hidden" name="quantity" value="1">
+
+            <fieldset class="ip-choice-group ip-order-builder__package">
+              <legend>Limited offer</legend>
+              <label class="ip-choice ip-order-card ip-order-card--package" for="preview-package">
+                <input id="preview-package" type="checkbox" name="properties[Patriot Package]" value="Patriot Package - $250; Classic Phone, 1 year phone service, and all 4 add-ons (saves $303.12)" data-order-package data-order-savings-year="30312" data-billing-variant="preview-package-billing" data-billing-role="package">
+                <span><strong>Patriot Package</strong><small>$250</small><em>Take advantage of our limited offer honoring the 250th anniversary of America. Includes Classic Phone, 1 Year phone service, all 4 add-on's for only $250! A savings of $303.12.</em></span>
+              </label>
+            </fieldset>
+
+            <fieldset class="ip-choice-group ip-order-builder__step">
+              <legend>1. Choose your phone</legend>
+              <div class="ip-order-builder__grid ip-order-builder__grid--phones">
+                <label class="ip-choice ip-order-card ip-order-card--phone" for="preview-phone-standard">
+                  <input id="preview-phone-standard" type="radio" name="properties[Phone]" value="Classic Phone - $100" data-order-phone data-order-variant="preview-standard" data-order-title="Classic Phone" data-order-price-cents="10000" data-order-image="../independence-phone-theme/assets/ip-current-site-product-1.png" checked>
+                  <span><strong>Classic Phone</strong><small>Wi-Fi, Bluetooth, encrypted data transmission and storage, 9-hour talk time.</small></span>
+                  <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Classic Phone" width="1200" height="1200" loading="lazy">
+                </label>
+                <label class="ip-choice ip-order-card ip-order-card--phone" for="preview-phone-rugged">
+                  <input id="preview-phone-rugged" type="radio" name="properties[Phone]" value="Rugged Phone - $150" data-order-phone data-order-variant="preview-rugged" data-order-title="Rugged Phone" data-order-price-cents="15000" data-order-image="../independence-phone-theme/assets/ip-current-site-product-2.png">
+                  <span><strong>Rugged Phone</strong><small>Wi-Fi, Bluetooth, encrypted data transmission and storage, 9-hour talk time, waterproof, drop proof.</small></span>
+                  <img src="../independence-phone-theme/assets/ip-current-site-product-2.png" alt="Rugged Phone" width="1200" height="1200" loading="lazy">
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="ip-choice-group ip-order-builder__step">
+              <legend>2. Choose your plan</legend>
+              <div class="ip-order-builder__grid ip-order-builder__grid--two">
+                <label class="ip-choice ip-order-card" for="preview-plan-monthly">
+                  <input id="preview-plan-monthly" type="radio" name="properties[Service plan]" value="Monthly service - $17.76/mo" checked>
+                  <span><strong>Monthly service</strong><small>$17.76/mo</small><em>Personal phone number and monthly service.</em></span>
+                </label>
+                <label class="ip-choice ip-order-card" for="preview-plan-annual">
+                  <input id="preview-plan-annual" type="radio" name="properties[Service plan]" value="Annual service - $200/yr (saves $13.12/yr)" data-order-annual data-order-savings-year="1312">
+                  <span><strong>Annual service</strong><small>$200/yr</small><em>Saves $13.12 compared with 12 monthly payments.</em></span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="ip-choice-group ip-order-builder__step">
+              <legend>3. Choose add-ons</legend>
+              <div class="ip-order-builder__grid ip-order-builder__grid--addons">
+                <label class="ip-choice ip-order-card ip-order-card--bundle" for="preview-addon-bundle">
+                  <input id="preview-addon-bundle" type="checkbox" name="properties[Add-on Bundle]" value="Add-on Bundle - $10/mo; includes Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant (saves $10/mo)" data-order-bundle data-order-savings-month="1000">
+                  <span><strong>Add-on Bundle</strong><small>$10/mo</small><em>Includes every add-on: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant. Saves $10/mo.</em></span>
+                </label>
+                <label class="ip-choice ip-order-card" for="preview-addon-recording"><input id="preview-addon-recording" type="checkbox" name="properties[Call Recording]" value="$5/mo" data-order-addon><span><strong>Call Recording</strong><small>$5/mo</small><em>Access to 90 days of recorded calls.</em></span></label>
+                <label class="ip-choice ip-order-card" for="preview-addon-hours"><input id="preview-addon-hours" type="checkbox" name="properties[Quiet Hours]" value="$5/mo" data-order-addon><span><strong>Quiet Hours</strong><small>$5/mo</small><em>Set times for when to receive incoming calls.</em></span></label>
+                <label class="ip-choice ip-order-card" for="preview-addon-voicemail"><input id="preview-addon-voicemail" type="checkbox" name="properties[Voicemail to Email]" value="$5/mo" data-order-addon><span><strong>Voicemail to Email</strong><small>$5/mo</small><em>Voicemail messages are sent to email as audio and transcription.</em></span></label>
+                <label class="ip-choice ip-order-card" for="preview-addon-attendant"><input id="preview-addon-attendant" type="checkbox" name="properties[Auto Attendant]" value="$5/mo" data-order-addon><span><strong>Auto Attendant</strong><small>$5/mo</small><em>Filter unwanted spam calls.</em></span></label>
+              </div>
+            </fieldset>
+
+            <label class="ip-policy-check" for="preview-policy">
+              <input id="preview-policy" type="checkbox" name="properties[Policy agreement]" value="Agreed to Privacy Policy and Terms and Conditions" required>
+              <span>I agree to the <a href="./index.html">Privacy Policy</a> and <a href="./index.html">Terms and Conditions</a>.</span>
+            </label>
+
+            <aside class="ip-card ip-order-summary" aria-live="polite">
+              <p class="ip-kicker">Order summary</p>
+              <h2 data-order-summary-title>Classic Phone</h2>
+              <dl>
+                <div><dt>Phone</dt><dd data-order-summary-phone>$100</dd></div>
+                <div><dt>Service</dt><dd data-order-summary-service>$17.76/mo</dd></div>
+                <div><dt>Add-ons</dt><dd data-order-summary-addons>None selected</dd></div>
+                <div><dt>Estimated savings</dt><dd data-order-summary-savings>$0</dd></div>
+              </dl>
+              <p class="ip-form-note">Taxes, shipping, and recurring billing are finalized through the approved store setup. Savings shown here are based on the selected setup options.</p>
+              <button type="submit" data-add-to-cart-button data-default-text="Add setup to cart">Add setup to cart</button>
+              <p class="ip-form-note" data-cart-status aria-live="polite" hidden></p>
+            </aside>
+          </form>
+        </section>
+      </div>
+
+      <div class="shopify-section" data-preview-pages="standard">
+        <section id="standard" class="ip-product-main" data-slot="product.standard">
+          <div class="ip-product-main__gallery" data-product-gallery data-gallery-title="Classic Phone">
             <div class="ip-product-main__media" aria-live="polite">
-              <figure class="ip-product-main__slide is-active" data-gallery-slide="0" data-gallery-open role="button" tabindex="0" aria-label="Open Freedom Phone full view">
-                <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Freedom Phone" width="1200" height="1200">
+              <figure class="ip-product-main__slide is-active" data-gallery-slide="0" data-gallery-open role="button" tabindex="0" aria-label="Open Classic Phone full view">
+                <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Classic Phone" width="1200" height="1200">
               </figure>
-              <figure class="ip-product-main__slide" data-gallery-slide="1" data-gallery-open role="button" tabindex="-1" aria-label="Open Freedom Phone dark product background full view" hidden>
-                <img src="../independence-phone-theme/assets/ip-current-site-product-3.png" alt="Freedom Phone on a dark product background" width="1200" height="1200">
+              <figure class="ip-product-main__slide" data-gallery-slide="1" data-gallery-open role="button" tabindex="-1" aria-label="Open Classic Phone dark product background full view" hidden>
+                <img src="../independence-phone-theme/assets/ip-current-site-product-3.png" alt="Classic Phone on a dark product background" width="1200" height="1200">
               </figure>
             </div>
-            <div class="ip-product-main__thumbs" aria-label="Freedom Phone media">
-              <button class="ip-product-main__thumb is-active" type="button" data-gallery-thumb="0" aria-label="Show Freedom Phone media 1" aria-pressed="true">
+            <div class="ip-product-main__thumbs" aria-label="Classic Phone media">
+              <button class="ip-product-main__thumb is-active" type="button" data-gallery-thumb="0" aria-label="Show Classic Phone media 1" aria-pressed="true">
                 <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="" width="220" height="220" loading="lazy">
               </button>
-              <button class="ip-product-main__thumb" type="button" data-gallery-thumb="1" aria-label="Show Freedom Phone media 2" aria-pressed="false">
+              <button class="ip-product-main__thumb" type="button" data-gallery-thumb="1" aria-label="Show Classic Phone media 2" aria-pressed="false">
                 <img src="../independence-phone-theme/assets/ip-current-site-product-3.png" alt="" width="220" height="220" loading="lazy">
               </button>
             </div>
@@ -431,32 +527,32 @@
           </div>
           <div class="ip-product-main__summary ip-stack">
             <p class="ip-kicker">A phone that acts like a phone</p>
-            <h1 class="ip-heading ip-heading--medium">Freedom Phone</h1>
+            <h1 class="ip-heading ip-heading--medium">Classic Phone</h1>
             <p class="ip-lede">The everyday family phone for kids who need to call home without stepping into smartphone life.</p>
-            <p class="ip-price">$99</p>
-            <form class="ip-product-form" data-preview-product-form data-product-title="Freedom Phone" data-product-price-cents="9900" data-product-currency="USD" data-product-image-src="../independence-phone-theme/assets/ip-current-site-product-1.png" data-product-image-alt="Freedom Phone">
-              <label for="freedom-qty">Quantity</label>
-              <input id="freedom-qty" type="number" name="quantity" min="1" value="1">
+            <p class="ip-price">$100</p>
+            <form class="ip-product-form" data-preview-product-form data-product-title="Classic Phone" data-product-price-cents="10000" data-product-currency="USD" data-product-image-src="../independence-phone-theme/assets/ip-current-site-product-1.png" data-product-image-alt="Classic Phone">
+              <label for="standard-qty">Quantity</label>
+              <input id="standard-qty" type="number" name="quantity" min="1" value="1">
               <div class="ip-product-options">
                 <h2>Choose service and add-ons</h2>
                 <fieldset class="ip-choice-group">
                   <legend>Service plan</legend>
-                  <label class="ip-choice" for="freedom-monthly">
-                    <input id="freedom-monthly" type="radio" name="freedom-service" value="Monthly service - $17.76/mo" checked>
+                  <label class="ip-choice" for="standard-monthly">
+                    <input id="standard-monthly" type="radio" name="standard-service" value="Monthly service - $17.76/mo" checked>
                     <span><strong>Monthly service</strong><small>$17.76/mo</small></span>
                   </label>
-                  <label class="ip-choice" for="freedom-annual">
-                    <input id="freedom-annual" type="radio" name="freedom-service" value="Annual service - $200/yr">
+                  <label class="ip-choice" for="standard-annual">
+                    <input id="standard-annual" type="radio" name="standard-service" value="Annual service - $200/yr">
                     <span><strong>Annual service</strong><small>$200/yr</small></span>
                   </label>
                 </fieldset>
                 <fieldset class="ip-choice-group">
                   <legend>Optional add-ons</legend>
-                  <label class="ip-choice" for="freedom-recording"><input id="freedom-recording" type="checkbox"><span><strong>Call Recording</strong><small>$5/mo</small></span></label>
-                  <label class="ip-choice" for="freedom-time"><input id="freedom-time" type="checkbox"><span><strong>Time Conditions</strong><small>$5/mo</small></span></label>
-                  <label class="ip-choice" for="freedom-voicemail"><input id="freedom-voicemail" type="checkbox"><span><strong>Voicemail to Email</strong><small>$5/mo</small></span></label>
-                  <label class="ip-choice" for="freedom-victory"><input id="freedom-victory" type="checkbox"><span><strong>Victory Bundle</strong><small>$10/mo</small></span></label>
-                  <label class="ip-choice" for="freedom-attendant"><input id="freedom-attendant" type="checkbox"><span><strong>Auto Attendant</strong><small>$5/mo</small></span></label>
+                  <label class="ip-choice" for="standard-recording"><input id="standard-recording" type="checkbox"><span><strong>Call Recording</strong><small>$5/mo</small></span></label>
+                  <label class="ip-choice" for="standard-time"><input id="standard-time" type="checkbox"><span><strong>Quiet Hours</strong><small>$5/mo</small></span></label>
+                  <label class="ip-choice" for="standard-voicemail"><input id="standard-voicemail" type="checkbox"><span><strong>Voicemail to Email</strong><small>$5/mo</small></span></label>
+                  <label class="ip-choice" for="standard-victory"><input id="standard-victory" type="checkbox"><span><strong>Add-on Bundle</strong><small>$10/mo</small></span></label>
+                  <label class="ip-choice" for="standard-attendant"><input id="standard-attendant" type="checkbox"><span><strong>Auto Attendant</strong><small>$5/mo</small></span></label>
                 </fieldset>
                 <p class="ip-form-note">Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout.</p>
               </div>
@@ -489,9 +585,9 @@
                   <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
                   <ul class="ip-addon-list">
                     <li><strong>Call Recording</strong><span>$5/mo</span></li>
-                    <li><strong>Time Conditions</strong><span>$5/mo</span></li>
+                    <li><strong>Quiet Hours</strong><span>$5/mo</span></li>
                     <li><strong>Voicemail to Email</strong><span>$5/mo</span></li>
-                    <li><strong>Victory Bundle</strong><span>$10/mo</span></li>
+                    <li><strong>Add-on Bundle</strong><span>$10/mo</span></li>
                     <li><strong>Auto Attendant</strong><span>$5/mo</span></li>
                   </ul>
                 </div>
@@ -509,22 +605,22 @@
         </section>
       </div>
 
-      <div class="shopify-section" data-preview-pages="patriot">
-        <section id="patriot" class="ip-product-main" data-slot="product.patriot">
-          <div class="ip-product-main__gallery" data-product-gallery data-gallery-title="Patriot Phone">
+      <div class="shopify-section" data-preview-pages="rugged">
+        <section id="rugged" class="ip-product-main" data-slot="product.rugged">
+          <div class="ip-product-main__gallery" data-product-gallery data-gallery-title="Rugged Phone">
             <div class="ip-product-main__media" aria-live="polite">
-              <figure class="ip-product-main__slide is-active" data-gallery-slide="0" data-gallery-open role="button" tabindex="0" aria-label="Open Patriot Phone full view">
-                <img src="../independence-phone-theme/assets/ip-current-site-product-2.png" alt="Patriot Phone" width="1200" height="1200">
+              <figure class="ip-product-main__slide is-active" data-gallery-slide="0" data-gallery-open role="button" tabindex="0" aria-label="Open Rugged Phone full view">
+                <img src="../independence-phone-theme/assets/ip-current-site-product-2.png" alt="Rugged Phone" width="1200" height="1200">
               </figure>
               <figure class="ip-product-main__slide" data-gallery-slide="1" data-gallery-open role="button" tabindex="-1" aria-label="Open Independence Phone handset on a flag background full view" hidden>
                 <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Independence Phone handset on a flag background" width="1200" height="1200">
               </figure>
             </div>
-            <div class="ip-product-main__thumbs" aria-label="Patriot Phone media">
-              <button class="ip-product-main__thumb is-active" type="button" data-gallery-thumb="0" aria-label="Show Patriot Phone media 1" aria-pressed="true">
+            <div class="ip-product-main__thumbs" aria-label="Rugged Phone media">
+              <button class="ip-product-main__thumb is-active" type="button" data-gallery-thumb="0" aria-label="Show Rugged Phone media 1" aria-pressed="true">
                 <img src="../independence-phone-theme/assets/ip-current-site-product-2.png" alt="" width="220" height="220" loading="lazy">
               </button>
-              <button class="ip-product-main__thumb" type="button" data-gallery-thumb="1" aria-label="Show Patriot Phone media 2" aria-pressed="false">
+              <button class="ip-product-main__thumb" type="button" data-gallery-thumb="1" aria-label="Show Rugged Phone media 2" aria-pressed="false">
                 <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="" width="220" height="220" loading="lazy">
               </button>
             </div>
@@ -532,32 +628,32 @@
           </div>
           <div class="ip-product-main__summary ip-stack">
             <p class="ip-kicker">A phone that acts like a phone</p>
-            <h1 class="ip-heading ip-heading--medium">Patriot Phone</h1>
+            <h1 class="ip-heading ip-heading--medium">Rugged Phone</h1>
             <p class="ip-lede">The rugged family phone for busier homes, tougher handling, and longer days.</p>
-            <p class="ip-price">$149</p>
-            <form class="ip-product-form" data-preview-product-form data-product-title="Patriot Phone" data-product-price-cents="14900" data-product-currency="USD" data-product-image-src="../independence-phone-theme/assets/ip-current-site-product-2.png" data-product-image-alt="Patriot Phone">
-              <label for="patriot-qty">Quantity</label>
-              <input id="patriot-qty" type="number" name="quantity" min="1" value="1">
+            <p class="ip-price">$150</p>
+            <form class="ip-product-form" data-preview-product-form data-product-title="Rugged Phone" data-product-price-cents="15000" data-product-currency="USD" data-product-image-src="../independence-phone-theme/assets/ip-current-site-product-2.png" data-product-image-alt="Rugged Phone">
+              <label for="rugged-qty">Quantity</label>
+              <input id="rugged-qty" type="number" name="quantity" min="1" value="1">
               <div class="ip-product-options">
                 <h2>Choose service and add-ons</h2>
                 <fieldset class="ip-choice-group">
                   <legend>Service plan</legend>
-                  <label class="ip-choice" for="patriot-monthly">
-                    <input id="patriot-monthly" type="radio" name="patriot-service" value="Monthly service - $17.76/mo" checked>
+                  <label class="ip-choice" for="rugged-monthly">
+                    <input id="rugged-monthly" type="radio" name="rugged-service" value="Monthly service - $17.76/mo" checked>
                     <span><strong>Monthly service</strong><small>$17.76/mo</small></span>
                   </label>
-                  <label class="ip-choice" for="patriot-annual">
-                    <input id="patriot-annual" type="radio" name="patriot-service" value="Annual service - $200/yr">
+                  <label class="ip-choice" for="rugged-annual">
+                    <input id="rugged-annual" type="radio" name="rugged-service" value="Annual service - $200/yr">
                     <span><strong>Annual service</strong><small>$200/yr</small></span>
                   </label>
                 </fieldset>
                 <fieldset class="ip-choice-group">
                   <legend>Optional add-ons</legend>
-                  <label class="ip-choice" for="patriot-recording"><input id="patriot-recording" type="checkbox"><span><strong>Call Recording</strong><small>$5/mo</small></span></label>
-                  <label class="ip-choice" for="patriot-time"><input id="patriot-time" type="checkbox"><span><strong>Time Conditions</strong><small>$5/mo</small></span></label>
-                  <label class="ip-choice" for="patriot-voicemail"><input id="patriot-voicemail" type="checkbox"><span><strong>Voicemail to Email</strong><small>$5/mo</small></span></label>
-                  <label class="ip-choice" for="patriot-victory"><input id="patriot-victory" type="checkbox"><span><strong>Victory Bundle</strong><small>$10/mo</small></span></label>
-                  <label class="ip-choice" for="patriot-attendant"><input id="patriot-attendant" type="checkbox"><span><strong>Auto Attendant</strong><small>$5/mo</small></span></label>
+                  <label class="ip-choice" for="rugged-recording"><input id="rugged-recording" type="checkbox"><span><strong>Call Recording</strong><small>$5/mo</small></span></label>
+                  <label class="ip-choice" for="rugged-time"><input id="rugged-time" type="checkbox"><span><strong>Quiet Hours</strong><small>$5/mo</small></span></label>
+                  <label class="ip-choice" for="rugged-voicemail"><input id="rugged-voicemail" type="checkbox"><span><strong>Voicemail to Email</strong><small>$5/mo</small></span></label>
+                  <label class="ip-choice" for="rugged-victory"><input id="rugged-victory" type="checkbox"><span><strong>Add-on Bundle</strong><small>$10/mo</small></span></label>
+                  <label class="ip-choice" for="rugged-attendant"><input id="rugged-attendant" type="checkbox"><span><strong>Auto Attendant</strong><small>$5/mo</small></span></label>
                 </fieldset>
                 <p class="ip-form-note">Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout.</p>
               </div>
@@ -591,9 +687,9 @@
                   <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
                   <ul class="ip-addon-list">
                     <li><strong>Call Recording</strong><span>$5/mo</span></li>
-                    <li><strong>Time Conditions</strong><span>$5/mo</span></li>
+                    <li><strong>Quiet Hours</strong><span>$5/mo</span></li>
                     <li><strong>Voicemail to Email</strong><span>$5/mo</span></li>
-                    <li><strong>Victory Bundle</strong><span>$10/mo</span></li>
+                    <li><strong>Add-on Bundle</strong><span>$10/mo</span></li>
                     <li><strong>Auto Attendant</strong><span>$5/mo</span></li>
                   </ul>
                 </div>
@@ -620,7 +716,7 @@
           </div>
           <div class="ip-card ip-cart__empty" data-preview-cart-empty>
             <p>Your cart is empty.</p>
-            <a class="ip-button" href="./index.html#choose">Choose your phone</a>
+            <a class="ip-button" href="?route=order">Order now</a>
           </div>
           <form class="ip-cart__form" data-preview-cart hidden>
             <div class="ip-cart__items">
@@ -630,15 +726,15 @@
               </div>
               <article class="ip-card ip-cart-item">
                 <div class="ip-cart-item__media">
-                  <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Freedom Phone" width="1200" height="1200" data-preview-cart-image>
+                  <img src="../independence-phone-theme/assets/ip-current-site-product-1.png" alt="Classic Phone" width="1200" height="1200" data-preview-cart-image>
                 </div>
                 <div class="ip-cart-item__body">
                   <div class="ip-cart-item__heading">
                     <div>
-                      <h2 data-preview-cart-title>Freedom Phone</h2>
+                      <h2 data-preview-cart-title>Classic Phone</h2>
                       <p class="ip-note">Default Title</p>
                     </div>
-                    <p class="ip-price" data-cart-line-price="1">$99</p>
+                    <p class="ip-price" data-cart-line-price="1">$100</p>
                   </div>
                   <dl class="ip-cart-properties" aria-label="Selected service and add-ons" data-preview-cart-properties data-cart-properties>
                     <div><dt>Service plan</dt><dd>Monthly service - $17.76/mo</dd></div>
@@ -650,17 +746,17 @@
                         <input id="preview-cart-recording" type="checkbox" data-cart-addon-option data-property-name="Call Recording" data-property-value="$5/mo">
                         <span><strong>Call Recording</strong><small>$5/mo</small></span>
                       </label>
-                      <label class="ip-choice" for="preview-cart-time">
-                        <input id="preview-cart-time" type="checkbox" data-cart-addon-option data-property-name="Time Conditions" data-property-value="$5/mo">
-                        <span><strong>Time Conditions</strong><small>$5/mo</small></span>
+                      <label class="ip-choice" for="preview-cart-hours">
+                        <input id="preview-cart-hours" type="checkbox" data-cart-addon-option data-property-name="Quiet Hours" data-property-value="$5/mo">
+                        <span><strong>Quiet Hours</strong><small>$5/mo</small></span>
                       </label>
                       <label class="ip-choice" for="preview-cart-voicemail">
                         <input id="preview-cart-voicemail" type="checkbox" data-cart-addon-option data-property-name="Voicemail to Email" data-property-value="$5/mo">
                         <span><strong>Voicemail to Email</strong><small>$5/mo</small></span>
                       </label>
-                      <label class="ip-choice" for="preview-cart-victory">
-                        <input id="preview-cart-victory" type="checkbox" data-cart-addon-option data-property-name="Victory Bundle" data-property-value="$10/mo">
-                        <span><strong>Victory Bundle</strong><small>$10/mo</small></span>
+                      <label class="ip-choice" for="preview-cart-bundle">
+                        <input id="preview-cart-bundle" type="checkbox" data-cart-addon-option data-property-name="Add-on Bundle" data-property-value="$10/mo; includes all add-ons; saves $10/mo">
+                        <span><strong>Add-on Bundle</strong><small>$10/mo; includes all add-ons; saves $10/mo</small></span>
                       </label>
                       <label class="ip-choice" for="preview-cart-attendant">
                         <input id="preview-cart-attendant" type="checkbox" data-cart-addon-option data-property-name="Auto Attendant" data-property-value="$5/mo">
@@ -680,31 +776,36 @@
             <div class="ip-card ip-cart__summary">
               <h2>Order summary</h2>
               <dl class="ip-cart__totals">
-                <div><dt>Subtotal</dt><dd data-cart-subtotal>$99</dd></div>
+                <div><dt>Subtotal</dt><dd data-cart-subtotal>$100</dd></div>
                 <div><dt>Shipping</dt><dd>Calculated at checkout</dd></div>
+                <div><dt>Estimated savings</dt><dd data-cart-savings>$0</dd></div>
               </dl>
               <p class="ip-note">Service and add-on selections are shown for setup confirmation. Taxes, shipping, and recurring billing are finalized through the approved store setup.</p>
+              <label class="ip-policy-check" for="preview-cart-policy">
+                <input id="preview-cart-policy" type="checkbox" name="attributes[Policy agreement]" value="Agreed to Privacy Policy and Terms and Conditions" required>
+                <span>I agree to the <a href="./index.html">Privacy Policy</a> and <a href="./index.html">Terms and Conditions</a>.</span>
+              </label>
               <p class="ip-form-note" data-cart-status aria-live="polite" hidden></p>
               <div class="ip-buttons">
                 <button type="button" name="update">Update</button>
                 <button type="button" name="checkout">Checkout</button>
               </div>
-              <a class="ip-cart__continue" href="./index.html#choose">Continue shopping</a>
+              <a class="ip-cart__continue" href="?route=order">Continue shopping</a>
             </div>
           </form>
         </section>
       </div>
 
-      <div class="shopify-section" data-preview-pages="home">
-        <section class="ip-section ip-section--surface" data-slot="faq">
+      <div class="shopify-section" data-preview-pages="home faq">
+        <section class="ip-section ip-section--surface ip-faq-section full-width" data-slot="faq">
           <div class="ip-stack">
-            <p class="ip-kicker">FAQ</p>
-            <h2 class="ip-heading ip-heading--medium ip-heading--wide">Questions parents ask before choosing a simpler phone.</h2>
+            <h2 class="ip-heading ip-heading--medium ip-heading--wide">Questions parents ask when choosing Independence Phone.</h2>
           </div>
           <div class="ip-faq" style="margin-top: 2rem;">
             <details open><summary>Does it have internet?</summary><div class="ip-faq__answer"><p>Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p></div></details>
-            <details><summary>What is the monthly fee?</summary><div class="ip-faq__answer"><p>Personal phone number plus monthly phone service is $17.76/mo. Annual service is $200/yr and saves $13.12 compared with monthly billing.</p></div></details>
-            <details><summary>What is the difference between Freedom Phone and Patriot Phone?</summary><div class="ip-faq__answer"><p>Freedom Phone is the everyday heavy-duty Wi-Fi handset. Patriot Phone is the rugged model with waterproof and dust-proof construction, drop protection up to 1.8 meters, and longer battery life.</p></div></details>
+            <details><summary>What is the monthly fee?</summary><div class="ip-faq__answer"><p>Personal phone number plus monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12 compared with monthly billing.</p></div></details>
+            <details><summary>What is the difference between Classic Phone and Rugged Phone?</summary><div class="ip-faq__answer"><p>Classic Phone is the everyday heavy-duty Wi-Fi handset. Rugged Phone is the rugged model with waterproof and dust-proof construction, drop protection up to 1.8 meters, and longer battery life.</p></div></details>
+            <details><summary>What does the Patriot Package include?</summary><div class="ip-faq__answer"><p>The Patriot Package includes a Classic Phone, 1 year of phone service, and all 4 add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant for $250.</p></div></details>
           </div>
         </section>
       </div>
@@ -715,7 +816,7 @@
             <div class="ip-stack">
               <p class="ip-kicker">Need help choosing?</p>
               <h1 class="ip-heading ip-heading--medium ip-heading--wide">Tell us what your family needs the phone to do.</h1>
-              <div class="ip-lede"><p>Ask about Freedom Phone, Patriot Phone, service, add-ons, the 250th Anniversary package, or launch updates.</p></div>
+              <div class="ip-lede"><p>Ask about Classic Phone, Rugged Phone, service, add-ons, the Patriot Package, or launch updates.</p></div>
               <p class="ip-note">Common buying moments include home-alone minutes, grandparents, school days, and a simpler first-phone step.</p>
             </div>
             <div class="ip-card" style="padding: clamp(1rem, 3vw, 1.5rem);">
@@ -730,7 +831,7 @@
                 </div>
                 <div class="ip-grid ip-grid--2">
                   <div class="ip-field"><label for="use-case">Main use case</label><select id="use-case"><option>Help choosing a phone</option><option>School or bus days</option><option>Grandparents and family calls</option></select></div>
-                  <div class="ip-field"><label for="product">Interested product</label><select id="product"><option>Freedom Phone</option><option>Patriot Phone</option><option>250th Anniversary package</option></select></div>
+                  <div class="ip-field"><label for="product">Interested product</label><select id="product"><option>Classic Phone</option><option>Rugged Phone</option><option>Patriot Package</option></select></div>
                 </div>
                 <div class="ip-field"><label for="plan">Preferred service plan</label><select id="plan"><option>Monthly service - $17.76/mo</option><option>Annual service - $200/yr</option><option>Not sure yet</option></select></div>
                 <div class="ip-field"><label for="questions">Questions</label><textarea id="questions"></textarea></div>
@@ -738,23 +839,6 @@
                 <button class="preview-field-button" type="button">Send my question</button>
                 <p class="ip-form-note">We will use your message to help with product choice, service questions, or launch updates. Do not send payment details through this form.</p>
               </form>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <div class="shopify-section" data-preview-pages="home">
-        <section class="ip-section ip-section--ink ip-section--flag" data-slot="trust">
-          <div class="ip-trust">
-            <div class="ip-stack">
-              <p class="ip-kicker">American-owned. Family-focused.</p>
-              <h2 class="ip-heading ip-heading--medium ip-heading--wide">A practical phone choice backed by decades of communication experience.</h2>
-              <div class="ip-lede"><p>The patriotic layer supports trust after parents understand the product: a phone that helps families stay connected without rushing into smartphone life.</p></div>
-            </div>
-            <div class="ip-trust__items">
-              <article class="ip-trust__item"><h3>American-owned</h3><p>A values-aligned trust layer for families choosing a simpler first phone.</p></article>
-              <article class="ip-trust__item"><h3>42 years in communications</h3><p>Use the company history to make the product feel dependable and experienced.</p></article>
-              <article class="ip-trust__item"><h3>250th Anniversary package</h3><p>A concrete introductory offer, not just patriotic styling.</p></article>
             </div>
           </div>
         </section>
@@ -768,7 +852,8 @@
         <p>American-owned and family-focused. Built for the smartphone-free years.</p>
       </div>
       <nav class="footer__links" aria-label="Footer menu">
-        <a href="./index.html#choose">Choose Your Phone</a>
+        <a href="?route=order">Order Now</a>
+        <a href="?route=faq">FAQ</a>
         <a href="?route=contact">Contact</a>
         <a href="./index.html">Privacy</a>
         <a href="./index.html">Terms</a>

@@ -1,19 +1,19 @@
 {% liquid
   assign is_patriot = false
-  if product.handle == 'patriot-phone'
+  if product.handle == 'rugged-phone' or product.handle == 'patriot-phone'
     assign is_patriot = true
   endif
 
   if is_patriot
-    assign fallback_title = 'Patriot Phone'
-    assign fallback_price = '$149'
+    assign fallback_title = 'Rugged Phone'
+    assign fallback_price = '$150'
     assign fallback_deck = 'The rugged family phone for busier homes, tougher handling, and longer days.'
     assign fallback_best_for = 'Best for families who want rugged durability, longer battery life, and a more resilient handset.'
     assign fallback_image = 'ip-current-site-product-2.png'
     assign fallback_gallery_image = 'ip-current-site-product-1.png'
   else
-    assign fallback_title = 'Freedom Phone'
-    assign fallback_price = '$99'
+    assign fallback_title = 'Classic Phone'
+    assign fallback_price = '$100'
     assign fallback_deck = 'The everyday family phone for kids who need to call home without stepping into smartphone life.'
     assign fallback_best_for = 'Best for home, grandparents, short independence windows, and everyday family calling.'
     assign fallback_image = 'ip-current-site-product-1.png'
@@ -49,43 +49,29 @@
 %}
 
 <section class="ip-product-main">
-  <div class="ip-product-main__gallery" data-product-gallery data-gallery-title="{{ product_title | escape }}">
-    <div class="ip-product-main__media" aria-live="polite">
-      {% if product.media.size > 0 %}
-        {% for media in product.media %}
-          {% assign media_alt = media.alt | default: product_title %}
-          <figure
-            class="ip-product-main__slide{% if forloop.first %} is-active{% endif %}"
-            data-gallery-slide="{{ forloop.index0 }}"
-            {% if media.media_type == 'image' %}
-              data-gallery-open
-              role="button"
-              tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
-              aria-label="Open {{ media_alt | escape }} full view"
-            {% endif %}
-            {% unless forloop.first %}
-              hidden
-            {% endunless %}
-          >
-            {% case media.media_type %}
-              {% when 'image' %}
-                {{
-                  media
-                  | image_url: width: 1400
-                  | image_tag:
-                    alt: media_alt,
-                    loading: 'eager',
-                    fetchpriority: 'high',
-                    sizes: '(min-width: 990px) 54vw, 100vw'
-                }}
-              {% when 'video' %}
-                {{ media | video_tag: controls: true, image_size: '1400x', class: 'ip-product-main__video' }}
-              {% when 'external_video' %}
-                {{ media | external_video_tag: class: 'ip-product-main__external-video' }}
-              {% else %}
-                {% if media.preview_image %}
+  <div class="ip-product-main__overview">
+    <div class="ip-product-main__gallery" data-product-gallery data-gallery-title="{{ product_title | escape }}">
+      <div class="ip-product-main__media" aria-live="polite">
+        {% if product.media.size > 0 %}
+          {% for media in product.media %}
+            {% assign media_alt = media.alt | default: product_title %}
+            <figure
+              class="ip-product-main__slide{% if forloop.first %} is-active{% endif %}"
+              data-gallery-slide="{{ forloop.index0 }}"
+              {% if media.media_type == 'image' %}
+                data-gallery-open
+                role="button"
+                tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+                aria-label="Open {{ media_alt | escape }} full view"
+              {% endif %}
+              {% unless forloop.first %}
+                hidden
+              {% endunless %}
+            >
+              {% case media.media_type %}
+                {% when 'image' %}
                   {{
-                    media.preview_image
+                    media
                     | image_url: width: 1400
                     | image_tag:
                       alt: media_alt,
@@ -93,101 +79,122 @@
                       fetchpriority: 'high',
                       sizes: '(min-width: 990px) 54vw, 100vw'
                   }}
-                {% endif %}
-            {% endcase %}
+                {% when 'video' %}
+                  {{ media | video_tag: controls: true, image_size: '1400x', class: 'ip-product-main__video' }}
+                {% when 'external_video' %}
+                  {{ media | external_video_tag: class: 'ip-product-main__external-video' }}
+                {% else %}
+                  {% if media.preview_image %}
+                    {{
+                      media.preview_image
+                      | image_url: width: 1400
+                      | image_tag:
+                        alt: media_alt,
+                        loading: 'eager',
+                        fetchpriority: 'high',
+                        sizes: '(min-width: 990px) 54vw, 100vw'
+                    }}
+                  {% endif %}
+              {% endcase %}
+            </figure>
+          {% endfor %}
+        {% else %}
+          <figure
+            class="ip-product-main__slide is-active"
+            data-gallery-slide="0"
+            data-gallery-open
+            role="button"
+            tabindex="0"
+            aria-label="Open {{ fallback_title }} full view"
+          >
+            <img
+              src="{{ fallback_image | asset_url }}"
+              alt="{{ fallback_title }}"
+              width="1200"
+              height="1200"
+              loading="eager"
+              fetchpriority="high"
+            >
           </figure>
-        {% endfor %}
-      {% else %}
-        <figure
-          class="ip-product-main__slide is-active"
-          data-gallery-slide="0"
-          data-gallery-open
-          role="button"
-          tabindex="0"
-          aria-label="Open {{ fallback_title }} full view"
-        >
-          <img
-            src="{{ fallback_image | asset_url }}"
-            alt="{{ fallback_title }}"
-            width="1200"
-            height="1200"
-            loading="eager"
-            fetchpriority="high"
+          <figure
+            class="ip-product-main__slide"
+            data-gallery-slide="1"
+            data-gallery-open
+            role="button"
+            tabindex="-1"
+            aria-label="Open {{ fallback_title }} alternate product image full view"
+            hidden
           >
-        </figure>
-        <figure
-          class="ip-product-main__slide"
-          data-gallery-slide="1"
-          data-gallery-open
-          role="button"
-          tabindex="-1"
-          aria-label="Open {{ fallback_title }} alternate product image full view"
-          hidden
-        >
-          <img
-            src="{{ fallback_gallery_image | asset_url }}"
-            alt="{{ fallback_title }} alternate product image"
-            width="1200"
-            height="1200"
-            loading="lazy"
+            <img
+              src="{{ fallback_gallery_image | asset_url }}"
+              alt="{{ fallback_title }} alternate product image"
+              width="1200"
+              height="1200"
+              loading="lazy"
+            >
+          </figure>
+        {% endif %}
+      </div>
+
+      {% if product.media.size > 1 %}
+        <div class="ip-product-main__thumbs" aria-label="{{ product.title | default: fallback_title }} media">
+          {% for media in product.media %}
+            <button
+              class="ip-product-main__thumb{% if forloop.first %} is-active{% endif %}"
+              type="button"
+              data-gallery-thumb="{{ forloop.index0 }}"
+              aria-label="Show {{ product.title | default: fallback_title }} media {{ forloop.index }}"
+              aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+            >
+              {% if media.preview_image %}
+                {{
+                  media.preview_image
+                  | image_url: width: 220
+                  | image_tag:
+                    alt: '',
+                    loading: 'lazy'
+                }}
+              {% else %}
+                <span>{{ media.media_type | replace: '_', ' ' }}</span>
+              {% endif %}
+            </button>
+          {% endfor %}
+        </div>
+      {% elsif product.media.size == 0 %}
+        <div class="ip-product-main__thumbs" aria-label="{{ fallback_title }} media">
+          <button
+            class="ip-product-main__thumb is-active"
+            type="button"
+            data-gallery-thumb="0"
+            aria-label="Show {{ fallback_title }} media 1"
+            aria-pressed="true"
           >
-        </figure>
+            <img src="{{ fallback_image | asset_url }}" alt="" width="220" height="220" loading="lazy">
+          </button>
+          <button
+            class="ip-product-main__thumb"
+            type="button"
+            data-gallery-thumb="1"
+            aria-label="Show {{ fallback_title }} media 2"
+            aria-pressed="false"
+          >
+            <img src="{{ fallback_gallery_image | asset_url }}" alt="" width="220" height="220" loading="lazy">
+          </button>
+        </div>
       {% endif %}
+
+      <button class="ip-product-main__full-view" type="button" data-gallery-open>
+        Click to see full view
+      </button>
     </div>
 
-    {% if product.media.size > 1 %}
-      <div class="ip-product-main__thumbs" aria-label="{{ product.title | default: fallback_title }} media">
-        {% for media in product.media %}
-          <button
-            class="ip-product-main__thumb{% if forloop.first %} is-active{% endif %}"
-            type="button"
-            data-gallery-thumb="{{ forloop.index0 }}"
-            aria-label="Show {{ product.title | default: fallback_title }} media {{ forloop.index }}"
-            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
-          >
-            {% if media.preview_image %}
-              {{
-                media.preview_image
-                | image_url: width: 220
-                | image_tag:
-                  alt: '',
-                  loading: 'lazy'
-              }}
-            {% else %}
-              <span>{{ media.media_type | replace: '_', ' ' }}</span>
-            {% endif %}
-          </button>
-        {% endfor %}
-      </div>
-    {% elsif product.media.size == 0 %}
-      <div class="ip-product-main__thumbs" aria-label="{{ fallback_title }} media">
-        <button
-          class="ip-product-main__thumb is-active"
-          type="button"
-          data-gallery-thumb="0"
-          aria-label="Show {{ fallback_title }} media 1"
-          aria-pressed="true"
-        >
-          <img src="{{ fallback_image | asset_url }}" alt="" width="220" height="220" loading="lazy">
-        </button>
-        <button
-          class="ip-product-main__thumb"
-          type="button"
-          data-gallery-thumb="1"
-          aria-label="Show {{ fallback_title }} media 2"
-          aria-pressed="false"
-        >
-          <img src="{{ fallback_gallery_image | asset_url }}" alt="" width="220" height="220" loading="lazy">
-        </button>
-      </div>
-    {% endif %}
+    <div class="ip-product-main__summary ip-stack">
+    <nav class="ip-product-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span aria-hidden="true">◆</span>
+      <span>{{ product_title }}</span>
+    </nav>
 
-    <button class="ip-product-main__full-view" type="button" data-gallery-open>
-      Click to see full view
-    </button>
-  </div>
-
-  <div class="ip-product-main__summary ip-stack">
     <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
     <h1 class="ip-heading ip-heading--medium">{{ product_title }}</h1>
     <p class="ip-lede">
@@ -199,17 +206,25 @@
         {{ fallback_deck }}
       {% endif %}
     </p>
+    <a class="ip-product-read-more" href="#ProductInfo-{{ section.id }}">Read more</a>
 
-    <p class="ip-price">
-      {% if product.price %}
-        {{ product.price | money }}
+    <div class="ip-product-purchase-meta">
+      {% if current_variant.available %}
+        <p class="ip-product-stock">In stock, ready to ship</p>
       {% else %}
-        {{ fallback_price }}
+        <p class="ip-product-stock ip-product-stock--muted">Currently unavailable</p>
       {% endif %}
-    </p>
+      <p class="ip-price">
+        {% if product.price %}
+          {{ product.price | money }}
+        {% else %}
+          {{ fallback_price }}
+        {% endif %}
+      </p>
+    </div>
 
     {% if product != blank %}
-      {% form 'product', product, class: 'ip-product-form' %}
+      {% form 'product', product, class: 'ip-product-form', data-product-title: product_title %}
         {% if product.has_only_default_variant %}
           <input type="hidden" name="id" value="{{ current_variant.id }}">
         {% else %}
@@ -228,6 +243,8 @@
           </select>
         {% endif %}
 
+        <input type="hidden" name="properties[Phone]" value="{{ product_title | escape }} - {{ product.price | money | escape }}">
+
         <label for="Quantity-{{ section.id }}">Quantity</label>
         <input id="Quantity-{{ section.id }}" type="number" name="quantity" min="1" value="1">
 
@@ -243,6 +260,7 @@
                 {% assign service_option_index = 0 %}
                 {% for block in section.blocks %}
                   {% if block.type == 'service_plan' %}
+                    {% assign billing_variant = block.settings.billing_product.selected_or_first_available_variant %}
                     {% assign service_option_index = service_option_index | plus: 1 %}
                     {% assign service_value = block.settings.title | append: ' - ' | append: block.settings.price %}
                     {% assign service_input_id = 'ServiceOption-' | append: section.id | append: '-' | append: service_option_index %}
@@ -252,6 +270,8 @@
                         type="radio"
                         name="properties[Service plan]"
                         value="{{ service_value | escape }}"
+                        data-billing-variant="{{ billing_variant.id }}"
+                        data-billing-role="service"
                         {% if service_option_index == default_service_index %}
                           checked
                         {% endif %}
@@ -272,6 +292,7 @@
                 {% assign addon_option_index = 0 %}
                 {% for block in section.blocks %}
                   {% if block.type == 'addon_option' %}
+                    {% assign billing_variant = block.settings.billing_product.selected_or_first_available_variant %}
                     {% assign addon_option_index = addon_option_index | plus: 1 %}
                     {% assign addon_input_id = 'AddonOption-' | append: section.id | append: '-' | append: addon_option_index %}
                     <label class="ip-choice" for="{{ addon_input_id }}" {{ block.shopify_attributes }}>
@@ -280,6 +301,8 @@
                         type="checkbox"
                         name="properties[{{ block.settings.title | escape }}]"
                         value="{{ block.settings.price | escape }}"
+                        data-billing-variant="{{ billing_variant.id }}"
+                        data-billing-role="addon"
                       >
                       <span>
                         <strong>{{ block.settings.title }}</strong>
@@ -296,6 +319,22 @@
             {% endif %}
           </div>
         {% endif %}
+
+        <label class="ip-policy-check" for="ProductPolicyAgreement-{{ section.id }}">
+          <input
+            id="ProductPolicyAgreement-{{ section.id }}"
+            type="checkbox"
+            name="properties[Policy agreement]"
+            value="Agreed to Privacy Policy and Terms and Conditions"
+            required
+          >
+          <span>
+            I agree to the
+            <a href="/policies/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>
+            and
+            <a href="/policies/terms-of-service" target="_blank" rel="noopener">Terms and Conditions</a>.
+          </span>
+        </label>
 
         <button
           type="submit"
@@ -315,102 +354,103 @@
         {% endif %}
       {% endform %}
     {% endif %}
-
-    {% if product_info_block_count > 0 %}
-      <div class="ip-product-accordions" aria-label="{{ section.settings.product_info_heading | escape }}">
-        {% if section.settings.product_info_heading != blank %}
-          <h2>{{ section.settings.product_info_heading }}</h2>
-        {% endif %}
-
-        {% for block in section.blocks %}
-          {% if block.type == 'info_accordion' %}
-            <details
-              class="ip-product-accordion"
-              {% if block.settings.open_by_default %}
-                open
-              {% endif %}
-              {{ block.shopify_attributes }}
-            >
-              <summary>{{ block.settings.title }}</summary>
-              <div class="ip-product-accordion__body">
-                {% case block.settings.source %}
-                  {% when 'best_for' %}
-                    {% if block.settings.body != blank %}
-                      {{ block.settings.body }}
-                    {% else %}
-                      <p>{{ best_for }}</p>
-                    {% endif %}
-
-                  {% when 'specs' %}
-                    {% if block.settings.body != blank %}
-                      {{ block.settings.body }}
-                    {% endif %}
-                    <ul class="ip-spec-list">
-                      {% if custom_specs != blank %}
-                        {% for spec in custom_specs_list %}
-                          {% assign spec_text = spec | strip %}
-                          {% if spec_text != blank %}
-                            <li>{{ spec_text }}</li>
-                          {% endif %}
-                        {% endfor %}
-                      {% elsif is_patriot %}
-                        <li>Rugged cordless Wi-Fi handset with charging base</li>
-                        <li>Waterproof and dust-proof, drop-proof up to 1.8 meters</li>
-                        <li>Non-slip, anti-scratch, anti-bacterial construction</li>
-                        <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
-                        <li>Encrypted data transmission and storage</li>
-                        <li>Built-in Bluetooth 5.0</li>
-                        <li>13-hour talk time, 300-hour standby battery</li>
-                      {% else %}
-                        <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
-                        <li>HD audio quality</li>
-                        <li>Smart noise filtering</li>
-                        <li>Encrypted data transmission and storage</li>
-                        <li>Built-in Bluetooth 5.0</li>
-                        <li>9-hour talk time, 200-hour standby battery</li>
-                      {% endif %}
-                    </ul>
-
-                  {% when 'service_addons' %}
-                    {% if block.settings.body != blank %}
-                      {{ block.settings.body }}
-                    {% else %}
-                      <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
-                    {% endif %}
-                    {% if addon_option_count > 0 %}
-                      <ul class="ip-addon-list">
-                        {% for addon_block in section.blocks %}
-                          {% if addon_block.type == 'addon_option' %}
-                            <li>
-                              <strong>{{ addon_block.settings.title }}</strong>
-                              <span>{{ addon_block.settings.price }}</span>
-                            </li>
-                          {% endif %}
-                        {% endfor %}
-                      </ul>
-                    {% endif %}
-
-                  {% when 'shipping_setup' %}
-                    {% if block.settings.body != blank %}
-                      {{ block.settings.body }}
-                    {% else %}
-                      <p>Shipping: $15 per phone anywhere in the USA.</p>
-                      <p>All products and services are subject to federal, state, and local taxes.</p>
-                      <p>Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout.</p>
-                    {% endif %}
-
-                  {% else %}
-                    {% if block.settings.body != blank %}
-                      {{ block.settings.body }}
-                    {% endif %}
-                {% endcase %}
-              </div>
-            </details>
-          {% endif %}
-        {% endfor %}
-      </div>
-    {% endif %}
   </div>
+  </div>
+
+  {% if product_info_block_count > 0 %}
+    <div id="ProductInfo-{{ section.id }}" class="ip-product-accordions" aria-label="{{ section.settings.product_info_heading | escape }}">
+      {% if section.settings.product_info_heading != blank %}
+        <h2>{{ section.settings.product_info_heading }}</h2>
+      {% endif %}
+
+      {% for block in section.blocks %}
+        {% if block.type == 'info_accordion' %}
+          <details
+            class="ip-product-accordion"
+            {% if block.settings.open_by_default %}
+              open
+            {% endif %}
+            {{ block.shopify_attributes }}
+          >
+            <summary>{{ block.settings.title }}</summary>
+            <div class="ip-product-accordion__body">
+              {% case block.settings.source %}
+                {% when 'best_for' %}
+                  {% if block.settings.body != blank %}
+                    {{ block.settings.body }}
+                  {% else %}
+                    <p>{{ best_for }}</p>
+                  {% endif %}
+
+                {% when 'specs' %}
+                  {% if block.settings.body != blank %}
+                    {{ block.settings.body }}
+                  {% endif %}
+                  <ul class="ip-spec-list">
+                    {% if custom_specs != blank %}
+                      {% for spec in custom_specs_list %}
+                        {% assign spec_text = spec | strip %}
+                        {% if spec_text != blank %}
+                          <li>{{ spec_text }}</li>
+                        {% endif %}
+                      {% endfor %}
+                    {% elsif is_patriot %}
+                      <li>Rugged cordless Wi-Fi handset with charging base</li>
+                      <li>Waterproof and dust-proof, drop-proof up to 1.8 meters</li>
+                      <li>Non-slip, anti-scratch, anti-bacterial construction</li>
+                      <li>HD Voice, AI Noise Cancellation, and Acoustic Shield</li>
+                      <li>Encrypted data transmission and storage</li>
+                      <li>Built-in Bluetooth 5.0</li>
+                      <li>13-hour talk time, 300-hour standby battery</li>
+                    {% else %}
+                      <li>Heavy-duty cordless Wi-Fi handset with charging base</li>
+                      <li>HD audio quality</li>
+                      <li>Smart noise filtering</li>
+                      <li>Encrypted data transmission and storage</li>
+                      <li>Built-in Bluetooth 5.0</li>
+                      <li>9-hour talk time, 200-hour standby battery</li>
+                    {% endif %}
+                  </ul>
+
+                {% when 'service_addons' %}
+                  {% if block.settings.body != blank %}
+                    {{ block.settings.body }}
+                  {% else %}
+                    <p>Service: personal phone number + monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12.</p>
+                  {% endif %}
+                  {% if addon_option_count > 0 %}
+                    <ul class="ip-addon-list">
+                      {% for addon_block in section.blocks %}
+                        {% if addon_block.type == 'addon_option' %}
+                          <li>
+                            <strong>{{ addon_block.settings.title }}</strong>
+                            <span>{{ addon_block.settings.price }}</span>
+                          </li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+
+                {% when 'shipping_setup' %}
+                  {% if block.settings.body != blank %}
+                    {{ block.settings.body }}
+                  {% else %}
+                    <p>Shipping: $15 per phone anywhere in the USA.</p>
+                    <p>All products and services are subject to federal, state, and local taxes.</p>
+                    <p>Service and add-on selections are captured with the order and added as billing items when the matching products are configured.</p>
+                  {% endif %}
+
+                {% else %}
+                  {% if block.settings.body != blank %}
+                    {{ block.settings.body }}
+                  {% endif %}
+              {% endcase %}
+            </div>
+          </details>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
 </section>
 
 {% schema %}
@@ -451,13 +491,13 @@
       "type": "textarea",
       "id": "purchase_options_note",
       "label": "Purchase options note",
-      "default": "Service and add-on selections are captured with the order so setup and recurring billing can be confirmed after checkout."
+      "default": "Service and add-on selections are captured with the order and added as billing items when the matching products are configured."
     },
     {
       "type": "checkbox",
       "id": "show_dynamic_checkout",
       "label": "Show dynamic checkout buttons",
-      "default": true
+      "default": false
     }
   ],
   "blocks": [
@@ -476,6 +516,11 @@
           "id": "price",
           "label": "Price",
           "default": "$17.76/mo"
+        },
+        {
+          "type": "product",
+          "id": "billing_product",
+          "label": "Billing product"
         },
         {
           "type": "checkbox",
@@ -500,6 +545,11 @@
           "id": "price",
           "label": "Price",
           "default": "$5/mo"
+        },
+        {
+          "type": "product",
+          "id": "billing_product",
+          "label": "Billing product"
         }
       ]
     },

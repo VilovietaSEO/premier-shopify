@@ -1,0 +1,22 @@
+# Cloudflare Worker example for forwarding live-domain CRM, Rev.io handoff,
+# and llms.txt paths to the persistent ops origin.
+#
+# Copy this to wrangler.toml in a private deployment workspace, replace
+# account_id, routes, and OPS_ORIGIN, then deploy with wrangler.
+
+name = "patriot-phone-ops-proxy"
+main = "cloudflare-worker.example.js"
+compatibility_date = "2026-06-30"
+
+# Example routes for a final custom domain. Keep only the routes that are
+# actually delegated through Cloudflare.
+routes = [
+  { pattern = "www.example.com/llms.txt", zone_name = "example.com" },
+  { pattern = "www.example.com/*/llms.txt", zone_name = "example.com" },
+  { pattern = "www.example.com/a/llms.txt", zone_name = "example.com" },
+  { pattern = "www.example.com/crm/*", zone_name = "example.com" },
+  { pattern = "www.example.com/revio/*", zone_name = "example.com" },
+]
+
+[vars]
+OPS_ORIGIN = "https://ops.example.com"

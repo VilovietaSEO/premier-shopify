@@ -34,13 +34,20 @@ required_files=(
 	  "assets/ip-hero-video-poster.jpg"
 	  "sections/ip-announcement-banner.liquid"
 	  "sections/ip-video-hero.liquid"
+  "sections/ip-order-builder.liquid"
+  "sections/ip-billing-item.liquid"
   "sections/ip-product-main.liquid"
   "sections/ip-contact-form.liquid"
+  "sections/search.liquid"
   "snippets/ip-structured-data.liquid"
   "templates/index.json"
   "templates/collection.phones.json"
   "templates/product.independence-phone.json"
+  "templates/product.billing-item.json"
+  "templates/page.order.json"
+  "templates/page.faq.json"
   "templates/page.contact.json"
+  "templates/robots.txt.liquid"
 )
 
 for file in "${required_files[@]}"; do
@@ -71,6 +78,12 @@ fi
 structured_data_count="$(grep -c "ip-structured-data" "$tmp_theme/layout/theme.liquid" || true)"
 if [ "$structured_data_count" -ne 1 ]; then
   echo "Expected one ip-structured-data render after repeated overlay application, found $structured_data_count" >&2
+  exit 1
+fi
+
+billing_noindex_count="$(grep -c "product.template_suffix == 'billing-item'" "$tmp_theme/layout/theme.liquid" || true)"
+if [ "$billing_noindex_count" -ne 1 ]; then
+  echo "Expected one billing-item noindex guard after repeated overlay application, found $billing_noindex_count" >&2
   exit 1
 fi
 

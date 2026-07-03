@@ -11,7 +11,7 @@ Example:
 
 What it does:
   1. Pulls the specified Shopify Refresh theme locally.
-  2. Applies the Independence Phone Refresh overlay.
+  2. Applies the Patriot Phone Refresh overlay.
   3. Runs Shopify Theme Check against the resulting local theme.
 
 Set ALLOW_EXISTING_REFRESH_THEME=1 to reuse a non-empty target directory.
@@ -56,7 +56,7 @@ mkdir -p "$(dirname "$target_theme")"
 echo "Pulling Refresh theme $theme_id from $store into $target_theme"
 shopify theme pull --store "$store" --theme "$theme_id" --path "$target_theme"
 
-echo "Applying Independence Phone overlay"
+echo "Applying Patriot Phone overlay"
 "$repo_root/scripts/apply-refresh-overlay.sh" "$target_theme"
 
 echo "Running Theme Check"

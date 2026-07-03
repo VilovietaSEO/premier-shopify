@@ -1,0 +1,57 @@
+{
+  "sections": {
+    "main": {
+      "type": "ip-order-builder",
+      "settings": {
+        "standard_product": "standard-phone",
+        "rugged_product": "rugged-phone",
+        "monthly_service_product": "monthly-service",
+        "annual_service_product": "annual-service",
+        "call_recording_product": "call-recording",
+        "family_quiet_hours_product": "family-quiet-hours",
+        "voicemail_to_email_product": "voicemail-to-email",
+        "auto_attendant_product": "auto-attendant",
+        "addon_bundle_product": "add-on-bundle",
+        "patriot_package_product": "patriot-package",
+        "heading": "Build your Independence Phone setup.",
+        "body": "<p>Start with the Patriot Package, or choose your phone, plan, and add-ons below.</p>",
+        "package_heading": "Limited offer",
+        "package_value": "Patriot Package - $250; Classic Phone, 1 year phone service, and all 4 add-ons (saves $303.12)",
+        "package_descriptor": "Take advantage of our limited offer honoring the 250th anniversary of America. Includes Classic Phone, 1 Year phone service, all 4 add-on's for only $250! A savings of $303.12.",
+        "checkout_note": "Taxes, shipping, and recurring billing are finalized through the approved store setup. Savings shown here are based on the selected setup options.",
+        "button_label": "Add setup to cart"
+      }
+    },
+    "faq": {
+      "type": "ip-faq",
+      "blocks": {
+        "billing": {
+          "type": "faq",
+          "settings": {
+            "question": "What gets billed at checkout?",
+            "answer": "<p>The chosen phone, service, and add-ons are added to the cart when the matching billing products are configured. Taxes, shipping, subscriptions, and any final bundle logic still depend on the approved Shopify or Rev.io setup.</p>"
+          }
+        },
+        "savings": {
+          "type": "faq",
+          "settings": {
+            "question": "How are savings shown?",
+            "answer": "<p>Annual service, the add-on bundle, and the Patriot Package show savings descriptors in the order builder and cart so the customer can see the value of the selected setup.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "billing",
+        "savings"
+      ],
+      "settings": {
+        "heading": "Questions before checkout",
+        "eyebrow": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "faq"
+  ]
+}

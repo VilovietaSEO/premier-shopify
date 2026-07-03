@@ -8,6 +8,69 @@ const root = path.resolve(__dirname, '..');
 const productsCsvPath = path.join(root, 'store-setup/products.csv');
 const dryRun = process.argv.includes('--dry-run');
 const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION || '2026-04';
+const legacyProductHandles = {
+  'standard-phone': ['freedom-phone'],
+  'rugged-phone': ['patriot-phone'],
+};
+
+const billingProducts = [
+  {
+    title: 'Monthly Service',
+    handle: 'monthly-service',
+    description: 'Personal phone number and monthly Independence Phone service.',
+    sku: 'PP-MONTHLY-SERVICE',
+    price: '17.76',
+  },
+  {
+    title: 'Annual Service',
+    handle: 'annual-service',
+    description: 'Personal phone number and annual Independence Phone service.',
+    sku: 'PP-ANNUAL-SERVICE',
+    price: '200.00',
+  },
+  {
+    title: 'Call Recording',
+    handle: 'call-recording',
+    description: 'Call recording add-on for an Independence Phone setup.',
+    sku: 'PP-ADDON-CALL-RECORDING',
+    price: '5.00',
+  },
+  {
+    title: 'Quiet Hours',
+    handle: 'family-quiet-hours',
+    description: 'Quiet Hours add-on for an Independence Phone setup.',
+    sku: 'PP-ADDON-FAMILY-QUIET-HOURS',
+    price: '5.00',
+  },
+  {
+    title: 'Voicemail to Email',
+    handle: 'voicemail-to-email',
+    description: 'Voicemail to Email add-on for an Independence Phone setup.',
+    sku: 'PP-ADDON-VOICEMAIL-TO-EMAIL',
+    price: '5.00',
+  },
+  {
+    title: 'Auto Attendant',
+    handle: 'auto-attendant',
+    description: 'Auto Attendant add-on for an Independence Phone setup.',
+    sku: 'PP-ADDON-AUTO-ATTENDANT',
+    price: '5.00',
+  },
+  {
+    title: 'Add-on Bundle',
+    handle: 'add-on-bundle',
+    description: 'Bundled add-ons for an Independence Phone setup.',
+    sku: 'PP-ADDON-BUNDLE',
+    price: '10.00',
+  },
+  {
+    title: 'Patriot Package',
+    handle: 'patriot-package',
+    description: 'Package balance for the limited Patriot Package offer.',
+    sku: 'PP-PATRIOT-PACKAGE',
+    price: '150.00',
+  },
+];
 
 const productByIdentifierQuery = `
 query ProductByIdentifier($identifier: ProductIdentifierInput!) {
@@ -19,6 +82,10 @@ query ProductByIdentifier($identifier: ProductIdentifierInput!) {
       nodes {
         id
         price
+        inventoryItem {
+          id
+          requiresShipping
+        }
       }
     }
   }
@@ -36,6 +103,10 @@ mutation CreateProduct($product: ProductCreateInput!) {
         nodes {
           id
           price
+          inventoryItem {
+            id
+            requiresShipping
+          }
         }
       }
     }
@@ -58,6 +129,10 @@ mutation UpdateProduct($product: ProductUpdateInput!) {
         nodes {
           id
           price
+          inventoryItem {
+            id
+            requiresShipping
+          }
         }
       }
     }
@@ -76,6 +151,25 @@ mutation UpdateProductVariant($productId: ID!, $variants: [ProductVariantsBulkIn
       id
       price
       taxable
+      inventoryItem {
+        id
+        requiresShipping
+      }
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
+`;
+
+const inventoryItemUpdateMutation = `
+mutation InventoryItemUpdate($id: ID!, $input: InventoryItemInput!) {
+  inventoryItemUpdate(id: $id, input: $input) {
+    inventoryItem {
+      id
+      requiresShipping
     }
     userErrors {
       field
@@ -208,6 +302,7 @@ function usage(exitCode = 64) {
 Required token scopes:
   read_products, write_products, read_content, write_content or write_online_store_pages
   read_publications and write_publications to publish products/collections to Online Store
+  write_inventory to automatically mark hidden billing products as non-shipping
 
 Optional:
   SHOPIFY_ADMIN_API_VERSION=${apiVersion}
@@ -321,6 +416,26 @@ function productInputFromRow(row, id) {
   return input;
 }
 
+function productInputFromBillingProduct(item, id) {
+  const input = {
+    title: item.title,
+    handle: item.handle,
+    descriptionHtml: `<p>${escapeHtml(item.description)}</p>`,
+    vendor: 'Independence Phone',
+    productType: 'Billing Item',
+    status: 'ACTIVE',
+    tags: ['patriot-phone', 'billing-item', 'hidden-from-catalog'],
+    templateSuffix: 'billing-item',
+    seo: {
+      title: `${item.title} | Independence Phone`,
+      description: item.description,
+    },
+  };
+
+  if (id) input.id = id;
+  return input;
+}
+
 function variantInputFromRow(row, variantId) {
   return {
     id: variantId,
@@ -330,12 +445,25 @@ function variantInputFromRow(row, variantId) {
   };
 }
 
+function variantInputFromBillingProduct(item, variantId) {
+  return {
+    id: variantId,
+    price: item.price,
+    taxable: true,
+    inventoryPolicy: 'CONTINUE',
+  };
+}
+
 function formatUserErrors(errors) {
   return errors.map((error) => `${(error.field || []).join('.') || 'input'}: ${error.message}`).join('; ');
 }
 
 function isPublicationAccessError(error) {
   return /read_publications|write_publications|ACCESS_DENIED|Access denied/i.test(error.message);
+}
+
+function isInventoryAccessError(error) {
+  return /write_inventory|inventoryItemUpdate|inventory item|ACCESS_DENIED|Access denied/i.test(error.message);
 }
 
 async function adminGraphql({ store, auth, query, variables }) {
@@ -425,16 +553,64 @@ async function publishResourcesToOnlineStore({ store, auth, resources }) {
   }
 }
 
-async function upsertProduct({ store, auth, row }) {
-  const handle = row['URL handle'];
-  const existingData = await adminGraphql({
+async function markInventoryItemNonShipping({ store, auth, inventoryItemId, label }) {
+  if (!inventoryItemId) {
+    console.warn(`Skipped ${label} non-shipping update: billing product variant has no inventory item id.`);
+    return;
+  }
+
+  try {
+    const result = await adminGraphql({
+      store,
+      auth,
+      query: inventoryItemUpdateMutation,
+      variables: {
+        id: inventoryItemId,
+        input: {
+          requiresShipping: false,
+          tracked: false,
+        },
+      },
+    });
+
+    const payload = result.inventoryItemUpdate;
+    if (payload.userErrors && payload.userErrors.length > 0) {
+      throw new Error(`${label} inventory item: ${formatUserErrors(payload.userErrors)}`);
+    }
+    console.log(`marked ${label} as non-shipping`);
+  } catch (error) {
+    if (!isInventoryAccessError(error)) throw error;
+    console.warn(`Skipped ${label} non-shipping update: token needs write_inventory. Mark this billing product as not requiring shipping in Shopify admin.`);
+  }
+}
+
+async function findProductByHandle({ store, auth, handle }) {
+  const data = await adminGraphql({
     store,
     auth,
     query: productByIdentifierQuery,
     variables: { identifier: { handle } },
   });
 
-  const existing = existingData.productByIdentifier;
+  return data.productByIdentifier;
+}
+
+async function upsertProduct({ store, auth, row }) {
+  const handle = row['URL handle'];
+  let existing = await findProductByHandle({ store, auth, handle });
+  let sourceHandle = handle;
+
+  if (!existing) {
+    for (const legacyHandle of legacyProductHandles[handle] || []) {
+      const legacyProduct = await findProductByHandle({ store, auth, handle: legacyHandle });
+      if (legacyProduct) {
+        existing = legacyProduct;
+        sourceHandle = legacyHandle;
+        break;
+      }
+    }
+  }
+
   const mutation = existing ? productUpdateMutation : productCreateMutation;
   const productInput = productInputFromRow(row, existing && existing.id);
   const mutationName = existing ? 'productUpdate' : 'productCreate';
@@ -471,7 +647,60 @@ async function upsertProduct({ store, auth, row }) {
     throw new Error(`${handle} variant: ${formatUserErrors(variantPayload.userErrors)}`);
   }
 
-  console.log(`${existing ? 'updated' : 'created'} product ${handle}: ${product.id}`);
+  if (existing && sourceHandle !== handle) {
+    console.log(`updated legacy product ${sourceHandle} to ${handle}: ${product.id}`);
+  } else {
+    console.log(`${existing ? 'updated' : 'created'} product ${handle}: ${product.id}`);
+  }
+  return product.id;
+}
+
+async function upsertBillingProduct({ store, auth, item }) {
+  const existing = await findProductByHandle({ store, auth, handle: item.handle });
+  const mutation = existing ? productUpdateMutation : productCreateMutation;
+  const mutationName = existing ? 'productUpdate' : 'productCreate';
+  const result = await adminGraphql({
+    store,
+    auth,
+    query: mutation,
+    variables: { product: productInputFromBillingProduct(item, existing && existing.id) },
+  });
+
+  const payload = result[mutationName];
+  if (payload.userErrors && payload.userErrors.length > 0) {
+    throw new Error(`${item.handle}: ${formatUserErrors(payload.userErrors)}`);
+  }
+
+  const product = payload.product;
+  const variant = product.variants.nodes[0];
+  if (!variant) {
+    throw new Error(`${item.handle}: product has no default variant to price.`);
+  }
+
+  const variantResult = await adminGraphql({
+    store,
+    auth,
+    query: productVariantUpdateMutation,
+    variables: {
+      productId: product.id,
+      variants: [variantInputFromBillingProduct(item, variant.id)],
+    },
+  });
+
+  const variantPayload = variantResult.productVariantsBulkUpdate;
+  if (variantPayload.userErrors && variantPayload.userErrors.length > 0) {
+    throw new Error(`${item.handle} variant: ${formatUserErrors(variantPayload.userErrors)}`);
+  }
+
+  const updatedVariant = variantPayload.productVariants[0] || variant;
+  await markInventoryItemNonShipping({
+    store,
+    auth,
+    inventoryItemId: updatedVariant.inventoryItem?.id || variant.inventoryItem?.id,
+    label: `billing product ${item.handle}`,
+  });
+
+  console.log(`${existing ? 'updated' : 'created'} billing product ${item.handle}: ${product.id}`);
   return product.id;
 }
 
@@ -532,16 +761,16 @@ async function ensurePhonesCollection({ store, auth, productIds }) {
   return collection.id;
 }
 
-async function ensureContactPage({ store, auth }) {
+async function ensurePage({ store, auth, title, handle, body, templateSuffix }) {
   const existingData = await adminGraphql({
     store,
     auth,
     query: pageByHandleQuery,
-    variables: { query: 'handle:contact' },
+    variables: { query: `handle:${handle}` },
   });
   const existing = existingData.pages.nodes[0];
   if (existing) {
-    console.log(`exists page contact: ${existing.id}`);
+    console.log(`exists page ${handle}: ${existing.id}`);
     return existing.id;
   }
 
@@ -551,33 +780,72 @@ async function ensureContactPage({ store, auth }) {
     query: pageCreateMutation,
     variables: {
       page: {
-        title: 'Contact',
-        handle: 'contact',
-        body: '<p>Questions about Independence Phone, service, or setup? Use the form below and the team will follow up.</p>',
+        title,
+        handle,
+        body,
         isPublished: true,
-        templateSuffix: 'contact',
+        templateSuffix,
       },
     },
   });
 
   const payload = result.pageCreate;
   if (payload.userErrors && payload.userErrors.length > 0) {
-    throw new Error(`page contact: ${formatUserErrors(payload.userErrors)}`);
+    throw new Error(`page ${handle}: ${formatUserErrors(payload.userErrors)}`);
   }
-  console.log(`created page contact: ${payload.page.id}`);
+  console.log(`created page ${handle}: ${payload.page.id}`);
   return payload.page.id;
+}
+
+async function ensureStorePages({ store, auth }) {
+  await ensurePage({
+    store,
+    auth,
+    title: 'Order Now',
+    handle: 'order-now',
+    body: '<p>Build your Independence Phone setup by choosing a phone, service plan, and add-ons.</p>',
+    templateSuffix: 'order',
+  });
+  await ensurePage({
+    store,
+    auth,
+    title: 'FAQ',
+    handle: 'faq',
+    body: '<p>Install, use, refer, and troubleshoot Independence Phone.</p>',
+    templateSuffix: 'faq',
+  });
+  await ensurePage({
+    store,
+    auth,
+    title: 'Contact',
+    handle: 'contact',
+    body: '<p>Questions about Independence Phone, service, or setup? Use the form below and the team will follow up.</p>',
+    templateSuffix: 'contact',
+  });
+}
+
+function isPageAccessDeniedError(error) {
+  return /access denied.*pages field|pages field|read_content|write_content|write_online_store_pages|ACCESS_DENIED/i.test(
+    error.message || '',
+  );
 }
 
 async function main() {
   const products = readProducts();
 
   if (dryRun) {
-    console.log(`Storefront objects ready: ${products.length} products, 1 collection, 1 page`);
+    console.log(`Storefront objects ready: ${products.length} products, ${billingProducts.length} hidden billing products, 1 collection, 3 pages`);
     for (const product of products) {
       console.log(`- product ${product['URL handle']}: $${product.Price}, template product.independence-phone`);
     }
+    for (const product of billingProducts) {
+      console.log(`- hidden billing product ${product.handle}: $${product.price}, template product.billing-item`);
+    }
+    console.log('- legacy product handles are updated in place when found: freedom-phone -> standard-phone, patriot-phone -> rugged-phone');
     console.log('- collection phones: template collection.phones');
-    console.log('- publish products and collection to Online Store when read_publications/write_publications are available');
+    console.log('- publish phone products, billing products, and collection to Online Store when read_publications/write_publications are available');
+    console.log('- page order-now: template page.order');
+    console.log('- page faq: template page.faq');
     console.log('- page contact: template page.contact');
     return;
   }
@@ -600,6 +868,15 @@ async function main() {
     });
   }
 
+  const createdBillingProducts = [];
+  for (const item of billingProducts) {
+    const productId = await upsertBillingProduct({ store, auth, item });
+    createdBillingProducts.push({
+      id: productId,
+      label: `billing product ${item.handle}`,
+    });
+  }
+
   const collectionId = await ensurePhonesCollection({
     store,
     auth,
@@ -610,10 +887,21 @@ async function main() {
     auth,
     resources: [
       ...createdProducts,
+      ...createdBillingProducts,
       { id: collectionId, label: 'collection phones' },
     ],
   });
-  await ensureContactPage({ store, auth });
+  try {
+    await ensureStorePages({ store, auth });
+  } catch (error) {
+    if (!isPageAccessDeniedError(error)) {
+      throw error;
+    }
+
+    console.warn(
+      'Skipped Online Store page creation: the current Shopify CLI session cannot access pages. Create visible pages for /pages/order-now, /pages/faq, and /pages/contact in Shopify admin.',
+    );
+  }
 }
 
 main().catch((error) => {

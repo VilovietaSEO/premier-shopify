@@ -5,8 +5,8 @@
   endif
 %}
 
-<section class="ip-hero full-width">
-  <div class="ip-hero__media" aria-hidden="true">
+<section class="ip-hero full-width" data-hero-video>
+  <div class="ip-hero__media">
     {% if section.settings.hero_video != blank %}
       {{
         section.settings.hero_video
@@ -32,7 +32,27 @@
     {% endif %}
   </div>
 
+  {% if section.settings.sound_label != blank %}
+    <button
+      class="ip-hero__sound"
+      type="button"
+      data-hero-sound-toggle
+      aria-label="{{ section.settings.sound_label | escape }}"
+      aria-pressed="false"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M11 5 6.5 9H3v6h3.5l4.5 4V5Z"></path>
+        <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+        <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+      </svg>
+    </button>
+  {% endif %}
+
   <div class="ip-hero__inner">
+    {% if section.settings.proof_line != blank %}
+      <p class="ip-hero__proof">{{ section.settings.proof_line }}</p>
+    {% endif %}
+
     <div class="ip-hero__copy">
       {% if section.settings.heading != blank %}
         <h1 class="ip-heading">{{ section.settings.heading }}</h1>
@@ -42,13 +62,16 @@
         <div class="ip-lede">{{ section.settings.subheading }}</div>
       {% endif %}
 
+      {% if section.settings.price_callout != blank %}
+        <p class="ip-hero__price">{{ section.settings.price_callout }}</p>
+      {% endif %}
+
       <div class="ip-buttons">
         {% if section.settings.primary_label != blank %}
-          <a class="ip-button" href="{{ section.settings.primary_link | default: '/collections/phones' }}">
+          <a class="ip-button" href="{{ section.settings.primary_link | default: '/collections/all' }}">
             {{ section.settings.primary_label }}
           </a>
         {% endif %}
-
       </div>
     </div>
   </div>
@@ -82,14 +105,32 @@
     },
     {
       "type": "text",
+      "id": "proof_line",
+      "label": "Proof line",
+      "default": "42 years in business, American owned, Family Focused"
+    },
+    {
+      "type": "text",
+      "id": "price_callout",
+      "label": "Price callout",
+      "default": "$17.76/mo"
+    },
+    {
+      "type": "text",
       "id": "primary_label",
       "label": "Primary CTA label",
-      "default": "Choose your phone"
+      "default": "Order now"
     },
     {
       "type": "url",
       "id": "primary_link",
       "label": "Primary CTA link"
+    },
+    {
+      "type": "text",
+      "id": "sound_label",
+      "label": "Sound icon accessible label",
+      "default": "Turn video sound on"
     }
   ],
   "presets": [

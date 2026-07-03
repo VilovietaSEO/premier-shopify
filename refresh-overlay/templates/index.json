@@ -3,7 +3,10 @@
     "hero": {
       "type": "ip-video-hero",
       "settings": {
-        "primary_link": "/collections/phones"
+        "primary_link": "/pages/order-now",
+        "price_callout": "$17.76/mo",
+        "proof_line": "42 years in business, American owned, Family Focused",
+        "subheading": "<p>Children can call home without apps, browsers, social media, or a personal screen. Built for bus days, home-alone minutes, grandparents, and the years before a smartphone.</p>"
       }
     },
     "parent_conflict": {
@@ -13,35 +16,46 @@
           "type": "moment",
           "settings": {
             "title": "Bus days",
-            "body": "<p>A simple way to call home before and after school without adding a smartphone.</p>"
+            "body": "<p>A simple way to call home before and after school without needing a smartphone.</p>"
           }
         },
         "moment_2": {
           "type": "moment",
           "settings": {
             "title": "Home-alone minutes",
-            "body": "<p>More independence for short windows while parents stay one call away.</p>"
+            "body": "<p>More independence for short windows while parents are only one call away.</p>"
           }
         },
         "moment_3": {
           "type": "moment",
           "settings": {
             "title": "Grandparents",
-            "body": "<p>A familiar phone experience that makes family calls feel easy again.</p>"
+            "body": "<p>A familiar phone experience that makes calls with grandparents feel easy again.</p>"
           }
         },
         "moment_4": {
           "type": "moment",
           "settings": {
             "title": "Before the smartphone",
-            "body": "<p>A calmer first step for families delaying apps, browsers, and social feeds.</p>"
+            "body": "<p>A calmer first step until the child is ready for apps, browsers, and social feeds.</p>"
           }
         }
       },
-      "block_order": ["moment_1", "moment_2", "moment_3", "moment_4"],
+      "block_order": [
+        "moment_1",
+        "moment_2",
+        "moment_3",
+        "moment_4"
+      ],
       "settings": {
-        "solution_heading": "The useful part of a phone, first.",
-        "solution_body": "<p>Independence Phone is built for families who want communication before distraction. It gives kids a simple way to call while helping parents delay the smartphone step until the family is ready.</p>"
+        "solution_heading": "",
+        "solution_body": "",
+        "eyebrow": "",
+        "heading": "Children need reachability. They do not need the whole internet yet.",
+        "body": "<p>The \"First Phone\" decision should start with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation. Independence Phone is built for parents who want communication before distraction. It gives children a simple way to call while helping parents delay the smartphone step until the child is ready.</p>",
+        "note": "",
+        "cta_label": "Order now",
+        "cta_link": "/pages/order-now"
       }
     },
     "feature_strip": {
@@ -50,9 +64,10 @@
         "feature_1": {
           "type": "feature",
           "settings": {
-            "title": "Auto Attendant Call Screening",
+            "title": "Auto Attendant",
             "icon": "shield_check",
-            "body": "Help screen unwanted calls before they interrupt the family phone."
+            "body": "Filter unwanted spam calls.",
+            "included_label": "Included in the Patriot Package"
           }
         },
         "feature_2": {
@@ -60,27 +75,44 @@
           "settings": {
             "title": "Call Recording",
             "icon": "microphone",
-            "body": "Keep a 90-day call record when your family needs extra visibility."
+            "body": "Access to 90 days of recorded calls.",
+            "included_label": "Included in the Patriot Package"
           }
         },
         "feature_3": {
           "type": "feature",
           "settings": {
-            "title": "Programmable On/Off Phone Times",
+            "title": "Quiet Hours",
             "icon": "clock",
-            "body": "Set times for when incoming calls can ring through."
+            "body": "Set times for when to receive incoming calls.",
+            "included_label": "Included in the Patriot Package"
+          }
+        },
+        "feature_4": {
+          "type": "feature",
+          "settings": {
+            "title": "Voicemail to Email",
+            "icon": "microphone",
+            "body": "Voicemail messages are sent to email as audio and transcription.",
+            "included_label": "Included in the Patriot Package"
           }
         }
       },
-      "block_order": ["feature_1", "feature_2", "feature_3"],
+      "block_order": [
+        "feature_1",
+        "feature_2",
+        "feature_3",
+        "feature_4"
+      ],
       "settings": {
-        "eyebrow": "Parent tools that feel immediately useful",
-        "heading": "Real phone tools without smartphone drama."
+        "eyebrow": "",
+        "heading": "Real phone service without smartphone drama."
       }
     },
     "products": {
       "type": "ip-product-comparison",
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
     "plans": {
       "type": "ip-service-plans",
@@ -104,7 +136,10 @@
           }
         }
       },
-      "block_order": ["monthly", "annual"],
+      "block_order": [
+        "monthly",
+        "annual"
+      ],
       "settings": {},
       "disabled": true
     },
@@ -116,15 +151,17 @@
           "settings": {
             "title": "Call Recording",
             "price": "$5/mo",
-            "body": "Record and store all calls for 90 days."
+            "body": "Record and store all calls for 90 days.",
+            "included_label": "Included in the Patriot Package"
           }
         },
-        "time_conditions": {
+        "quiet_hours": {
           "type": "addon",
           "settings": {
-            "title": "Time Conditions",
+            "title": "Quiet Hours",
             "price": "$5/mo",
-            "body": "Set on/off times for incoming calls."
+            "body": "Set on/off times for incoming calls.",
+            "included_label": "Included in the Patriot Package"
           }
         },
         "voicemail": {
@@ -132,15 +169,17 @@
           "settings": {
             "title": "Voicemail to Email",
             "price": "$5/mo",
-            "body": "Unanswered calls go to voicemail and messages are sent to email."
+            "body": "Unanswered calls go to voicemail and messages are sent to email.",
+            "included_label": "Included in the Patriot Package"
           }
         },
-        "victory": {
+        "bundle": {
           "type": "addon",
           "settings": {
-            "title": "Victory Bundle",
+            "title": "Add-on Bundle",
             "price": "$10/mo",
-            "body": "Call Recording, Time Conditions, and Voicemail to Email together."
+            "body": "Includes all add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant. Saves $10/mo.",
+            "included_label": "Included in the Patriot Package"
           }
         },
         "attendant": {
@@ -148,11 +187,18 @@
           "settings": {
             "title": "Auto Attendant",
             "price": "$5/mo",
-            "body": "Help screen spam calls before they interrupt the family phone."
+            "body": "Help screen spam calls before they interrupt the family phone.",
+            "included_label": "Included in the Patriot Package"
           }
         }
       },
-      "block_order": ["recording", "time_conditions", "voicemail", "victory", "attendant"],
+      "block_order": [
+        "recording",
+        "quiet_hours",
+        "voicemail",
+        "bundle",
+        "attendant"
+      ],
       "settings": {},
       "disabled": true
     },
@@ -205,14 +251,20 @@
           }
         }
       },
-      "block_order": ["calls", "wifi", "browser", "apps", "unsupported"],
+      "block_order": [
+        "calls",
+        "wifi",
+        "browser",
+        "apps",
+        "unsupported"
+      ],
       "settings": {},
       "disabled": true
     },
     "package": {
       "type": "ip-package-band",
       "settings": {
-        "cta_link": "/products/freedom-phone"
+        "cta_link": "/collections/all"
       }
     },
     "matrix": {
@@ -259,7 +311,12 @@
           }
         }
       },
-      "block_order": ["primary_job", "apps", "browser", "cost"],
+      "block_order": [
+        "primary_job",
+        "apps",
+        "browser",
+        "cost"
+      ],
       "settings": {},
       "disabled": true
     },
@@ -284,19 +341,28 @@
           "type": "faq",
           "settings": {
             "question": "What is the monthly fee?",
-            "answer": "<p>Personal phone number plus monthly phone service is $17.76/mo. Annual service is $200/yr and saves $13.12 compared with monthly billing.</p>"
+            "answer": "<p>Personal phone number plus monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12 compared with monthly billing.</p>"
           }
         },
         "package": {
           "type": "faq",
           "settings": {
-            "question": "What does the 250th Anniversary package include?",
-            "answer": "<p>The introductory package includes 1 Freedom Phone, 1 year of service, and the Victory Bundle for $250.</p>"
+            "question": "What does the Patriot Package include?",
+            "answer": "<p>The Patriot Package includes a Classic Phone, 1 year of phone service, and all 4 add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant for $250.</p>"
           }
         }
       },
-      "block_order": ["internet", "apps", "fee", "package"],
-      "settings": {}
+      "block_order": [
+        "internet",
+        "apps",
+        "fee",
+        "package"
+      ],
+      "settings": {
+        "eyebrow": "",
+        "heading": "Questions parents ask when choosing Independence Phone.",
+        "body": ""
+      }
     },
     "trust": {
       "type": "ip-trust-band",
@@ -318,26 +384,23 @@
         "package": {
           "type": "trust_item",
           "settings": {
-            "title": "250th Anniversary package",
-            "body": "A concrete introductory offer, not just patriotic styling."
+            "title": "Patriot Package",
+            "body": "A concrete all-in offer for families who want every add-on included."
           }
         }
       },
-      "block_order": ["owned", "experience", "package"],
+      "block_order": [
+        "owned",
+        "experience",
+        "package"
+      ],
       "settings": {}
     }
   },
   "order": [
     "hero",
     "feature_strip",
-    "products",
     "parent_conflict",
-    "plans",
-    "addons",
-    "capabilities",
-    "package",
-    "matrix",
-    "faq",
-    "trust"
+    "faq"
   ]
 }

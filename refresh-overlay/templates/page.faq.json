@@ -1,0 +1,43 @@
+{
+  "sections": {
+    "main": {
+      "type": "ip-faq",
+      "blocks": {
+        "install": {
+          "type": "faq",
+          "settings": {
+            "question": "How do I install the phone?",
+            "answer": "<p>Place the cordless Wi-Fi handset on its charging base, connect it to the home Wi-Fi setup provided after purchase, and follow the activation steps from the Patriot Phone team.</p>"
+          }
+        },
+        "use": {
+          "type": "faq",
+          "settings": {
+            "question": "How does my family use it?",
+            "answer": "<p>The phone is designed around calling. It does not include apps, a web browser, social feeds, GPS, camera, or cellular mobility unless the product scope changes.</p>"
+          }
+        },
+        "refer": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I refer another family?",
+            "answer": "<p>Referral details can be added here when the program is finalized.</p>"
+          }
+        },
+        "troubleshoot": {
+          "type": "faq",
+          "settings": {
+            "question": "Where do I go for troubleshooting?",
+            "answer": "<p>Use the contact page for setup, service, billing, or phone troubleshooting. The team can expand this page with step-by-step support articles after launch.</p>"
+          }
+        }
+      },
+      "block_order": ["install", "use", "refer", "troubleshoot"],
+      "settings": {
+        "eyebrow": "Help center",
+        "heading": "Install, use, refer, and troubleshoot."
+      }
+    }
+  },
+  "order": ["main"]
+}
