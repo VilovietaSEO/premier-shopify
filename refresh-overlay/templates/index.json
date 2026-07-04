@@ -394,13 +394,15 @@
         "experience",
         "package"
       ],
-      "settings": {}
+      "settings": {},
+      "disabled": true
     }
   },
   "order": [
     "hero",
     "feature_strip",
     "parent_conflict",
-    "faq"
+    "faq",
+    "trust"
   ]
 }
