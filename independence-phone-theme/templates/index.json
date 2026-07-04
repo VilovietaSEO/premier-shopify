@@ -265,7 +265,8 @@
       "type": "ip-package-band",
       "settings": {
         "cta_link": "/collections/all"
-      }
+      },
+      "disabled": true
     },
     "matrix": {
       "type": "ip-comparison-matrix",
@@ -402,6 +403,12 @@
     "hero",
     "feature_strip",
     "parent_conflict",
+    "products",
+    "plans",
+    "addons",
+    "capabilities",
+    "package",
+    "matrix",
     "faq",
     "trust"
   ]
