@@ -18,9 +18,12 @@ The current storefront direction is compatible with Rev.io if the final checkout
 1. The customer uses the theme to choose phone, plan, and add-ons.
 2. Shopify cart receives the visible phone item plus hidden/priced billing items.
 3. The cart page sends the complete setup payload to a server endpoint.
-4. The server validates prices and consent, creates or updates Rev.io records, creates the service request/products/bill/payment flow, stores CRM proof, and redirects the customer to the approved next step.
+4. The owner-hosted bridge validates the storefront payload, stores CRM proof, and forwards a signed `revio.checkout.requested` webhook.
+5. The Rev.io API implementer receives that webhook, maps it to the client's Rev.io tenant, creates or updates Rev.io records, creates the service request/products/bill/payment flow, and returns or manages the approved next step.
 
 The native Shopify checkout button is not the final Rev.io payment path unless the business intentionally keeps Shopify checkout as the payment processor. If Rev.io is the processor, the checkout button should become a server-side Rev.io checkout handoff before launch.
+
+This repo is not the Rev.io tenant integration. It prepares the storefront and server handoff so the API implementer can wire Rev.io without changing the theme, cart modeling, or public product catalog.
 
 ## Official Documentation
 
