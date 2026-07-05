@@ -1,8 +1,12 @@
 # Shopify Handoff Checklist
 
-Use this after the fresh Shopify store exists.
+Use this for the Independence Phone Shopify store handoff.
 
-This project targets a fresh Shopify store. Connect the final public domain later; the immediate requirement is a Shopify store handle, theme access, and a non-live preview/publish workflow.
+Current store: `jordan-mark-premier.myshopify.com`.
+
+Current live theme: `Independence Phone` / theme ID `150479208517`.
+
+The original fresh-store workflow below remains useful for future stores. For this launch, use `GO_LIVE_RUNBOOK.md` for the current payment, hosting, users, ops, CRM, Rev.io, and public-launch sequence.
 
 Detailed Theme Editor editing guide:
 
@@ -10,7 +14,7 @@ Detailed Theme Editor editing guide:
 /Users/vilovieta/Documents/Shopify/independence-phone-theme/THEME_EDITOR_GUIDE.md
 ```
 
-Fresh store launch checklist:
+Store launch checklist:
 
 ```bash
 /Users/vilovieta/Documents/Shopify/store-setup/LAUNCH_CHECKLIST.md
@@ -18,7 +22,7 @@ Fresh store launch checklist:
 
 ## Refresh Base Requirement
 
-Final build target: Shopify `Refresh` plus the Patriot Phone overlay.
+Final build target: Shopify `Refresh` plus the Independence Phone overlay.
 
 The current local folder `/Users/vilovieta/Documents/Shopify/independence-phone-theme` is a complete uploadable theme package and source reference. The Refresh-specific path is:
 
@@ -353,7 +357,7 @@ Simple CRM proof passed, including storefront-origin return redirects after exte
 Automatic llms.txt proof passed
 Storefront ops proof passed
 Ops deployment audit proof passed locally
-Launch readiness audit exists and currently reports blocked with 13 pass, 1 pending, and 7 blockers until live ops, public SEO/LLMS, CRM wiring, and order proof are complete
+Launch readiness audit exists and currently reports blocked with 22 pass, 1 pending, and 6 blockers until live ops, public SEO/LLMS, storefront password/public access, and real/test order proof are complete
 Order setup export proof passed
 Storefront object audit proof passed
 Product media assignment proof passed

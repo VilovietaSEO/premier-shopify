@@ -11,7 +11,7 @@ This spec captures the issues found in the current Shopify draft flow, the requi
 
 The original core problem was that the theme files were updated faster than the Shopify store objects. The draft theme expected Classic/Rugged products and an Order Now page before those objects were fully visible in the store.
 
-## Execution Status: 2026-06-30
+## Execution Status: 2026-07-05
 
 The theme `Independence Phone` (`150479208517`) has been pushed and published live. The previous live theme `Horizon` (`150479175749`) is now unpublished.
 
@@ -69,6 +69,8 @@ Verified against the Shopify draft preview:
 - `llms/automatic-llms.js` now generates raw Markdown for root `/llms.txt` and route-level files such as `/products/standard-phone/llms.txt`, `/collections/all/llms.txt`, and Shopify app-proxy requests such as `/a/llms.txt?path=/pages/faq`.
 - `scripts/create-storefront-objects.js` now creates the three Shopify pages that actually need page objects: `order-now`, `faq`, and `contact`.
 - `scripts/audit-storefront-objects.js` provides a read-only Admin GraphQL audit for product titles, handles, prices, templates, metafields, media counts, collection membership, and required pages.
+- Live Shopify product modeling now confirms Classic Phone and Rugged Phone require shipping, while Monthly Service, Annual Service, Call Recording, Quiet Hours, Voicemail to Email, Auto Attendant, Add-on Bundle, and Patriot Package are non-shipping hidden billing products.
+- Payment path remains an owner/API decision: native Shopify Checkout can accept payment quickly when `Rev.io checkout handoff URL` is blank; Rev.io checkout requires the ops server and API middleware to be deployed and proven.
 
 Proof artifacts:
 
@@ -125,21 +127,24 @@ cd /Users/vilovieta/Documents/Shopify
 npm run launch:readiness
 ```
 
-Latest result: `blocked` with 13 pass, 1 pending, and 7 blockers. The saved artifact is `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/launch-readiness-audit.json`.
+Latest saved result from `2026-07-05T18:29:42.423Z`: `blocked` with 22 pass, 1 pending, and 6 blockers. The saved artifact is `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/launch-readiness-audit.json`.
 
-1. Decide how Jordan/Mark will access the password-gated store for review: share the store password, temporarily disable storefront password protection, or use a Shopify preview method that actually bypasses password protection.
-2. Build `tmp/patriot-phone-ops-deployment` with `npm run ops:bundle`, then deploy the included ops service from that bundle so the simple CRM, optional outbound lead/sale webhooks, and automatic raw Markdown `llms.txt` routes are publicly reachable behind HTTPS.
-3. Enter the deployed CRM endpoint URL in the live theme's `CRM endpoint URL` setting, then audit rendered contact HTML with `CONTACT_CRM_HTML=... CONTACT_CRM_EXPECTED_ENDPOINT=... npm run contact:crm:audit`, submit a real contact test, and export it from the CRM viewer.
-4. Wire/prove `/llms.txt`, route-level `.../llms.txt`, and/or `/a/llms.txt?path=...` on the live domain, then run `OPS_BASE_URL=... CRM_VIEWER_TOKEN=... CRM_ORDER_INGEST_TOKEN=... SHOPIFY_ORDER_WEBHOOK_SECRET=... npm run ops:deployment:audit`.
-5. Re-run the live SEO audit against the password-unlocked or public storefront after ops proxy deployment; the current saved artifact is blocker proof, not final SEO pass proof.
-6. Run a real/test Shopify order after checkout/payment settings are ready, then confirm order line-item properties, savings descriptors, policy acceptance, fulfillment/tracking visibility, and export behavior in Shopify Admin.
+1. Decide the launch payment path:
+   - Fastest path: configure native Shopify Checkout in `Settings -> Payments`, leave `Rev.io checkout handoff URL` blank, and sync orders to Rev.io after payment.
+   - Rev.io-first path: deploy ops server, configure Rev.io middleware, set `Rev.io checkout handoff URL`, and prove sandbox payment/request behavior.
+2. Decide how Jordan/Mark will access the password-gated store for review: share the store password, temporarily disable storefront password protection, or use a Shopify preview method that actually bypasses password protection.
+3. Build `tmp/patriot-phone-ops-deployment` with `npm run ops:bundle`, then deploy the included ops service from that bundle so the simple CRM, optional outbound lead/sale webhooks, Rev.io handoff, and automatic raw Markdown `llms.txt` routes are publicly reachable behind HTTPS.
+4. Enter the deployed CRM endpoint URL in the live theme's `CRM endpoint URL` setting, then audit rendered contact HTML with `CONTACT_CRM_HTML=... CONTACT_CRM_EXPECTED_ENDPOINT=... npm run contact:crm:audit`, submit a real contact test, and export it from the CRM viewer.
+5. Wire/prove `/llms.txt`, route-level `.../llms.txt`, and/or `/a/llms.txt?path=...` on the live domain, then run `OPS_BASE_URL=... CRM_VIEWER_TOKEN=... CRM_ORDER_INGEST_TOKEN=... SHOPIFY_ORDER_WEBHOOK_SECRET=... npm run ops:deployment:audit`.
+6. Re-run the live SEO audit against the password-unlocked or public storefront after ops proxy deployment; the current saved artifact is blocker proof, not final SEO pass proof.
+7. Run a real/test Shopify order after checkout/payment settings are ready, then confirm order line-item properties, savings descriptors, policy acceptance, fulfillment/tracking visibility, and export behavior in Shopify Admin.
    - Proof command: `ORDER_PROOF_INPUT=/path/to/shopify-orders.json npm run orders:proof:audit`
    - Expected artifacts: `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/order-proof-audit.json` and `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/order-setup-details.csv`
    - CRM requirement: purchases must be automatically tracked as CRM `sale` records through the signed `/crm/shopify/orders/create` webhook with `source_type=shopify_order`, `sale_type`, order id/name, and tags; `/crm/orders/import` remains the manual backfill path.
-   - Billing requirement: the phone line must carry setup properties while selected service/add-ons are actual priced billing items when hidden billing products are configured.
+   - Billing requirement: the phone line must carry setup properties while selected service/add-ons are actual priced non-shipping billing items.
    - Integration requirement: if the owner configures outbound destinations, purchases must also dispatch `crm.sale.created` and contact leads must dispatch `crm.lead.created` with HMAC signatures.
-7. Re-run the Admin object audit with page-read scope if the client wants Admin API proof of page objects; storefront route proof already confirms the pages render.
-8. Do final client review on desktop and mobile using the actual access method they will receive.
+8. Re-run the Admin object audit with page-read scope if the client wants Admin API proof of page objects; storefront route proof already confirms the pages render.
+9. Do final client review on desktop and mobile using the actual access method they will receive.
 
 ## Operational And SEO Readiness Addendum
 
@@ -413,15 +418,13 @@ Homepage CTA destinations:
 - Hero `Order now` links to `/pages/order-now`.
 - Patriot Package `Order now` links to `/pages/order-now`.
 - Footer `Order Now` links to `/pages/order-now`.
-- `/pages/order-now` currently returns `404`.
+- At diagnosis time, `/pages/order-now` returned `404`.
 
 Product routes:
 
-- `/products/freedom-phone` exists, but still shows old name and price: `Freedom Phone`, `$99`.
-- `/products/patriot-phone` exists, but still shows old name and price: `Patriot Phone`, `$149`.
-- `/products/standard-phone` returns `404`.
-- `/products/rugged-phone` returns `404`.
-- `/products/independence-phone` returns `404`.
+- At diagnosis time, `/products/freedom-phone` existed but showed old name/price.
+- At diagnosis time, `/products/patriot-phone` existed but showed old name/price.
+- At diagnosis time, `/products/standard-phone`, `/products/rugged-phone`, and `/products/independence-phone` returned `404`.
 
 Collection routes:
 
@@ -521,14 +524,16 @@ If not keeping `/pages/order-now`:
 
 ## Issue 3: Classic/Rugged Product Handles Do Not Exist
 
+Status: resolved in the current live store. This issue is retained as historical remediation context.
+
 ### Problem
 
-The updated theme expects:
+At diagnosis time, the updated theme expected:
 
 - `/products/standard-phone`
 - `/products/rugged-phone`
 
-But the store currently has:
+But the store had:
 
 - `/products/freedom-phone`
 - `/products/patriot-phone`
@@ -819,12 +824,11 @@ The public store may show a password page to unauthenticated users. A preview UR
 
 ## Issue 12: Existing Old Product Pages Still Use Old Pricing
 
+Status: resolved in the current live store. This issue is retained as historical remediation context.
+
 ### Problem
 
-The existing old product pages still show:
-
-- Freedom Phone: `$99`
-- Patriot Phone: `$149`
+At diagnosis time, the existing old product pages still showed pre-client-feedback pricing and naming.
 
 This conflicts with the client request for round numbers.
 

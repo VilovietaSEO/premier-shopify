@@ -1,6 +1,6 @@
-# Patriot Phone Theme Editor Guide
+# Independence Phone Theme Editor Guide
 
-Use this guide after the fresh Shopify store exists and the Refresh overlay has been applied.
+Use this guide for the current Independence Phone theme or after applying the Refresh overlay to a future store.
 
 Canonical local paths:
 
@@ -10,9 +10,9 @@ Canonical local paths:
 - Hero video source: `/Users/vilovieta/Documents/Shopify/brief-materials/assets/video/indy-phone-reel-1.mov`
 - Handoff checklist: `/Users/vilovieta/Documents/Shopify/independence-phone-theme/SHOPIFY_HANDOFF.md`
 
-## Fresh Store Boundary
+## Store Boundary
 
-The storefront is built for a fresh Shopify store. The final domain can be connected later.
+The current storefront is live as theme `Independence Phone` on `jordan-mark-premier.myshopify.com`. The final domain can be connected later after launch proof is complete.
 
 Before Theme Editor work, the store needs:
 

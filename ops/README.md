@@ -1,6 +1,6 @@
 # Storefront Ops Service
 
-This service is the deployable server-side layer for the Patriot Phone storefront. It intentionally stays outside Shopify Liquid because the theme cannot securely store CRM records or create arbitrary route-level raw text files by itself.
+This service is the deployable server-side layer for the Independence Phone storefront. It intentionally stays outside Shopify Liquid because the theme cannot securely store CRM records, verify private webhooks, forward signed integration events, or create arbitrary route-level raw text files by itself.
 
 It serves:
 
@@ -17,6 +17,26 @@ It serves:
 - `GET /llms.txt` - root/site overview Markdown.
 - `GET /products/standard-phone/llms.txt` and other route-level `.../llms.txt` paths.
 - `GET /a/llms.txt?path=/pages/faq` - Shopify app-proxy compatible LLM Markdown route.
+
+## Payment Boundary
+
+The ops service is not a payment gateway.
+
+Fast payment launch:
+
+- Configure Shopify Payments or another Shopify-supported provider in Shopify Admin.
+- Leave the theme's `Cart -> Rev.io checkout handoff URL` blank.
+- Shopify Checkout collects payment and creates the order.
+- Shopify's signed `orders/create` webhook sends the completed order to `/crm/shopify/orders/create` for CRM sale capture.
+
+Rev.io checkout launch:
+
+- Deploy this ops service first.
+- Set the theme's `Cart -> Rev.io checkout handoff URL` to the public `/revio/checkout` route.
+- Configure `REVIO_CHECKOUT_WEBHOOK_URLS` and `REVIO_WEBHOOK_SECRET`.
+- This service stores the checkout intent and forwards a signed `revio.checkout.requested` event to the API implementer's Rev.io middleware.
+
+Do not put Rev.io API credentials, APIM subscription keys, Basic Auth credentials, raw card numbers, or CVV handling in Shopify Liquid, browser JavaScript, Theme Editor settings, this README, or committed env files. Rev.io tenant credentials belong only in the API implementer's server environment.
 
 ## Local Proof
 
@@ -52,7 +72,7 @@ Use a persistent host or a database-backed storage adapter. Do not run the CRM c
 Deployment templates in this folder:
 
 - `patriot-phone-ops.service.example` - systemd service for a persistent Linux host.
-- `patriot-phone-ops.env.example` - secret environment file template for the staff viewer token.
+- `patriot-phone-ops.env.example` - secret environment file template for tokens and outbound webhook settings. The filename is legacy; the service supports the Independence Phone storefront.
 - `cloudflare-worker.example.js` - edge proxy for final-domain CRM, Rev.io handoff, and `llms.txt` paths.
 - `wrangler.toml.example` - Cloudflare Worker route and `OPS_ORIGIN` template.
 
@@ -89,6 +109,14 @@ REVIO_WEBHOOK_SECRET=<long random Rev.io handoff signing secret>
 REVIO_CHECKOUT_SUCCESS_URL=https://jordan-mark-premier.myshopify.com/cart?revio_checkout=received
 REVIO_CHECKOUT_ALLOWED_ORIGINS=https://jordan-mark-premier.myshopify.com
 ```
+
+Secret meanings:
+
+- `CRM_VIEWER_TOKEN` protects `/crm/leads` and `/crm/leads.csv`.
+- `CRM_ORDER_INGEST_TOKEN` protects manual order imports at `/crm/orders/import`.
+- `SHOPIFY_ORDER_WEBHOOK_SECRET` verifies inbound Shopify `orders/create` webhooks.
+- `CRM_WEBHOOK_SECRET` signs outbound `crm.lead.created` and `crm.sale.created` webhooks.
+- `REVIO_WEBHOOK_SECRET` signs outbound `revio.checkout.requested` webhooks.
 
 `CRM_LEAD_WEBHOOK_URLS` and `CRM_SALE_WEBHOOK_URLS` can contain one or more comma-separated or newline-separated `https://` destinations. When either outbound webhook variable is configured in production, the service refuses to start unless every URL is valid and `CRM_WEBHOOK_SECRET` is at least 24 characters.
 

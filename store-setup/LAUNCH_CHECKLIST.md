@@ -1,6 +1,6 @@
-# Patriot Phone Fresh Store Launch Checklist
+# Independence Phone Store Launch Checklist
 
-Use this when the fresh Shopify store handle and access are available. The final public domain can be connected after the store preview is approved.
+Use this when Shopify store access is available. The final public domain can be connected after store preview, payment path, ops hosting, CRM, and order proof are approved.
 
 Canonical repo:
 
@@ -26,12 +26,52 @@ This command writes `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/l
 
 ## 1. Access And Store Target
 
-- [ ] Confirm the store handle: `STORE.myshopify.com`.
+- [ ] Confirm the store handle: `jordan-mark-premier.myshopify.com` or the current `STORE.myshopify.com`.
 - [ ] Confirm staff/collaborator access with theme permissions.
 - [ ] Confirm product, collection, page, navigation, files, and settings access.
 - [ ] Confirm Admin API token includes `read_publications` and `write_publications`, or plan to publish objects to Online Store manually in admin.
 - [ ] Confirm whether CLI login or Shopify Theme Access app password will be used.
 - [ ] Do not connect or publish the final public domain until preview QA is approved.
+
+## 1.1 Users, Roles, And Store Ownership
+
+- [ ] Store owner/admin goes to `Settings -> Users`.
+- [ ] Add Jordan, Mark, support staff, fulfillment staff, and any API/developer users who need access.
+- [ ] Assign least-privilege roles instead of giving every user administrator access.
+- [ ] Require two-step authentication for users with payment, order, user, app, theme, or settings access.
+- [ ] Confirm every invite is accepted; Shopify invitations expire after seven days.
+- [ ] Keep the Rev.io/API implementer out of Shopify payment/bank settings unless explicitly approved.
+
+Official reference: `https://help.shopify.com/en/manual/your-account/users/invite-users`
+
+## 1.2 Payment Path
+
+Choose one launch path before real order proof.
+
+Fastest path: native Shopify Checkout.
+
+- [ ] Go to `Settings -> Payments`.
+- [ ] Activate Shopify Payments or an approved third-party provider.
+- [ ] Leave Theme Editor `Cart -> Rev.io checkout handoff URL` blank.
+- [ ] Confirm checkout can collect payment and create a Shopify order.
+- [ ] Configure Shopify `orders/create` webhook to the ops server so paid orders become CRM sale records.
+- [ ] Decide whether Rev.io sync happens after Shopify payment.
+
+Rev.io checkout path:
+
+- [ ] Deploy the ops server publicly.
+- [ ] Configure `REVIO_CHECKOUT_WEBHOOK_URLS` and `REVIO_WEBHOOK_SECRET` on the ops server.
+- [ ] Set Theme Editor `Cart -> Rev.io checkout handoff URL` to `https://YOUR_DOMAIN/revio/checkout`.
+- [ ] Confirm the cart handoff creates a CRM sale/checkout intent record.
+- [ ] Confirm the API implementer receives and verifies the signed `revio.checkout.requested` webhook.
+- [ ] Confirm Rev.io sandbox payment/request proof before launch.
+
+Do not put Rev.io API keys, APIM subscription keys, Basic Auth credentials, raw card data, or payment-processing code in Shopify Liquid, JavaScript, or Theme Editor settings.
+
+Official payment references:
+
+- `https://help.shopify.com/en/manual/payments/shopify-payments/onboarding`
+- `https://help.shopify.com/en/manual/payments/third-party-providers`
 
 ## 2. Refresh Base Theme
 
@@ -133,11 +173,13 @@ Required hidden billing product handles:
 - [ ] `/products/add-on-bundle`
 - [ ] `/products/patriot-package`
 - [ ] Billing products are active and purchasable, use template `product.billing-item`, and are not added to the `Phones` collection or public product cards.
+- [ ] Billing products are not physical products and do not require shipping.
 
 Required product facts:
 
 - [ ] Classic Phone is `$100`.
 - [ ] Rugged Phone is `$150`.
+- [ ] Classic Phone and Rugged Phone are physical products and require shipping.
 - [ ] Both products use template `product.independence-phone`.
 - [ ] Product images are uploaded or assigned.
 - [ ] Product images have concise alt text for SEO/accessibility.

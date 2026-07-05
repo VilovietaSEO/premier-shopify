@@ -25,6 +25,37 @@ The native Shopify checkout button is not the final Rev.io payment path unless t
 
 This repo is not the Rev.io tenant integration. It prepares the storefront and server handoff so the API implementer can wire Rev.io without changing the theme, cart modeling, or public product catalog.
 
+## Payment Launch Decision
+
+The business can launch payment in two different ways. The chosen path must be explicit before real order proof.
+
+### Fastest Acceptance: Shopify Checkout First
+
+Use this when the business wants to accept credit cards quickly.
+
+1. Shopify Admin -> `Settings -> Payments`.
+2. Activate Shopify Payments or a Shopify-supported third-party provider.
+3. Leave Theme Editor `Cart -> Rev.io checkout handoff URL` blank.
+4. Customer pays through native Shopify Checkout.
+5. Shopify creates the order with the phone plus hidden service/add-on/package billing line items.
+6. Shopify sends `orders/create` to the ops server, where the order becomes a CRM `sale` record.
+7. Rev.io middleware can sync the completed Shopify order into Rev.io after payment.
+
+This path is fastest because Shopify owns payment capture. It does not make Rev.io the payment processor.
+
+### Rev.io Checkout Or Payment First
+
+Use this only when the Rev.io API implementer has a working hosted checkout, tokenized payment, or approved billing/payment flow.
+
+1. Deploy the owner-hosted ops service.
+2. Configure `REVIO_CHECKOUT_WEBHOOK_URLS` and `REVIO_WEBHOOK_SECRET`.
+3. Set Theme Editor `Cart -> Rev.io checkout handoff URL` to the public `/revio/checkout` route.
+4. The theme posts the cart/setup payload to the ops server.
+5. The ops server stores CRM proof and forwards signed `revio.checkout.requested`.
+6. Rev.io middleware creates or updates the customer, request, products, services, bill/charge/payment, or returns a hosted checkout URL.
+
+This path is not complete until Rev.io sandbox proof confirms customer/request/product/payment behavior and no raw card number or CVV appears in Shopify, browser requests, server logs, or CRM records.
+
 ## Official Documentation
 
 Primary developer surface:

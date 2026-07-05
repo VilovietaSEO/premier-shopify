@@ -1,223 +1,198 @@
-# Premier Shopify
+# Independence Phone Shopify Launch
 
-Private working repository for building and operating a client Shopify storefront from the CLI while keeping the client-editable Shopify theme builder intact.
+This repo holds the Shopify theme and launch support files for the Independence Phone store.
 
-## Current Project
+Current store:
 
-Independence Phone fresh-store theme build:
-
-- Theme path: `/Users/vilovieta/Documents/Shopify/independence-phone-theme`
-- Refresh overlay path: `/Users/vilovieta/Documents/Shopify/refresh-overlay`
-- Refresh overlay script: `/Users/vilovieta/Documents/Shopify/scripts/apply-refresh-overlay.sh`
-- Refresh store bootstrap script: `/Users/vilovieta/Documents/Shopify/scripts/bootstrap-refresh-store.sh`
-- Fresh store setup data: `/Users/vilovieta/Documents/Shopify/store-setup`
-- Fresh store launch checklist: `/Users/vilovieta/Documents/Shopify/store-setup/LAUNCH_CHECKLIST.md`
-- Brief/source path: `/Users/vilovieta/Documents/Shopify/brief-materials`
-- Handoff checklist: `/Users/vilovieta/Documents/Shopify/independence-phone-theme/SHOPIFY_HANDOFF.md`
-- Theme Editor guide: `/Users/vilovieta/Documents/Shopify/independence-phone-theme/THEME_EDITOR_GUIDE.md`
-- Goal prompt: `/Users/vilovieta/Documents/Shopify/brief-materials/strategy/goal-prompt.md`
-- GitHub remote: `https://github.com/VilovietaSEO/premier-shopify`
-
-This project targets a fresh Shopify store. The final public domain can be connected later; the build only needs the Shopify store handle and theme access before live preview/publish work can happen.
-
-Local validation currently passes:
-
-```bash
-cd /Users/vilovieta/Documents/Shopify/independence-phone-theme
-shopify theme check
+```text
+jordan-mark-premier.myshopify.com
 ```
 
-Run the full local gate before pushing theme changes or applying the Refresh overlay:
+Current GitHub repo:
+
+```text
+https://github.com/VilovietaSEO/premier-shopify
+```
+
+## Plain-English Status
+
+The storefront design and product flow are mostly built. The live Shopify theme is:
+
+```text
+Independence Phone / theme ID 150479208517
+```
+
+The store is still password-protected, so it is not fully public yet.
+
+The public store should stay simple:
+
+- Classic Phone
+- Rugged Phone
+- Patriot Package offer
+
+The services and add-ons exist behind the scenes as Shopify line items so checkout, orders, and Rev.io can understand what the customer chose. They should not become a big public product grid.
+
+## How The Business Can Take Payment
+
+There are two choices.
+
+### Fastest Launch: Use Shopify Checkout
+
+This is the simplest way to start accepting cards.
+
+The store owner goes to:
+
+```text
+Shopify Admin -> Settings -> Payments
+```
+
+Then they activate Shopify Payments, PayPal, or another Shopify-supported payment provider.
+
+In this path:
+
+- The customer checks out through Shopify.
+- Shopify collects payment.
+- Shopify creates the order.
+- The CRM/server can receive the order after checkout.
+- Rev.io can be updated later from the completed Shopify order.
+
+For this path, leave this theme setting blank:
+
+```text
+Cart -> Rev.io checkout handoff URL
+```
+
+### Rev.io Checkout: Use After The API Work Is Ready
+
+Rev.io should not be connected by putting an API key into Shopify.
+
+If Rev.io is going to handle checkout or billing directly, the store needs the separate server/API handoff first. That server receives the cart details, saves a CRM record, and sends the setup to the Rev.io API implementer.
+
+In this path:
+
+- The customer chooses phone, plan, and add-ons on the site.
+- The cart sends that setup to the hosted server.
+- The server sends a signed handoff to the Rev.io API middleware.
+- The Rev.io API implementer creates the customer, service, products, billing, or payment flow in Rev.io.
+
+Only use this path after Rev.io sandbox testing is complete.
+
+## What Still Has To Happen Before Launch
+
+1. Add the store users.
+2. Choose the payment path: Shopify Checkout now, or Rev.io checkout after API proof.
+3. Add policy pages: privacy policy, terms, refund, and shipping policy.
+4. Set shipping for the physical phones.
+5. Confirm taxes and any telecom billing requirements.
+6. Deploy the small server that handles CRM, order webhooks, Rev.io handoff, and `llms.txt`.
+7. Replace any placeholder CRM endpoint with the real hosted `/crm/capture` URL.
+8. Connect Shopify order webhooks to that server.
+9. Test a real or approved test order.
+10. Confirm the contact form creates a CRM lead in the hosted CRM viewer/export.
+11. Turn off the storefront password only when the owner approves launch.
+
+## What Each System Does
+
+Shopify handles:
+
+- Website pages
+- Product photos and product details
+- Cart
+- Checkout if Shopify is the payment path
+- Orders
+- Fulfillment and tracking for shipped phones
+
+The hosted server handles:
+
+- Contact form records
+- CRM viewer and CSV export
+- Shopify order webhook capture
+- Rev.io handoff
+- Automatic raw Markdown `llms.txt` routes
+
+Rev.io handles, once the API person wires it:
+
+- Customer/service/billing records
+- Rev.io products and packages
+- Rev.io-hosted payment or billing flow, if that is the chosen path
+
+## Product And Shipping Model
+
+Physical products:
+
+- Classic Phone: ships
+- Rugged Phone: ships
+
+Behind-the-scenes billing items:
+
+- Monthly Service: does not ship
+- Annual Service: does not ship
+- Call Recording: does not ship
+- Quiet Hours: does not ship
+- Voicemail to Email: does not ship
+- Auto Attendant: does not ship
+- Add-on Bundle: does not ship
+- Patriot Package: does not ship as its own separate box
+
+Only the phones are shipped.
+
+## Where To Edit Normal Store Content
+
+Business owners should use Shopify Admin for normal edits:
+
+- Products: names, descriptions, prices, photos, image alt text
+- Theme Editor: homepage copy, video, logos, buttons, sections
+- Pages: FAQ, Contact, policies
+- Navigation: menus and footer links
+- Orders: fulfillment, tracking, customer details
+
+Developers should edit the repo for:
+
+- Theme code
+- Custom cart/order logic
+- CRM/server code
+- Rev.io handoff code
+- Audit scripts
+
+## Important Docs
+
+Use these based on what you are doing:
+
+- `CLIENT_HANDOFF_PACKET.md` - send this to the client as the main launch handoff packet
+- `SOW_SCOPE_REVIEW.md` - compares the finished build and remaining launch tasks against the original SOW
+- `GO_LIVE_RUNBOOK.md` - launch checklist and owner/developer sequence
+- `store-setup/LAUNCH_CHECKLIST.md` - Shopify admin checklist
+- `REVIO_INTEGRATION_HANDOFF.md` - what the Rev.io API implementer needs
+- `ops/README.md` - how to host the CRM/Rev.io/llms server
+- `independence-phone-theme/THEME_EDITOR_GUIDE.md` - where to edit theme content
+- `spec.md` - full issue list, proof steps, and quality definition
+
+## Developer Appendix
+
+Run local proof before pushing changes:
 
 ```bash
 cd /Users/vilovieta/Documents/Shopify
 npm run verify:local
 ```
 
-That command checks required goal artifacts, smoke-tests the Refresh overlay application path, verifies the Shopify theme, and runs the desktop/tablet/mobile visual preview test.
-
-The local goal audit also checks that the Independence Phone sections expose the expected Theme Editor settings, blocks, presets, product templates, product metafields, and Refresh overlay matches.
-
-Refresh-base path for the fresh store:
-
-1. Add Shopify `Refresh` to the new store.
-2. Pull that Refresh theme locally.
-3. Apply `/Users/vilovieta/Documents/Shopify/refresh-overlay`.
-
-Preferred scripted path after you know the store handle and Refresh theme ID:
+Check launch readiness against the live Shopify store:
 
 ```bash
 cd /Users/vilovieta/Documents/Shopify
-scripts/bootstrap-refresh-store.sh STORE.myshopify.com REFRESH_THEME_ID /Users/vilovieta/Documents/Shopify/refresh-theme
+SHOPIFY_STORE=jordan-mark-premier.myshopify.com SHOPIFY_USE_CLI_SESSION=1 npm run launch:readiness
 ```
 
-Manual overlay-only path:
+Push the theme only after reviewing the target theme:
 
 ```bash
-cd /Users/vilovieta/Documents/Shopify
-scripts/apply-refresh-overlay.sh /path/to/pulled-refresh-theme
+shopify theme push --store jordan-mark-premier.myshopify.com --theme 150479208517 --path independence-phone-theme
 ```
 
-## Operating Model
-
-Build the site as a Shopify Online Store 2.0 theme.
-
-- Codex/developer controls theme code from this repo: Liquid, JSON templates, sections, snippets, assets, CSS, JavaScript, schema, and theme settings.
-- Client controls normal content in Shopify: section text, images, products, collections, menus, pages, theme settings, and section order.
-- Avoid third-party page builders unless the client explicitly requires one. Native Shopify sections keep the storefront editable without hiding layout data inside an app.
-- Treat Shopify admin edits as real source changes. Pull them before overwriting a remote theme.
-
-## Local Requirements
-
-This machine already has the required base tooling:
+Publish only after owner approval:
 
 ```bash
-node -v
-npm -v
-shopify version
+shopify theme publish --store jordan-mark-premier.myshopify.com --theme 150479208517
 ```
 
-Expected current Shopify CLI version on this machine:
-
-```bash
-3.92.1
-```
-
-## Access Needed From The Client
-
-Minimum handoff needed so Codex can operate end-to-end:
-
-- Shopify store domain, usually `client-store.myshopify.com`.
-- Staff or collaborator access with theme permissions.
-- Theme Access password from the Shopify Theme Access app if CLI login is not preferred.
-- Brand assets: logo, fonts, color direction, photography, product imagery.
-- Product, collection, policy, shipping, tax, and payment requirements.
-- App list, if the client already relies on reviews, subscriptions, bundles, loyalty, forms, or email capture apps.
-
-Do not paste permanent secrets into chat or commit them to the repo. Use a local `.env` file or password manager when needed.
-
-## Starting From A New Theme
-
-Use this when the client does not already have a theme that must be preserved.
-
-```bash
-shopify theme init
-shopify theme dev --store client-store.myshopify.com
-```
-
-`shopify theme dev` creates a development theme and prints preview/theme-editor URLs. Changes pushed from this repo update the development theme in real time.
-
-## Starting From An Existing Shopify Theme
-
-Use this when the client already has a store/theme and we need to take control safely.
-
-```bash
-shopify theme list --store client-store.myshopify.com
-shopify theme pull --store client-store.myshopify.com --theme THEME_ID
-shopify theme dev --store client-store.myshopify.com --theme THEME_ID
-```
-
-Before making code changes, duplicate the live theme in Shopify or through the CLI:
-
-```bash
-shopify theme duplicate --store client-store.myshopify.com --theme LIVE_THEME_ID
-```
-
-Work against the duplicate or a development theme until publishing is approved.
-
-## Daily Development Loop
-
-```bash
-git pull
-shopify theme pull --store client-store.myshopify.com --theme THEME_ID
-shopify theme dev --store client-store.myshopify.com --theme THEME_ID
-shopify theme check
-git status
-git add README.md sections snippets templates assets config layout locales
-git commit -m "Describe the storefront change"
-git push
-```
-
-Pull first if the client has edited the theme in Shopify admin. This prevents overwriting their builder changes.
-
-## Deployment
-
-Push to a non-live theme first:
-
-```bash
-shopify theme push --store client-store.myshopify.com --theme THEME_ID
-```
-
-Publish only after preview approval:
-
-```bash
-shopify theme publish --store client-store.myshopify.com --theme THEME_ID
-```
-
-Never publish a theme directly from an unreviewed local state.
-
-## GitHub Sync Option
-
-Shopify can connect a theme to a GitHub branch. If enabled, Shopify will update the theme when the branch changes and can commit Shopify admin edits back to GitHub.
-
-Recommended branch model:
-
-- `main`: approved production source.
-- `staging`: preview or pre-launch theme.
-- `codex/*`: implementation branches for larger work.
-
-If Shopify GitHub sync is enabled, pull before coding and review Shopify-generated commits before pushing over the same branch.
-
-## Theme Architecture Rules
-
-- Prefer reusable sections with clear schema settings.
-- Use JSON templates so pages are editable in the Shopify theme editor.
-- Put repeated markup in snippets.
-- Put client-editable content in section settings, blocks, metafields, or metaobjects.
-- Do not hardcode content that the client reasonably expects to edit.
-- Keep product/catalog data in Shopify, not in theme files.
-- Use metafields/metaobjects for structured content such as badges, specs, FAQs, comparison rows, testimonials, or ingredient/details tables.
-
-## Client Editing Boundary
-
-The client should edit:
-
-- Theme editor section settings.
-- Products and variants.
-- Collections.
-- Navigation menus.
-- Pages and blog posts.
-- Metaobjects/metafields when configured.
-
-The client should not edit:
-
-- Liquid files.
-- Theme JavaScript/CSS.
-- JSON templates without coordination.
-- App embed settings that affect global storefront behavior without telling us.
-
-## Codex Directives
-
-When operating this repo:
-
-- Verify the active store and theme ID before pushing.
-- Pull remote theme changes before editing if Shopify admin changes may have happened.
-- Use development or duplicate themes for risky work.
-- Run `shopify theme check` before pushing/publishing.
-- Keep secrets out of Git.
-- Commit only intentional files.
-- Preserve client-editable schema instead of baking content into code.
-- Publish only after explicit approval.
-
-## Useful Commands
-
-```bash
-shopify theme list --store client-store.myshopify.com
-shopify theme info --store client-store.myshopify.com --theme THEME_ID
-shopify theme dev --store client-store.myshopify.com --theme THEME_ID
-shopify theme pull --store client-store.myshopify.com --theme THEME_ID
-shopify theme push --store client-store.myshopify.com --theme THEME_ID
-shopify theme check
-shopify theme open --store client-store.myshopify.com --theme THEME_ID
-shopify theme publish --store client-store.myshopify.com --theme THEME_ID
-```
+Do not commit secrets. Do not put Rev.io credentials in Shopify Liquid, JavaScript, or Theme Editor settings.

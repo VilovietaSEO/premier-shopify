@@ -1,6 +1,6 @@
 # Simple CRM Capture
 
-This is the minimal CRM path for the Patriot Phone storefront contact form.
+This is the minimal CRM path for the Independence Phone storefront contact form.
 
 It is intentionally separate from Liquid. A Shopify theme can render the form, but it cannot securely store lead records or hold private API credentials. The theme posts to this server-side endpoint only when the `IP contact form` section has a CRM endpoint URL configured.
 

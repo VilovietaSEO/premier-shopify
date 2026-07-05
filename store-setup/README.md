@@ -1,12 +1,12 @@
 # Fresh Store Setup Data
 
-This folder contains the Patriot Phone product data needed after the fresh Shopify store exists.
+This folder contains the Independence Phone product data needed after the Shopify store exists.
 
 Files:
 
 - `product-metafields.json` - product metafield definitions the theme reads.
 - `products.csv` - two-product starter import file.
-- `LAUNCH_CHECKLIST.md` - store-by-store checklist to execute after access exists.
+- `LAUNCH_CHECKLIST.md` - store-by-store checklist for access, users, payment path, products, theme settings, CRM, and launch proof.
 - `/Users/vilovieta/Documents/Shopify/scripts/create-product-metafields.js` - Admin GraphQL helper for creating the product metafield definitions from `product-metafields.json`.
 - `/Users/vilovieta/Documents/Shopify/scripts/create-storefront-objects.js` - Admin GraphQL helper for upserting the two products, creating the `Phones` collection, publishing products/collection to Online Store when publication scopes are available, and creating the `Order Now`, `FAQ`, and `Contact` pages.
 - `/Users/vilovieta/Documents/Shopify/scripts/audit-storefront-objects.js` - read-only Admin GraphQL audit for products, prices, metafields, templates, media counts, collection membership, and required pages.
