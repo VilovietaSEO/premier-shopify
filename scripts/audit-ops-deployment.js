@@ -11,7 +11,7 @@ const requiredLlmsRoutes = [
   { path: '/llms.txt', expected: ['# Independence Phone', '## Pages', '## Products'] },
   { path: '/products/standard-phone/llms.txt', expected: ['# Classic Phone', '## Key Facts'] },
   { path: '/products/rugged-phone/llms.txt', expected: ['# Rugged Phone', '## Key Facts'] },
-  { path: '/collections/all/llms.txt', expected: ['# Order Now', 'product-selection route'] },
+  { path: '/pages/order-now/llms.txt', expected: ['# Order Now', 'guided order builder'] },
   { path: '/a/llms.txt?path=/pages/faq', expected: ['# FAQ', 'Support and buying FAQ'] },
 ];
 

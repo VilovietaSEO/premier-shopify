@@ -82,7 +82,7 @@ Automatic raw Markdown `llms.txt` is not a Shopify page. Use `/Users/vilovieta/D
 - `/llms.txt`
 - `/products/standard-phone/llms.txt`
 - `/products/rugged-phone/llms.txt`
-- `/collections/all/llms.txt`
+- `/pages/order-now/llms.txt`
 - `/a/llms.txt?path=/pages/faq` when using Shopify app proxy routing
 
 ## Theme Files

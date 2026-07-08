@@ -46,7 +46,7 @@ async function main() {
   assert.match(root, /Generated: 2026-06-30T20:30:00/);
   assert.match(root, /## Pages/);
   assert.match(root, /\[Home\]\(https:\/\/jordan-mark-premier\.myshopify\.com\/\)/);
-  assert.match(root, /\[Order Now\]\(https:\/\/jordan-mark-premier\.myshopify\.com\/collections\/all\)/);
+  assert.match(root, /\[Order Now\]\(https:\/\/jordan-mark-premier\.myshopify\.com\/pages\/order-now\)/);
   assert.match(root, /## Products/);
   assert.match(root, /\[Classic Phone\]\(https:\/\/jordan-mark-premier\.myshopify\.com\/products\/standard-phone\): \$100/);
   assert.match(root, /\[Rugged Phone\]\(https:\/\/jordan-mark-premier\.myshopify\.com\/products\/rugged-phone\): \$150/);
@@ -68,11 +68,11 @@ async function main() {
   assert.match(ruggedText, /URL: https:\/\/jordan-mark-premier\.myshopify\.com\/products\/rugged-phone/);
   assert.match(ruggedText, /## Price\n\n\$150/);
 
-  const collection = routeToEntry(manifest, '/collections/all');
-  assert.equal(collection.title, 'Order Now');
-  const collectionText = renderEntryLlmsTxt(manifest, collection);
-  assert.match(collectionText, /^# Order Now/);
-  assert.match(collectionText, /Primary product-selection route/);
+  const order = routeToEntry(manifest, '/pages/order-now');
+  assert.equal(order.title, 'Order Now');
+  const orderText = renderEntryLlmsTxt(manifest, order);
+  assert.match(orderText, /^# Order Now/);
+  assert.match(orderText, /Primary guided purchase route/);
 
   const server = createServer({
     siteUrl: 'https://jordan-mark-premier.myshopify.com',

@@ -260,13 +260,13 @@ The local uploadable theme also includes this as:
 Create or update the main menu:
 
 - Home -> `/`
-- Order Now -> `/collections/all`
+- Order Now -> `/pages/order-now`
 - FAQ -> `/pages/faq`
 - Contact -> `/pages/contact`
 
 Footer menu:
 
-- Order Now -> `/collections/all`
+- Order Now -> `/pages/order-now`
 - FAQ -> `/pages/faq`
 - Contact -> `/pages/contact`
 - Privacy Policy -> `/policies/privacy-policy`
@@ -370,8 +370,8 @@ Preview QA: 4 passed
 Already proved against the password-authenticated live storefront:
 
 - Home renders on live theme `150479208517`.
-- `/collections/all` renders the product-selection page.
 - `/pages/order-now` renders the guided order-builder page and is not a 404.
+- `/collections/all` remains a legacy/default Shopify collection route, but primary Order Now CTAs should not send shoppers there.
 - `/pages/faq` renders the standalone support page and is not a 404.
 - `/pages/contact` renders the contact form page and is not a 404.
 - `/products/standard-phone` and `/products/rugged-phone` render and add to cart.
@@ -382,12 +382,12 @@ Still required for launch proof:
 - Re-run `cd /Users/vilovieta/Documents/Shopify && npm run launch:readiness` after each live ops/access/order change. Current artifact: `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/launch-readiness-audit.json`.
 - Give Jordan/Mark the storefront password, temporarily disable password protection for review, or provide another preview method that works outside an Admin session.
 - Current public `npm run seo:live` proof is saved at `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/seo-ops-audit.json`; it fails because unauthenticated routes return the password page and live `llms.txt` still returns Shopify HTML until the ops proxy is deployed.
-- Check Home, `/collections/all`, `/pages/order-now`, `/pages/faq`, `/pages/contact`, `/products/standard-phone`, and `/products/rugged-phone` on the exact desktop/mobile access path the client will use.
+- Check Home, `/pages/order-now`, `/pages/faq`, `/pages/contact`, `/products/standard-phone`, and `/products/rugged-phone` on the exact desktop/mobile access path the client will use.
 - Deploy and check automatic route-level `llms.txt` output:
   - `/llms.txt`
   - `/products/standard-phone/llms.txt`
   - `/products/rugged-phone/llms.txt`
-  - `/collections/all/llms.txt`
+  - `/pages/order-now/llms.txt`
   - `/a/llms.txt?path=/pages/faq` if using Shopify app proxy routing.
 - If using the included server-side path, deploy `/Users/vilovieta/Documents/Shopify/ops/storefront-ops-server.js` on persistent storage and use `/Users/vilovieta/Documents/Shopify/ops/README.md` for environment variables and proxy routing.
 - Deployment templates are in `/Users/vilovieta/Documents/Shopify/ops/patriot-phone-ops.service.example`, `/Users/vilovieta/Documents/Shopify/ops/patriot-phone-ops.env.example`, `/Users/vilovieta/Documents/Shopify/ops/cloudflare-worker.example.js`, and `/Users/vilovieta/Documents/Shopify/ops/wrangler.toml.example`.

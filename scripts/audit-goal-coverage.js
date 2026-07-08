@@ -599,7 +599,7 @@ assertFileIncludes('scripts/audit-live-seo.js', [
   'requiredLlmsRoutes',
   '/llms.txt',
   '/products/standard-phone/llms.txt',
-  '/collections/all/llms.txt',
+  '/pages/order-now/llms.txt',
   'auditLlmsRoute',
   'text/plain',
   'HTML storefront shell returned instead of raw Markdown',
@@ -616,7 +616,7 @@ assertFileIncludes('llms/automatic-llms.js', [
   '/llms.txt',
   '/a/llms.txt',
   '/products/standard-phone',
-  '/collections/all',
+  '/pages/order-now',
   'text/plain; charset=utf-8',
   'Claims Discipline',
 ], 'Automatic llms.txt module');
@@ -913,7 +913,7 @@ assertFileIncludes('independence-phone-theme/THEME_EDITOR_GUIDE.md', [
   '/robots.txt',
   'Automatic route-level `llms.txt`',
   '/products/standard-phone/llms.txt',
-  '/collections/all/llms.txt',
+  '/pages/order-now/llms.txt',
 ], 'Theme Editor operations and SEO guide');
 assertFile('refresh-overlay/README.md', 'Refresh overlay README');
 assertFileIncludes('refresh-overlay/README.md', [
@@ -1057,7 +1057,7 @@ assertFileIncludes('independence-phone-theme/assets/ip-tool-icon-phone-times.svg
 ], 'Heroicons clock asset');
 assertFileIncludes('independence-phone-theme/sections/footer.liquid', [
   'aria-label="Footer menu"',
-  'routes.all_products_collection_url',
+  'routes.root_url }}pages/order-now',
   'routes.root_url }}pages/faq',
   'routes.root_url }}pages/contact',
   'routes.root_url }}policies/privacy-policy',
@@ -1111,7 +1111,7 @@ assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   '`/robots.txt` is reviewed',
   'Automatic raw Markdown `llms.txt` is deployed for root and route-level requests.',
   '`/products/standard-phone/llms.txt` returns a product-specific Markdown summary.',
-  '`/collections/all/llms.txt` returns a collection/order-flow Markdown summary.',
+  '`/pages/order-now/llms.txt` returns a guided order-builder Markdown summary.',
   '`/a/llms.txt?path=/pages/faq` returns the FAQ Markdown summary when using Shopify app proxy routing.',
   'SHOPIFY_STORE_URL=https://STORE.myshopify.com npm run seo:live',
   'SHOPIFY_PREVIEW_THEME_ID=THEME_ID',

@@ -226,7 +226,7 @@ Home page:
 - [ ] Upload or select hero video: `/Users/vilovieta/Documents/Shopify/brief-materials/assets/video/indy-phone-reel-1.mov`.
 - [ ] Confirm hero positioning: `Give them a phone. Not the internet.`
 - [ ] Confirm the JTBD line is removed and the section starts with the updated reachability heading.
-- [ ] Confirm the primary CTA says `Order now` and points to `/collections/all`.
+- [ ] Confirm the primary CTA says `Order now` and points to `/pages/order-now`.
 
 Order Now page:
 
@@ -301,7 +301,7 @@ SEO:
 - [ ] `/llms.txt` returns a homepage/site overview in `text/plain; charset=utf-8`.
 - [ ] `/products/standard-phone/llms.txt` returns a product-specific Markdown summary.
 - [ ] `/products/rugged-phone/llms.txt` returns a product-specific Markdown summary.
-- [ ] `/collections/all/llms.txt` returns a collection/order-flow Markdown summary.
+- [ ] `/pages/order-now/llms.txt` returns a guided order-builder Markdown summary.
 - [ ] `/a/llms.txt?path=/pages/faq` returns the FAQ Markdown summary when using Shopify app proxy routing.
 - [ ] Run the local llms proof:
 

@@ -30,8 +30,8 @@ Before Theme Editor work, the store needs:
 | Store URL | Shopify object | Template | Purpose |
 | --- | --- | --- | --- |
 | `/` | Home | `index.json` | Main sales page and hero video |
-| `/collections/all` | Shopify all collection | `collection.json` | Primary product-selection route for `Order now` CTAs |
-| `/pages/order-now` | Page: `Order Now` | `page.order` | Guided purchase flow: package, phone, plan, add-ons |
+| `/pages/order-now` | Page: `Order Now` | `page.order` | Primary guided purchase flow: package, phone, plan, add-ons |
+| `/collections/all` | Shopify all collection | `collection.json` | Legacy/default collection route; do not use for primary Order Now CTAs |
 | `/collections/phones` | Collection: `Phones` | `collection.phones` | Narrow two-phone collection support |
 | `/products/standard-phone` | Product: `Classic Phone` | `product.independence-phone` | Classic Phone product detail |
 | `/products/rugged-phone` | Product: `Rugged Phone` | `product.independence-phone` | Rugged Phone product detail |
@@ -225,7 +225,7 @@ The intended outputs are raw Markdown text, for example:
 
 - root overview: `/llms.txt`
 - product summary: `/products/standard-phone/llms.txt`
-- collection/order-flow summary: `/collections/all/llms.txt`
+- order-flow summary: `/pages/order-now/llms.txt`
 - Shopify app-proxy fallback: `/a/llms.txt?path=/pages/faq`
 
 Root `/llms.txt` requires an edge/proxy or custom domain route in front of Shopify. Shopify app proxy routing can support `/a/llms.txt` and route-specific `?path=` requests. Do not model this as a manually maintained Shopify page.
@@ -294,7 +294,6 @@ This proves:
 After the fresh store handle and access are available, verify:
 
 - Home desktop and mobile.
-- `/collections/all` desktop and mobile.
 - `/pages/order-now` desktop and mobile.
 - `/collections/phones` desktop and mobile.
 - `/products/standard-phone`.

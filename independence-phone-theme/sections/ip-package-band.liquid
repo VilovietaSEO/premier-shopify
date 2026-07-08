@@ -8,7 +8,7 @@
       <div class="ip-lede">{{ section.settings.body }}</div>
       <div class="ip-buttons">
         {% if section.settings.cta_label != blank %}
-          <a class="ip-button" href="{{ section.settings.cta_link | default: '/collections/all' }}">
+          <a class="ip-button" href="{{ section.settings.cta_link | default: '/pages/order-now' }}">
             {{ section.settings.cta_label }}
           </a>
         {% endif %}

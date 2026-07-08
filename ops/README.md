@@ -199,7 +199,7 @@ Required launch checks:
 ```bash
 curl -i https://www.example.com/llms.txt
 curl -i https://www.example.com/products/standard-phone/llms.txt
-curl -i https://www.example.com/collections/all/llms.txt
+curl -i https://www.example.com/pages/order-now/llms.txt
 curl -i 'https://www.example.com/a/llms.txt?path=/pages/faq'
 curl -i 'https://www.example.com/crm/leads?token=<staff-token>'
 curl -i -X POST https://www.example.com/revio/checkout

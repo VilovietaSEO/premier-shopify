@@ -15,7 +15,7 @@
   {% if cart.item_count == 0 %}
     <div class="ip-card ip-cart__empty">
       <p>Your cart is empty.</p>
-      <a class="ip-button" href="{{ routes.all_products_collection_url }}">Order now</a>
+      <a class="ip-button" href="{{ routes.root_url }}pages/order-now">Order now</a>
     </div>
   {% else %}
     <form
@@ -213,7 +213,7 @@
           <button type="submit" name="update">{{ 'cart.update' | t }}</button>
           <button type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
         </div>
-        <a class="ip-cart__continue" href="{{ routes.all_products_collection_url }}">Continue shopping</a>
+        <a class="ip-cart__continue" href="{{ routes.root_url }}pages/order-now">Continue shopping</a>
       </div>
     </form>
   {% endif %}

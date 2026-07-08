@@ -25,8 +25,9 @@ const routeUrl = (route) => {
 };
 
 async function openPreviewRoute(page, route) {
-  await page.goto(routeUrl(route), { waitUntil: 'networkidle' });
+  await page.goto(routeUrl(route), { waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-preview-route', route);
+  await expect(page.locator(`[data-preview-pages~="${route}"]`).first()).toBeVisible();
 }
 
 async function triggerLazyImages(page) {
@@ -164,12 +165,13 @@ test.describe('Independence Phone visual preview', () => {
       await expect(page.locator('[data-order-summary-service]')).toContainText('Annual service');
       await expect(page.locator('[data-order-summary-addons]')).toContainText('Add-on Bundle');
       await expect(page.locator('[data-order-summary-savings]')).toHaveText('$303.12/yr');
+      await page.locator('[data-slot="order.builder"] [data-add-to-cart-button]').click();
+      await expect(page.locator('[data-slot="order.builder"] [data-cart-status]')).toContainText('Please agree to the Privacy Policy and Terms and Conditions');
       await page.locator('#preview-policy').check();
       await page.locator('[data-slot="order.builder"] [data-add-to-cart-button]').click();
-      await expect(page.locator('[data-slot="order.builder"] [data-cart-status]')).toContainText('Added 1 Classic Phone to cart.');
+      await expect(page).toHaveURL(/route=cart/);
       await expect(page.locator('[data-cart-count]').first()).toHaveText('1');
 
-      await openPreviewRoute(page, 'cart');
       await triggerLazyImages(page);
       const cartReport = await collectRouteReport(page);
       await saveRouteArtifacts(page, viewport.name, 'cart', cartReport);

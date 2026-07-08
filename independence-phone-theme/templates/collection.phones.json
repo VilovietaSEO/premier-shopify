@@ -149,7 +149,7 @@
     "package": {
       "type": "ip-package-band",
       "settings": {
-        "cta_link": "/collections/all"
+        "cta_link": "/pages/order-now"
       }
     },
     "faq": {

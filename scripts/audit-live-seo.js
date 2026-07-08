@@ -23,7 +23,7 @@ const requiredLlmsRoutes = [
   { route: '/llms.txt', requiredText: ['# Independence Phone', '## Pages', '## Products'] },
   { route: '/products/standard-phone/llms.txt', requiredText: ['# Classic Phone', '## Key Facts'] },
   { route: '/products/rugged-phone/llms.txt', requiredText: ['# Rugged Phone', '## Key Facts'] },
-  { route: '/collections/all/llms.txt', requiredText: ['# Order Now', 'product-selection route'] },
+  { route: '/pages/order-now/llms.txt', requiredText: ['# Order Now', 'guided order builder'] },
 ];
 
 function usage() {

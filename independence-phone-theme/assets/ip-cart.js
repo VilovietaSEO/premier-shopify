@@ -62,6 +62,29 @@
     });
   };
 
+  const validateProductForm = (form) => {
+    const requiredPolicy = form.querySelector('input[name="properties[Policy agreement]"][required]');
+    if (requiredPolicy && !requiredPolicy.checked) {
+      setStatus(form, 'Please agree to the Privacy Policy and Terms and Conditions before adding this setup to cart.', 'error');
+      requiredPolicy.focus({ preventScroll: false });
+      form.reportValidity();
+      return false;
+    }
+
+    if (!form.reportValidity()) {
+      setStatus(form, 'Please complete the required fields before adding this setup to cart.', 'error');
+      return false;
+    }
+
+    return true;
+  };
+
+  const reportPolicyError = (control) => {
+    const form = control?.closest('.ip-product-form');
+    if (!form) return;
+    setStatus(form, 'Please agree to the Privacy Policy and Terms and Conditions before adding this setup to cart.', 'error');
+  };
+
   const fetchJson = async (url, options = {}) => {
     const response = await fetch(url, {
       credentials: 'same-origin',
@@ -570,6 +593,7 @@
         submitter.textContent = 'Add to cart';
       }, 1600);
     }
+    window.location.assign('?route=cart');
   };
 
   const updateOrderBuilder = (form) => {
@@ -707,6 +731,7 @@
           submitter.textContent = submitter.dataset.defaultText || 'Add to cart';
         }, 1600);
       }
+      window.location.assign(endpoint('cart'));
     } catch (error) {
       setStatus(form, error.message, 'error');
     } finally {
@@ -777,13 +802,19 @@
     if (!form || !submitter?.matches('[data-add-to-cart-button]')) return;
 
     event.preventDefault();
-    if (!form.reportValidity()) return;
+    if (!validateProductForm(form)) return;
     if (form.matches('[data-preview-product-form]')) {
       addPreviewProduct(form, submitter);
       return;
     }
     addProduct(form, submitter);
   });
+
+  document.addEventListener('invalid', (event) => {
+    if (event.target.matches('input[name="properties[Policy agreement]"][required]')) {
+      reportPolicyError(event.target);
+    }
+  }, true);
 
   document.addEventListener('change', (event) => {
     const orderInput = event.target.closest('[data-order-form] input');
@@ -817,17 +848,32 @@
       const hero = soundButton.closest('[data-hero-video]');
       const video = hero?.querySelector('video');
       if (video) {
+        video.classList.remove('has-ended');
         video.muted = false;
         video.removeAttribute('muted');
         video.volume = 1;
         video.loop = false;
         video.controls = true;
         video.currentTime = 0;
+        video.addEventListener('ended', () => {
+          video.classList.add('has-ended');
+          soundButton.classList.remove('is-playing');
+          soundButton.setAttribute('aria-label', 'Video replay ended');
+        }, { once: true });
         video.play().catch(() => {});
         soundButton.classList.add('is-playing');
         soundButton.setAttribute('aria-pressed', 'true');
         soundButton.setAttribute('aria-label', 'Video sound is on');
       }
+      return;
+    }
+
+    const addButton = event.target.closest('[data-add-to-cart-button]');
+    if (addButton) {
+      const requiredPolicy = addButton
+        .closest('.ip-product-form')
+        ?.querySelector('input[name="properties[Policy agreement]"][required]');
+      if (requiredPolicy && !requiredPolicy.checked) reportPolicyError(requiredPolicy);
       return;
     }
 

@@ -29,7 +29,18 @@
     <div class="ip-story__cards">
       {% for block in section.blocks %}
         {% liquid
-          assign fallback_card_bg = 'ip-current-site-product-1.png' | asset_url
+          case forloop.index
+            when 1
+              assign fallback_card_bg = 'ip-story-bus-days.png' | asset_url
+            when 2
+              assign fallback_card_bg = 'ip-story-home-alone.png' | asset_url
+            when 3
+              assign fallback_card_bg = 'ip-story-grandparents.png' | asset_url
+            when 4
+              assign fallback_card_bg = 'ip-story-before-smartphone.png' | asset_url
+            else
+              assign fallback_card_bg = 'ip-story-bus-days.png' | asset_url
+          endcase
 
           assign card_bg = fallback_card_bg
           if block.settings.image != blank
