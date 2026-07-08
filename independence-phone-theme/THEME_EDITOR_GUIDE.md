@@ -161,12 +161,12 @@ Editable sections:
 
 - `IP contact form`
   - Edit eyebrow, heading, body, helper text, button label, marketing opt-in note, and payment note.
-  - The theme controls the visible form content, but durable CRM capture requires the approved server-side capture path. A Liquid theme cannot securely store CRM records by itself.
-  - Launch scope should capture submitted date/time plus every submitted form field in a staff-viewable CRM record with CSV export.
+  - Leave `CRM endpoint URL` blank for the current launch so Shopify's native contact form sends submissions by email.
+  - In Shopify Admin, set the contact form recipient/Sender email to `jordan@premiercompanies.com`.
 - `IP FAQ`
 - `IP trust band`
 
-After store auth exists, submit a real contact form test and confirm the CRM viewer and CSV export include the timestamp and every submitted field. If email notification remains enabled, confirm delivery to the store contact email too.
+After store auth exists, submit a real contact form test and confirm `jordan@premiercompanies.com` receives the message.
 
 ## Content That Belongs In Shopify Admin
 
@@ -213,9 +213,9 @@ Before launch, confirm these in Shopify admin:
 - Product image alt text for every meaningful product photo.
 - `/sitemap.xml` resolves after products/pages are published.
 - `/robots.txt` is acceptable with Shopify defaults, or a custom `templates/robots.txt.liquid` is added intentionally.
-- The contact form posts to the approved CRM endpoint and stores timestamp plus every submitted field.
-- Staff can view CRM leads and export them to CSV.
-- If email notification remains enabled, the contact form also delivers to the correct store contact email.
+- `CRM endpoint URL` is blank on the contact form section.
+- Shopify Admin contact form recipient/Sender email is set to `jordan@premiercompanies.com`.
+- A real contact form test delivers to `jordan@premiercompanies.com`.
 - Test orders show service plan, add-ons, Patriot Package, savings, and policy agreement as line-item properties.
 - Order CSV export includes setup details in a usable form, or a custom export/app gap is documented.
 

@@ -8,6 +8,7 @@ const proofDir = path.join(root, 'tmp', 'shopify-live-proof');
 const outputPath =
   process.env.LAUNCH_READINESS_OUTPUT ||
   path.join(proofDir, 'launch-readiness-audit.json');
+const contactEmailRecipient = 'jordan@premiercompanies.com';
 
 const requiredRoutes = [
   '/',
@@ -389,37 +390,41 @@ function opsDeploymentChecks(opsDeployment) {
   ];
 }
 
-function contactCrmWiringChecks(contactCrm) {
-  if (contactCrm.missing) {
+function contactEmailDeliveryChecks(contactEmail) {
+  if (contactEmail.missing) {
     return [
       check(
-        'live contact page CRM form wiring',
+        'native contact form email delivery',
         'blocker',
-        'contact CRM wiring audit has not been run against rendered contact page HTML after CRM endpoint configuration',
-        [contactCrm.path]
+        `contact email proof has not been recorded; set the Shopify contact form recipient/Sender email to ${contactEmailRecipient} and submit a real test message`,
+        [contactEmail.path]
       ),
     ];
   }
-  if (contactCrm.error || !contactCrm.data) {
+  if (contactEmail.error || !contactEmail.data) {
     return [
       check(
-        'live contact page CRM form wiring',
+        'native contact form email delivery',
         'blocker',
-        contactCrm.error || 'contact CRM wiring audit could not be read',
-        [contactCrm.path]
+        contactEmail.error || 'contact email proof could not be read',
+        [contactEmail.path]
       ),
     ];
   }
 
-  const failures = contactCrm.data.failures || [];
+  const failures = [...(contactEmail.data.failures || [])];
+  const serialized = JSON.stringify(contactEmail.data).toLowerCase();
+  if (contactEmail.data.status !== 'pass') failures.push('contact email proof status is not pass');
+  if (!serialized.includes(contactEmailRecipient)) failures.push(`proof does not mention ${contactEmailRecipient}`);
+
   return [
     check(
-      'live contact page CRM form wiring',
-      failures.length > 0 || contactCrm.data.status !== 'pass' ? 'blocker' : 'pass',
+      'native contact form email delivery',
+      failures.length > 0 ? 'blocker' : 'pass',
       failures.length > 0
-        ? `${failures.length} contact CRM wiring failure(s)`
-        : `contact page posts lead records to ${contactCrm.data.formAction}`,
-      [contactCrm.path]
+        ? `${failures.length} contact email proof failure(s)`
+        : `Shopify native contact form delivers to ${contactEmailRecipient}`,
+      [contactEmail.path]
     ),
   ];
 }
@@ -467,7 +472,7 @@ function buildReport() {
     passwordProof: readJson('tmp/shopify-live-proof/password-access-verification.json'),
     opsBundle: readJson('tmp/patriot-phone-ops-deployment/deployment-manifest.json'),
     opsDeployment: readJson('tmp/shopify-live-proof/ops-deployment-audit.json'),
-    contactCrm: readJson('tmp/shopify-live-proof/contact-crm-wiring-audit.json'),
+    contactEmail: readJson('tmp/shopify-live-proof/contact-email-proof.json'),
     orderProof: readJson('tmp/shopify-live-proof/order-proof-audit.json'),
   };
 
@@ -478,7 +483,7 @@ function buildReport() {
     { name: 'Public SEO and llms.txt', checks: seoChecks(artifacts.seo) },
     { name: 'Ops deployment package', checks: opsBundleChecks(artifacts.opsBundle) },
     { name: 'Ops deployment', checks: opsDeploymentChecks(artifacts.opsDeployment) },
-    { name: 'CRM wiring', checks: contactCrmWiringChecks(artifacts.contactCrm) },
+    { name: 'Contact email', checks: contactEmailDeliveryChecks(artifacts.contactEmail) },
     { name: 'Orders', checks: orderChecks(artifacts.orderProof) },
   ];
 

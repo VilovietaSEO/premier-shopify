@@ -108,7 +108,7 @@ SHOPIFY_STORE_URL=https://jordan-mark-premier.myshopify.com \\
 npm run ops:deployment:audit
 \`\`\`
 
-Shopify still needs the live contact form setting pointed to \`https://OPS_HOST/crm/capture\`, an \`orders/create\` webhook pointed to \`https://OPS_HOST/crm/shopify/orders/create\`, and the cart section \`Rev.io checkout handoff URL\` pointed to \`https://OPS_HOST/revio/checkout\` when Rev.io is the payment handoff path.
+For the current launch, leave the live contact form \`CRM endpoint URL\` blank and use Shopify native contact-form email delivery to jordan@premiercompanies.com. Shopify still needs an \`orders/create\` webhook pointed to \`https://OPS_HOST/crm/shopify/orders/create\`, and the cart section \`Rev.io checkout handoff URL\` pointed to \`https://OPS_HOST/revio/checkout\` when Rev.io is the payment handoff path.
 `;
   fs.writeFileSync(path.join(outputDir, 'DEPLOYMENT.md'), body);
   return 'DEPLOYMENT.md';

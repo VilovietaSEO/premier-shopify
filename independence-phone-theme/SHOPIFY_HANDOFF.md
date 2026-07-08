@@ -392,7 +392,8 @@ Still required for launch proof:
 - If using the included server-side path, deploy `/Users/vilovieta/Documents/Shopify/ops/storefront-ops-server.js` on persistent storage and use `/Users/vilovieta/Documents/Shopify/ops/README.md` for environment variables and proxy routing.
 - Deployment templates are in `/Users/vilovieta/Documents/Shopify/ops/patriot-phone-ops.service.example`, `/Users/vilovieta/Documents/Shopify/ops/patriot-phone-ops.env.example`, `/Users/vilovieta/Documents/Shopify/ops/cloudflare-worker.example.js`, and `/Users/vilovieta/Documents/Shopify/ops/wrangler.toml.example`.
 - After deployment, prove the public endpoint with `OPS_BASE_URL=... CRM_VIEWER_TOKEN=... CRM_ORDER_INGEST_TOKEN=... SHOPIFY_ORDER_WEBHOOK_SECRET=... SHOPIFY_STORE_URL=https://jordan-mark-premier.myshopify.com npm run ops:deployment:audit`; the proof artifact redacts both tokens and the webhook secret.
-- After configuring Theme Editor `CRM endpoint URL`, save rendered contact page HTML and run `CONTACT_CRM_HTML=/path/to/rendered-contact-page.html CONTACT_CRM_EXPECTED_ENDPOINT=https://www.example.com/crm/capture npm run contact:crm:audit`.
+- Leave Theme Editor `CRM endpoint URL` blank for the current launch so Shopify native contact-form email delivery is used.
+- In Shopify Admin, set the contact form recipient/Sender email to `jordan@premiercompanies.com`, submit a test contact form entry, and save proof of delivery.
 - If the owner wants leads or purchases sent to another system, configure outbound server variables `CRM_LEAD_WEBHOOK_URLS`, `CRM_SALE_WEBHOOK_URLS`, and `CRM_WEBHOOK_SECRET`. Do not put downstream secrets in Liquid.
 - Confirm page source includes Patriot Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD.
 - Confirm Theme Editor can edit section content and reorder sections.
@@ -400,10 +401,10 @@ Still required for launch proof:
 - After real/test orders exist, run `ORDER_PROOF_INPUT=/path/to/shopify-orders.json npm run orders:proof:audit`; it writes `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/order-proof-audit.json` and `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/order-setup-details.csv`.
 - Run the read-only object audit with Admin page-read scope if Admin API page-object proof is required:
   - `SHOPIFY_STORE=STORE.myshopify.com SHOPIFY_USE_CLI_SESSION=1 npm run store:objects:audit`
-- Confirm contact form creates a CRM `lead` record with submitted date/time, every submitted field, `source_type=contact_form`, `lead_type=contact_form`, and tags after the CRM endpoint is deployed and configured in Theme Editor.
+- Confirm the contact form sends a native Shopify email to `jordan@premiercompanies.com`. CRM lead capture is optional for a later phase.
 - Configure Shopify `orders/create` webhook delivery to `/crm/shopify/orders/create` and confirm purchases create CRM `sale` records with `source_type=shopify_order`, `sale_type`, order id/name, setup summary, and tags. Keep `/crm/orders/import` available for protected manual backfills.
 - Confirm outbound lead webhooks send `crm.lead.created`, outbound purchase webhooks send `crm.sale.created`, and both include `x-patriot-phone-record-id` plus a `sha256=` HMAC signature when outbound destinations are configured.
 - Confirm the hidden billing products exist, use template `product.billing-item`, are assigned to the Order Now/product/cart template settings, and are not added to the public `Phones` collection.
 - Confirm a quantity-2 setup adds quantity 2 for the phone, selected service, and selected add-on billing items; different setups should be added as separate cart lines.
 - Confirm staff can view and export CRM submissions without developer tools.
-- If email notifications remain enabled, confirm contact form sends to the store contact email.
+- Confirm contact form sends to `jordan@premiercompanies.com`.

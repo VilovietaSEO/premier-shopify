@@ -144,7 +144,9 @@ The JSON body includes `event`, `generatedAt`, `source`, and the normalized `rec
 
 ## Shopify Wiring
 
-In Theme Editor:
+For the current launch, do not wire the visible contact form to this CRM endpoint. Leave the Theme Editor `CRM endpoint URL` blank and use Shopify native contact-form email delivery to `jordan@premiercompanies.com`.
+
+If CRM capture is added later, configure Theme Editor:
 
 ```text
 Online Store -> Themes -> Customize -> Pages -> Contact -> IP contact form

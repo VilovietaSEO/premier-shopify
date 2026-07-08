@@ -14,7 +14,7 @@
     <div class="ip-card" style="padding: clamp(1rem, 3vw, 1.5rem);">
       {% assign crm_endpoint = section.settings.crm_endpoint_url | strip %}
 
-      {% capture contact_fields %}
+      {% capture crm_fields %}
         <input type="hidden" name="crm[form_name]" value="contact">
         <input type="hidden" name="crm[record_type]" value="lead">
         <input type="hidden" name="crm[source_type]" value="contact_form">
@@ -27,7 +27,9 @@
         <input type="hidden" name="crm[utm_medium]" value="" data-crm-utm="utm_medium">
         <input type="hidden" name="crm[utm_campaign]" value="" data-crm-utm="utm_campaign">
         <input type="hidden" name="crm[return_to]" value="{{ request.path | append: '?crm=received' | escape }}">
+      {% endcapture %}
 
+      {% capture contact_fields %}
         <div class="ip-field ip-honeypot" aria-hidden="true">
           <label for="ContactWebsite-{{ section.id }}">Website</label>
           <input id="ContactWebsite-{{ section.id }}" type="text" name="company_website" tabindex="-1" autocomplete="off">
@@ -141,6 +143,7 @@
       {% if crm_endpoint != blank %}
         <form method="post" action="{{ crm_endpoint | escape }}" class="ip-contact-form" data-crm-capture="true">
           <p class="ip-form-note" data-crm-success hidden>Thanks. We received your question and will follow up.</p>
+          {{ crm_fields }}
           {{ contact_fields }}
           <button type="submit">{{ section.settings.button_label }}</button>
           <p class="ip-form-note">{{ section.settings.payment_note }}</p>
@@ -225,7 +228,7 @@
       "type": "url",
       "id": "crm_endpoint_url",
       "label": "CRM endpoint URL",
-      "info": "Optional. When set, this form posts to the CRM capture endpoint instead of Shopify's native contact email form."
+      "info": "Leave blank for this launch so Shopify sends contact submissions to the store Sender email. Set Shopify Sender email to jordan@premiercompanies.com. Only set this URL if a CRM capture endpoint is intentionally used later."
     },
     {
       "type": "textarea",

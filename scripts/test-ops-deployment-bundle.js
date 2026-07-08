@@ -38,7 +38,8 @@ assert.match(deploymentReadme, /REVIO_CHECKOUT_WEBHOOK_URLS=https:\/\/hooks\.exa
 assert.match(deploymentReadme, /crm\.lead\.created/);
 assert.match(deploymentReadme, /crm\.sale\.created/);
 assert.match(deploymentReadme, /revio\.checkout\.requested/);
-assert.match(deploymentReadme, /https:\/\/OPS_HOST\/crm\/capture/);
+assert.match(deploymentReadme, /leave the live contact form `CRM endpoint URL` blank/);
+assert.match(deploymentReadme, /jordan@premiercompanies\.com/);
 assert.match(deploymentReadme, /https:\/\/OPS_HOST\/crm\/shopify\/orders\/create/);
 assert.match(deploymentReadme, /https:\/\/OPS_HOST\/revio\/checkout/);
 assert.match(deploymentReadme, /npm run ops:deployment:audit/);

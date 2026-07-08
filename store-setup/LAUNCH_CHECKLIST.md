@@ -249,12 +249,10 @@ Contact page:
 
 - [ ] Open page template `page.contact`.
 - [ ] Confirm contact form fields render.
-- [ ] Confirm the form posts to the approved simple CRM capture path, not email-only handling.
-- [ ] Submit a test lead with unique values in every field.
-- [ ] Confirm the CRM record stores submitted date/time plus every submitted field.
-- [ ] Confirm staff can view the lead without developer tools.
-- [ ] Confirm CSV export includes the same timestamp and all submitted fields.
-- [ ] If email notification remains enabled, confirm delivery to the store contact email.
+- [ ] Leave the `CRM endpoint URL` setting blank for the current launch.
+- [ ] In Shopify Admin, set the contact form recipient/Sender email to `jordan@premiercompanies.com`.
+- [ ] Submit a test contact form entry with unique values in every field.
+- [ ] Confirm `jordan@premiercompanies.com` receives the contact form email, including the selected product/service/add-on context.
 
 ## 7. Navigation And Store Settings
 
@@ -375,20 +373,11 @@ npm run ops:test
 npm run ops:deployment:audit:test
 ```
 
-- [ ] Configure the Theme Editor `CRM endpoint URL` to the deployed HTTPS `/crm/capture` endpoint.
+- [ ] Do not configure the Theme Editor `CRM endpoint URL` for the current launch; the contact form should use Shopify's native email delivery to `jordan@premiercompanies.com`.
 - [ ] Configure Shopify `orders/create` webhook delivery to the deployed HTTPS `/crm/shopify/orders/create` endpoint.
 - [ ] If leads or purchases need to fan out to another system, configure outbound destinations on the ops host with `CRM_LEAD_WEBHOOK_URLS`, `CRM_SALE_WEBHOOK_URLS`, and `CRM_WEBHOOK_SECRET`.
 - [ ] Confirm outbound lead deliveries use event `crm.lead.created`; outbound sale deliveries use event `crm.sale.created`; both include `x-patriot-phone-record-id` and `x-patriot-phone-signature`.
-- [ ] Save the rendered live contact page HTML and prove it posts to the CRM endpoint:
-
-```bash
-cd /Users/vilovieta/Documents/Shopify
-CONTACT_CRM_HTML=/path/to/rendered-contact-page.html \
-CONTACT_CRM_EXPECTED_ENDPOINT=https://www.example.com/crm/capture \
-npm run contact:crm:audit
-```
-
-- [ ] Confirm `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/contact-crm-wiring-audit.json` reports `status: pass`.
+- [ ] Save proof that Shopify native contact-form email delivery reaches `jordan@premiercompanies.com`.
 - [ ] Configure an edge/proxy/app-proxy route for `/llms.txt`, route-level `.../llms.txt`, and/or `/a/llms.txt?path=/...`.
 - [ ] Run the deployed endpoint proof and save `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/ops-deployment-audit.json`:
 
@@ -402,14 +391,14 @@ SHOPIFY_STORE_URL=https://jordan-mark-premier.myshopify.com \
 npm run ops:deployment:audit
 ```
 
-- [ ] Confirm contact leads are tagged with `record_type=lead`, `source_type=contact_form`, `lead_type=contact_form`, and useful tags.
+- [ ] If CRM capture is added later, confirm contact leads are tagged with `record_type=lead`, `source_type=contact_form`, `lead_type=contact_form`, and useful tags.
 - [ ] Confirm purchases are automatically captured in CRM through `/crm/shopify/orders/create` and tagged with `record_type=sale`, `source_type=shopify_order`, and the correct `sale_type`; keep `/crm/orders/import` available for protected manual backfills.
-- [ ] Confirm failed outbound deliveries do not erase the local CRM record; downstream retry/alerting should be handled by the receiving automation tool or production host monitoring.
-- [ ] Confirm the CRM captures submitted date/time, source URL, referrer/UTMs, name, email, phone, age range, use case, interested product, preferred plan, Patriot Package interest, selected add-ons, message, marketing opt-in, and privacy/terms consent if present.
-- [ ] Confirm staff can expand `View details` for a lead or sale and see normalized fields, raw submitted fields, and metadata.
-- [ ] Confirm the CRM has spam protection, at minimum honeypot plus rate limiting or the equivalent app controls.
-- [ ] Confirm the CRM viewer shows newest submissions first plus total, lead, and sale counts.
-- [ ] Export CRM leads/sales to CSV and confirm all normalized fields, `raw_form_fields_json`, and `meta_json` are included.
+- [ ] If CRM capture is added later, confirm failed outbound deliveries do not erase the local CRM record; downstream retry/alerting should be handled by the receiving automation tool or production host monitoring.
+- [ ] If CRM capture is added later, confirm it captures submitted date/time, source URL, referrer/UTMs, name, email, phone, age range, use case, interested product, preferred plan, Patriot Package interest, selected add-ons, message, marketing opt-in, and privacy/terms consent if present.
+- [ ] If CRM capture is added later, confirm staff can expand `View details` for a lead or sale and see normalized fields, raw submitted fields, and metadata.
+- [ ] If CRM capture is added later, confirm the CRM has spam protection, at minimum honeypot plus rate limiting or the equivalent app controls.
+- [ ] If CRM capture is added later, confirm the CRM viewer shows newest submissions first plus total, lead, and sale counts.
+- [ ] If CRM capture is added later, export CRM leads/sales to CSV and confirm all normalized fields, `raw_form_fields_json`, and `meta_json` are included.
 
 ## 9. Claim Discipline QA
 
