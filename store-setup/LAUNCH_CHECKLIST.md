@@ -1,6 +1,6 @@
 # Independence Phone Store Launch Checklist
 
-Use this when Shopify store access is available. The final public domain can be connected after store preview, payment path, ops hosting, CRM, and order proof are approved.
+Use this for `jordan-mark-premier.myshopify.com`. The final public domain can be connected after the store preview is approved.
 
 Canonical repo:
 
@@ -22,56 +22,20 @@ cd /Users/vilovieta/Documents/Shopify
 npm run launch:readiness
 ```
 
-This command writes `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/launch-readiness-audit.json`. It is expected to exit nonzero until public access/SEO, live `llms.txt`, deployed CRM/ops, and order proof are complete.
+This command writes `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/launch-readiness-audit.json`. It is expected to exit nonzero until public access/SEO, live `llms.txt`, external checkout/ops, approved delivery tests, and order proof are complete.
 
 ## 1. Access And Store Target
 
-- [ ] Confirm the store handle: `jordan-mark-premier.myshopify.com` or the current `STORE.myshopify.com`.
+- [ ] Confirm the store handle: `jordan-mark-premier.myshopify.com`.
 - [ ] Confirm staff/collaborator access with theme permissions.
+- [ ] Confirm Jordan and Mark have the operating access approved by the owner.
+- [ ] Keep the developer administrator access needed for ongoing store work.
+- [ ] Give the Rev.io/API developer only the least-privilege integration access required; do not grant payment or bank-setting access unless separately approved.
+- [ ] Require two-step authentication for every staff and collaborator account.
 - [ ] Confirm product, collection, page, navigation, files, and settings access.
 - [ ] Confirm Admin API token includes `read_publications` and `write_publications`, or plan to publish objects to Online Store manually in admin.
 - [ ] Confirm whether CLI login or Shopify Theme Access app password will be used.
 - [ ] Do not connect or publish the final public domain until preview QA is approved.
-
-## 1.1 Users, Roles, And Store Ownership
-
-- [ ] Store owner/admin goes to `Settings -> Users`.
-- [ ] Add Jordan, Mark, support staff, fulfillment staff, and any API/developer users who need access.
-- [ ] Assign least-privilege roles instead of giving every user administrator access.
-- [ ] Require two-step authentication for users with payment, order, user, app, theme, or settings access.
-- [ ] Confirm every invite is accepted; Shopify invitations expire after seven days.
-- [ ] Keep the Rev.io/API implementer out of Shopify payment/bank settings unless explicitly approved.
-
-Official reference: `https://help.shopify.com/en/manual/your-account/users/invite-users`
-
-## 1.2 Payment Path
-
-Choose one launch path before real order proof.
-
-Fastest path: native Shopify Checkout.
-
-- [ ] Go to `Settings -> Payments`.
-- [ ] Activate Shopify Payments or an approved third-party provider.
-- [ ] Leave Theme Editor `Cart -> Rev.io checkout handoff URL` blank.
-- [ ] Confirm checkout can collect payment and create a Shopify order.
-- [ ] Configure Shopify `orders/create` webhook to the ops server so paid orders become CRM sale records.
-- [ ] Decide whether Rev.io sync happens after Shopify payment.
-
-Rev.io checkout path:
-
-- [ ] Deploy the ops server publicly.
-- [ ] Configure `REVIO_CHECKOUT_WEBHOOK_URLS` and `REVIO_WEBHOOK_SECRET` on the ops server.
-- [ ] Set Theme Editor `Cart -> Rev.io checkout handoff URL` to `https://YOUR_DOMAIN/revio/checkout`.
-- [ ] Confirm the cart handoff creates a CRM sale/checkout intent record.
-- [ ] Confirm the API implementer receives and verifies the signed `revio.checkout.requested` webhook.
-- [ ] Confirm Rev.io sandbox payment/request proof before launch.
-
-Do not put Rev.io API keys, APIM subscription keys, Basic Auth credentials, raw card data, or payment-processing code in Shopify Liquid, JavaScript, or Theme Editor settings.
-
-Official payment references:
-
-- `https://help.shopify.com/en/manual/payments/shopify-payments/onboarding`
-- `https://help.shopify.com/en/manual/payments/third-party-providers`
 
 ## 2. Refresh Base Theme
 
@@ -82,7 +46,7 @@ Official payment references:
 shopify theme list --store STORE.myshopify.com
 ```
 
-- [ ] Pull Refresh, apply the Patriot Phone overlay, and run Theme Check:
+- [ ] Pull Refresh, apply the Independence Phone overlay, and run Theme Check:
 
 ```bash
 cd /Users/vilovieta/Documents/Shopify
@@ -171,18 +135,21 @@ Required hidden billing product handles:
 - [ ] `/products/voicemail-to-email`
 - [ ] `/products/auto-attendant`
 - [ ] `/products/add-on-bundle`
-- [ ] `/products/patriot-package`
 - [ ] Billing products are active and purchasable, use template `product.billing-item`, and are not added to the `Phones` collection or public product cards.
-- [ ] Billing products are not physical products and do not require shipping.
+- [ ] Each billing variant is `$0.00`, non-shipping, and uses its documented stable SKU.
+- [ ] The retired `/products/patriot-package` product is not assigned, published, or used by the current order flow.
 
 Required product facts:
 
 - [ ] Classic Phone is `$100`.
 - [ ] Rugged Phone is `$150`.
-- [ ] Classic Phone and Rugged Phone are physical products and require shipping.
 - [ ] Both products use template `product.independence-phone`.
+- [ ] Both phone products use Shopify category `Electronics > Communications > Telephony > Cordless Phones` (`gid://shopify/TaxonomyCategory/el-4-8-3`).
+- [ ] Deferred service/add-on products remain uncategorized pending accounting guidance.
 - [ ] Product images are uploaded or assigned.
+- [ ] Each phone's product media order is Front, optimized rotating MP4, Buttons, Charger, Back.
 - [ ] Product images have concise alt text for SEO/accessibility.
+- [ ] All seven service/add-on products use the approved American-flag media so checkout has no blank placeholder.
 - [ ] Product image dimensions/file sizes are acceptable in Shopify media/file details before launch.
 - [ ] Product descriptions and metafields match `/Users/vilovieta/Documents/Shopify/store-setup/README.md`.
 
@@ -191,8 +158,16 @@ Product media helper, if needed:
 ```bash
 cd /Users/vilovieta/Documents/Shopify
 npm run store:media:dry-run
-SHOPIFY_STORE=STORE.myshopify.com SHOPIFY_USE_CLI_SESSION=1 npm run store:media:assign
+SHOPIFY_THEME_ASSET_BASE='https://cdn.shopify.com/s/files/.../assets' \
+SHOPIFY_PRODUCT_MEDIA_APPROVED=1 \
+SHOPIFY_STORE=STORE.myshopify.com \
+SHOPIFY_USE_CLI_SESSION=1 \
+npm run store:media:assign
 ```
+
+- [ ] Before a real media assignment, copy the exact asset-directory base from a rendered QA-theme asset URL; do not assume a `/cdn/shop/t/N/assets` number.
+- [ ] Record explicit approval for the product-global media mutation before setting `SHOPIFY_PRODUCT_MEDIA_APPROVED=1`.
+- [ ] Run `npm run store:retired-product:dry-run`; if the audit reports an active/published Patriot Package, obtain approval and run `SHOPIFY_RETIRED_PRODUCT_ARCHIVE_APPROVED=1 npm run store:retired-product:archive`.
 
 ## 5. Collection And Page Setup
 
@@ -224,21 +199,22 @@ Home page:
 - [ ] Open `Home page` in Theme Editor.
 - [ ] Select `IP video hero`.
 - [ ] Upload or select hero video: `/Users/vilovieta/Documents/Shopify/brief-materials/assets/video/indy-phone-reel-1.mov`.
-- [ ] Confirm hero positioning: `Give them a phone. Not the internet.`
+- [ ] Confirm hero positioning: `Give your child a phone, not the internet.`
 - [ ] Confirm the JTBD line is removed and the section starts with the updated reachability heading.
 - [ ] Confirm the primary CTA says `Order now` and points to `/pages/order-now`.
 
 Order Now page:
 
 - [ ] Open page template `page.order`.
-- [ ] Confirm the page presents Patriot Package, Choose your phone, Choose your plan, and Choose add-ons.
-- [ ] Confirm selected-state highlighting, savings descriptors, and policy checkbox render.
+- [ ] Confirm the page presents Choose your phone, Choose your service plan, and Choose add-ons with no Patriot Package.
+- [ ] Confirm selected-state highlighting and separate immediate/future price language render.
+- [ ] Confirm neither Privacy Policy/Terms consent nor desired area code is requested on Order Now.
 
 Product pages:
 
 - [ ] Open `Classic Phone` with template `product.independence-phone`.
 - [ ] Open `Rugged Phone` with template `product.independence-phone`.
-- [ ] Confirm the product image, price, specs, service copy, add-ons, and package band render.
+- [ ] Confirm the product image, price, specs, service copy, and add-ons render without Patriot Package copy.
 - [ ] Confirm the product form shows monthly/annual service choices.
 - [ ] Confirm the product form shows Call Recording, Quiet Hours, Voicemail to Email, Add-on Bundle, and Auto Attendant add-on choices.
 - [ ] Confirm the hidden billing products are assigned in the product form and Order Now template settings.
@@ -249,10 +225,11 @@ Contact page:
 
 - [ ] Open page template `page.contact`.
 - [ ] Confirm contact form fields render.
-- [ ] Leave the `CRM endpoint URL` setting blank for the current launch.
-- [ ] In Shopify Admin, set the contact form recipient/Sender email to `jordan@premiercompanies.com`.
-- [ ] Submit a test contact form entry with unique values in every field.
-- [ ] Confirm `jordan@premiercompanies.com` receives the contact form email, including the selected product/service/add-on context.
+- [ ] Confirm Theme Editor `CRM endpoint URL` is blank so the form uses Shopify's native contact handling for this handoff.
+- [ ] Confirm Shopify Admin `Settings -> Notifications -> Sender email` is `jordan@premiercompanies.com`.
+- [ ] Record explicit client approval before submitting any external contact-form delivery test.
+- [ ] After approval, submit a uniquely labeled test and confirm delivery to `jordan@premiercompanies.com`.
+- [ ] If CRM capture is later approved, confirm the endpoint stores submitted date/time plus every submitted field, staff can view the lead without developer tools, and CSV export includes the same data.
 
 ## 7. Navigation And Store Settings
 
@@ -269,15 +246,19 @@ Footer menu:
 - [ ] FAQ -> `/pages/faq`
 - [ ] Contact -> `/pages/contact`
 - [ ] Privacy Policy -> `/policies/privacy-policy`
-- [ ] Terms of Service -> `/policies/terms-of-service`
+- [ ] Terms and Conditions -> `/policies/terms-of-service`
 
 Store settings:
 
 - [ ] Header logo is uploaded/selected from `/Users/vilovieta/Documents/Shopify/brief-materials/assets/logo/independence-phone-logo-export.png`.
-- [ ] Shipping is configured for `$15/phone` or the approved Shopify shipping model.
-- [ ] Taxes are configured for launch requirements.
-- [ ] Payments are configured or launch checkout behavior is explicitly approved.
+- [ ] Exactly one flat `$15` shipping rate applies per order.
+- [ ] No second shipping method appears.
+- [ ] Taxes calculate after a customer enters an address.
+- [ ] The final Rev.io/gateway path is configured or production checkout remains explicitly blocked.
 - [ ] Store contact email is correct.
+- [ ] Native contact-form Sender email is `jordan@premiercompanies.com`.
+- [ ] Staff new-order notifications include `mark@premiercompanies.com` and `jordan@premiercompanies.com`; this list is separate from the contact-form Sender email.
+- [ ] Record explicit client approval before sending a contact-form test or placing a test order that triggers external email.
 - [ ] Policies are drafted or approved.
 
 ## 8. SEO And Operations Readiness
@@ -299,7 +280,7 @@ SEO:
 - [ ] `/llms.txt` returns a homepage/site overview in `text/plain; charset=utf-8`.
 - [ ] `/products/standard-phone/llms.txt` returns a product-specific Markdown summary.
 - [ ] `/products/rugged-phone/llms.txt` returns a product-specific Markdown summary.
-- [ ] `/pages/order-now/llms.txt` returns a guided order-builder Markdown summary.
+- [ ] `/pages/order-now/llms.txt` returns a guided order-flow Markdown summary.
 - [ ] `/a/llms.txt?path=/pages/faq` returns the FAQ Markdown summary when using Shopify app proxy routing.
 - [ ] Run the local llms proof:
 
@@ -330,12 +311,15 @@ unset SHOPIFY_STOREFRONT_PASSWORD
 
 Operations:
 
-- [ ] Confirm hidden billing products exist and use template `product.billing-item`: Monthly Service, Annual Service, Call Recording, Quiet Hours, Voicemail to Email, Auto Attendant, Add-on Bundle, and Patriot Package.
+- [ ] Confirm hidden billing products exist and use template `product.billing-item`: Monthly Service, Annual Service, Call Recording, Quiet Hours, Voicemail to Email, Auto Attendant, and Add-on Bundle.
 - [ ] Confirm hidden billing products are active/purchasable but not added to the `Phones` collection or visible public product grid.
+- [ ] Confirm all seven billing products use `$0.00` Shopify variants, no shipping requirement, stable SKUs, and American-flag media.
 - [ ] Place a test order or approved manual order for Classic Phone with monthly service and one add-on.
-- [ ] Place a test order or approved manual order for Classic Phone with Patriot Package, annual service, and Add-on Bundle.
-- [ ] Confirm Shopify Admin order detail shows the phone line plus the priced service/add-on billing line items with matching setup quantities.
-- [ ] Confirm the phone line still shows service plan, add-ons, Patriot Package, savings, and policy agreement line-item properties for staff setup review.
+- [ ] Place a test order or approved manual order for Rugged Phone with annual service and Add-on Bundle.
+- [ ] Confirm Shopify Admin order detail shows the phone line plus zero-dollar service/add-on lines with matching setup quantities.
+- [ ] Confirm service/add-on lines preserve future charge, billing cadence, and `first_day_of_next_month`.
+- [ ] Confirm the Order Now page and cart do not contain policy consent or desired-area-code fields.
+- [ ] Confirm cart removal deletes the phone and its grouped service/add-on lines.
 - [ ] Confirm fulfillment/tracking workflow is available in Shopify Admin.
 - [ ] Export orders to CSV and confirm setup details are usable, or document the need for a custom export/app.
 - [ ] If Shopify's native CSV does not expose setup properties cleanly, use the local custom-export proof and exporter:
@@ -351,7 +335,35 @@ npm run orders:export
 ```
 
 - [ ] Confirm `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/order-proof-audit.json` reports `status: pass`.
-- [ ] Confirm `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/order-setup-details.csv` contains the Classic monthly add-on order and Classic Patriot Package annual/bundle order.
+- [ ] Confirm `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/order-setup-details.csv` contains the Classic monthly add-on order and Rugged annual/bundle order.
+
+### Storefront/cart handoff proof
+
+- [ ] The checkout handoff schema is `independence_phone.revio_checkout.v2`.
+- [ ] Each line includes stable SKU, role, quantity, `checkout_price_cents`, `future_charge_cents`, `billing_cadence`, and `first_bill_rule`.
+- [ ] Phone-only merchandise is due today.
+- [ ] Shipping is exactly `1500` cents once per order.
+- [ ] Tax is marked pending until the final checkout has an address.
+- [ ] Future service/add-on total is shown separately and begins the first day of the following month.
+- [ ] Patriot Package and `PP-PATRIOT-PACKAGE` are absent.
+
+### External Rev.io/gateway proof
+
+These items cannot be completed by the Shopify theme alone:
+
+- [ ] Final checkout requires Privacy Policy/Terms consent exactly once.
+- [ ] Final checkout requires desired area code.
+- [ ] Server validates every variant, SKU, quantity, role, checkout price, future price, cadence, and first-bill rule.
+- [ ] Server rejects browser-tampered values and retired package roles/SKUs.
+- [ ] Checkout creation, payment, provisioning, retry, and webhook handling are idempotent.
+- [ ] Today's payment includes only phone, applicable tax, and one `$15` shipping fee.
+- [ ] Service/add-ons are scheduled for the first day of the following month and are not charged today.
+- [ ] No raw card number, CVV, or Rev.io credential appears in the browser, Shopify metadata, logs, or CRM.
+- [ ] Complete `/Users/vilovieta/Documents/Shopify/REVIO_INTEGRATION_HANDOFF.md` sandbox proof before enabling production checkout.
+
+### Optional CRM track
+
+The CRM items below are not required for the current native-contact handoff. Run them only if the client separately approves CRM capture and deployment.
 
 - [ ] Implement simple CRM capture through an approved server-side path, such as a custom Shopify app/app proxy, Shopify Forms/CRM app, or external backend.
 - [ ] If using the included ops service, deploy `/Users/vilovieta/Documents/Shopify/ops/storefront-ops-server.js` on persistent storage with `CRM_SUBMISSIONS_PATH`, `CRM_VIEWER_TOKEN`, `CRM_ORDER_INGEST_TOKEN`, `SHOPIFY_ORDER_WEBHOOK_SECRET`, and `LLMS_SITE_URL` configured.
@@ -373,11 +385,23 @@ npm run ops:test
 npm run ops:deployment:audit:test
 ```
 
-- [ ] Do not configure the Theme Editor `CRM endpoint URL` for the current launch; the contact form should use Shopify's native email delivery to `jordan@premiercompanies.com`.
-- [ ] Configure Shopify `orders/create` webhook delivery to the deployed HTTPS `/crm/shopify/orders/create` endpoint.
+- [ ] Keep Theme Editor `CRM endpoint URL` blank for native contact delivery. Configure a deployed HTTPS `/crm/capture` endpoint only if the client later approves CRM capture.
+- [ ] If CRM capture is approved, configure Shopify `orders/create` webhook delivery to the deployed HTTPS `/crm/shopify/orders/create` endpoint.
 - [ ] If leads or purchases need to fan out to another system, configure outbound destinations on the ops host with `CRM_LEAD_WEBHOOK_URLS`, `CRM_SALE_WEBHOOK_URLS`, and `CRM_WEBHOOK_SECRET`.
 - [ ] Confirm outbound lead deliveries use event `crm.lead.created`; outbound sale deliveries use event `crm.sale.created`; both include `x-patriot-phone-record-id` and `x-patriot-phone-signature`.
-- [ ] Save proof that Shopify native contact-form email delivery reaches `jordan@premiercompanies.com`.
+- [ ] If CRM capture is approved, save the rendered live contact page HTML and prove it posts to the CRM endpoint:
+
+```bash
+cd /Users/vilovieta/Documents/Shopify
+CONTACT_CRM_HTML=/path/to/rendered-contact-page.html \
+CONTACT_CRM_EXPECTED_ENDPOINT=https://www.example.com/crm/capture \
+npm run contact:crm:audit
+```
+
+- [ ] If CRM capture is approved, confirm `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/contact-crm-wiring-audit.json` reports `status: pass`.
+
+### Public `llms.txt` and combined ops proof
+
 - [ ] Configure an edge/proxy/app-proxy route for `/llms.txt`, route-level `.../llms.txt`, and/or `/a/llms.txt?path=/...`.
 - [ ] Run the deployed endpoint proof and save `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/ops-deployment-audit.json`:
 
@@ -391,14 +415,18 @@ SHOPIFY_STORE_URL=https://jordan-mark-premier.myshopify.com \
 npm run ops:deployment:audit
 ```
 
-- [ ] If CRM capture is added later, confirm contact leads are tagged with `record_type=lead`, `source_type=contact_form`, `lead_type=contact_form`, and useful tags.
+### Optional CRM verification
+
+Complete these checks only if the client approves CRM lead or sale capture.
+
+- [ ] If CRM capture is approved, confirm contact leads are tagged with `record_type=lead`, `source_type=contact_form`, `lead_type=contact_form`, and useful tags.
 - [ ] Confirm purchases are automatically captured in CRM through `/crm/shopify/orders/create` and tagged with `record_type=sale`, `source_type=shopify_order`, and the correct `sale_type`; keep `/crm/orders/import` available for protected manual backfills.
-- [ ] If CRM capture is added later, confirm failed outbound deliveries do not erase the local CRM record; downstream retry/alerting should be handled by the receiving automation tool or production host monitoring.
-- [ ] If CRM capture is added later, confirm it captures submitted date/time, source URL, referrer/UTMs, name, email, phone, age range, use case, interested product, preferred plan, Patriot Package interest, selected add-ons, message, marketing opt-in, and privacy/terms consent if present.
-- [ ] If CRM capture is added later, confirm staff can expand `View details` for a lead or sale and see normalized fields, raw submitted fields, and metadata.
-- [ ] If CRM capture is added later, confirm the CRM has spam protection, at minimum honeypot plus rate limiting or the equivalent app controls.
-- [ ] If CRM capture is added later, confirm the CRM viewer shows newest submissions first plus total, lead, and sale counts.
-- [ ] If CRM capture is added later, export CRM leads/sales to CSV and confirm all normalized fields, `raw_form_fields_json`, and `meta_json` are included.
+- [ ] Confirm failed outbound deliveries do not erase the local CRM record; downstream retry/alerting should be handled by the receiving automation tool or production host monitoring.
+- [ ] Confirm the CRM captures submitted date/time, source URL, referrer/UTMs, name, email, phone, interested product, selected service, selected add-ons, message, marketing opt-in, and checkout consent evidence when provided by the final gateway.
+- [ ] Confirm staff can expand `View details` for a lead or sale and see normalized fields, raw submitted fields, and metadata.
+- [ ] Confirm the CRM has spam protection, at minimum honeypot plus rate limiting or the equivalent app controls.
+- [ ] Confirm the CRM viewer shows newest submissions first plus total, lead, and sale counts.
+- [ ] Export CRM leads/sales to CSV and confirm all normalized fields, `raw_form_fields_json`, and `meta_json` are included.
 
 ## 9. Claim Discipline QA
 
@@ -415,7 +443,7 @@ Confirm the storefront does not imply unsupported features:
 
 Confirm the storefront keeps the main pitch parent-first:
 
-- [ ] `Give them a phone. Not the internet.`
+- [ ] `Give your child a phone, not the internet.`
 - [ ] The old `Reachable without scrollable` eyebrow is absent.
 - [ ] `A phone that acts like a phone`.
 - [ ] The old `The useful part of a phone, first.` heading is absent.
@@ -434,7 +462,9 @@ Desktop and mobile:
 - [ ] Contact `/pages/contact`.
 - [ ] Page source includes Independence Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD.
 - [ ] Cart shows selected service/add-on setup details.
-- [ ] Checkout path approved for launch.
+- [ ] Cart shows phone-only due-today merchandise, one `$15` shipping fee, tax pending until address, and separate future charges.
+- [ ] Cart removal removes the complete grouped setup.
+- [ ] Final Rev.io/gateway checkout path passes the required sandbox proof.
 - [ ] 404/system pages use Shopify boilerplate acceptably.
 
 Theme Editor:

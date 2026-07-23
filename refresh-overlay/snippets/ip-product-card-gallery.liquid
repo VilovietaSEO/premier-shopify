@@ -2,7 +2,7 @@
   assign media_limit = 6
   assign gallery_title = card_product.title | default: fallback_title
   assign product_media_count = 0
-  if card_product != blank and card_product.media.size > 0
+  if prefer_fallback_asset != true and card_product != blank and card_product.media.size > 0
     assign product_media_count = card_product.media.size
     if product_media_count > media_limit
       assign product_media_count = media_limit
@@ -11,7 +11,7 @@
 
   assign block_image_count = 0
   for block in gallery_blocks
-    if block.type == block_type and block.settings.image != blank
+    if prefer_fallback_asset != true and block.type == block_type and block.settings.image != blank
       assign block_image_count = block_image_count | plus: 1
     endif
   endfor
@@ -26,7 +26,7 @@
 
 <div class="ip-product-card__gallery" data-product-gallery data-gallery-title="{{ gallery_title | escape }}">
   <div class="ip-product-card__media" aria-live="polite">
-    {% if card_product != blank and card_product.media.size > 0 %}
+    {% if prefer_fallback_asset != true and card_product != blank and card_product.media.size > 0 %}
       {% for media in card_product.media limit: media_limit %}
         {% liquid
           assign media_alt = media.alt | default: gallery_title
@@ -80,7 +80,7 @@
     {% endif %}
 
     {% for block in gallery_blocks %}
-      {% if block.type == block_type and block.settings.image != blank %}
+      {% if prefer_fallback_asset != true and block.type == block_type and block.settings.image != blank %}
         {% liquid
           assign block_alt = block.settings.image.alt | default: gallery_title
           assign active_slide = false
@@ -122,7 +122,7 @@
         tabindex="0"
         aria-label="Open {{ gallery_title | escape }} full view"
       >
-        {% if fallback_image != blank %}
+        {% if prefer_fallback_asset != true and fallback_image != blank %}
           {{
             fallback_image
             | image_url: width: 760
@@ -141,7 +141,7 @@
   {% if gallery_count > 1 %}
     <div class="ip-product-card__thumbs" aria-label="{{ gallery_title | escape }} images">
       {% assign thumb_index = 0 %}
-      {% if card_product != blank and card_product.media.size > 0 %}
+      {% if prefer_fallback_asset != true and card_product != blank and card_product.media.size > 0 %}
         {% for media in card_product.media limit: media_limit %}
           <button
             class="ip-product-card__thumb{% if thumb_index == 0 %} is-active{% endif %}"
@@ -167,7 +167,7 @@
       {% endif %}
 
       {% for block in gallery_blocks %}
-        {% if block.type == block_type and block.settings.image != blank %}
+        {% if prefer_fallback_asset != true and block.type == block_type and block.settings.image != blank %}
           <button
             class="ip-product-card__thumb{% if thumb_index == 0 %} is-active{% endif %}"
             type="button"

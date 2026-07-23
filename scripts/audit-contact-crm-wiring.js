@@ -191,6 +191,16 @@ function findCrmForm(html) {
   return null;
 }
 
+function controlTag(formHtml, field) {
+  const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = formHtml.match(new RegExp(`<(?:input|textarea)\\b[^>]*\\bname\\s*=\\s*["']${escaped}["'][^>]*>`, 'i'));
+  return match ? match[0] : '';
+}
+
+function hasRequiredAttribute(tag) {
+  return /(?:^|\s)required(?:\s|=|>|$)/i.test(tag);
+}
+
 function auditHtml(html, options = {}) {
   const expectedEndpoint = options.expectedEndpoint || '';
   const failures = [];
@@ -211,7 +221,7 @@ function auditHtml(html, options = {}) {
     failures.push(`CRM form action ${action || '(blank)'} does not match expected endpoint ${expectedEndpoint}`);
   }
 
-  const requiredFields = [
+  const requiredProvenanceFields = [
     'crm[record_type]',
     'crm[source_type]',
     'crm[lead_type]',
@@ -223,30 +233,80 @@ function auditHtml(html, options = {}) {
     'crm[utm_medium]',
     'crm[utm_campaign]',
     'crm[return_to]',
+  ];
+  const requiredVisibleFields = [
     'contact[name]',
     'contact[email]',
     'contact[phone]',
+    'contact[body]',
+  ];
+  const retiredVisibleFields = [
     'contact[Child age range]',
     'contact[Main use case]',
     'contact[Interested product]',
     'contact[Preferred service plan]',
     'contact[Patriot Package interest]',
     'contact[Selected add-ons]',
-    'contact[body]',
     'contact[Marketing opt-in]',
     'contact[Privacy and terms consent]',
   ];
 
-  for (const field of requiredFields) {
+  for (const field of [...requiredProvenanceFields, ...requiredVisibleFields]) {
     const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     if (!new RegExp(`name\\s*=\\s*["']${escaped}["']`, 'i').test(formHtml)) {
       failures.push(`missing form field ${field}`);
     }
   }
 
+  const nameField = controlTag(formHtml, 'contact[name]');
+  const emailField = controlTag(formHtml, 'contact[email]');
+  const phoneField = controlTag(formHtml, 'contact[phone]');
+  const messageField = controlTag(formHtml, 'contact[body]');
+  if (nameField && (!/type\s*=\s*["']text["']/i.test(nameField) || !hasRequiredAttribute(nameField))) {
+    failures.push('Name must be a required text field');
+  }
+  if (emailField && (!/type\s*=\s*["']email["']/i.test(emailField) || !hasRequiredAttribute(emailField))) {
+    failures.push('Email must be a required email field');
+  }
+  if (phoneField && (!/type\s*=\s*["']tel["']/i.test(phoneField) || hasRequiredAttribute(phoneField))) {
+    failures.push('Phone Number must be an optional telephone field');
+  }
+  if (messageField && (!/^<textarea\b/i.test(messageField) || !hasRequiredAttribute(messageField))) {
+    failures.push('How can we Help? must be a required textarea');
+  }
+
+  for (const field of retiredVisibleFields) {
+    const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (new RegExp(`name\\s*=\\s*["']${escaped}["']`, 'i').test(formHtml)) {
+      failures.push(`retired visible field ${field} is present`);
+    }
+  }
+
+  for (const controlMatch of formHtml.matchAll(/<(?:input|select|textarea)\b[^>]*>/gi)) {
+    const tag = controlMatch[0];
+    const field = attrValue(tag, 'name');
+    if (
+      field.startsWith('contact[') &&
+      !requiredVisibleFields.includes(field) &&
+      !retiredVisibleFields.includes(field) &&
+      !/type\s*=\s*["']hidden["']/i.test(tag)
+    ) {
+      failures.push(`unexpected visible contact field ${field}`);
+    }
+  }
+
   if (!/company_website/i.test(formHtml)) failures.push('honeypot field company_website is missing');
-  if (!/Privacy Policy/i.test(formHtml)) failures.push('Privacy Policy link text is missing');
-  if (!/Terms and Conditions/i.test(formHtml)) failures.push('Terms and Conditions link text is missing');
+  if (!/<label\b[^>]*>\s*Name\s*<\/label>/i.test(formHtml)) failures.push('Name label is missing');
+  if (!/<label\b[^>]*>\s*Email\s*<\/label>/i.test(formHtml)) failures.push('Email label is missing');
+  if (!/<label\b[^>]*>\s*Phone Number\s*<\/label>/i.test(formHtml)) failures.push('Phone Number label is missing');
+  if (!/<label\b[^>]*>\s*How can we Help\?\s*<\/label>/i.test(formHtml)) failures.push('How can we Help? label is missing');
+  if (!/<button\b[^>]*type\s*=\s*["']submit["'][^>]*>\s*Send\s*<\/button>/i.test(formHtml)) {
+    failures.push('Send submit button is missing');
+  }
+  if (/<a\b[^>]*>\s*(?:Privacy Policy|Terms(?: and Conditions)?)\s*<\/a>/i.test(formHtml)) {
+    failures.push('policy link is present in the contact form');
+  }
+  if (/patriot/i.test(formHtml)) failures.push('Patriot reference is present in the contact form');
 
   return {
     status: failures.length > 0 ? 'fail' : 'pass',
@@ -254,7 +314,7 @@ function auditHtml(html, options = {}) {
     formAction: action,
     formMethod: method,
     expectedEndpoint: expectedEndpoint || null,
-    requiredFieldCount: requiredFields.length,
+    requiredFieldCount: requiredProvenanceFields.length + requiredVisibleFields.length,
     failures,
   };
 }

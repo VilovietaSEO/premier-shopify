@@ -1,5 +1,5 @@
 {%- liquid
-  assign organization_name = shop.name | default: 'Independence Phone'
+  assign organization_name = settings.ip_brand_name | default: 'Independence Phone'
   assign organization_url = request.origin | append: routes.root_url
   assign organization_logo = 'ip-current-site-logo.png' | asset_url | prepend: 'https:'
   assign organization_description = shop.description | default: 'Independence Phone helps families give kids a phone without apps, browsers, social feeds, or the open internet.'
@@ -23,7 +23,7 @@
       "@type": "WebSite",
       "name": {{ organization_name | json }},
       "url": {{ organization_url | json }},
-      "description": "Give them a phone. Not the internet."
+      "description": "Give your child a phone, not the internet."
     }
   </script>
 {% endif %}

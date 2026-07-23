@@ -25,9 +25,7 @@
 
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
-    {% if template.name == 'product' and product.template_suffix == 'billing-item' %}
-      <meta name="robots" content="noindex,nofollow">
-    {% endif %}
+    <meta name="robots" content="noindex,nofollow">
     {% render 'ip-structured-data' %}
 
     {{ content_for_header }}

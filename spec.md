@@ -1,9 +1,13 @@
 # Shopify Flow Remediation Spec
 
+> **Current delivery override (2026-07-23):** Use `docs/decisions/2026-07-23-defer-service-and-add-on-charges.md`, `CLIENT_QA_EXECUTION_SPEC.md` under `2026-07-23 delivery override`, and `GO_LIVE_RUNBOOK.md` as the current contract. They supersede every historical issue below that describes an active Patriot Package, priced service/add-on checkout lines, policy consent on Order Now/cart, or `/collections/all` as the primary purchase route.
+
+> **Current theme-role override (2026-07-23):** Theme `151266459717` is live and deferred-billing QA theme `151553245253` is unpublished. Choose and verify a rollback candidate with `shopify theme list` immediately before launch. Every different live/preview role below is dated historical proof.
+
 Date: 2026-06-30
 Store: `jordan-mark-premier.myshopify.com`
-Live theme: `Independence Phone` / theme ID `150479208517`
-Status: current theme is live; storefront remains password-gated; final client review still required
+Historical baseline theme: `Independence Phone` / theme ID `150479208517`
+Status of this document: historical remediation record; the current contract is defined by the overrides above
 
 ## Purpose
 

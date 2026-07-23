@@ -3,65 +3,7 @@
     "contact": {
       "type": "ip-contact-form",
       "settings": {}
-    },
-    "faq": {
-      "type": "ip-faq",
-      "blocks": {
-        "choosing": {
-          "type": "faq",
-          "settings": {
-            "question": "What should I ask if I am not sure which phone to choose?",
-            "answer": "<p>Tell us where the phone will be used, who needs to call, how rough the handset may be treated, and whether battery life or rugged construction matters most.</p>"
-          }
-        },
-        "updates": {
-          "type": "faq",
-          "settings": {
-            "question": "Can I receive launch or marketing updates?",
-            "answer": "<p>Yes. Use the opt-in checkbox on the contact form to receive text or email updates and marketing information. You can opt out later.</p>"
-          }
-        },
-        "referral": {
-          "type": "faq",
-          "settings": {
-            "question": "How does the referral offer work?",
-            "answer": "<p>The supplied offer is: refer a friend and earn 1 free month of service.</p>"
-          }
-        }
-      },
-      "block_order": ["choosing", "updates", "referral"],
-      "settings": {
-        "heading": "A few common questions before you send the form."
-      }
-    },
-    "trust": {
-      "type": "ip-trust-band",
-      "blocks": {
-        "owned": {
-          "type": "trust_item",
-          "settings": {
-            "title": "American-owned",
-            "body": "A values-aligned trust layer for families choosing a simpler first phone."
-          }
-        },
-        "experience": {
-          "type": "trust_item",
-          "settings": {
-            "title": "42 years in communications",
-            "body": "Use the company history to make the product feel dependable and experienced."
-          }
-        },
-        "package": {
-          "type": "trust_item",
-          "settings": {
-            "title": "Patriot Package",
-            "body": "Ask about the Patriot Package if you want a phone, annual service, and every add-on together."
-          }
-        }
-      },
-      "block_order": ["owned", "experience", "package"],
-      "settings": {}
     }
   },
-  "order": ["contact", "faq", "trust"]
+  "order": ["contact"]
 }

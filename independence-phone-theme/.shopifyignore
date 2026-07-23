@@ -26,6 +26,9 @@ CONTRIBUTING.md
 LICENSE.md
 *.zip
 
+# Preserve server-side Theme Editor selections on every push.
+config/settings_data.json
+
 # Git and local tooling metadata
 .gitattributes
 .gitignore

@@ -67,6 +67,67 @@ function assertFileIncludes(filePath, phrases, label = filePath) {
   }
 }
 
+function assertFileExcludes(filePath, phrases, label = filePath) {
+  const absolute = assertFile(filePath, label);
+  if (!absolute) return;
+  const source = fs.readFileSync(absolute, 'utf8');
+
+  for (const phrase of phrases) {
+    if (source.includes(phrase)) {
+      fail(`${label}: unexpectedly includes ${phrase}`);
+    } else {
+      pass(`${label}: excludes ${phrase}`);
+    }
+  }
+}
+
+function assertFileOccurrenceCount(filePath, phrase, expectedCount, label = filePath) {
+  const absolute = assertFile(filePath, label);
+  if (!absolute) return;
+  const source = fs.readFileSync(absolute, 'utf8');
+  const actualCount = source.split(phrase).length - 1;
+
+  if (actualCount === expectedCount) {
+    pass(`${label}: includes ${phrase} exactly ${expectedCount} time(s)`);
+  } else {
+    fail(`${label}: expected ${phrase} exactly ${expectedCount} time(s), found ${actualCount}`);
+  }
+}
+
+function assertFileMatches(filePath, pattern, requirement, label = filePath) {
+  const absolute = assertFile(filePath, label);
+  if (!absolute) return;
+  const source = fs.readFileSync(absolute, 'utf8');
+
+  if (pattern.test(source)) {
+    pass(`${label}: ${requirement}`);
+  } else {
+    fail(`${label}: missing ${requirement}`);
+  }
+}
+
+function assertFilePhraseOrder(filePath, phrases, label = filePath) {
+  const absolute = assertFile(filePath, label);
+  if (!absolute) return;
+  const source = fs.readFileSync(absolute, 'utf8');
+  let previousIndex = -1;
+
+  for (const phrase of phrases) {
+    const index = source.indexOf(phrase, previousIndex + 1);
+    if (index === -1) {
+      fail(`${label}: cannot verify order because ${phrase} is missing`);
+      return;
+    }
+    if (index <= previousIndex) {
+      fail(`${label}: ${phrase} is out of the required order`);
+      return;
+    }
+    previousIndex = index;
+  }
+
+  pass(`${label}: required phrase order is preserved`);
+}
+
 function extractSectionSchema(section) {
   const filePath = `independence-phone-theme/sections/${section}.liquid`;
   const absolute = path.join(root, filePath);
@@ -277,7 +338,6 @@ const customSections = [
   'ip-service-plans',
   'ip-add-ons',
   'ip-capability-table',
-  'ip-package-band',
   'ip-comparison-matrix',
   'ip-faq',
   'ip-trust-band',
@@ -357,11 +417,6 @@ const sectionSchemaRequirements = {
       'voicemail_to_email_product',
       'auto_attendant_product',
       'addon_bundle_product',
-      'package_heading',
-      'package_title',
-      'package_price',
-      'package_value',
-      'package_descriptor',
       'checkout_note',
       'button_label',
     ],
@@ -382,20 +437,6 @@ const sectionSchemaRequirements = {
     blocks: { capability: ['capability', 'status', 'status_style', 'explanation'] },
     requiresPreset: true,
   },
-  'ip-package-band': {
-    settings: [
-      'eyebrow',
-      'heading',
-      'body',
-      'price_label',
-      'price',
-      'includes',
-      'disclosure',
-      'cta_label',
-      'cta_link',
-    ],
-    requiresPreset: true,
-  },
   'ip-comparison-matrix': {
     settings: ['eyebrow', 'heading', 'body'],
     blocks: { row: ['feature', 'independence', 'smartphone', 'flip', 'landline'] },
@@ -403,7 +444,7 @@ const sectionSchemaRequirements = {
   },
   'ip-faq': {
     settings: ['eyebrow', 'heading', 'body', 'open_first'],
-    blocks: { faq: ['question', 'answer'] },
+    blocks: { faq: ['question', 'answer', 'anchor_id'] },
     requiresPreset: true,
   },
   'ip-trust-band': {
@@ -412,16 +453,7 @@ const sectionSchemaRequirements = {
     requiresPreset: true,
   },
   'ip-contact-form': {
-    settings: [
-      'eyebrow',
-      'heading',
-      'body',
-      'helper',
-      'button_label',
-      'crm_endpoint_url',
-      'opt_in_text',
-      'payment_note',
-    ],
+    settings: ['button_label', 'crm_endpoint_url'],
     requiresPreset: true,
   },
 };
@@ -431,11 +463,14 @@ const customTemplates = [
   'collection.phones.json',
   'product.independence-phone.json',
   'page.contact.json',
+  'page.faq.json',
+  'page.order.json',
 ];
 
 const customSnippets = [
   'ip-structured-data.liquid',
   'ip-product-card-gallery.liquid',
+  'ip-order-builder-form.liquid',
 ];
 
 const themeAssets = [
@@ -447,8 +482,22 @@ const themeAssets = [
   'ip-current-site-product-3.png',
   'ip-current-site-product-4.png',
   'ip-current-site-product-collage.png',
+  'ip-classic-phone-back.webp',
+  'ip-classic-phone-buttons.webp',
+  'ip-classic-phone-charger.webp',
+  'ip-classic-phone-front.webp',
+  'ip-classic-phone-spin.mp4',
+  'ip-rugged-phone-back.webp',
+  'ip-rugged-phone-buttons.webp',
+  'ip-rugged-phone-charger.webp',
+  'ip-rugged-phone-front.webp',
+  'ip-rugged-phone-spin.mp4',
+  'ip-billing-flag.webp',
   'ip-independence-phone-product-crunchy.png',
   'ip-hero-video.mp4',
+  'ip-hero-video-desktop.mp4',
+  'ip-hero-video-poster.webp',
+  'ip-hero-video-poster-mobile.webp',
   'ip-hero-video-poster.jpg',
   'ip-phone-cutout-freedom.png',
   'ip-bg-flag-subtle.png',
@@ -504,6 +553,18 @@ for (const asset of themeAssets) {
   assertFilesMatch(`independence-phone-theme/assets/${asset}`, `refresh-overlay/assets/${asset}`);
 }
 
+for (const file of [
+  'sections/footer.liquid',
+  'sections/cart.liquid',
+  'sections/page.liquid',
+  'assets/ip-cart.js',
+]) {
+  assertFilesMatch(
+    `independence-phone-theme/${file}`,
+    `refresh-overlay/${file}`
+  );
+}
+
 assertExecutable('scripts/apply-refresh-overlay.sh', 'Refresh overlay script');
 assertExecutable('scripts/bootstrap-refresh-store.sh', 'Refresh store bootstrap script');
 assertExecutable('scripts/test-refresh-overlay.sh', 'Refresh overlay smoke test');
@@ -512,6 +573,8 @@ assertExecutable('scripts/create-storefront-objects.js', 'Storefront object crea
 assertExecutable('scripts/audit-live-seo.js', 'Live SEO audit script');
 assertFile('scripts/audit-storefront-objects.js', 'Read-only storefront object audit script');
 assertFile('scripts/test-storefront-object-audit.js', 'Read-only storefront object audit proof script');
+assertFile('scripts/storefront-billing-products.js', 'Deferred billing catalog definition');
+assertFile('scripts/test-deferred-billing-catalog.js', 'Deferred billing catalog proof script');
 assertFile('scripts/assign-product-media.js', 'Product media assignment script');
 assertFile('crm/simple-crm.js', 'Simple CRM module');
 assertFile('crm/README.md', 'Simple CRM README');
@@ -542,13 +605,51 @@ assertFileIncludes('scripts/create-storefront-objects.js', [
   'pageCreate',
   'hidden billing products',
   'billing-item',
-  'inventoryItemUpdate',
+  'productInputFromBillingProduct',
+  'variantInputFromBillingProduct',
+  'future_price_cents',
+  'billing_cadence',
+  'first_bill_rule',
+  'price: item.checkoutPrice',
+  'taxable: false',
   'requiresShipping: false',
+  'tracked: false',
+], 'Zero-dollar deferred billing storefront object creation script');
+assertFileExcludes('scripts/create-storefront-objects.js', [
+  'inventoryItemUpdate',
   'write_inventory',
-  'monthly-service',
-  'add-on-bundle',
+  "handle: 'patriot-package'",
+  "sku: 'PP-PATRIOT-PACKAGE'",
+], 'Storefront object creation excludes retired inventory mutation and package contracts');
+assertFileIncludes('scripts/storefront-billing-products.js', [
+  "const FIRST_BILL_RULE = 'first_day_of_next_month'",
+  "checkoutPrice: '0.00'",
+  "sku: 'PP-MONTHLY-SERVICE'",
+  "sku: 'PP-ANNUAL-SERVICE'",
+  "sku: 'PP-ADDON-CALL-RECORDING'",
+  "sku: 'PP-ADDON-FAMILY-QUIET-HOURS'",
+  "sku: 'PP-ADDON-VOICEMAIL-TO-EMAIL'",
+  "sku: 'PP-ADDON-AUTO-ATTENDANT'",
+  "sku: 'PP-ADDON-BUNDLE'",
+], 'Deferred billing catalog stable SKU and first-bill contract');
+assertFileExcludes('scripts/storefront-billing-products.js', [
+  'Patriot Package',
   'patriot-package',
-], 'Storefront object creation script');
+  'PP-PATRIOT-PACKAGE',
+], 'Deferred billing catalog excludes retired package');
+assertFileIncludes('scripts/test-deferred-billing-catalog.js', [
+  'assert.equal(billingProducts.length, 7)',
+  "assert.equal(product.checkoutPrice, '0.00')",
+  'assert.equal(variantInput.taxable, false)',
+  'requiresShipping: false',
+  'tracked: false',
+  'future_price_cents',
+  'billing_cadence',
+  'first_bill_rule',
+  "assert.match(product.files[0].filename, /^ip-.+-billing-flag\\.webp$/)",
+  "assert.equal(product.files[0].sourceFilename, 'ip-billing-flag.webp')",
+  'fs.statSync(assetPath).size < 100_000',
+], 'Deferred billing catalog proof');
 assertFileIncludes('scripts/audit-storefront-objects.js', [
   'auditSnapshot',
   'productByIdentifier',
@@ -566,8 +667,12 @@ assertFileIncludes('scripts/test-storefront-object-audit.js', [
   'Storefront object audit proof passed',
   'Classic Phone',
   'Rugged Phone',
-  'hidden billing products',
-  'monthly-service',
+  'zero-dollar deferred billing products',
+  "handle === 'monthly-service').price, '0.00'",
+  "handle === 'monthly-service').futurePrice, '17.76'",
+  "handle === 'annual-service').futurePrice, '200.00'",
+  "handle === 'add-on-bundle').futurePrice, '10.00'",
+  "handle === 'patriot-package'), false",
   'billing product requires shipping',
   'price is 99.00',
   'missing product rugged-phone',
@@ -576,15 +681,20 @@ assertFileIncludes('scripts/test-storefront-object-audit.js', [
 assertFileIncludes('scripts/assign-product-media.js', [
   'productSet',
   'SHOPIFY_THEME_ASSET_BASE',
-  '/cdn/shop/t/2/assets',
-  'ip-current-site-product-1.png',
-  'ip-current-site-product-2.png',
-  'ip-current-site-product-3.png',
-  'ip-current-site-product-4.png',
-  'Classic Phone cordless Wi-Fi handset with charging base',
-  'Rugged Phone cordless Wi-Fi handset with charging base',
+  'VERIFY_RENDERED_QA_ASSET_BASE',
+  'ip-classic-phone-buttons.webp',
+  'ip-classic-phone-charger.webp',
+  'ip-classic-phone-back.webp',
+  'ip-rugged-phone-buttons.webp',
+  'ip-rugged-phone-charger.webp',
+  'ip-rugged-phone-back.webp',
+  'billingMediaPlan',
+  'ip-billing-flag.webp',
+  'Classic Phone handset and charging base',
+  'Rugged Phone handset and charging base',
   'duplicateResolutionMode',
   'Product media assignment ready',
+  'SHOPIFY_PRODUCT_MEDIA_APPROVED',
 ], 'Product media assignment script');
 assertFileIncludes('scripts/audit-live-seo.js', [
   'SHOPIFY_STORE_URL',
@@ -681,7 +791,7 @@ assertFileIncludes('ops/README.md', [
   '/crm/shopify/orders/create',
   '/revio/checkout',
   'refuses to start unless',
-  'Set `CRM endpoint URL` to the HTTPS capture URL',
+  'For the current client handoff, leave `CRM endpoint URL` blank',
   'Edge/Cloudflare Worker routes',
   'SHOPIFY_STORE_URL=https://jordan-mark-premier.myshopify.com LLMS_BASE_URL=https://www.example.com npm run seo:live',
 ], 'Storefront ops README');
@@ -714,7 +824,9 @@ assertFileIncludes('scripts/test-launch-readiness-audit.js', [
   'Launch readiness audit proof passed',
   'Ops deployment package',
   'opsBundleChecks',
-  'public deployment',
+  'deferred-billing v2',
+  'priced checkout billing lines',
+  'cart-level consent',
 ], 'Launch readiness audit proof script');
 assertFileIncludes('package.json', [
   'ops:bundle',
@@ -738,7 +850,6 @@ assertFileIncludes('orders/setup-export.js', [
   'extractSetupRows',
   'setupRowsToCsv',
   'Service plan',
-  'Patriot Package',
   'Add-on Bundle',
   'Policy agreement',
   'all_properties_json',
@@ -749,15 +860,19 @@ assertFileIncludes('orders/setup-export.js', [
 assertFileIncludes('scripts/test-order-setup-export.js', [
   'Order setup export proof passed',
   'Classic Phone - $100',
-  'Patriot Package - $250',
   'Monthly service - $17.76/mo',
   'Annual service - $200/yr',
   'Call Recording',
   'Voicemail to Email',
   'Policy agreement',
-  'PP-MONTHLY-SERVICE',
+  "Object.prototype.hasOwnProperty.call(rows[1], 'patriot_package'), false",
+  'assert.doesNotMatch(csv, /Patriot Package/)',
   '_setup_parent',
 ], 'Order setup export proof script');
+assertFileExcludes('orders/setup-export.js', [
+  "'patriot_package'",
+  "'Patriot Package'",
+], 'Order setup export excludes retired package columns');
 assertFileIncludes('crm/simple-crm.js', [
   'submitted_at',
   'submitted_at_store_timezone',
@@ -799,7 +914,6 @@ assertFileIncludes('crm/README.md', [
   '/crm/leads',
   '/crm/leads.csv',
   'submitted timestamp in ISO format',
-  'privacy and terms consent',
   'CRM_VIEWER_TOKEN',
   'Outbound Webhooks',
   'CRM_LEAD_WEBHOOK_URLS',
@@ -813,12 +927,12 @@ assertFileIncludes('independence-phone-theme/.shopifyignore', [
   'README.md',
   'SHOPIFY_HANDOFF.md',
   'THEME_EDITOR_GUIDE.md',
+  'config/settings_data.json',
   '*.zip',
 ], 'Theme Shopify ignore');
 assertFileIncludes('independence-phone-theme/layout/theme.liquid', [
   "{% render 'ip-structured-data' %}",
   'ip-product-gallery.js',
-  "product.template_suffix == 'billing-item'",
   'noindex,nofollow',
 ], 'Theme layout');
 assertFileIncludes('independence-phone-theme/config/settings_schema.json', [
@@ -840,7 +954,7 @@ assertFileIncludes('independence-phone-theme/snippets/meta-tags.liquid', [
 assertFileIncludes('independence-phone-theme/snippets/ip-structured-data.liquid', [
   '"@type": "Organization"',
   '"@type": "WebSite"',
-  'Give them a phone. Not the internet.',
+  'Give your child a phone, not the internet.',
 ], 'Structured data snippet');
 assertFileIncludes('independence-phone-theme/snippets/ip-product-card-gallery.liquid', [
   'card_product.media.size',
@@ -864,7 +978,8 @@ assertFileIncludes('scripts/apply-refresh-overlay.sh', [
   'cp -R "$overlay/snippets/." "$target_theme/snippets/"',
   'ip-product-gallery.js',
   "{% render 'ip-structured-data' %}",
-  "product.template_suffix == 'billing-item'",
+  'Independence Phone indexing disabled until launch approval',
+  'layout/password.liquid',
 ], 'Refresh overlay script');
 assertFileIncludes('scripts/bootstrap-refresh-store.sh', [
   'shopify theme pull --store "$store" --theme "$theme_id" --path "$target_theme"',
@@ -877,6 +992,11 @@ assertFileIncludes('scripts/test-refresh-overlay.sh', [
 	  'sections/ip-announcement-banner.liquid',
 	  'sections/ip-video-hero.liquid',
 	  'sections/ip-order-builder.liquid',
+	  'sections/cart.liquid',
+	  'assets/ip-classic-phone-spin.mp4',
+	  'assets/ip-rugged-phone-spin.mp4',
+	  'assets/ip-billing-flag.webp',
+  'sections/page.liquid',
   'sections/ip-billing-item.liquid',
   'sections/search.liquid',
   'snippets/ip-structured-data.liquid',
@@ -885,25 +1005,39 @@ assertFileIncludes('scripts/test-refresh-overlay.sh', [
   'templates/page.faq.json',
   'templates/product.independence-phone.json',
   'ip-theme.css',
+  'assets/ip-cart.js',
   'ip-structured-data',
   'templates/robots.txt.liquid',
+  "schema: 'independence_phone.revio_checkout.v2'",
+  "collection_status: 'pending_checkout'",
+  "desired_area_code_collection_status: 'required_at_checkout'",
+  'flat_shipping_cents: shippingCents',
+  'data-cart-due-today',
+  'data-cart-future-charge',
+  'ip-classic-phone-front.webp',
+  'ip-rugged-phone-front.webp',
+  'formnovalidate',
+  'data-cart-setup-child',
+  'validateAddedSetup',
+  "window.location.assign(endpoint('cart'))",
 ], 'Refresh overlay smoke test');
 assertFile('independence-phone-theme/SHOPIFY_HANDOFF.md', 'Shopify handoff');
 assertFileIncludes('independence-phone-theme/SHOPIFY_HANDOFF.md', [
-  'Patriot Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD',
+  'Independence Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD',
   '/collections/all',
   '/pages/order-now',
   '/pages/faq',
   'automatic route-level `llms.txt`',
-  '64 files inspected with no offenses found.',
+  '65 files inspected with no offenses found.',
   'shopify theme push --store STORE.myshopify.com --theme REFRESH_THEME_ID',
   'shopify theme publish --store STORE.myshopify.com --theme REFRESH_THEME_ID',
 ], 'Shopify handoff');
 assertFile('independence-phone-theme/THEME_EDITOR_GUIDE.md', 'Theme Editor guide');
 assertFileIncludes('independence-phone-theme/THEME_EDITOR_GUIDE.md', [
-  "Leave `CRM endpoint URL` blank for the current launch so Shopify's native contact form sends submissions by email.",
-  'jordan@premiercompanies.com',
-  'A real contact form test delivers to `jordan@premiercompanies.com`.',
+  'durable CRM capture requires the approved server-side capture path',
+  'A Liquid theme cannot securely store CRM records by itself.',
+  'submitted date/time plus every submitted form field',
+  'CRM viewer and CSV export',
   'Product image alt text',
   'Search engine listing titles and meta descriptions',
   'Order list, order detail, fulfillment, tracking numbers, and order export',
@@ -924,9 +1058,15 @@ assertFileIncludes('store-setup/README.md', [
   'Add descriptive alt text to meaningful product images',
   'Product pages and collection product cards read Shopify product media first.',
   'Use Shopify media/file details to check image dimensions and file sizes before launch.',
-  'adds the matching service/add-on products as real priced cart items',
-  'hidden setup id',
-  'confirm Shopify Admin order detail and order CSV export show the setup details',
+  'Hidden billing products exist for Monthly Service',
+  'checkout price of `$0.00`',
+  '`future_charge_cents`',
+  '`first_bill_rule=first_day_of_next_month`',
+  'Store shipping is one flat `$15` fee per order',
+  'Privacy Policy/Terms consent and desired area code are not collected on Order Now or cart',
+  '`independence_phone.revio_checkout.v2`',
+  'one shared hidden `setup_id`',
+  'Order setup selections are captured as Shopify line-item properties.',
   'SEO And Form Operations Boundary',
   'SHOPIFY_STORE_URL=https://STORE.myshopify.com npm run seo:live',
   'SHOPIFY_PREVIEW_THEME_ID=THEME_ID',
@@ -935,10 +1075,10 @@ assertFileIncludes('store-setup/README.md', [
   'Automatic `llms.txt` output is generated by `/Users/vilovieta/Documents/Shopify/llms/automatic-llms.js`.',
   'Route-level raw Markdown is available for homepage, collections, products, pages, and cart-style routes through the llms service.',
   'Root `/llms.txt` requires an edge/proxy or custom domain route in front of Shopify.',
-  "The contact page should use Shopify's native contact form for the current launch.",
-  'jordan@premiercompanies.com',
+  "leave `CRM endpoint URL` blank in the `IP contact form` section so Shopify's native contact form is used",
+  'Configure staff new-order notifications separately for `mark@premiercompanies.com` and `jordan@premiercompanies.com`',
   'npm run crm:test',
-  'durable CRM capture can be added later',
+  "Shopify's native contact form is the approved current handoff path",
 ], 'Store setup SEO and operations boundary');
 assertFileIncludes('independence-phone-theme/templates/robots.txt.liquid', [
   'robots.default_groups',
@@ -953,30 +1093,215 @@ assertFileIncludes('independence-phone-theme/sections/ip-contact-form.liquid', [
   'crm[referrer]',
   'crm[utm_source]',
   'company_website',
-  'contact[Patriot Package interest]',
-  'contact[Selected add-ons]',
-  'contact[Privacy and terms consent]',
-  'Privacy Policy',
-  'Terms and Conditions',
-], 'Contact form CRM capture wiring');
+  'Phone Number',
+  'How can we Help?',
+  '"default": "Send"',
+  'ip-contact--simple',
+], 'Simplified contact form and CRM capture wiring');
+assertFileExcludes('independence-phone-theme/sections/ip-contact-form.liquid', [
+  'Child age range',
+  'Main use case',
+  'Interested product',
+  'Preferred service plan',
+  'Patriot Package',
+  'Selected add-ons',
+  'Marketing opt-in',
+  'Privacy and terms consent',
+  'Send my question',
+  'payment_note',
+], 'Contact form excludes removed fields and copy');
+assertFileIncludes('independence-phone-theme/templates/page.faq.json', [
+  'How does the referral offer work?',
+  'you both will get one month of service for free!',
+  'What is the difference between Classic Phone and Rugged Phone?',
+  'Both phones include Wi-Fi, Bluetooth, encrypted data transmission and storage, and 9-hour talk time.',
+  'waterproof and drop-proof protection',
+  '"anchor_id": "phone-comparison"',
+], 'FAQ referral and phone comparison content');
+assertFileExcludes('independence-phone-theme/templates/page.faq.json', [
+  'Patriot Package',
+  'dust-proof',
+  '1.8 meters',
+  'longer battery life',
+], 'FAQ template excludes retired Patriot Package');
+assertFileIncludes('independence-phone-theme/sections/page.liquid', [
+  'id="referral-offer"',
+  'How does the referral offer work?',
+  'id="phone-comparison"',
+], 'FAQ fallback referral and phone comparison anchors');
 assertFileIncludes('independence-phone-theme/sections/cart.liquid', [
   'item.properties',
   '_setup_id',
   '_setup_parent',
   'ip-cart-properties',
-  'ip-cart-addons',
-  'data-cart-addon-selector',
-  'data-cart-addon-option',
   'data-cart-key',
   'data-setup-id',
-  'data-billing-variant',
+  'data-cart-setup',
+  'data-cart-setup-children',
+  'data-cart-setup-child',
+  'data-cart-setup-quantity',
+  'data-cart-setup-remove',
+  'data-cart-savings-source',
   'Selected service and add-ons',
-  'Available add-ons',
-  'Billed with this phone setup',
   'data-cart-savings',
+  'Your Independence Phone Cart',
+  "approved_phone_asset = 'ip-classic-phone-front.webp'",
+  "approved_phone_asset = 'ip-rugged-phone-front.webp'",
+  '{% assign flat_shipping = 1500 %}',
+  'Phone subtotal',
+  'Calculated after address',
+  'Due today before tax',
+  'Due on the first of next month',
+  'data-cart-due-today',
+  'data-cart-future-charge',
+  'Taxes and recurring billing are shown in checkout.',
+  'formnovalidate',
+], 'Grouped cart deferred-billing section');
+assertFileOccurrenceCount(
+  'independence-phone-theme/sections/cart.liquid',
+  'name="attributes[Policy agreement]"',
+  0,
+  'Cart defers policy consent to final checkout'
+);
+assertFileOccurrenceCount(
+  'independence-phone-theme/sections/cart.liquid',
+  'name="properties[Policy agreement]"',
+  0,
+  'Cart has no line-item policy consent'
+);
+assertFileOccurrenceCount(
+  'independence-phone-theme/sections/cart.liquid',
+  'formnovalidate',
+  1,
+  'Grouped cart Update validation bypass'
+);
+assertFileMatches(
+  'independence-phone-theme/sections/cart.liquid',
+  /<form\b(?=[^>]*\bdata-cart-form\b)(?![^>]*\bnovalidate\b)[^>]*>/,
+  'the cart form keeps native validation enabled while Update alone uses formnovalidate',
+  'Grouped cart native validation'
+);
+for (const hook of [
+  'data-cart-setup',
+  'data-cart-setup-children',
+  'data-cart-setup-child',
+  'data-cart-setup-quantity',
+  'data-cart-setup-remove',
+]) {
+  assertFileMatches(
+    'independence-phone-theme/sections/cart.liquid',
+    new RegExp(`${hook}(?![-\\w])`),
+    `contains exact grouped cart hook ${hook}`,
+    'Grouped cart selector contract'
+  );
+}
+assertFileExcludes('independence-phone-theme/sections/cart.liquid', [
+  'name="properties[Policy agreement]"',
+  'name="attributes[Policy agreement]"',
+  'data-cart-policy-error',
   'Privacy Policy',
   'Terms and Conditions',
-], 'Local cart section');
+  'Billed with this phone setup',
+  'Order review',
+  '<th scope="col">Product</th>',
+  '<th scope="col">Total</th>',
+  'Remove setup',
+], 'Grouped cart excludes retired labels and duplicate consent');
+assertFileIncludes('independence-phone-theme/sections/cart.liquid', [
+  'orphan_setup_child',
+  'setup_parent_exists',
+  'setup_has_service',
+  'cart_has_incomplete_order',
+  '{% if setup_id != blank %}',
+  '{% assign cart_has_orphan_child = true %}',
+  'data-cart-orphan-child',
+  'data-cart-incomplete-setup',
+  'This billing item is no longer attached to a phone.',
+  'This phone is missing its required service selection.',
+  'data-cart-integrity-error',
+  'name="checkout" {% if cart_has_orphan_child or cart_has_incomplete_order %}disabled aria-disabled="true"{% endif %}',
+], 'Grouped cart orphan and required-service integrity warnings');
+assertFileMatches(
+  'independence-phone-theme/sections/cart.liquid',
+  /{% if setup_parent %}[\s\S]*?{% unless setup_parent_exists %}[\s\S]*?{% assign orphan_setup_child = true %}[\s\S]*?{% assign setup_parent = false %}/,
+  'orphan billing children are promoted into removable customer-visible rows',
+  'Grouped cart orphan rendering'
+);
+assertFileIncludes('independence-phone-theme/sections/cart.liquid', [
+  '{% if setup_id == blank %}name="updates[{{ item.key }}]"{% endif %}',
+  '{% if setup_id != blank %}readonly{% endif %}',
+  'data-cart-parent-quantity',
+  'data-cart-child-quantity',
+], 'Grouped cart parent and child quantity fields');
+for (const section of [
+  'ip-order-builder.liquid',
+  'ip-product-main.liquid',
+  'page.liquid',
+]) {
+  assertFileExcludes(
+    `independence-phone-theme/sections/${section}`,
+    ['name="properties[Policy agreement]"'],
+    `${section} has no line-item policy checkbox`
+  );
+}
+assertFileIncludes('independence-phone-theme/sections/ip-product-main.liquid', [
+  'Acceptance is collected once at final checkout.',
+  'Shipping: one $15 charge per order in the USA.',
+], 'Product support route states the final-checkout consent and per-order shipping contract');
+assertFileIncludes('independence-phone-theme/templates/product.independence-phone.json', [
+  'Shipping: one $15 charge per order in the USA.',
+  'Applicable tax is calculated after the customer enters an address.',
+], 'Product template states the per-order shipping and address-based tax contract');
+assertFileIncludes('visual-preview/index.html', [
+  'Shipping: one $15 charge per order in the USA.',
+  'Service and add-on selections are captured as $0.00 deferred-billing lines',
+], 'Visual preview matches deferred-billing shipping copy');
+assertFileExcludes('visual-preview/index.html', [
+  '$15 per phone',
+], 'Visual preview excludes retired per-phone shipping copy');
+assertFileExcludes(
+  'independence-phone-theme/snippets/ip-order-builder-form.liquid',
+  ['name="properties[Policy agreement]"', 'name="attributes[Policy agreement]"'],
+  'shared Order Now builder has no pre-checkout policy field'
+);
+for (const section of [
+  'ip-order-builder.liquid',
+  'page.liquid',
+]) {
+  assertFileIncludes(
+    `independence-phone-theme/sections/${section}`,
+    ["{% render 'ip-order-builder-form'"],
+    `${section} uses the shared Order Now builder`
+  );
+}
+assertFileIncludes('independence-phone-theme/snippets/ip-order-builder-form.liquid', [
+  "data-order-image=\"{{ 'ip-classic-phone-front.webp' | asset_url }}\"",
+  "data-order-image=\"{{ 'ip-rugged-phone-front.webp' | asset_url }}\"",
+  'ip-order-card__phone-media--classic',
+  'ip-order-card__phone-media--rugged',
+  "src=\"{{ 'ip-classic-phone-spin.mp4' | asset_url }}\"",
+  "src=\"{{ 'ip-rugged-phone-spin.mp4' | asset_url }}\"",
+  'aria-label="Rotating view of the Classic Phone"',
+  'aria-label="Rotating view of the Rugged Phone"',
+  'alt="Full front view of the Classic Phone"',
+  'alt="Full front view of the Rugged Phone"',
+  '/pages/faq#phone-comparison',
+], 'Shared Order Now builder front images, rotating media, and description links');
+assertFileExcludes('independence-phone-theme/snippets/ip-order-builder-form.liquid', [
+  'ip-classic-phone-buttons.webp',
+  'ip-rugged-phone-buttons.webp',
+], 'Shared Order Now builder excludes cropped selector imagery');
+assertFileMatches(
+  'independence-phone-theme/assets/ip-theme.css',
+  /\.ip-order-card__phone-media img,\s*\.ip-order-card__phone-media video\s*\{[^}]*clip-path:\s*none;[^}]*object-fit:\s*cover;[^}]*transform:\s*none;[^}]*\}/,
+  'selector images and rotating media fill the balanced frame without clipping or transforms',
+  'Order Now selector media'
+);
+assertFileExcludes(
+  'independence-phone-theme/assets/ip-theme.css',
+  ['background: url("ip-bg-flag-subtle.png")'],
+  'selector media wrappers do not duplicate the patriotic background baked into the WebP assets'
+);
 assertFileIncludes('independence-phone-theme/templates/cart.json', [
   'addon_recording',
   'billing_product',
@@ -986,14 +1311,35 @@ assertFileIncludes('independence-phone-theme/templates/cart.json', [
   'addon_bundle',
   'addon_attendant',
 ], 'Cart template add-on blocks');
-assertFileIncludes('independence-phone-theme/sections/ip-order-builder.liquid', [
+assertFileIncludes('independence-phone-theme/snippets/ip-order-builder-form.liquid', [
   'monthly_service_product',
   'annual_service_product',
   'call_recording_product',
   'data-billing-variant',
   'data-billing-role',
+  'data-future-charge-cents="1776"',
+  'data-future-charge-cents="20000"',
+  'data-future-charge-cents="1000"',
+  'data-future-charge-cents="500"',
+  'data-billing-cadence="monthly"',
+  'data-billing-cadence="annual"',
+  'data-first-bill-rule="first_day_of_next_month"',
+  'Choose your service plan — Billed on the 1st of the next month',
+  'Choose add-ons — Billed on the 1st of the next month',
+  'Discount/referral code',
+], 'Order builder deferred-billing controls and exact client copy');
+assertFileIncludes('independence-phone-theme/sections/ip-order-builder.liquid', [
+  '"default": "Build your Independence Phone order now."',
+  '"default": "Taxes, shipping, and recurring billing will be shown in the cart."',
+  '"default": "Add order to cart"',
+], 'Order builder schema exact client copy');
+assertFileExcludes('independence-phone-theme/snippets/ip-order-builder-form.liquid', [
+  'Patriot Package',
+  'patriot-package',
   'data-order-package',
-], 'Order builder billable setup controls');
+  'If another customer referred you',
+  'name="properties[Policy agreement]"',
+], 'Order builder excludes retired package, helper, and policy collection');
 assertFileIncludes('independence-phone-theme/templates/page.order.json', [
   'monthly-service',
   'annual-service',
@@ -1002,17 +1348,140 @@ assertFileIncludes('independence-phone-theme/templates/page.order.json', [
   'voicemail-to-email',
   'auto-attendant',
   'add-on-bundle',
+  '"heading": "Build your Independence Phone order now."',
+  '"checkout_note": "Taxes, shipping, and recurring billing will be shown in the cart."',
+  '"button_label": "Add order to cart"',
+], 'Order page deferred-billing product defaults and exact client copy');
+assertFileExcludes('independence-phone-theme/templates/page.order.json', [
+  'Patriot Package',
   'patriot-package',
-], 'Order page billing product defaults');
+  'Policy agreement',
+], 'Order page excludes retired package and duplicated policy collection');
 assertFileIncludes('independence-phone-theme/assets/ip-cart.js', [
   'buildSetupCartPayload',
   'selectedBillingInputs',
+  'orderBillingConfigurationError',
+  'required billing item is not configured',
   'data-billing-variant',
   '_setup_id',
   '_setup_parent',
   'cart/update.js',
   'cartDisplayCount',
-], 'Cart JS grouped billing item behavior');
+  'validateAddedSetup',
+  'expectedItems.every',
+  'removeIncompleteSetup',
+  'removeIncompleteSetup(validation)',
+  'Nothing was kept in your cart',
+  'SETUP_CLEANUP_FAILED',
+  'Open the cart and remove the incomplete billing item before retrying.',
+  "window.location.assign(endpoint('cart'))",
+  'data-cart-setup-quantity',
+  'data-cart-setup-remove',
+  'data-cart-savings-source',
+  "schema: 'independence_phone.revio_checkout.v2'",
+  "collection_status: 'pending_checkout'",
+  'privacy_terms_accepted: null',
+  'desired_area_code: null',
+  "desired_area_code_collection_status: 'required_at_checkout'",
+  'const shippingCents = cartDisplayCount(cart) > 0 ? 1500 : 0;',
+  'flat_shipping_cents: shippingCents',
+  'due_today_before_tax_cents: immediateSubtotalCents + shippingCents',
+  'future_charge_cents: futureChargeCents',
+  "first_bill_rule: 'first_day_of_next_month'",
+  "setupProperties._order_contract = 'deferred-billing-v2'",
+  "'Future charge': details.price || details.value",
+  "'Billing starts': 'First day of the following month'",
+  '_setup_future_charge_cents',
+  '_setup_billing_cadence',
+  '_setup_first_bill_rule',
+  '.cart-count-bubble',
+  'let cartMutationVersion = 0;',
+  'const requestVersion = cartMutationVersion;',
+  'if (cartMutationVersion === requestVersion && !nativeCartHeaderChanged)',
+], 'Cart JS grouped deferred billing, v2 handoff, validation, and redirect behavior');
+assertFileExcludes('independence-phone-theme/assets/ip-cart.js', [
+  "schema: 'independence_phone.revio_checkout.v1'",
+  'validateCartPolicy',
+  'data-cart-policy-error',
+  "'Policy agreement':",
+  'input[type="checkbox"][name="attributes[Policy agreement]"]',
+], 'Cart JS excludes v1 and pre-checkout policy collection');
+assertFileIncludes('independence-phone-theme/assets/ip-cart.js', [
+  "document.querySelector('#cart-icon-bubble, .header__icon--cart')",
+  "bubble.className = 'cart-count-bubble';",
+  "bubble.querySelector('span[aria-hidden=\"true\"]')",
+  "bubble.querySelector('.visually-hidden')",
+  'visualCount.hidden = count >= 100;',
+  'accessibleCount.textContent = label;',
+], 'Cart JS creates and accessibly updates a missing Refresh cart badge');
+assertFileMatches(
+  'independence-phone-theme/assets/ip-cart.js',
+  /method !== 'GET'[\s\S]*?cartMutationVersion \+= 1;[\s\S]*?const requestVersion = cartMutationVersion;[\s\S]*?new MutationObserver[\s\S]*?nativeCartHeaderChanged[\s\S]*?cartMutationVersion === requestVersion && !nativeCartHeaderChanged/,
+  'scripted cart mutations and native cart-icon DOM replacements invalidate a pending initial count correction',
+  'Cart JS stale header-count response guard'
+);
+assertFileIncludes('independence-phone-theme/assets/ip-cart.js', [
+  'const unmatchedLines = [...setupLines];',
+  "const expectedRole = String(expected.properties?._setup_role || '');",
+  "const expectedBillingName = String(expected.properties?._setup_billing_name || '');",
+  'unmatchedLines.findIndex',
+  'unmatchedLines.splice(matchIndex, 1);',
+], 'Cart JS one-to-one setup validation');
+assertFileIncludes('independence-phone-theme/assets/ip-cart.js', [
+  'const syncSetupQuantity = (input, value = input.value) => {',
+  "setup.querySelectorAll('[data-cart-parent-quantity], [data-cart-child-quantity]')",
+  'syncSetupQuantity(setupQuantity);',
+  'syncSetupQuantity(input, previousQuantity);',
+], 'Cart JS parent and child quantity synchronization');
+assertFileMatches(
+  'independence-phone-theme/assets/ip-cart.js',
+  /const updateCartLine = async \(input\) => \{[\s\S]*?endpoint\('cart\/update\.js'\)[\s\S]*?updates: Object\.fromEntries/,
+  'grouped quantity updates preserve all setup lines without mutating checkout consent',
+  'Cart JS grouped quantity update'
+);
+assertFileMatches(
+  'independence-phone-theme/assets/ip-cart.js',
+  /const setBusy = \(element, busy\) => \{[\s\S]*?element\.querySelectorAll\('button, input, select'\)\.forEach\(\(control\) => \{[\s\S]*?if \(busy\) \{[\s\S]*?control\.disabled = true;/,
+  'setBusy disables Checkout with the other form controls while a request is active',
+  'Cart JS busy-state checkout guard'
+);
+assertFileExcludes('independence-phone-theme/assets/ip-cart.js', [
+  "if (control.name === 'checkout') return;",
+], 'Cart JS busy state has no Checkout exception');
+assertFileIncludes('independence-phone-theme/assets/ip-cart.js', [
+  'const parentSetupIds = new Set(',
+  '.filter((item) => !isSetupChild(item.properties))',
+  'if (isSetupChild(item.properties) && parentSetupIds.has(setupId)) return count;',
+], 'Cart JS grouped header count excludes only attached billing children');
+assertFileIncludes('independence-phone-theme/assets/ip-cart.js', [
+  'const validateCartIntegrity = (form) => {',
+  "form.querySelector('[data-cart-orphan-child], [data-cart-incomplete-setup]')",
+  "form.querySelector('[data-cart-integrity-error]')",
+  'const integrityValid = validateCartIntegrity(cartForm);',
+  'if (!integrityValid)',
+], 'Cart JS orphan and required-service integrity checkout block');
+assertFileIncludes('independence-phone-theme/assets/ip-cart.js', [
+  "const sources = [...document.querySelectorAll('[data-cart-savings-source]')];",
+  "source.querySelector('[data-cart-quantity]')?.value",
+  'year: total.year + (lineSavings.year * quantity)',
+  'month: total.month + (lineSavings.month * quantity)',
+], 'Cart JS quantity-aware savings inputs');
+assertFilePhraseOrder('independence-phone-theme/assets/ip-cart.js', [
+  'const updateCartSavings = () => {',
+  "const sources = [...document.querySelectorAll('[data-cart-savings-source]')];",
+  'const savings = sources.length > 0',
+  '? sources.reduce((total, source) => {',
+  'const lineSavings = calculateSavings',
+  'lineSavings.year * quantity',
+  'lineSavings.month * quantity',
+  ': calculateSavings(',
+], 'Cart JS uses quantity-aware setup sources or visible properties without double-counting both');
+assertFilePhraseOrder('independence-phone-theme/assets/ip-cart.js', [
+  'const validation = validateAddedSetup(cart, setupPayload);',
+  'if (!validation.complete)',
+  'removeIncompleteSetup(validation)',
+  "window.location.assign(endpoint('cart'));",
+], 'Cart JS validates and cleans up the complete setup before redirect');
 assertFile('independence-phone-theme/templates/product.billing-item.json', 'Hidden billing item product template');
 assertFileIncludes('independence-phone-theme/sections/ip-billing-item.liquid', [
   'Setup billing item',
@@ -1026,7 +1495,15 @@ assertFileIncludes('independence-phone-theme/sections/header.liquid', [
   'aria-label="Store actions"',
   'aria-label="Cart"',
   'data-cart-count',
+  'customer_cart_count',
+  'header_child_has_parent',
 ], 'Local header section');
+assertFileMatches(
+  'independence-phone-theme/sections/cart.liquid',
+  /<button\b(?=[^>]*\bdata-cart-setup-remove\b)(?=[^>]*\bhidden\b)[^>]*>/,
+  'grouped setup removal is hidden until JavaScript can safely remove every grouped line',
+  'Cart no-JS grouped remove guard'
+);
 assertFileIncludes('independence-phone-theme/sections/ip-feature-strip.liquid', [
   'block.settings.icon',
   'block.settings.included_label',
@@ -1057,12 +1534,41 @@ assertFileIncludes('independence-phone-theme/assets/ip-tool-icon-phone-times.svg
 ], 'Heroicons clock asset');
 assertFileIncludes('independence-phone-theme/sections/footer.liquid', [
   'aria-label="Footer menu"',
+  'class="footer__contact"',
+  'aria-label="Independence Phone contact information"',
+  'section.settings.contact_email',
+  'section.settings.contact_phone',
+  'section.settings.contact_phone_link',
+  "footer_email != blank",
+  "footer_phone != blank and footer_phone_link != blank",
+  "'mailto:' | append: footer_email",
+  "'tel:' | append: footer_phone_link",
+  '{{ footer_email_url | escape }}',
+  '{{ footer_email | escape }}',
+  '{{ footer_phone_url | escape }}',
+  '{{ footer_phone | escape }}',
+  '"default": "info@independencephone.com"',
+  '"default": "(615) 704-1776"',
+  '"default": "+16157041776"',
   'routes.root_url }}pages/order-now',
+  "footer_link_title == 'order now'",
   'routes.root_url }}pages/faq',
   'routes.root_url }}pages/contact',
-  'routes.root_url }}policies/privacy-policy',
-  'routes.root_url }}policies/terms-of-service',
+  "append: 'policies/privacy-policy'",
+  "append: 'policies/terms-of-service'",
+  'Privacy Policy',
+  'Terms and Conditions',
 ], 'Local footer section');
+assertSectionSchema('footer', {
+  settings: [
+    'footer_note',
+    'contact_email',
+    'contact_phone',
+    'contact_phone_link',
+    'menu',
+    'show_payment_icons',
+  ],
+});
 assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'STORE.myshopify.com',
   'Shopify `Refresh` theme',
@@ -1077,8 +1583,12 @@ assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   '/products/standard-phone',
   '/products/rugged-phone',
   '/products/monthly-service',
+  '/products/annual-service',
+  '/products/call-recording',
+  '/products/family-quiet-hours',
+  '/products/voicemail-to-email',
+  '/products/auto-attendant',
   '/products/add-on-bundle',
-  '/products/patriot-package',
   'product.billing-item',
   'collection.phones',
   'product.independence-phone',
@@ -1088,22 +1598,24 @@ assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   'Product images have concise alt text for SEO/accessibility.',
   'Product image dimensions/file sizes are acceptable in Shopify media/file details before launch.',
   'indy-phone-reel-1.mov',
-  'Give them a phone. Not the internet.',
+  'Give your child a phone, not the internet.',
   'The old `Reachable without scrollable` eyebrow is absent.',
   'A phone that acts like a phone',
   'The old `The useful part of a phone, first.` heading is absent.',
   'For bus days, home-alone minutes, and grandparents.',
   'American-owned messaging is secondary trust',
   'Confirm hidden billing products exist and use template `product.billing-item`',
+  'all seven billing products use `$0.00` Shopify variants, no shipping requirement, stable SKUs, and American-flag media',
   'Confirm add-to-cart works for both products and adds phone, service, and selected add-ons as grouped cart items.',
   'Order Now `/pages/order-now`.',
   'FAQ `/pages/faq`.',
   'Page source includes Independence Phone `Organization`, home-page `WebSite`, and FAQ accordion `FAQPage` JSON-LD.',
   'Cart shows selected service/add-on setup details.',
+  'Cart shows phone-only due-today merchandise, one `$15` shipping fee, tax pending until address, and separate future charges.',
   'matching setup quantities',
-  'Leave the `CRM endpoint URL` setting blank for the current launch.',
-  'jordan@premiercompanies.com',
-  'receives the contact form email',
+  "Confirm Theme Editor `CRM endpoint URL` is blank so the form uses Shopify's native contact handling for this handoff.",
+  'Confirm Shopify Admin `Settings -> Notifications -> Sender email` is `jordan@premiercompanies.com`.',
+  'If CRM capture is later approved, confirm the endpoint stores submitted date/time plus every submitted field',
   'SEO And Operations Readiness',
   'Online Store preferences have a launch-ready home page title.',
   'Classic Phone search-engine listing is edited.',
@@ -1111,20 +1623,26 @@ assertFileIncludes('store-setup/LAUNCH_CHECKLIST.md', [
   '`/robots.txt` is reviewed',
   'Automatic raw Markdown `llms.txt` is deployed for root and route-level requests.',
   '`/products/standard-phone/llms.txt` returns a product-specific Markdown summary.',
-  '`/pages/order-now/llms.txt` returns a guided order-builder Markdown summary.',
+  '`/pages/order-now/llms.txt` returns a guided order-flow Markdown summary.',
   '`/a/llms.txt?path=/pages/faq` returns the FAQ Markdown summary when using Shopify app proxy routing.',
   'SHOPIFY_STORE_URL=https://STORE.myshopify.com npm run seo:live',
   'SHOPIFY_PREVIEW_THEME_ID=THEME_ID',
   'unset SHOPIFY_STOREFRONT_PASSWORD',
   'tmp/shopify-live-proof/seo-ops-audit.json',
   'Place a test order or approved manual order for Classic Phone with monthly service and one add-on.',
-  'Confirm Shopify Admin order detail shows the phone line plus the priced service/add-on billing line items with matching setup quantities.',
+  'Place a test order or approved manual order for Rugged Phone with annual service and Add-on Bundle.',
+  'Confirm Shopify Admin order detail shows the phone line plus zero-dollar service/add-on lines with matching setup quantities.',
+  'The checkout handoff schema is `independence_phone.revio_checkout.v2`.',
+  'Shipping is exactly `1500` cents once per order.',
+  'Future service/add-on total is shown separately and begins the first day of the following month.',
+  'Final checkout requires Privacy Policy/Terms consent exactly once.',
+  'Final checkout requires desired area code.',
   'Export orders to CSV and confirm setup details are usable',
   'npm run orders:test',
-  'Do not configure the Theme Editor `CRM endpoint URL` for the current launch',
-  'Save proof that Shopify native contact-form email delivery reaches `jordan@premiercompanies.com`.',
-  'If CRM capture is added later, confirm staff can expand `View details` for a lead or sale',
-  'If CRM capture is added later, export CRM leads/sales to CSV and confirm all normalized fields',
+  'Implement simple CRM capture through an approved server-side path',
+  'Confirm the CRM captures submitted date/time, source URL, referrer/UTMs',
+  'Confirm staff can expand `View details` for a lead or sale',
+  'Export CRM leads/sales to CSV and confirm all normalized fields',
   'shopify theme push --store STORE.myshopify.com --theme REFRESH_THEME_ID',
   'shopify theme publish --store STORE.myshopify.com --theme REFRESH_THEME_ID',
   'Connect the final public domain after publish approval.',
@@ -1134,7 +1652,7 @@ assertFileIncludes('visual-preview/preview.spec.js', [
   'cart.review',
   'order.builder',
   'ip-cart-properties',
-  'visibleCartAddonOptionCount',
+  'visibleCartSetupCount',
   'Auto Attendant',
   'visibleCartPropertyRowCount',
   'visibleProductFormCount',
@@ -1152,11 +1670,15 @@ assertTemplateTypes('independence-phone-theme/templates/index.json', [
   'ip-service-plans',
   'ip-add-ons',
   'ip-capability-table',
-  'ip-package-band',
   'ip-comparison-matrix',
   'ip-faq',
   'ip-trust-band',
 ]);
+assertFileExcludes('independence-phone-theme/templates/index.json', [
+  'Patriot Package',
+  'patriot-package',
+  '"type": "ip-package-band"',
+], 'Homepage template excludes the retired Patriot Package');
 
 assertTemplateTypes('independence-phone-theme/templates/page.order.json', [
   'ip-order-builder',
@@ -1172,7 +1694,6 @@ assertTemplateTypes('independence-phone-theme/templates/collection.phones.json',
   'ip-service-plans',
   'ip-add-ons',
   'ip-capability-table',
-  'ip-package-band',
   'ip-faq',
 ]);
 
@@ -1181,16 +1702,17 @@ assertTemplateTypes('independence-phone-theme/templates/product.independence-pho
   'ip-service-plans',
   'ip-add-ons',
   'ip-capability-table',
-  'ip-package-band',
   'ip-faq',
   'ip-trust-band',
 ]);
 
 assertTemplateTypes('independence-phone-theme/templates/page.contact.json', [
   'ip-contact-form',
-  'ip-faq',
-  'ip-trust-band',
 ]);
+assertFileExcludes('independence-phone-theme/templates/page.contact.json', [
+  '"type": "ip-faq"',
+  '"type": "ip-trust-band"',
+], 'Contact template contains only the contact form');
 
 const productMain = fs.readFileSync(
   path.join(root, 'independence-phone-theme/sections/ip-product-main.liquid'),

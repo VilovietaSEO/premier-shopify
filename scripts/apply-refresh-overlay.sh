@@ -35,6 +35,7 @@ if [ -d "$overlay/snippets" ]; then
 fi
 
 theme_layout="$target_theme/layout/theme.liquid"
+password_layout="$target_theme/layout/password.liquid"
 if ! grep -q "ip-theme.css" "$theme_layout"; then
   perl -0pi -e "s#(\\s*\\{\\{ content_for_header \\}\\})#    {{ 'ip-theme.css' | asset_url | stylesheet_tag }}\\n\\1#" "$theme_layout"
 fi
@@ -51,8 +52,12 @@ if ! grep -q "ip-structured-data" "$theme_layout"; then
   perl -0pi -e "s#(\\s*\\{\\{ content_for_header \\}\\})#    {% render 'ip-structured-data' %}\\n\\1#" "$theme_layout"
 fi
 
-if ! grep -q "product.template_suffix == 'billing-item'" "$theme_layout"; then
-  perl -0pi -e "s#(\\s*\\{% render 'ip-structured-data' %\\})#    {% if template.name == 'product' and product.template_suffix == 'billing-item' %}\\n      <meta name=\"robots\" content=\"noindex,nofollow\">\\n    {% endif %}\\n\\1#" "$theme_layout"
+if ! grep -q "Independence Phone indexing disabled until launch approval" "$theme_layout"; then
+  perl -0pi -e "s#(\\s*\\{\\{ content_for_header \\}\\})#    {% comment %} Independence Phone indexing disabled until launch approval {% endcomment %}\\n    <meta name=\"robots\" content=\"noindex,nofollow\">\\n\\1#" "$theme_layout"
+fi
+
+if [ -f "$password_layout" ] && ! grep -q "Independence Phone indexing disabled until launch approval" "$password_layout"; then
+  perl -0pi -e "s#(\\s*\\{\\{ content_for_header \\}\\})#    {% comment %} Independence Phone indexing disabled until launch approval {% endcomment %}\\n    <meta name=\"robots\" content=\"noindex,nofollow\">\\n\\1#" "$password_layout"
 fi
 
 echo "Applied Patriot Phone overlay to: $target_theme"

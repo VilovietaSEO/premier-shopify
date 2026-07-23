@@ -26,14 +26,15 @@
         card_product: freedom,
         fallback_title: freedom_title,
         fallback_image: section.settings.freedom_image,
-        fallback_asset: 'ip-current-site-product-1.png',
+        fallback_asset: 'ip-classic-phone-buttons.webp',
+        prefer_fallback_asset: true,
         block_type: 'standard_gallery_image',
         gallery_blocks: section.blocks
       %}
       <div class="ip-product-card__body">
         <div class="ip-product-card__meta">
           <h3>{{ freedom_title }}</h3>
-          <p class="ip-price">{% if freedom.price %}{{ freedom.price | money }}{% else %}$100{% endif %}</p>
+          <p class="ip-price">{% if freedom.price %}{{ freedom.price | money }}{% else %}$100{% endif %} one-time</p>
         </div>
         <p>{{ freedom_summary }}</p>
         <ul class="ip-spec-list">
@@ -64,14 +65,15 @@
         card_product: patriot,
         fallback_title: patriot_title,
         fallback_image: section.settings.patriot_image,
-        fallback_asset: 'ip-current-site-product-2.png',
+        fallback_asset: 'ip-rugged-phone-buttons.webp',
+        prefer_fallback_asset: true,
         block_type: 'rugged_gallery_image',
         gallery_blocks: section.blocks
       %}
       <div class="ip-product-card__body">
         <div class="ip-product-card__meta">
           <h3>{{ patriot_title }}</h3>
-          <p class="ip-price">{% if patriot.price %}{{ patriot.price | money }}{% else %}$150{% endif %}</p>
+          <p class="ip-price">{% if patriot.price %}{{ patriot.price | money }}{% else %}$150{% endif %} one-time</p>
         </div>
         <p>{{ patriot_summary }}</p>
         <ul class="ip-spec-list">

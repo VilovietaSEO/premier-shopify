@@ -3,6 +3,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { resolveAdminAuth } = require('./shopify-admin-auth');
+const { billingProducts } = require('./storefront-billing-products');
+const { PHONE_PRODUCT_CATEGORY } = require('./storefront-product-taxonomy');
 
 const root = path.resolve(__dirname, '..');
 const productsCsvPath = path.join(root, 'store-setup/products.csv');
@@ -13,77 +15,24 @@ const legacyProductHandles = {
   'rugged-phone': ['patriot-phone'],
 };
 
-const billingProducts = [
-  {
-    title: 'Monthly Service',
-    handle: 'monthly-service',
-    description: 'Personal phone number and monthly Independence Phone service.',
-    sku: 'PP-MONTHLY-SERVICE',
-    price: '17.76',
-  },
-  {
-    title: 'Annual Service',
-    handle: 'annual-service',
-    description: 'Personal phone number and annual Independence Phone service.',
-    sku: 'PP-ANNUAL-SERVICE',
-    price: '200.00',
-  },
-  {
-    title: 'Call Recording',
-    handle: 'call-recording',
-    description: 'Call recording add-on for an Independence Phone setup.',
-    sku: 'PP-ADDON-CALL-RECORDING',
-    price: '5.00',
-  },
-  {
-    title: 'Quiet Hours',
-    handle: 'family-quiet-hours',
-    description: 'Quiet Hours add-on for an Independence Phone setup.',
-    sku: 'PP-ADDON-FAMILY-QUIET-HOURS',
-    price: '5.00',
-  },
-  {
-    title: 'Voicemail to Email',
-    handle: 'voicemail-to-email',
-    description: 'Voicemail to Email add-on for an Independence Phone setup.',
-    sku: 'PP-ADDON-VOICEMAIL-TO-EMAIL',
-    price: '5.00',
-  },
-  {
-    title: 'Auto Attendant',
-    handle: 'auto-attendant',
-    description: 'Auto Attendant add-on for an Independence Phone setup.',
-    sku: 'PP-ADDON-AUTO-ATTENDANT',
-    price: '5.00',
-  },
-  {
-    title: 'Add-on Bundle',
-    handle: 'add-on-bundle',
-    description: 'Bundled add-ons for an Independence Phone setup.',
-    sku: 'PP-ADDON-BUNDLE',
-    price: '10.00',
-  },
-  {
-    title: 'Patriot Package',
-    handle: 'patriot-package',
-    description: 'Package balance for the limited Patriot Package offer.',
-    sku: 'PP-PATRIOT-PACKAGE',
-    price: '150.00',
-  },
-];
-
 const productByIdentifierQuery = `
 query ProductByIdentifier($identifier: ProductIdentifierInput!) {
   productByIdentifier(identifier: $identifier) {
     id
     handle
     title
+    category {
+      id
+      fullName
+    }
     variants(first: 1) {
       nodes {
         id
         price
+        taxable
         inventoryItem {
           id
+          sku
           requiresShipping
         }
       }
@@ -99,12 +48,18 @@ mutation CreateProduct($product: ProductCreateInput!) {
       id
       handle
       title
+      category {
+        id
+        fullName
+      }
       variants(first: 1) {
         nodes {
           id
           price
+          taxable
           inventoryItem {
             id
+            sku
             requiresShipping
           }
         }
@@ -125,12 +80,18 @@ mutation UpdateProduct($product: ProductUpdateInput!) {
       id
       handle
       title
+      category {
+        id
+        fullName
+      }
       variants(first: 1) {
         nodes {
           id
           price
+          taxable
           inventoryItem {
             id
+            sku
             requiresShipping
           }
         }
@@ -153,23 +114,9 @@ mutation UpdateProductVariant($productId: ID!, $variants: [ProductVariantsBulkIn
       taxable
       inventoryItem {
         id
+        sku
         requiresShipping
       }
-    }
-    userErrors {
-      field
-      message
-    }
-  }
-}
-`;
-
-const inventoryItemUpdateMutation = `
-mutation InventoryItemUpdate($id: ID!, $input: InventoryItemInput!) {
-  inventoryItemUpdate(id: $id, input: $input) {
-    inventoryItem {
-      id
-      requiresShipping
     }
     userErrors {
       field
@@ -302,7 +249,6 @@ function usage(exitCode = 64) {
 Required token scopes:
   read_products, write_products, read_content, write_content or write_online_store_pages
   read_publications and write_publications to publish products/collections to Online Store
-  write_inventory to automatically mark hidden billing products as non-shipping
 
 Optional:
   SHOPIFY_ADMIN_API_VERSION=${apiVersion}
@@ -402,6 +348,7 @@ function productInputFromRow(row, id) {
     descriptionHtml: `<p>${escapeHtml(row.Description)}</p>`,
     vendor: row.Vendor,
     productType: row.Type,
+    category: PHONE_PRODUCT_CATEGORY.id,
     status: 'ACTIVE',
     tags,
     templateSuffix: 'independence-phone',
@@ -423,9 +370,36 @@ function productInputFromBillingProduct(item, id) {
     descriptionHtml: `<p>${escapeHtml(item.description)}</p>`,
     vendor: 'Independence Phone',
     productType: 'Billing Item',
+    category: null,
     status: 'ACTIVE',
-    tags: ['patriot-phone', 'billing-item', 'hidden-from-catalog'],
+    tags: ['independence-phone', 'billing-item', 'hidden-from-catalog'],
     templateSuffix: 'billing-item',
+    metafields: [
+      {
+        namespace: 'custom',
+        key: 'future_price_cents',
+        type: 'number_integer',
+        value: String(item.futurePriceCents),
+      },
+      {
+        namespace: 'custom',
+        key: 'billing_cadence',
+        type: 'single_line_text_field',
+        value: item.billingCadence,
+      },
+      {
+        namespace: 'custom',
+        key: 'first_bill_rule',
+        type: 'single_line_text_field',
+        value: item.firstBillRule,
+      },
+      {
+        namespace: 'custom',
+        key: 'billing_role',
+        type: 'single_line_text_field',
+        value: item.role,
+      },
+    ],
     seo: {
       title: `${item.title} | Independence Phone`,
       description: item.description,
@@ -442,15 +416,25 @@ function variantInputFromRow(row, variantId) {
     price: row.Price,
     taxable: row['Charge tax'] === 'true',
     inventoryPolicy: row['Continue selling when out of stock'] === 'continue' ? 'CONTINUE' : 'DENY',
+    inventoryItem: {
+      sku: row.SKU,
+      requiresShipping: row['Requires shipping'] === 'true',
+      tracked: Boolean(row['Inventory tracker']),
+    },
   };
 }
 
 function variantInputFromBillingProduct(item, variantId) {
   return {
     id: variantId,
-    price: item.price,
-    taxable: true,
+    price: item.checkoutPrice,
+    taxable: false,
     inventoryPolicy: 'CONTINUE',
+    inventoryItem: {
+      sku: item.sku,
+      requiresShipping: false,
+      tracked: false,
+    },
   };
 }
 
@@ -460,10 +444,6 @@ function formatUserErrors(errors) {
 
 function isPublicationAccessError(error) {
   return /read_publications|write_publications|ACCESS_DENIED|Access denied/i.test(error.message);
-}
-
-function isInventoryAccessError(error) {
-  return /write_inventory|inventoryItemUpdate|inventory item|ACCESS_DENIED|Access denied/i.test(error.message);
 }
 
 async function adminGraphql({ store, auth, query, variables }) {
@@ -550,37 +530,6 @@ async function publishResourcesToOnlineStore({ store, auth, resources }) {
       if (!isPublicationAccessError(error)) throw error;
       console.warn(`Skipped ${resource.label} Online Store publishing: token needs write_publications. Publish it manually in Shopify admin.`);
     }
-  }
-}
-
-async function markInventoryItemNonShipping({ store, auth, inventoryItemId, label }) {
-  if (!inventoryItemId) {
-    console.warn(`Skipped ${label} non-shipping update: billing product variant has no inventory item id.`);
-    return;
-  }
-
-  try {
-    const result = await adminGraphql({
-      store,
-      auth,
-      query: inventoryItemUpdateMutation,
-      variables: {
-        id: inventoryItemId,
-        input: {
-          requiresShipping: false,
-          tracked: false,
-        },
-      },
-    });
-
-    const payload = result.inventoryItemUpdate;
-    if (payload.userErrors && payload.userErrors.length > 0) {
-      throw new Error(`${label} inventory item: ${formatUserErrors(payload.userErrors)}`);
-    }
-    console.log(`marked ${label} as non-shipping`);
-  } catch (error) {
-    if (!isInventoryAccessError(error)) throw error;
-    console.warn(`Skipped ${label} non-shipping update: token needs write_inventory. Mark this billing product as not requiring shipping in Shopify admin.`);
   }
 }
 
@@ -691,14 +640,6 @@ async function upsertBillingProduct({ store, auth, item }) {
   if (variantPayload.userErrors && variantPayload.userErrors.length > 0) {
     throw new Error(`${item.handle} variant: ${formatUserErrors(variantPayload.userErrors)}`);
   }
-
-  const updatedVariant = variantPayload.productVariants[0] || variant;
-  await markInventoryItemNonShipping({
-    store,
-    auth,
-    inventoryItemId: updatedVariant.inventoryItem?.id || variant.inventoryItem?.id,
-    label: `billing product ${item.handle}`,
-  });
 
   console.log(`${existing ? 'updated' : 'created'} billing product ${item.handle}: ${product.id}`);
   return product.id;
@@ -838,9 +779,14 @@ async function main() {
     for (const product of products) {
       console.log(`- product ${product['URL handle']}: $${product.Price}, template product.independence-phone`);
     }
+    console.log(`- phone product category: ${PHONE_PRODUCT_CATEGORY.fullName} (${PHONE_PRODUCT_CATEGORY.id})`);
     for (const product of billingProducts) {
-      console.log(`- hidden billing product ${product.handle}: $${product.price}, template product.billing-item`);
+      console.log(
+        `- hidden billing product ${product.handle}: $${product.checkoutPrice} due at Shopify checkout; `
+        + `$${product.futurePrice} ${product.billingCadence} after checkout; SKU ${product.sku}; template product.billing-item`,
+      );
     }
+    console.log('- hidden billing products remain uncategorized pending accounting guidance');
     console.log('- legacy product handles are updated in place when found: freedom-phone -> standard-phone, patriot-phone -> rugged-phone');
     console.log('- collection phones: template collection.phones');
     console.log('- publish phone products, billing products, and collection to Online Store when read_publications/write_publications are available');
@@ -904,7 +850,18 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  billingProducts,
+  PHONE_PRODUCT_CATEGORY,
+  productInputFromBillingProduct,
+  productInputFromRow,
+  variantInputFromBillingProduct,
+  variantInputFromRow,
+};

@@ -10,271 +10,37 @@
   {% liquid
     assign standard_product = all_products['standard-phone']
     assign rugged_product = all_products['rugged-phone']
-    assign monthly_service = all_products['monthly-service']
-    assign annual_service = all_products['annual-service']
-    assign call_recording = all_products['call-recording']
-    assign quiet_hours = all_products['family-quiet-hours']
-    assign voicemail_to_email = all_products['voicemail-to-email']
-    assign auto_attendant = all_products['auto-attendant']
-    assign addon_bundle = all_products['add-on-bundle']
-    assign patriot_package = all_products['patriot-package']
-    assign standard_variant = standard_product.selected_or_first_available_variant
-    assign rugged_variant = rugged_product.selected_or_first_available_variant
-    assign monthly_service_variant = monthly_service.selected_or_first_available_variant
-    assign annual_service_variant = annual_service.selected_or_first_available_variant
-    assign call_recording_variant = call_recording.selected_or_first_available_variant
-    assign quiet_hours_variant = quiet_hours.selected_or_first_available_variant
-    assign voicemail_variant = voicemail_to_email.selected_or_first_available_variant
-    assign auto_attendant_variant = auto_attendant.selected_or_first_available_variant
-    assign addon_bundle_variant = addon_bundle.selected_or_first_available_variant
-    assign patriot_package_variant = patriot_package.selected_or_first_available_variant
-    assign default_variant_id = standard_variant.id
-
-    if default_variant_id == blank
-      assign default_variant_id = rugged_variant.id
-    endif
+    assign monthly_service_product = all_products['monthly-service']
+    assign annual_service_product = all_products['annual-service']
+    assign call_recording_product = all_products['call-recording']
+    assign family_quiet_hours_product = all_products['family-quiet-hours']
+    assign voicemail_to_email_product = all_products['voicemail-to-email']
+    assign auto_attendant_product = all_products['auto-attendant']
+    assign addon_bundle_product = all_products['add-on-bundle']
+    assign order_builder_id = section.id | append: '-page-order'
   %}
+  {% capture order_builder_body %}<p>Choose your phone, service plan, and add-ons below.</p>{% endcapture %}
 
-  <section class="ip-section ip-order-builder" data-order-builder>
-    <div class="ip-order-builder__header ip-stack">
-      <p class="ip-kicker">Order now</p>
-      <h1 class="ip-heading ip-heading--medium ip-heading--wide">Build your Independence Phone setup.</h1>
-      <div class="ip-lede">
-        <p>Start with the Patriot Package, or choose your phone, plan, and add-ons below.</p>
-      </div>
-    </div>
-
-    <form
-      action="{{ routes.cart_add_url }}"
-      method="post"
-      enctype="multipart/form-data"
-      class="ip-product-form ip-order-builder__form"
-      data-order-form
-    >
-      <input type="hidden" name="id" value="{{ default_variant_id }}" data-order-variant-id>
-      <input type="hidden" name="quantity" value="1">
-
-      <fieldset class="ip-choice-group ip-order-builder__package">
-        <legend>Limited offer</legend>
-        <label class="ip-choice ip-order-card ip-order-card--package" for="OrderPackage-{{ section.id }}">
-          <input
-            id="OrderPackage-{{ section.id }}"
-            type="checkbox"
-            name="properties[Patriot Package]"
-            value="Patriot Package - $250; Classic Phone, 1 year phone service, and all 4 add-ons (saves $303.12)"
-            data-order-package
-            data-order-savings-year="30312"
-            data-billing-variant="{{ patriot_package_variant.id }}"
-            data-billing-role="package"
-          >
-          <span>
-            <strong>Patriot Package</strong>
-            <small>$250</small>
-            <em>Take advantage of our limited offer honoring the 250th anniversary of America. Includes Classic Phone, 1 Year phone service, all 4 add-on's for only $250! A savings of $303.12.</em>
-          </span>
-        </label>
-      </fieldset>
-
-      <fieldset class="ip-choice-group ip-order-builder__step">
-        <legend>1. Choose your phone</legend>
-        <div class="ip-order-builder__grid ip-order-builder__grid--phones">
-          <label class="ip-choice ip-order-card ip-order-card--phone" for="OrderPhoneStandard-{{ section.id }}">
-            <input
-              id="OrderPhoneStandard-{{ section.id }}"
-              type="radio"
-              name="properties[Phone]"
-              value="Classic Phone - $100"
-              data-order-phone
-              data-order-variant="{{ standard_variant.id }}"
-              data-order-title="Classic Phone"
-              data-order-price-cents="10000"
-              data-order-image="{{ 'ip-current-site-product-1.png' | asset_url }}"
-              checked
-            >
-            <span>
-              <strong>Classic Phone</strong>
-              <small>Wi-Fi, Bluetooth, encrypted data transmission and storage, 9-hour talk time.</small>
-            </span>
-            <img src="{{ 'ip-current-site-product-1.png' | asset_url }}" alt="Classic Phone" width="1200" height="1200" loading="lazy">
-          </label>
-
-          <label class="ip-choice ip-order-card ip-order-card--phone" for="OrderPhoneRugged-{{ section.id }}">
-            <input
-              id="OrderPhoneRugged-{{ section.id }}"
-              type="radio"
-              name="properties[Phone]"
-              value="Rugged Phone - $150"
-              data-order-phone
-              data-order-variant="{{ rugged_variant.id }}"
-              data-order-title="Rugged Phone"
-              data-order-price-cents="15000"
-              data-order-image="{{ 'ip-current-site-product-2.png' | asset_url }}"
-            >
-            <span>
-              <strong>Rugged Phone</strong>
-              <small>Wi-Fi, Bluetooth, encrypted data transmission and storage, 9-hour talk time, waterproof, drop proof.</small>
-            </span>
-            <img src="{{ 'ip-current-site-product-2.png' | asset_url }}" alt="Rugged Phone" width="1200" height="1200" loading="lazy">
-          </label>
-        </div>
-      </fieldset>
-
-      <fieldset class="ip-choice-group ip-order-builder__step">
-        <legend>2. Choose your plan</legend>
-        <div class="ip-order-builder__grid ip-order-builder__grid--two">
-          <label class="ip-choice ip-order-card" for="OrderPlanMonthly-{{ section.id }}">
-            <input
-              id="OrderPlanMonthly-{{ section.id }}"
-              type="radio"
-              name="properties[Service plan]"
-              value="Monthly service - $17.76/mo"
-              data-billing-variant="{{ monthly_service_variant.id }}"
-              data-billing-role="service"
-              checked
-            >
-            <span>
-              <strong>Monthly service</strong>
-              <small>$17.76/mo</small>
-              <em>Personal phone number and monthly service.</em>
-            </span>
-          </label>
-
-          <label class="ip-choice ip-order-card" for="OrderPlanAnnual-{{ section.id }}">
-            <input
-              id="OrderPlanAnnual-{{ section.id }}"
-              type="radio"
-              name="properties[Service plan]"
-              value="Annual service - $200/yr (saves $13.12/yr)"
-              data-order-annual
-              data-order-savings-year="1312"
-              data-billing-variant="{{ annual_service_variant.id }}"
-              data-billing-role="service"
-            >
-            <span>
-              <strong>Annual service</strong>
-              <small>$200/yr</small>
-              <em>Saves $13.12 compared with 12 monthly payments.</em>
-            </span>
-          </label>
-        </div>
-      </fieldset>
-
-      <fieldset class="ip-choice-group ip-order-builder__step">
-        <legend>3. Choose add-ons</legend>
-        <div class="ip-order-builder__grid ip-order-builder__grid--addons">
-          <label class="ip-choice ip-order-card ip-order-card--bundle" for="OrderAddonBundle-{{ section.id }}">
-            <input
-              id="OrderAddonBundle-{{ section.id }}"
-              type="checkbox"
-              name="properties[Add-on Bundle]"
-              value="Add-on Bundle - $10/mo; includes Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant (saves $10/mo)"
-              data-order-bundle
-              data-order-savings-month="1000"
-              data-billing-variant="{{ addon_bundle_variant.id }}"
-              data-billing-role="addon_bundle"
-            >
-            <span>
-              <strong>Add-on Bundle</strong>
-              <small>$10/mo</small>
-              <em>Includes every add-on: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant. Saves $10/mo.</em>
-            </span>
-          </label>
-
-          <label class="ip-choice ip-order-card" for="OrderAddonRecording-{{ section.id }}">
-            <input id="OrderAddonRecording-{{ section.id }}" type="checkbox" name="properties[Call Recording]" value="$5/mo" data-order-addon data-billing-variant="{{ call_recording_variant.id }}" data-billing-role="addon">
-            <span>
-              <strong>Call Recording</strong>
-              <small>$5/mo</small>
-              <em>Access to 90 days of recorded calls.</em>
-            </span>
-          </label>
-
-          <label class="ip-choice ip-order-card" for="OrderAddonQuietHours-{{ section.id }}">
-            <input id="OrderAddonQuietHours-{{ section.id }}" type="checkbox" name="properties[Quiet Hours]" value="$5/mo" data-order-addon data-billing-variant="{{ quiet_hours_variant.id }}" data-billing-role="addon">
-            <span>
-              <strong>Quiet Hours</strong>
-              <small>$5/mo</small>
-              <em>Set times for when to receive incoming calls.</em>
-            </span>
-          </label>
-
-          <label class="ip-choice ip-order-card" for="OrderAddonVoicemail-{{ section.id }}">
-            <input id="OrderAddonVoicemail-{{ section.id }}" type="checkbox" name="properties[Voicemail to Email]" value="$5/mo" data-order-addon data-billing-variant="{{ voicemail_variant.id }}" data-billing-role="addon">
-            <span>
-              <strong>Voicemail to Email</strong>
-              <small>$5/mo</small>
-              <em>Voicemail messages are sent to email as audio and transcription.</em>
-            </span>
-          </label>
-
-          <label class="ip-choice ip-order-card" for="OrderAddonAttendant-{{ section.id }}">
-            <input id="OrderAddonAttendant-{{ section.id }}" type="checkbox" name="properties[Auto Attendant]" value="$5/mo" data-order-addon data-billing-variant="{{ auto_attendant_variant.id }}" data-billing-role="addon">
-            <span>
-              <strong>Auto Attendant</strong>
-              <small>$5/mo</small>
-              <em>Filter unwanted spam calls.</em>
-            </span>
-          </label>
-        </div>
-      </fieldset>
-
-      <label class="ip-policy-check" for="OrderPolicyAgreement-{{ section.id }}">
-        <input
-          id="OrderPolicyAgreement-{{ section.id }}"
-          type="checkbox"
-          name="properties[Policy agreement]"
-          value="Agreed to Privacy Policy and Terms and Conditions"
-          required
-        >
-        <span>
-          I agree to the
-          <a href="/policies/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>
-          and
-          <a href="/policies/terms-of-service" target="_blank" rel="noopener">Terms and Conditions</a>.
-        </span>
-      </label>
-
-      <aside class="ip-card ip-order-summary" aria-live="polite">
-        <p class="ip-kicker">Order summary</p>
-        <h2 data-order-summary-title>Classic Phone</h2>
-        <dl>
-          <div>
-            <dt>Phone</dt>
-            <dd data-order-summary-phone>$100</dd>
-          </div>
-          <div>
-            <dt>Service</dt>
-            <dd data-order-summary-service>$17.76/mo</dd>
-          </div>
-          <div>
-            <dt>Add-ons</dt>
-            <dd data-order-summary-addons>None selected</dd>
-          </div>
-          <div>
-            <dt>Estimated savings</dt>
-            <dd data-order-summary-savings>$0</dd>
-          </div>
-        </dl>
-        <p class="ip-form-note">Taxes, shipping, and recurring billing are finalized through the approved store setup. Savings shown here are based on the selected setup options.</p>
-        <button
-          type="submit"
-          data-add-to-cart-button
-          data-default-text="Add setup to cart"
-          {% if default_variant_id == blank %}
-            disabled
-          {% endif %}
-        >
-          Add setup to cart
-        </button>
-        <p class="ip-form-note" data-cart-status aria-live="polite" hidden></p>
-      </aside>
-    </form>
-  </section>
+  {% render 'ip-order-builder-form',
+    builder_id: order_builder_id,
+    standard_product: standard_product,
+    rugged_product: rugged_product,
+    monthly_service_product: monthly_service_product,
+    annual_service_product: annual_service_product,
+    call_recording_product: call_recording_product,
+    family_quiet_hours_product: family_quiet_hours_product,
+    voicemail_to_email_product: voicemail_to_email_product,
+    auto_attendant_product: auto_attendant_product,
+    addon_bundle_product: addon_bundle_product,
+    heading: 'Build your Independence Phone order now.',
+    body: order_builder_body,
+    checkout_note: 'Taxes, shipping, and recurring billing will be shown in the cart.',
+    button_label: 'Add order to cart'
+  %}
 {% elsif page.handle == 'faq' %}
   <section class="ip-section ip-section--surface ip-faq-section full-width">
     <div class="ip-stack">
-      <p class="ip-kicker">FAQ</p>
-      <h1 class="ip-heading ip-heading--medium ip-heading--wide">Install, use, refer, and troubleshoot Patriot Phone.</h1>
+      <h1 class="ip-heading ip-heading--medium ip-heading--wide">Install, use, refer, and troubleshoot Independence Phone.</h1>
       <div class="ip-lede">
         <p>Use this page as the support path for setup, service questions, referrals, and common troubleshooting.</p>
       </div>
@@ -288,9 +54,27 @@
         </div>
       </details>
       <details>
+        <summary>How does my family use it?</summary>
+        <div class="ip-faq__answer">
+          <p>The phone is designed around calling. It does not include apps, a web browser, social feeds, GPS, camera, or cellular mobility unless the product scope changes.</p>
+        </div>
+      </details>
+      <details id="referral-offer">
+        <summary>How does the referral offer work?</summary>
+        <div class="ip-faq__answer">
+          <p>If a friend referred you, upon checkout type in their referral code, and you both will get one month of service for free!</p>
+        </div>
+      </details>
+      <details>
+        <summary>Where do I go for troubleshooting?</summary>
+        <div class="ip-faq__answer">
+          <p>Use the contact page for setup, service, billing, or phone troubleshooting. The team can expand this page with step-by-step support articles after launch.</p>
+        </div>
+      </details>
+      <details>
         <summary>Does it have internet?</summary>
         <div class="ip-faq__answer">
-          <p>No. Patriot Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>
+          <p>No. Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>
         </div>
       </details>
       <details>
@@ -299,16 +83,10 @@
           <p>Personal phone number plus monthly phone service is $17.76/mo. Annual service is $200/yr and saves $13.12 compared with monthly billing.</p>
         </div>
       </details>
-      <details>
+      <details id="phone-comparison">
         <summary>What is the difference between Classic Phone and Rugged Phone?</summary>
         <div class="ip-faq__answer">
-          <p>Classic Phone is the everyday cordless Wi-Fi handset. Rugged Phone is the model with waterproof and dust-proof construction, drop protection up to 1.8 meters, and longer battery life.</p>
-        </div>
-      </details>
-      <details>
-        <summary>What does the Patriot Package include?</summary>
-        <div class="ip-faq__answer">
-          <p>The Patriot Package includes a Classic Phone, 1 year of phone service, and all 4 add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant for $250.</p>
+          <p>Both phones include Wi-Fi, Bluetooth, encrypted data transmission and storage, and 9-hour talk time. Rugged Phone also adds waterproof and drop-proof protection.</p>
         </div>
       </details>
     </div>
@@ -329,10 +107,34 @@
         },
         {
           "@type": "Question",
+          "name": "How does my family use it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The phone is designed around calling. It does not include apps, a web browser, social feeds, GPS, camera, or cellular mobility unless the product scope changes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the referral offer work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If a friend referred you, upon checkout type in their referral code, and you both will get one month of service for free!"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where do I go for troubleshooting?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use the contact page for setup, service, billing, or phone troubleshooting. The team can expand this page with step-by-step support articles after launch."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Does it have internet?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. Patriot Phone is positioned as a phone-first product without web browsing, apps, or social feeds."
+            "text": "No. Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds."
           }
         },
         {
@@ -348,15 +150,7 @@
           "name": "What is the difference between Classic Phone and Rugged Phone?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Classic Phone is the everyday cordless Wi-Fi handset. Rugged Phone is the model with waterproof and dust-proof construction, drop protection up to 1.8 meters, and longer battery life."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What does the Patriot Package include?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "The Patriot Package includes a Classic Phone, 1 year of phone service, and all 4 add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant for $250."
+            "text": "Both phones include Wi-Fi, Bluetooth, encrypted data transmission and storage, and 9-hour talk time. Rugged Phone also adds waterproof and drop-proof protection."
           }
         }
       ]

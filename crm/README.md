@@ -1,6 +1,6 @@
 # Simple CRM Capture
 
-This is the minimal CRM path for the Independence Phone storefront contact form.
+This is the minimal CRM path for the Independence Phone storefront contact form and optional Shopify order evidence.
 
 It is intentionally separate from Liquid. A Shopify theme can render the form, but it cannot securely store lead records or hold private API credentials. The theme posts to this server-side endpoint only when the `IP contact form` section has a CRM endpoint URL configured.
 
@@ -48,7 +48,7 @@ After a successful CRM capture, the endpoint redirects the visitor back to the s
 
 ## Captured Fields
 
-Each accepted lead record stores:
+Each accepted lead record can store:
 
 - submitted timestamp in ISO format
 - submitted timestamp formatted in the store timezone
@@ -60,17 +60,19 @@ Each accepted lead record stores:
 - name
 - email
 - phone
-- child age range
-- main use case
 - interested product
 - preferred service plan
-- Patriot Package interest
 - selected add-ons
 - message
 - marketing opt-in
-- privacy and terms consent
 - raw submitted form fields
 - IP and user agent metadata when the host provides them
+
+The current contact form submits only Name, Email, Phone Number, and `How can we Help?`. Optional normalized product/service/add-on fields remain available for other approved sources, but the CRM must not invent values that were not submitted.
+
+For `contact_form` lead capture, Name, a valid Email, and `How can we Help?` are required. Phone Number is optional. Privacy/Terms consent is neither required nor synthesized: when the field is omitted, its normalized value remains `null`. If an approved compatible source explicitly submits a true consent value, the receiver preserves that value without making it a contact-form requirement.
+
+Privacy Policy/Terms checkout consent and required desired area code are not collected by the contact form, Order Now page, cart, or CRM lead capture. The final Rev.io/gateway checkout, or a Shopify Plus checkout extension, must collect them exactly once and persist the resulting evidence with the checkout/sale record.
 
 Contact form submissions are tagged as:
 
@@ -83,8 +85,10 @@ Purchase/order imports are tagged as:
 
 - `record_type`: `sale`
 - `source_type`: `shopify_order`
-- `sale_type`: `classic_monthly_addon_sale`, `classic_patriot_package_sale`, `rugged_patriot_package_sale`, or `phone_setup_sale`
-- `tags`: `sale`, `shopify_order`, product/plan/package tags where available
+- `sale_type`: a setup-derived value such as `classic_monthly_addon_sale`, `rugged_annual_bundle_sale`, or the fallback `phone_setup_sale`
+- `tags`: `sale`, `shopify_order`, and product/plan/add-on tags where available
+
+The current checkout contract has no Patriot Package. Purchase evidence can include `$0.00` service/add-on Shopify lines plus their stable SKU, future charge, billing cadence, and first-day-of-next-month rule. CRM records are audit evidence, not the authority that validates prices or schedules future billing.
 
 Automatic order capture uses Shopify's signed `orders/create` webhook at `/crm/shopify/orders/create`. Set `SHOPIFY_ORDER_WEBHOOK_SECRET` in production so the endpoint can verify `X-Shopify-Hmac-Sha256` before writing a sale record into the same CRM JSONL store as contact leads.
 
@@ -104,7 +108,7 @@ CRM_WEBHOOK_SECRET=<long random outbound signing secret>
 
 Lead destinations receive `crm.lead.created` after contact-form capture. Sale destinations receive `crm.sale.created` after signed Shopify order webhook capture or protected manual import. Multiple URLs can be comma-separated or newline-separated.
 
-Every outbound request is JSON and includes `x-patriot-phone-event`, `x-patriot-phone-record-id`, and `x-patriot-phone-signature: sha256=...`. The signature is an HMAC SHA-256 of the exact JSON body using `CRM_WEBHOOK_SECRET`.
+Every outbound request is JSON and includes `x-patriot-phone-event`, `x-patriot-phone-record-id`, and `x-patriot-phone-signature: sha256=...`. These legacy header names are retained for compatibility with the current server implementation; they do not indicate a Patriot Package product. The signature is an HMAC SHA-256 of the exact JSON body using `CRM_WEBHOOK_SECRET`.
 
 ## Staff Viewer And Export
 

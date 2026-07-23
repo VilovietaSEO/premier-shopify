@@ -11,7 +11,8 @@
 
   <div class="ip-faq" style="margin-top: 2rem;">
     {% for block in section.blocks %}
-      <details {% if forloop.first and section.settings.open_first %}open{% endif %} {{ block.shopify_attributes }}>
+      {% assign faq_anchor = block.settings.anchor_id | strip | handleize %}
+      <details{% if faq_anchor != blank %} id="{{ faq_anchor }}"{% endif %} {% if forloop.first and section.settings.open_first %}open{% endif %} {{ block.shopify_attributes }}>
         <summary>{{ block.settings.question }}</summary>
         <div class="ip-faq__answer">{{ block.settings.answer }}</div>
       </details>
@@ -83,6 +84,12 @@
           "id": "answer",
           "label": "Answer",
           "default": "<p>Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>"
+        },
+        {
+          "type": "text",
+          "id": "anchor_id",
+          "label": "Link anchor (optional)",
+          "info": "Use a short value such as phone-comparison when another page should link directly to this answer."
         }
       ]
     }
@@ -116,14 +123,15 @@
           "type": "faq",
           "settings": {
             "question": "What is the difference between Classic Phone and Rugged Phone?",
-            "answer": "<p>Classic Phone is the everyday heavy-duty Wi-Fi handset. Rugged Phone is the model with waterproof and dust-proof construction, drop protection up to 1.8 meters, and longer battery life.</p>"
+            "answer": "<p>Both phones include Wi-Fi, Bluetooth, encrypted data transmission and storage, and 9-hour talk time. Rugged Phone also adds waterproof and drop-proof protection.</p>"
           }
         },
         {
           "type": "faq",
           "settings": {
-            "question": "What does the Patriot Package include?",
-            "answer": "<p>The Patriot Package includes a Classic Phone, 1 year of phone service, and all 4 add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant for $250.</p>"
+            "question": "How does the referral offer work?",
+            "answer": "<p>If a friend referred you, upon checkout type in their referral code, and you both will get one month of service for free!</p>",
+            "anchor_id": "referral-offer"
           }
         }
       ]

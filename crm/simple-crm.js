@@ -7,6 +7,99 @@ const { extractSetupRows } = require('../orders/setup-export');
 const DEFAULT_TIME_ZONE = process.env.CRM_STORE_TIMEZONE || 'America/Denver';
 const DEFAULT_STORAGE_PATH = process.env.CRM_SUBMISSIONS_PATH || path.resolve(process.cwd(), 'tmp/crm-submissions.jsonl');
 const DEFAULT_WEBHOOK_TIMEOUT_MS = 8000;
+const FIRST_BILL_RULE = 'first_day_of_next_month';
+const REVIO_CHECKOUT_LINE_ALLOWLIST = Object.freeze({
+  'PP-CLASSIC-PHONE': Object.freeze({
+    handle: 'standard-phone',
+    role: 'phone',
+    checkoutPriceCents: 10000,
+    futurePriceCents: 0,
+    billingCadence: '',
+    firstBillRule: '',
+    requiresShipping: true,
+    taxable: true,
+  }),
+  'PP-RUGGED-PHONE': Object.freeze({
+    handle: 'rugged-phone',
+    role: 'phone',
+    checkoutPriceCents: 15000,
+    futurePriceCents: 0,
+    billingCadence: '',
+    firstBillRule: '',
+    requiresShipping: true,
+    taxable: true,
+  }),
+  'PP-MONTHLY-SERVICE': Object.freeze({
+    handle: 'monthly-service',
+    role: 'service',
+    checkoutPriceCents: 0,
+    futurePriceCents: 1776,
+    billingCadence: 'monthly',
+    firstBillRule: FIRST_BILL_RULE,
+    requiresShipping: false,
+    taxable: false,
+  }),
+  'PP-ANNUAL-SERVICE': Object.freeze({
+    handle: 'annual-service',
+    role: 'service',
+    checkoutPriceCents: 0,
+    futurePriceCents: 20000,
+    billingCadence: 'annual',
+    firstBillRule: FIRST_BILL_RULE,
+    requiresShipping: false,
+    taxable: false,
+  }),
+  'PP-ADDON-CALL-RECORDING': Object.freeze({
+    handle: 'call-recording',
+    role: 'addon',
+    checkoutPriceCents: 0,
+    futurePriceCents: 500,
+    billingCadence: 'monthly',
+    firstBillRule: FIRST_BILL_RULE,
+    requiresShipping: false,
+    taxable: false,
+  }),
+  'PP-ADDON-FAMILY-QUIET-HOURS': Object.freeze({
+    handle: 'family-quiet-hours',
+    role: 'addon',
+    checkoutPriceCents: 0,
+    futurePriceCents: 500,
+    billingCadence: 'monthly',
+    firstBillRule: FIRST_BILL_RULE,
+    requiresShipping: false,
+    taxable: false,
+  }),
+  'PP-ADDON-VOICEMAIL-TO-EMAIL': Object.freeze({
+    handle: 'voicemail-to-email',
+    role: 'addon',
+    checkoutPriceCents: 0,
+    futurePriceCents: 500,
+    billingCadence: 'monthly',
+    firstBillRule: FIRST_BILL_RULE,
+    requiresShipping: false,
+    taxable: false,
+  }),
+  'PP-ADDON-AUTO-ATTENDANT': Object.freeze({
+    handle: 'auto-attendant',
+    role: 'addon',
+    checkoutPriceCents: 0,
+    futurePriceCents: 500,
+    billingCadence: 'monthly',
+    firstBillRule: FIRST_BILL_RULE,
+    requiresShipping: false,
+    taxable: false,
+  }),
+  'PP-ADDON-BUNDLE': Object.freeze({
+    handle: 'add-on-bundle',
+    role: 'addon_bundle',
+    checkoutPriceCents: 0,
+    futurePriceCents: 1000,
+    billingCadence: 'monthly',
+    firstBillRule: FIRST_BILL_RULE,
+    requiresShipping: false,
+    taxable: false,
+  }),
+});
 
 const FIELD_ALIASES = {
   name: ['contact[name]', 'name'],
@@ -16,7 +109,6 @@ const FIELD_ALIASES = {
   useCase: ['contact[Main use case]', 'main_use_case', 'use_case'],
   interestedProduct: ['contact[Interested product]', 'interested_product'],
   preferredPlan: ['contact[Preferred service plan]', 'preferred_plan'],
-  patriotPackageInterest: ['contact[Patriot Package interest]', 'patriot_package_interest'],
   selectedAddons: ['contact[Selected add-ons]', 'selected_addons', 'selected_addons[]'],
   message: ['contact[body]', 'message', 'body'],
   marketingOptIn: ['contact[Marketing opt-in]', 'marketing_opt_in'],
@@ -64,7 +156,6 @@ const CSV_COLUMNS = [
   'use_case',
   'interested_product',
   'preferred_plan',
-  'patriot_package_interest',
   'selected_addons',
   'message',
   'marketing_opt_in',
@@ -135,6 +226,11 @@ function booleanValue(fields, aliases) {
   return ['1', 'true', 'yes', 'on', 'agree', 'agreed'].includes(value);
 }
 
+function optionalBooleanValue(fields, aliases) {
+  const wasSubmitted = aliases.some((alias) => Object.prototype.hasOwnProperty.call(fields, alias));
+  return wasSubmitted ? booleanValue(fields, aliases) : null;
+}
+
 function storeTime(isoDate, timeZone) {
   return new Intl.DateTimeFormat('en-US', {
     dateStyle: 'medium',
@@ -181,11 +277,10 @@ function createSubmissionRecord(input, options = {}) {
     useCase: firstValue(formFields, FIELD_ALIASES.useCase),
     interestedProduct: firstValue(formFields, FIELD_ALIASES.interestedProduct),
     preferredPlan: firstValue(formFields, FIELD_ALIASES.preferredPlan),
-    patriotPackageInterest: firstValue(formFields, FIELD_ALIASES.patriotPackageInterest),
     selectedAddons: arrayValue(formFields, FIELD_ALIASES.selectedAddons),
     message: firstValue(formFields, FIELD_ALIASES.message),
     marketingOptIn: booleanValue(formFields, FIELD_ALIASES.marketingOptIn),
-    privacyTermsConsent: booleanValue(formFields, FIELD_ALIASES.privacyTermsConsent),
+    privacyTermsConsent: optionalBooleanValue(formFields, FIELD_ALIASES.privacyTermsConsent),
     sourceUrl,
     sourcePath: firstValue(formFields, FIELD_ALIASES.sourcePath),
     referrer: firstValue(formFields, FIELD_ALIASES.referrer),
@@ -228,7 +323,6 @@ function validateSubmission(record) {
   if (!fields.email) errors.push('email is required');
   if (fields.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) errors.push('email is invalid');
   if (!fields.message) errors.push('message is required');
-  if (!fields.privacyTermsConsent) errors.push('privacy and terms consent is required');
 
   return errors;
 }
@@ -313,12 +407,30 @@ async function dispatchOutboundWebhook(url, payload, options = {}) {
       body,
       signal: AbortSignal.timeout(options.timeoutMs || DEFAULT_WEBHOOK_TIMEOUT_MS),
     });
+    let responsePayload = null;
+    if (typeof response.json === 'function') {
+      try {
+        responsePayload = await response.json();
+      } catch {
+        responsePayload = null;
+      }
+    }
+    const locationHeader = typeof response.headers?.get === 'function'
+      ? response.headers.get('location') || ''
+      : '';
+    const checkoutUrl = [
+      responsePayload?.checkout_url,
+      responsePayload?.redirect_url,
+      locationHeader,
+      response.redirected ? response.url : '',
+    ].find((value) => String(value || '').trim()) || '';
     return {
       url,
-      ok: response.ok,
+      ok: response.ok && responsePayload?.ok !== false,
       status: response.status,
       event: payload.event,
       recordId: payload.record?.id || '',
+      checkoutUrl,
     };
   } catch (error) {
     return {
@@ -353,12 +465,6 @@ function existingDedupeKeys(storagePath) {
 }
 
 function saleTypeForSetupRow(row) {
-  if (/classic phone/i.test(row.line_item_title || row.phone || '') && /patriot package/i.test(row.patriot_package || '')) {
-    return 'classic_patriot_package_sale';
-  }
-  if (/rugged phone/i.test(row.line_item_title || row.phone || '') && /patriot package/i.test(row.patriot_package || '')) {
-    return 'rugged_patriot_package_sale';
-  }
   if (/classic phone/i.test(row.line_item_title || row.phone || '') && /monthly service/i.test(row.service_plan || '')) {
     return 'classic_monthly_addon_sale';
   }
@@ -371,7 +477,6 @@ function saleTagsForSetupRow(row, saleType) {
   if (/rugged phone/i.test(row.line_item_title || row.phone || '')) tags.push('rugged-phone');
   if (/monthly service/i.test(row.service_plan || '')) tags.push('monthly-service');
   if (/annual service/i.test(row.service_plan || '')) tags.push('annual-service');
-  if (/patriot package/i.test(row.patriot_package || '')) tags.push('patriot-package');
   if (/add-on bundle/i.test(row.add_on_bundle || '')) tags.push('add-on-bundle');
   return Array.from(new Set(tags));
 }
@@ -396,7 +501,6 @@ function createOrderCrmRecord(row, options = {}) {
     useCase: 'Purchase',
     interestedProduct: row.line_item_title || row.phone || '',
     preferredPlan: row.service_plan || '',
-    patriotPackageInterest: row.patriot_package || '',
     selectedAddons: [
       row.add_on_bundle ? `Add-on Bundle: ${row.add_on_bundle}` : '',
       row.call_recording ? `Call Recording: ${row.call_recording}` : '',
@@ -488,25 +592,53 @@ function checkoutSetupIds(payload) {
   return Array.from(ids).sort();
 }
 
-function checkoutDedupeKey(payload) {
-  const token = payload?.cart?.token || '';
-  const setupIds = checkoutSetupIds(payload).join('|');
-  if (token || setupIds) return `revio_checkout:${token}:${setupIds}`;
-  const hash = crypto
+function checkoutSelectionLine(line = {}) {
+  const visibleProperties = Array.isArray(line.visible_properties)
+    ? line.visible_properties
+      .map((property) => ({
+        name: String(property?.name || property?.key || '').trim(),
+        value: String(property?.value ?? '').trim(),
+      }))
+      .filter((property) => property.name)
+      .sort((left, right) => `${left.name}\u0000${left.value}`.localeCompare(`${right.name}\u0000${right.value}`))
+    : [];
+
+  return {
+    setup_id: String(line.setup_id || ''),
+    role: String(line.role || ''),
+    shopify_variant_id: String(line.shopify_variant_id || ''),
+    sku: String(line.sku || ''),
+    quantity: Number(line.quantity || 0),
+    checkout_price_cents: line.checkout_price_cents,
+    checkout_line_price_cents: line.checkout_line_price_cents,
+    future_charge_cents: line.future_charge_cents,
+    future_line_charge_cents: line.future_line_charge_cents,
+    billing_cadence: String(line.billing_cadence || ''),
+    first_bill_rule: String(line.first_bill_rule || ''),
+    setup_billing_name: String(line.setup_billing_name || ''),
+    setup_billing_value: String(line.setup_billing_value || ''),
+    visible_properties: visibleProperties,
+  };
+}
+
+function checkoutSelectionHash(payload) {
+  const lines = checkoutHandoffLines(payload)
+    .map(checkoutSelectionLine)
+    .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)));
+  return crypto
     .createHash('sha256')
-    .update(JSON.stringify(payload || {}))
+    .update(JSON.stringify(lines))
     .digest('hex')
     .slice(0, 24);
-  return `revio_checkout:${hash}`;
+}
+
+function checkoutDedupeKey(payload) {
+  const token = payload?.cart?.token || '';
+  return `revio_checkout:${token || 'no-cart-token'}:${checkoutSelectionHash(payload)}`;
 }
 
 function checkoutSaleType(payload) {
-  const packageLine = firstCheckoutLine(payload, ['package']);
   const phoneLine = firstCheckoutLine(payload, ['phone']);
-  if (packageLine && /classic/i.test(phoneLine?.title || packageLine.setup_phone || '')) {
-    return 'classic_patriot_package_checkout';
-  }
-  if (packageLine) return 'patriot_package_checkout';
   if (/rugged/i.test(phoneLine?.title || '')) return 'rugged_phone_checkout';
   if (/classic/i.test(phoneLine?.title || '')) return 'classic_phone_checkout';
   return 'revio_checkout_handoff';
@@ -523,7 +655,6 @@ function checkoutTags(payload, saleType) {
   if (lines.some((line) => line.role === 'service' && /annual/i.test(line.setup_billing_value || line.title || ''))) {
     tags.push('annual-service');
   }
-  if (lines.some((line) => line.role === 'package')) tags.push('patriot-package');
   if (lines.some((line) => line.role === 'addon_bundle')) tags.push('add-on-bundle');
   return Array.from(new Set(tags));
 }
@@ -538,8 +669,29 @@ function checkoutLineLabel(line) {
 
 function validateCheckoutHandoff(payload) {
   const errors = [];
-  if (!payload || typeof payload !== 'object') errors.push('checkout payload is required');
-  if (!payload?.consent?.privacy_terms_accepted) errors.push('privacy and terms consent is required');
+  const allowedRoles = new Set(['phone', 'service', 'addon', 'addon_bundle']);
+  const deferredRoles = new Set(['service', 'addon', 'addon_bundle']);
+  const isMoneyCents = (value) => Number.isInteger(value) && value >= 0;
+  const isPositiveQuantity = (value) => Number.isInteger(value) && value > 0;
+
+  if (!payload || typeof payload !== 'object') {
+    return ['checkout payload is required'];
+  }
+  if (payload.schema !== 'independence_phone.revio_checkout.v2') {
+    errors.push('schema must be independence_phone.revio_checkout.v2');
+  }
+  if (payload?.consent?.collection_status !== 'pending_checkout') {
+    errors.push('privacy and terms consent collection_status must be pending_checkout');
+  }
+  if (payload?.consent?.privacy_terms_accepted != null) {
+    errors.push('privacy and terms consent must remain pending until final checkout');
+  }
+  if (payload?.customer?.desired_area_code_collection_status !== 'required_at_checkout') {
+    errors.push('desired area code must be marked required_at_checkout');
+  }
+  if (String(payload?.customer?.desired_area_code || '').trim()) {
+    errors.push('desired area code must remain pending until final checkout');
+  }
   if (!Array.isArray(payload?.setups) || payload.setups.length === 0) {
     errors.push('at least one phone setup is required');
   }
@@ -550,9 +702,187 @@ function validateCheckoutHandoff(payload) {
   const setupIds = checkoutSetupIds(payload);
   if (setupIds.length === 0) errors.push('setup_id is required for Rev.io checkout handoff');
 
+  const declaredSetupIds = new Set();
   for (const setup of payload?.setups || []) {
-    const phoneLine = (setup.lines || []).find((line) => line.role === 'phone' || !line.setup_parent);
-    if (!phoneLine) errors.push(`phone line is missing for setup ${setup.setup_id || '(unknown)'}`);
+    const setupId = String(setup.setup_id || '');
+    if (!setupId) {
+      errors.push('every setup must have a setup_id');
+      continue;
+    }
+    if (declaredSetupIds.has(setupId)) errors.push(`duplicate setup_id ${setupId}`);
+    declaredSetupIds.add(setupId);
+    if (!Array.isArray(setup.lines) || setup.lines.length === 0) {
+      errors.push(`lines are required for setup ${setupId}`);
+      continue;
+    }
+    const phoneLines = setup.lines.filter((line) => line.role === 'phone');
+    const serviceLines = setup.lines.filter((line) => line.role === 'service');
+    if (phoneLines.length !== 1) errors.push(`exactly one phone line is required for setup ${setupId}`);
+    if (serviceLines.length !== 1) errors.push(`exactly one service line is required for setup ${setupId}`);
+    if (!isPositiveQuantity(setup.quantity)) errors.push(`quantity must be a positive integer for setup ${setupId}`);
+    for (const line of setup.lines) {
+      if (String(line.setup_id || '') !== setupId) {
+        errors.push(`line setup_id must match setup ${setupId}`);
+      }
+      if (isPositiveQuantity(setup.quantity) && line.quantity !== setup.quantity) {
+        errors.push(`line quantity must match setup quantity for setup ${setupId}`);
+      }
+    }
+  }
+
+  for (const [index, line] of (payload.lines || []).entries()) {
+    const label = `line ${index + 1}`;
+    const role = String(line?.role || '');
+    if (!allowedRoles.has(role)) {
+      errors.push(`${label} has unsupported role ${role || '(missing)'}`);
+      continue;
+    }
+    if (!String(line.setup_id || '')) errors.push(`${label} setup_id is required`);
+    if (!declaredSetupIds.has(String(line.setup_id || ''))) {
+      errors.push(`${label} references an unknown setup_id`);
+    }
+    if (!String(line.shopify_variant_id || '')) errors.push(`${label} shopify_variant_id is required`);
+    if (!String(line.sku || '').trim()) errors.push(`${label} sku is required`);
+    if (!isPositiveQuantity(line.quantity)) errors.push(`${label} quantity must be a positive integer`);
+    if (!isMoneyCents(line.checkout_price_cents)) errors.push(`${label} checkout_price_cents must be numeric cents`);
+    if (!isMoneyCents(line.checkout_line_price_cents)) errors.push(`${label} checkout_line_price_cents must be numeric cents`);
+    if (!isMoneyCents(line.future_charge_cents)) errors.push(`${label} future_charge_cents must be numeric cents`);
+    if (!isMoneyCents(line.future_line_charge_cents)) errors.push(`${label} future_line_charge_cents must be numeric cents`);
+    if (
+      isPositiveQuantity(line.quantity)
+      && isMoneyCents(line.checkout_price_cents)
+      && isMoneyCents(line.checkout_line_price_cents)
+      && line.checkout_line_price_cents !== line.checkout_price_cents * line.quantity
+    ) {
+      errors.push(`${label} checkout line price must equal unit price times quantity`);
+    }
+    if (
+      isPositiveQuantity(line.quantity)
+      && isMoneyCents(line.future_charge_cents)
+      && isMoneyCents(line.future_line_charge_cents)
+      && line.future_line_charge_cents !== line.future_charge_cents * line.quantity
+    ) {
+      errors.push(`${label} future line charge must equal unit future charge times quantity`);
+    }
+
+    const allowedLine = REVIO_CHECKOUT_LINE_ALLOWLIST[String(line.sku || '').trim()];
+    if (!allowedLine) {
+      errors.push(`${label} sku is not approved for Rev.io checkout`);
+    } else {
+      if (line.shopify_handle !== allowedLine.handle) {
+        errors.push(`${label} shopify_handle does not match approved sku`);
+      }
+      if (role !== allowedLine.role) {
+        errors.push(`${label} role does not match approved sku`);
+      }
+      if (line.checkout_price_cents !== allowedLine.checkoutPriceCents) {
+        errors.push(`${label} checkout_price_cents does not match approved sku`);
+      }
+      if (line.future_charge_cents !== allowedLine.futurePriceCents) {
+        errors.push(`${label} future_charge_cents does not match approved sku`);
+      }
+      if (line.billing_cadence !== allowedLine.billingCadence) {
+        errors.push(`${label} billing_cadence does not match approved sku`);
+      }
+      if (line.first_bill_rule !== allowedLine.firstBillRule) {
+        errors.push(`${label} first_bill_rule does not match approved sku`);
+      }
+      if (line.requires_shipping !== allowedLine.requiresShipping) {
+        errors.push(`${label} requires_shipping does not match approved sku`);
+      }
+      if (line.taxable !== allowedLine.taxable) {
+        errors.push(`${label} taxable does not match approved sku`);
+      }
+    }
+
+    if (role === 'phone') {
+      if (line.setup_parent) errors.push(`${label} phone line cannot be a setup parent`);
+      if (!(line.checkout_price_cents > 0) || !(line.checkout_line_price_cents > 0)) {
+        errors.push(`${label} phone must have an immediate checkout price`);
+      }
+      if (line.future_charge_cents !== 0 || line.future_line_charge_cents !== 0) {
+        errors.push(`${label} phone cannot have a future charge`);
+      }
+      continue;
+    }
+
+    if (deferredRoles.has(role)) {
+      if (!line.setup_parent) errors.push(`${label} deferred billing line must be a setup parent`);
+      if (line.checkout_price_cents !== 0 || line.checkout_line_price_cents !== 0) {
+        errors.push(`${label} deferred billing line must be $0 at Shopify checkout`);
+      }
+      if (!(line.future_charge_cents > 0) || !(line.future_line_charge_cents > 0)) {
+        errors.push(`${label} deferred billing line must have a positive future charge`);
+      }
+      if (!['monthly', 'annual'].includes(line.billing_cadence)) {
+        errors.push(`${label} billing_cadence must be monthly or annual`);
+      }
+      if (role !== 'service' && line.billing_cadence !== 'monthly') {
+        errors.push(`${label} add-on billing_cadence must be monthly`);
+      }
+      if (line.first_bill_rule !== 'first_day_of_next_month') {
+        errors.push(`${label} first_bill_rule must be first_day_of_next_month`);
+      }
+    }
+  }
+
+  const nestedSelection = (payload.setups || [])
+    .flatMap((setup) => setup.lines || [])
+    .map(checkoutSelectionLine)
+    .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)));
+  const topLevelSelection = (payload.lines || [])
+    .map(checkoutSelectionLine)
+    .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)));
+  if (JSON.stringify(nestedSelection) !== JSON.stringify(topLevelSelection)) {
+    errors.push('top-level checkout lines must match setup lines');
+  }
+
+  if (Array.isArray(payload.ungrouped_lines) && payload.ungrouped_lines.length > 0) {
+    errors.push('ungrouped checkout lines are not supported');
+  }
+  if (payload.setup_count !== (payload.setups || []).length) {
+    errors.push('setup_count must match the number of setups');
+  }
+
+  const immediateSubtotal = (payload.lines || []).reduce(
+    (total, line) => total + (isMoneyCents(line.checkout_line_price_cents) ? line.checkout_line_price_cents : 0),
+    0,
+  );
+  const futureCharge = (payload.lines || []).reduce(
+    (total, line) => total + (isMoneyCents(line.future_line_charge_cents) ? line.future_line_charge_cents : 0),
+    0,
+  );
+  if (payload?.cart?.immediate_subtotal_cents !== immediateSubtotal) {
+    errors.push('cart immediate_subtotal_cents must match checkout lines');
+  }
+  if (payload?.cart?.future_charge_cents !== futureCharge) {
+    errors.push('cart future_charge_cents must match deferred billing lines');
+  }
+  const phoneQuantity = (payload.lines || []).reduce(
+    (total, line) => total + (line.role === 'phone' && isPositiveQuantity(line.quantity) ? line.quantity : 0),
+    0,
+  );
+  const rawItemQuantity = (payload.lines || []).reduce(
+    (total, line) => total + (isPositiveQuantity(line.quantity) ? line.quantity : 0),
+    0,
+  );
+  if (payload?.cart?.item_count !== phoneQuantity) {
+    errors.push('cart item_count must match phone quantity');
+  }
+  if (payload?.cart?.raw_item_count !== rawItemQuantity) {
+    errors.push('cart raw_item_count must match all checkout line quantities');
+  }
+  if (payload?.cart?.flat_shipping_cents !== 1500) {
+    errors.push('cart flat_shipping_cents must be 1500');
+  }
+  if (payload?.cart?.due_today_before_tax_cents !== immediateSubtotal + 1500) {
+    errors.push('cart due_today_before_tax_cents must include the $15 flat shipping charge');
+  }
+  if (payload?.cart?.tax_status !== 'calculated_after_address' || payload?.cart?.tax_cents != null) {
+    errors.push('cart tax must remain pending until an address is entered');
+  }
+  if (payload?.cart?.first_bill_rule !== 'first_day_of_next_month') {
+    errors.push('cart first_bill_rule must be first_day_of_next_month');
   }
 
   return Array.from(new Set(errors));
@@ -565,7 +895,6 @@ function createCheckoutHandoffRecord(payload, options = {}) {
   const saleType = checkoutSaleType(payload);
   const phoneLine = firstCheckoutLine(payload, ['phone']);
   const serviceLine = firstCheckoutLine(payload, ['service']);
-  const packageLine = firstCheckoutLine(payload, ['package']);
   const addonLines = checkoutHandoffLines(payload).filter((line) => ['addon', 'addon_bundle'].includes(line.role));
   const setupIds = checkoutSetupIds(payload);
   const sourceUrl = payload.source_url || '';
@@ -597,11 +926,10 @@ function createCheckoutHandoffRecord(payload, options = {}) {
       useCase: 'Purchase',
       interestedProduct: phoneLine?.title || phoneLine?.setup_phone || '',
       preferredPlan: checkoutLineLabel(serviceLine || {}),
-      patriotPackageInterest: checkoutLineLabel(packageLine || {}),
       selectedAddons: addonLines.map(checkoutLineLabel).filter(Boolean),
       message: `Rev.io checkout handoff for ${setupIds.length || payload.setup_count || 0} setup(s).`,
       marketingOptIn: false,
-      privacyTermsConsent: Boolean(payload.consent?.privacy_terms_accepted),
+      privacyTermsConsent: payload.consent?.privacy_terms_accepted ?? null,
       sourceUrl,
       sourcePath,
       referrer: payload.referrer || '',
@@ -620,7 +948,13 @@ function createCheckoutHandoffRecord(payload, options = {}) {
       cart_token: payload.cart?.token || '',
       setup_ids: setupIds,
       schema: payload.schema || '',
-      total_price_cents: payload.cart?.total_price_cents || 0,
+      immediate_subtotal_cents: payload.cart?.immediate_subtotal_cents || 0,
+      flat_shipping_cents: payload.cart?.flat_shipping_cents || 0,
+      due_today_before_tax_cents: payload.cart?.due_today_before_tax_cents || 0,
+      future_charge_cents: payload.cart?.future_charge_cents || 0,
+      consent_collection_status: payload.consent?.collection_status || '',
+      desired_area_code: payload.customer?.desired_area_code ?? null,
+      desired_area_code_collection_status: payload.customer?.desired_area_code_collection_status || '',
     },
     spam: false,
   };
@@ -687,11 +1021,10 @@ function submissionsToCsv(records) {
         fields.useCase,
         fields.interestedProduct,
         fields.preferredPlan,
-        fields.patriotPackageInterest,
         fields.selectedAddons,
         fields.message,
         fields.marketingOptIn ? 'Yes' : 'No',
-        fields.privacyTermsConsent ? 'Yes' : 'No',
+        fields.privacyTermsConsent == null ? 'Pending' : (fields.privacyTermsConsent ? 'Yes' : 'No'),
         JSON.stringify(record.form_fields || {}),
         JSON.stringify(record.meta || {}),
       ].map(csvValue).join(',')
@@ -1131,6 +1464,7 @@ module.exports = {
   DEFAULT_STORAGE_PATH,
   FIELD_ALIASES,
   MemoryRateLimiter,
+  REVIO_CHECKOUT_LINE_ALLOWLIST,
   createCheckoutHandoffRecord,
   createRequestHandler,
   createServer,

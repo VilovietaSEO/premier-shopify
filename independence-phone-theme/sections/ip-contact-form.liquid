@@ -1,17 +1,6 @@
 <section class="ip-section">
-  <div class="ip-contact">
-    <div class="ip-stack">
-      {% if section.settings.eyebrow != blank %}
-        <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
-      {% endif %}
-      <h1 class="ip-heading ip-heading--medium ip-heading--wide">{{ section.settings.heading }}</h1>
-      <div class="ip-lede">{{ section.settings.body }}</div>
-      {% if section.settings.helper != blank %}
-        <p class="ip-note">{{ section.settings.helper }}</p>
-      {% endif %}
-    </div>
-
-    <div class="ip-card" style="padding: clamp(1rem, 3vw, 1.5rem);">
+  <div class="ip-contact ip-contact--simple">
+    <div class="ip-card ip-contact__card">
       {% assign crm_endpoint = section.settings.crm_endpoint_url | strip %}
 
       {% capture crm_fields %}
@@ -19,7 +8,7 @@
         <input type="hidden" name="crm[record_type]" value="lead">
         <input type="hidden" name="crm[source_type]" value="contact_form">
         <input type="hidden" name="crm[lead_type]" value="contact_form">
-        <input type="hidden" name="crm[tags]" value="lead,contact_form,product_interest">
+        <input type="hidden" name="crm[tags]" value="lead,contact_form">
         <input type="hidden" name="crm[source_url]" value="{{ canonical_url | escape }}" data-crm-source-url>
         <input type="hidden" name="crm[source_path]" value="{{ request.path | escape }}">
         <input type="hidden" name="crm[referrer]" value="" data-crm-referrer>
@@ -47,97 +36,15 @@
           </div>
         </div>
 
-        <div class="ip-grid ip-grid--2">
-          <div class="ip-field">
-            <label for="ContactPhone-{{ section.id }}">Phone</label>
-            <input id="ContactPhone-{{ section.id }}" type="tel" name="contact[phone]" autocomplete="tel">
-          </div>
-
-          <div class="ip-field">
-            <label for="ContactAge-{{ section.id }}">Child age range</label>
-            <select id="ContactAge-{{ section.id }}" name="contact[Child age range]">
-              <option value="">Select one</option>
-              <option>Under 8</option>
-              <option>8-10</option>
-              <option>11-13</option>
-              <option>14+</option>
-              <option>Not for a child</option>
-            </select>
-          </div>
+        <div class="ip-field">
+          <label for="ContactPhone-{{ section.id }}">Phone Number</label>
+          <input id="ContactPhone-{{ section.id }}" type="tel" name="contact[phone]" autocomplete="tel">
         </div>
-
-        <div class="ip-grid ip-grid--2">
-          <div class="ip-field">
-            <label for="ContactUseCase-{{ section.id }}">Main use case</label>
-            <select id="ContactUseCase-{{ section.id }}" name="contact[Main use case]">
-              <option value="">Select one</option>
-              <option>Help choosing a phone</option>
-              <option>Home-alone minutes</option>
-              <option>School or bus days</option>
-              <option>Grandparents and family calls</option>
-              <option>Question about service</option>
-              <option>Question about add-ons</option>
-              <option>Referral question</option>
-            </select>
-          </div>
-
-          <div class="ip-field">
-            <label for="ContactProduct-{{ section.id }}">Interested product</label>
-            <select id="ContactProduct-{{ section.id }}" name="contact[Interested product]">
-              <option value="">Select one</option>
-              <option>Classic Phone</option>
-              <option>Rugged Phone</option>
-              <option>Patriot Package</option>
-              <option>Not sure yet</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="ip-grid ip-grid--2">
-          <div class="ip-field">
-            <label for="ContactPlan-{{ section.id }}">Preferred service plan</label>
-            <select id="ContactPlan-{{ section.id }}" name="contact[Preferred service plan]">
-              <option value="">Select one</option>
-              <option>Monthly service - $17.76/mo</option>
-              <option>Annual service - $200/yr</option>
-              <option>Not sure yet</option>
-            </select>
-          </div>
-
-          <div class="ip-field">
-            <label for="ContactPackage-{{ section.id }}">Patriot Package interest</label>
-            <select id="ContactPackage-{{ section.id }}" name="contact[Patriot Package interest]">
-              <option value="">Select one</option>
-              <option>Interested in Patriot Package</option>
-              <option>Phone only for now</option>
-              <option>Need help deciding</option>
-            </select>
-          </div>
-        </div>
-
-        <fieldset class="ip-field ip-fieldset">
-          <legend>Selected add-ons</legend>
-          <label><input type="checkbox" name="contact[Selected add-ons]" value="Call Recording"> Call Recording</label>
-          <label><input type="checkbox" name="contact[Selected add-ons]" value="Quiet Hours"> Quiet Hours</label>
-          <label><input type="checkbox" name="contact[Selected add-ons]" value="Voicemail to Email"> Voicemail to Email</label>
-          <label><input type="checkbox" name="contact[Selected add-ons]" value="Auto Attendant"> Auto Attendant</label>
-          <label><input type="checkbox" name="contact[Selected add-ons]" value="Add-on Bundle"> Add-on Bundle</label>
-        </fieldset>
 
         <div class="ip-field">
-          <label for="ContactMessage-{{ section.id }}">Questions</label>
+          <label for="ContactMessage-{{ section.id }}">How can we Help?</label>
           <textarea id="ContactMessage-{{ section.id }}" name="contact[body]" required></textarea>
         </div>
-
-        <label class="ip-form-note">
-          <input type="checkbox" name="contact[Marketing opt-in]" value="Yes">
-          {{ section.settings.opt_in_text }}
-        </label>
-
-        <label class="ip-form-note">
-          <input type="checkbox" name="contact[Privacy and terms consent]" value="Yes" required>
-          I agree to the <a href="{{ routes.root_url }}policies/privacy-policy">Privacy Policy</a> and <a href="{{ routes.root_url }}policies/terms-of-service">Terms and Conditions</a>.
-        </label>
       {% endcapture %}
 
       {% if crm_endpoint != blank %}
@@ -146,7 +53,6 @@
           {{ crm_fields }}
           {{ contact_fields }}
           <button type="submit">{{ section.settings.button_label }}</button>
-          <p class="ip-form-note">{{ section.settings.payment_note }}</p>
         </form>
       {% else %}
         {% form 'contact', class: 'ip-contact-form' %}
@@ -163,7 +69,6 @@
 
           {{ contact_fields }}
           <button type="submit">{{ section.settings.button_label }}</button>
-          <p class="ip-form-note">{{ section.settings.payment_note }}</p>
         {% endform %}
       {% endif %}
     </div>
@@ -196,51 +101,19 @@
   "settings": [
     {
       "type": "text",
-      "id": "eyebrow",
-      "label": "Eyebrow",
-      "default": "Need help choosing?"
-    },
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "Tell us what your family needs the phone to do."
-    },
-    {
-      "type": "richtext",
-      "id": "body",
-      "label": "Body",
-      "default": "<p>Ask about Classic Phone, Rugged Phone, service, add-ons, the Patriot Package, or launch updates.</p>"
-    },
-    {
-      "type": "textarea",
-      "id": "helper",
-      "label": "Helper text",
-      "default": "Common buying moments include home-alone minutes, grandparents, school days, and a simpler first-phone step."
-    },
-    {
-      "type": "text",
       "id": "button_label",
       "label": "Button label",
-      "default": "Send my question"
+      "default": "Send"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave the CRM endpoint URL blank for Shopify's native contact form. Native submissions go to the Sender email configured in Shopify Admin. For this handoff, set the Sender email to jordan@premiercompanies.com."
     },
     {
       "type": "url",
       "id": "crm_endpoint_url",
-      "label": "CRM endpoint URL",
-      "info": "Leave blank for this launch so Shopify sends contact submissions to the store Sender email. Set Shopify Sender email to jordan@premiercompanies.com. Only set this URL if a CRM capture endpoint is intentionally used later."
-    },
-    {
-      "type": "textarea",
-      "id": "opt_in_text",
-      "label": "Marketing opt-in text",
-      "default": "Send me text or email updates and marketing information. I can opt out later."
-    },
-    {
-      "type": "textarea",
-      "id": "payment_note",
-      "label": "Payment note",
-      "default": "We will use your message to help with product choice, service questions, or launch updates. Do not send payment details through this form."
+      "label": "CRM endpoint URL (optional)",
+      "info": "Blank by default. Only enter an approved HTTPS CRM capture endpoint when replacing Shopify's native contact-email delivery."
     }
   ],
   "presets": [

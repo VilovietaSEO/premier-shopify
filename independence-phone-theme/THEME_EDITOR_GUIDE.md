@@ -1,6 +1,6 @@
 # Independence Phone Theme Editor Guide
 
-Use this guide for the current Independence Phone theme or after applying the Refresh overlay to a future store.
+Use this guide for the existing Independence Phone Shopify store after the Refresh overlay has been applied.
 
 Canonical local paths:
 
@@ -12,7 +12,7 @@ Canonical local paths:
 
 ## Store Boundary
 
-The current storefront is live as theme `Independence Phone` on `jordan-mark-premier.myshopify.com`. The final domain can be connected later after launch proof is complete.
+The storefront target is `jordan-mark-premier.myshopify.com`. The final public domain can be connected later.
 
 Before Theme Editor work, the store needs:
 
@@ -30,8 +30,8 @@ Before Theme Editor work, the store needs:
 | Store URL | Shopify object | Template | Purpose |
 | --- | --- | --- | --- |
 | `/` | Home | `index.json` | Main sales page and hero video |
-| `/pages/order-now` | Page: `Order Now` | `page.order` | Primary guided purchase flow: package, phone, plan, add-ons |
-| `/collections/all` | Shopify all collection | `collection.json` | Legacy/default collection route; do not use for primary Order Now CTAs |
+| `/collections/all` | Shopify all collection | `collection.json` | Two-phone catalog/support route; hidden billing items must not appear |
+| `/pages/order-now` | Page: `Order Now` | `page.order` | Primary `Order now` destination and guided purchase flow: package, phone, plan, add-ons |
 | `/collections/phones` | Collection: `Phones` | `collection.phones` | Narrow two-phone collection support |
 | `/products/standard-phone` | Product: `Classic Phone` | `product.independence-phone` | Classic Phone product detail |
 | `/products/rugged-phone` | Product: `Rugged Phone` | `product.independence-phone` | Rugged Phone product detail |
@@ -93,7 +93,7 @@ Editable sections:
 
 - `IP order builder`
 
-The point of this page is purchase selection, not a broad product grid. Keep the Patriot Package fast path, Classic/Rugged phone cards, monthly/annual plan cards, add-ons, savings summary, and policy checkbox prominent.
+The point of this page is purchase selection, not a broad product grid. Keep the Classic/Rugged phone cards, monthly/annual service cards, add-ons, and savings summary prominent. Privacy/terms consent belongs only in the final checkout.
 
 ## Product Pages
 
@@ -117,7 +117,7 @@ Editable sections:
   - Edit service plan and add-on purchase options as blocks inside the product main section.
   - Product title, price, image, description, and add-to-cart come from Shopify product data.
   - Product deck, best-for copy, and specs come from product metafields when present.
-  - Service and add-on selections remain visible as setup details on the phone line and can add matching hidden billing products as priced cart items when those products are assigned.
+  - Service and add-on selections remain visible as setup details and add matching `$0.00` deferred-billing lines with future-charge metadata when those products are assigned.
 - `IP service plans`
 - `IP add-ons`
 - `IP capability table`
@@ -161,12 +161,14 @@ Editable sections:
 
 - `IP contact form`
   - Edit eyebrow, heading, body, helper text, button label, marketing opt-in note, and payment note.
-  - Leave `CRM endpoint URL` blank for the current launch so Shopify's native contact form sends submissions by email.
-  - In Shopify Admin, set the contact form recipient/Sender email to `jordan@premiercompanies.com`.
+  - Leave `CRM endpoint URL` blank for the client handoff. The section then uses Shopify's native contact form.
+  - In Shopify Admin, set `Settings -> Notifications -> Sender email` to `jordan@premiercompanies.com`; Liquid cannot set or override that recipient.
+  - The theme controls the visible form content, but durable CRM capture requires the approved server-side capture path. A Liquid theme cannot securely store CRM records by itself.
+  - If CRM capture is later approved, it should capture submitted date/time plus every submitted form field in a staff-viewable record with CSV export.
 - `IP FAQ`
 - `IP trust band`
 
-After store auth exists, submit a real contact form test and confirm `jordan@premiercompanies.com` receives the message.
+Do not submit the form as an external delivery test until the client explicitly approves it. After approval, submit one uniquely labeled test and confirm it reaches `jordan@premiercompanies.com`. If CRM capture is later approved, separately confirm the CRM viewer and CSV export include the timestamp and every submitted field.
 
 ## Content That Belongs In Shopify Admin
 
@@ -184,6 +186,8 @@ Edit these in Shopify admin, not in Liquid:
 - Policies.
 - Search engine listing titles and meta descriptions for products, collections, pages, and the home page.
 - Store contact email.
+- Sender email for native contact-form submissions (`jordan@premiercompanies.com` for this handoff).
+- Staff order notifications (`mark@premiercompanies.com` and `jordan@premiercompanies.com` for this handoff).
 - Order list, order detail, fulfillment, tracking numbers, and order export.
 - Shipping, tax, payment, and checkout settings.
 
@@ -213,10 +217,12 @@ Before launch, confirm these in Shopify admin:
 - Product image alt text for every meaningful product photo.
 - `/sitemap.xml` resolves after products/pages are published.
 - `/robots.txt` is acceptable with Shopify defaults, or a custom `templates/robots.txt.liquid` is added intentionally.
-- `CRM endpoint URL` is blank on the contact form section.
-- Shopify Admin contact form recipient/Sender email is set to `jordan@premiercompanies.com`.
-- A real contact form test delivers to `jordan@premiercompanies.com`.
-- Test orders show service plan, add-ons, Patriot Package, savings, and policy agreement as line-item properties.
+- The Theme Editor `CRM endpoint URL` remains blank for native contact delivery unless a CRM endpoint is separately approved.
+- The Shopify Admin Sender email is `jordan@premiercompanies.com`.
+- Staff order notifications include both `mark@premiercompanies.com` and `jordan@premiercompanies.com`; these are separate from contact-form delivery.
+- If CRM capture is later approved, staff can view CRM leads and export them to CSV.
+- External contact and order delivery tests are run only after explicit client approval.
+- Test orders show the service plan, add-ons, future-charge amount, billing cadence, and first-day-of-next-month rule. Final checkout collects policy consent and desired area code exactly once.
 - Order CSV export includes setup details in a usable form, or a custom export/app gap is documented.
 
 Automatic route-level `llms.txt` is generated outside the Liquid theme by `/Users/vilovieta/Documents/Shopify/llms/automatic-llms.js`.
@@ -225,7 +231,7 @@ The intended outputs are raw Markdown text, for example:
 
 - root overview: `/llms.txt`
 - product summary: `/products/standard-phone/llms.txt`
-- order-flow summary: `/pages/order-now/llms.txt`
+- guided order-flow summary: `/pages/order-now/llms.txt`
 - Shopify app-proxy fallback: `/a/llms.txt?path=/pages/faq`
 
 Root `/llms.txt` requires an edge/proxy or custom domain route in front of Shopify. Shopify app proxy routing can support `/a/llms.txt` and route-specific `?path=` requests. Do not model this as a manually maintained Shopify page.
@@ -255,7 +261,7 @@ Use these supplied claims:
 - Rugged Phone: `$150`.
 - Monthly service: `$17.76/mo`.
 - Annual service: `$200/yr`.
-- Shipping: `$15/phone` anywhere in the USA.
+- Shipping: one `$15` charge per order in the USA.
 - American-owned.
 - 42 years in communications.
 
@@ -294,6 +300,7 @@ This proves:
 After the fresh store handle and access are available, verify:
 
 - Home desktop and mobile.
+- `/collections/all` desktop and mobile.
 - `/pages/order-now` desktop and mobile.
 - `/collections/phones` desktop and mobile.
 - `/products/standard-phone`.
@@ -302,5 +309,6 @@ After the fresh store handle and access are available, verify:
 - `/pages/contact`.
 - Theme Editor can edit copy, media, rows, and section order.
 - Both products can add to cart.
-- Contact form delivers.
+- After explicit client approval, a native contact-form test delivers to `jordan@premiercompanies.com`.
+- After explicit client approval, a test order notifies both `mark@premiercompanies.com` and `jordan@premiercompanies.com`.
 - Checkout settings are configured enough for the approved launch path.

@@ -1,0 +1,13 @@
+handle	position	filename	content_type	alt	assignment_status
+standard-phone	1	ip-classic-phone-buttons.webp	IMAGE	Classic Phone keypad and controls	ready
+standard-phone	2	ip-classic-phone-charger.webp	IMAGE	Classic Phone handset and charging base	ready
+standard-phone	3	ip-classic-phone-back.webp	IMAGE	Classic Phone back view	ready
+standard-phone		ip-classic-phone-front.webp	IMAGE	Classic Phone front view	rejected_retouch_not_created
+standard-phone		ip-classic-phone-side.webp	IMAGE	Classic Phone side view	rejected_retouch_not_created
+standard-phone		ip-classic-phone-spin.mp4	VIDEO	Classic Phone 360-degree view	blocked_logo_review
+rugged-phone	1	ip-rugged-phone-buttons.webp	IMAGE	Rugged Phone keypad and controls	ready
+rugged-phone	2	ip-rugged-phone-charger.webp	IMAGE	Rugged Phone handset and charging base	ready
+rugged-phone	3	ip-rugged-phone-back.webp	IMAGE	Rugged Phone back view	ready
+rugged-phone		ip-rugged-phone-front.webp	IMAGE	Rugged Phone front view	rejected_retouch_not_created
+rugged-phone		ip-rugged-phone-side.webp	IMAGE	Rugged Phone side view	rejected_retouch_not_created
+rugged-phone		ip-rugged-phone-spin.mp4	VIDEO	Rugged Phone 360-degree view	blocked_logo_review

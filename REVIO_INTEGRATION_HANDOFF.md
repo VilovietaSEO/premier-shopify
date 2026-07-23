@@ -1,77 +1,90 @@
 # Rev.io Integration Handoff
 
-Date: 2026-07-03
+Date: 2026-07-23
 
-Purpose: align the Independence Phone Shopify storefront with Rev.io payment and billing integration so the API implementer can wire checkout, cart lines, CRM records, and webhook reconciliation without changing the public merchandising model.
+Purpose: give the Rev.io/payment implementer a stable, versioned contract for the Independence Phone checkout without moving credentials, payment processing, recurring billing, or tenant-specific Rev.io logic into Shopify Liquid or browser JavaScript.
 
-## Executive Decision
+## Accepted Commerce Contract
 
-Rev.io should be integrated server-side. Do not put Rev.io API keys, APIM subscription keys, Basic Auth credentials, raw payment data, or payment-processing calls inside Shopify Liquid or browser JavaScript.
+The accepted contract is `independence_phone.revio_checkout.v2`.
 
-The current storefront direction is compatible with Rev.io if the final checkout action becomes a backend handoff. This repo now includes that bridge:
+- Shopify charges only the selected phone today.
+- Shopify adds selected service and add-ons as hidden billing-product lines priced at `$0.00`.
+- The selected service and add-ons begin billing on the first day of the following month.
+- The cart and checkout must distinguish today's charge from future recurring charges.
+- Shipping is one flat `$15` fee per order, not per phone.
+- Tax is calculated after the customer enters a taxable address.
+- The final Rev.io/gateway checkout, or a Shopify Plus checkout extension, collects required Privacy Policy/Terms consent and the required desired area code.
+- Consent and desired area code must not be collected a second time in the Order Now page or cart.
+- The retired Patriot Package is not part of this contract.
+- Service and add-on checkout lines use the approved American-flag media so `$0.00` operational lines do not look like broken or image-less products.
+
+The native Shopify cart remains useful before the gateway is connected: it preserves the selected phone, service, add-ons, stable SKUs, future prices, billing cadence, and first-bill timing. Zero-dollar service/add-on lines do not schedule or collect future payments by themselves.
+
+## Ownership And Current Boundary
+
+### Storefront and catalog obligations
+
+These are owned by this Shopify repository and can be finished before Rev.io credentials or a payment gateway are available:
+
+- Keep the public purchase path focused on Classic Phone, Rugged Phone, service plan, and optional add-ons.
+- Keep service/add-on products hidden from public catalog discovery.
+- Price each service/add-on Shopify variant at `$0.00`, mark it non-shipping, and keep its stable SKU.
+- Add one phone line plus the selected zero-dollar service/add-on lines to the cart with one shared `setup_id`.
+- Carry validated `future_charge_cents`, `billing_cadence`, and `first_bill_rule` metadata for every future-billed line.
+- Show phone-only merchandise due today, `$15` shipping per order, tax pending until address, and a separate future-charge total.
+- Use the approved phone media for phone lines and American-flag media for service/add-on lines.
+- Emit `independence_phone.revio_checkout.v2` when a handoff endpoint is configured.
+- Allow customers to update or remove a complete setup before checkout.
+- Do not duplicate policy consent or desired-area-code fields in Order Now or cart.
+
+### External Rev.io/gateway obligations
+
+These remain with the Rev.io/payment implementer:
+
+- Supply Rev.io tenant credentials, sandbox access, product IDs, bill profile, service type, provider, tax, request, status, and webhook mappings.
+- Receive and authenticate the v2 payload through the approved server-side handoff.
+- Revalidate every Shopify variant, SKU, quantity, role, immediate price, future price, cadence, and first-bill rule against a server-side allowlist.
+- Collect required Privacy Policy/Terms consent and the required desired area code exactly once at the final checkout step.
+- Tokenize payment details through an approved hosted or gateway flow. Never send raw card numbers or CVV through the theme.
+- Calculate tax after the customer provides an address.
+- Charge today only for the phone, applicable tax, and the single `$15` order shipping fee.
+- Create the Rev.io customer/request/service/product records and schedule selected service/add-ons for the first day of the following month.
+- Make checkout creation, payment, provisioning, webhook handling, and retries idempotent.
+- Return the approved redirect or confirmation URL and reconcile final status back to Shopify/CRM.
+
+The storefront must not be described as payment-complete until this external path passes sandbox and end-to-end proof.
+
+## Server-Side Integration Only
+
+Do not put Rev.io API keys, APIM subscription keys, Basic Auth credentials, payment tokens, raw payment data, or tenant mappings in Liquid, theme JavaScript, rendered HTML, line-item properties, cart attributes, or browser logs.
+
+The repository bridge is:
 
 - Theme setting: `Cart -> Rev.io checkout handoff URL`.
-- Theme payload schema: `independence_phone.revio_checkout.v1`.
+- Payload schema: `independence_phone.revio_checkout.v2`.
 - Ops receiver: `POST /revio/checkout`.
-- Outbound event to API middleware: `revio.checkout.requested`.
+- Shopify app-proxy option: `POST /apps/independence-phone/revio/checkout`.
+- Signed outbound event: `revio.checkout.requested`.
 
-1. The customer uses the theme to choose phone, plan, and add-ons.
-2. Shopify cart receives the visible phone item plus hidden/priced billing items.
-3. The cart page sends the complete setup payload to a server endpoint.
-4. The owner-hosted bridge validates the storefront payload, stores CRM proof, and forwards a signed `revio.checkout.requested` webhook.
-5. The Rev.io API implementer receives that webhook, maps it to the client's Rev.io tenant, creates or updates Rev.io records, creates the service request/products/bill/payment flow, and returns or manages the approved next step.
+When the handoff URL is blank, the storefront can be reviewed through the native cart, but production checkout is not complete. When the URL is configured, the cart sends the normalized payload and follows the returned `redirect_url` or `checkout_url`.
 
-The native Shopify checkout button is not the final Rev.io payment path unless the business intentionally keeps Shopify checkout as the payment processor. If Rev.io is the processor, the checkout button should become a server-side Rev.io checkout handoff before launch.
-
-This repo is not the Rev.io tenant integration. It prepares the storefront and server handoff so the API implementer can wire Rev.io without changing the theme, cart modeling, or public product catalog.
-
-## Payment Launch Decision
-
-The business can launch payment in two different ways. The chosen path must be explicit before real order proof.
-
-### Fastest Acceptance: Shopify Checkout First
-
-Use this when the business wants to accept credit cards quickly.
-
-1. Shopify Admin -> `Settings -> Payments`.
-2. Activate Shopify Payments or a Shopify-supported third-party provider.
-3. Leave Theme Editor `Cart -> Rev.io checkout handoff URL` blank.
-4. Customer pays through native Shopify Checkout.
-5. Shopify creates the order with the phone plus hidden service/add-on/package billing line items.
-6. Shopify sends `orders/create` to the ops server, where the order becomes a CRM `sale` record.
-7. Rev.io middleware can sync the completed Shopify order into Rev.io after payment.
-
-This path is fastest because Shopify owns payment capture. It does not make Rev.io the payment processor.
-
-### Rev.io Checkout Or Payment First
-
-Use this only when the Rev.io API implementer has a working hosted checkout, tokenized payment, or approved billing/payment flow.
-
-1. Deploy the owner-hosted ops service.
-2. Configure `REVIO_CHECKOUT_WEBHOOK_URLS` and `REVIO_WEBHOOK_SECRET`.
-3. Set Theme Editor `Cart -> Rev.io checkout handoff URL` to the public `/revio/checkout` route.
-4. The theme posts the cart/setup payload to the ops server.
-5. The ops server stores CRM proof and forwards signed `revio.checkout.requested`.
-6. Rev.io middleware creates or updates the customer, request, products, services, bill/charge/payment, or returns a hosted checkout URL.
-
-This path is not complete until Rev.io sandbox proof confirms customer/request/product/payment behavior and no raw card number or CVV appears in Shopify, browser requests, server logs, or CRM records.
-
-## Official Documentation
+## Official Rev.io Documentation
 
 Primary developer surface:
 
 - Rev.io developer portal: https://developers.rev.io/
 - Rev.io LLM/docs index: https://developers.rev.io/llms.txt
-- Getting started workflow: https://developers.rev.io/docs/getting-started
+- Getting started: https://developers.rev.io/docs/getting-started
 - API management: https://developers.rev.io/docs/api-management.md
 - Basic authentication: https://developers.rev.io/docs/basic-authentication.md
-- Payments guide: https://developers.rev.io/docs/payments-1.md
-- Webhooks guide: https://developers.rev.io/docs/webhooks.md
+- Payments: https://developers.rev.io/docs/payments-1.md
+- Webhooks: https://developers.rev.io/docs/webhooks.md
 - Webhook receivers: https://developers.rev.io/docs/webhook-receivers.md
 - Webhook subscriptions: https://developers.rev.io/docs/webhook-subscriptions.md
 - Webhook notifications: https://developers.rev.io/docs/webhook-notifications.md
 
-Key REST reference pages for this build:
+Relevant REST references:
 
 - Create customer: https://developers.rev.io/reference/postv1_customers-1.md
 - Search bill profiles: https://developers.rev.io/reference/getv1_billprofiles-1.md
@@ -87,81 +100,216 @@ Key REST reference pages for this build:
 - Search payments: https://developers.rev.io/reference/getv1_payments.md
 - Search orders: https://developers.rev.io/reference/getv1_orders-1.md
 
-Do not use `revio.docs.apiary.io` for this integration. The public APIary document found during research is a sample/placeholder Polls API, not the Rev.io billing API.
+Do not use `revio.docs.apiary.io`; the public document found there is a sample Polls API, not the Rev.io billing API.
 
-## Auth And Security Requirements
+## Authentication And Payment Security
 
-Rev.io API calls require server-side credentials. The docs describe an APIM subscription key header and Basic Auth using a Rev.io API user:
+Rev.io documentation describes:
 
-- `Ocp-Apim-Subscription-Key: <client APIM key>`
-- Basic Auth credential format: `username@clientcode:password`
-- Base REST API host: `https://restapi.rev.io`
+- Header: `Ocp-Apim-Subscription-Key: <client APIM key>`
+- Basic Auth format: `username@clientcode:password`
+- REST API host: `https://restapi.rev.io`
 
-Implementation requirements:
+Requirements:
 
-- Store credentials only in server environment variables.
-- Use a dedicated Rev.io API-only user for this integration.
-- Use sandbox credentials until end-to-end tests pass.
-- Never collect, store, log, or transmit raw card numbers or CVV from the theme.
-- Tokenized card data must come from the approved Rev.io/gateway flow.
-- The theme can collect consent and cart choices, but the server must validate all prices and product mappings.
+- Store credentials only in server environment variables or an approved secret manager.
+- Use a dedicated Rev.io API-only user.
+- Use sandbox credentials until end-to-end proof passes.
+- Use a hosted/tokenized gateway path for card data.
+- Never collect, persist, log, or forward raw card numbers or CVV through Shopify theme code, the ops receiver, or CRM.
 
-## Storefront Button Alignment
+## Shopify Catalog Contract
 
-Homepage and product CTAs:
+The two public phone variants keep their immediate prices. The seven supported hidden billing variants use a `$0.00` Shopify checkout price and retain their nominal future prices in validated metadata.
 
-- `Order now` can route to the order builder or the narrow product collection.
-- Product pages can still present the same add-ons and service plan choices.
-- The public catalog should stay narrow: Classic Phone, Rugged Phone, and the consumer-facing Patriot Package framing.
+| Item | Shopify handle | Stable SKU | Checkout price | Future charge | Cadence |
+| --- | --- | --- | ---: | ---: | --- |
+| Classic Phone | `standard-phone` | `PP-CLASSIC-PHONE` | `$100.00` | none | one time |
+| Rugged Phone | `rugged-phone` | `PP-RUGGED-PHONE` | `$150.00` | none | one time |
+| Monthly Service | `monthly-service` | `PP-MONTHLY-SERVICE` | `$0.00` | `$17.76` | monthly |
+| Annual Service | `annual-service` | `PP-ANNUAL-SERVICE` | `$0.00` | `$200.00` | annual |
+| Call Recording | `call-recording` | `PP-ADDON-CALL-RECORDING` | `$0.00` | `$5.00` | monthly |
+| Quiet Hours | `family-quiet-hours` | `PP-ADDON-FAMILY-QUIET-HOURS` | `$0.00` | `$5.00` | monthly |
+| Voicemail to Email | `voicemail-to-email` | `PP-ADDON-VOICEMAIL-TO-EMAIL` | `$0.00` | `$5.00` | monthly |
+| Auto Attendant | `auto-attendant` | `PP-ADDON-AUTO-ATTENDANT` | `$0.00` | `$5.00` | monthly |
+| Add-on Bundle | `add-on-bundle` | `PP-ADDON-BUNDLE` | `$0.00` | `$10.00` | monthly |
 
-Order builder submit:
+All service and add-on lines use `first_day_of_next_month` as `first_bill_rule`. The external service must reject the retired `PP-PATRIOT-PACKAGE` SKU and any `package` role in a v2 payload.
 
-- Current function: add the selected phone plus priced hidden billing items into the Shopify cart.
-- Keep this behavior. It produces line-level products that Rev.io and payment reconciliation can map cleanly.
+## `independence_phone.revio_checkout.v2` Payload
 
-Cart update:
+The theme sends one setup group per selected phone configuration. Mixed configurations use separate setup IDs.
 
-- Current function: update Shopify cart quantities and keep hidden setup items aligned with the parent phone.
-- Keep this as a local cart-management action.
+Example:
 
-Cart checkout:
+```json
+{
+  "schema": "independence_phone.revio_checkout.v2",
+  "source": "shopify-theme-cart",
+  "occurred_at": "2026-07-23T18:00:00.000Z",
+  "source_url": "https://store.example/cart",
+  "referrer": "https://store.example/pages/order-now",
+  "consent": {
+    "collection_status": "pending_checkout",
+    "privacy_terms_accepted": null
+  },
+  "customer": {
+    "desired_area_code": null,
+    "desired_area_code_collection_status": "required_at_checkout"
+  },
+  "cart": {
+    "token": "shopify-cart-token",
+    "currency": "USD",
+    "item_count": 1,
+    "raw_item_count": 3,
+    "immediate_subtotal_cents": 10000,
+    "flat_shipping_cents": 1500,
+    "tax_cents": null,
+    "tax_status": "calculated_after_address",
+    "due_today_before_tax_cents": 11500,
+    "future_charge_cents": 2276,
+    "first_bill_rule": "first_day_of_next_month",
+    "shopify_total_price_cents": 10000,
+    "shopify_items_subtotal_price_cents": 10000,
+    "total_discount_cents": 0
+  },
+  "setup_count": 1,
+  "setups": [
+    {
+      "setup_id": "ip-setup-...",
+      "quantity": 1,
+      "phone_line": {
+        "role": "phone",
+        "sku": "PP-CLASSIC-PHONE"
+      },
+      "lines": [
+        {
+          "line_index": 1,
+          "key": "shopify-line-key",
+          "role": "phone",
+          "setup_id": "ip-setup-...",
+          "setup_parent": false,
+          "shopify_product_id": 123,
+          "shopify_variant_id": 456,
+          "shopify_handle": "standard-phone",
+          "sku": "PP-CLASSIC-PHONE",
+          "title": "Classic Phone",
+          "quantity": 1,
+          "checkout_price_cents": 10000,
+          "checkout_line_price_cents": 10000,
+          "future_charge_cents": 0,
+          "future_line_charge_cents": 0,
+          "billing_cadence": "",
+          "first_bill_rule": "",
+          "currency": "USD",
+          "requires_shipping": true,
+          "taxable": true,
+          "visible_properties": []
+        },
+        {
+          "line_index": 2,
+          "key": "shopify-line-key",
+          "role": "service",
+          "setup_id": "ip-setup-...",
+          "setup_parent": true,
+          "setup_billing_name": "Service plan",
+          "setup_billing_value": "Monthly service",
+          "setup_phone": "Classic Phone",
+          "shopify_product_id": 789,
+          "shopify_variant_id": 1011,
+          "shopify_handle": "monthly-service",
+          "sku": "PP-MONTHLY-SERVICE",
+          "title": "Monthly Service",
+          "quantity": 1,
+          "checkout_price_cents": 0,
+          "checkout_line_price_cents": 0,
+          "future_charge_cents": 1776,
+          "future_line_charge_cents": 1776,
+          "billing_cadence": "monthly",
+          "first_bill_rule": "first_day_of_next_month",
+          "currency": "USD",
+          "requires_shipping": false,
+          "taxable": false,
+          "visible_properties": [
+            {
+              "name": "Future charge",
+              "value": "$17.76/mo"
+            },
+            {
+              "name": "Billing begins",
+              "value": "First day of next month"
+            }
+          ]
+        },
+        {
+          "line_index": 3,
+          "key": "shopify-line-key",
+          "role": "addon",
+          "setup_id": "ip-setup-...",
+          "setup_parent": true,
+          "setup_billing_name": "Call Recording",
+          "setup_billing_value": "$5/mo",
+          "setup_phone": "Classic Phone",
+          "shopify_product_id": 1213,
+          "shopify_variant_id": 1415,
+          "shopify_handle": "call-recording",
+          "sku": "PP-ADDON-CALL-RECORDING",
+          "title": "Call Recording",
+          "quantity": 1,
+          "checkout_price_cents": 0,
+          "checkout_line_price_cents": 0,
+          "future_charge_cents": 500,
+          "future_line_charge_cents": 500,
+          "billing_cadence": "monthly",
+          "first_bill_rule": "first_day_of_next_month",
+          "currency": "USD",
+          "requires_shipping": false,
+          "taxable": false,
+          "visible_properties": [
+            {
+              "name": "Future charge",
+              "value": "$5/mo"
+            },
+            {
+              "name": "Billing begins",
+              "value": "First day of next month"
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "phone": "Classic Phone",
+        "service": "Monthly service",
+        "add_ons": [
+          "Call Recording"
+        ],
+        "due_today_before_tax_cents": 10000,
+        "future_charge_cents": 2276
+      }
+    }
+  ],
+  "lines": [],
+  "ungrouped_lines": []
+}
+```
 
-- Required final function: hand off to the server for Rev.io checkout.
-- Implemented endpoint shape: `POST /revio/checkout`.
-- Shopify app proxy version: `POST /apps/independence-phone/revio/checkout`.
-- The endpoint should return a redirect URL, order confirmation URL, or error response.
-- The native checkout behavior remains when the cart section `Rev.io checkout handoff URL` setting is blank.
-- When the setting is filled, the button posts the normalized cart payload to that URL and follows `redirect_url` or `checkout_url` from the JSON response.
+The abbreviated `phone_line` object and empty top-level `lines` array above are for readability; the real payload repeats each fully normalized line in both its setup and the top-level `lines` array. `tax_cents` remains `null` until the final checkout has an address. The gateway may add normalized name, email, phone, billing address, and service address fields after collecting them.
 
-Launch blocker:
+### Required line fields
 
-- If Rev.io is the actual payment processor, native Shopify checkout cannot be treated as finished until it is replaced by or wrapped with the Rev.io backend checkout handoff.
-
-## Current Cart Payload Contract
-
-The theme should send one setup group per selected phone configuration. Each line needs enough information to reconstruct the sale on the server.
-
-Required setup fields:
-
-- `schema`: `independence_phone.revio_checkout.v1`.
-- `setup_id`: stable client-generated setup group ID.
-- `cart_token`: Shopify cart token if available.
-- `source_url`: page URL that submitted the setup.
-- `policy_agreed`: true only if privacy policy and terms were accepted.
-- `policy_agreed_at`: timestamp generated server-side.
-- `customer`: email, phone, name, billing address, service address, and any contact form fields available.
-- `lines`: normalized array of products and billing items.
-
-Required line fields:
-
-- `role`: `phone`, `service`, `addon`, `addon_bundle`, `package`, `shipping`, or `discount`.
+- `role`: `phone`, `service`, `addon`, or `addon_bundle`
 - `shopify_product_id`
 - `shopify_variant_id`
 - `shopify_handle`
 - `sku`
 - `title`
 - `quantity`
-- `unit_price_cents`
+- `checkout_price_cents`
+- `checkout_line_price_cents`
+- `future_charge_cents`
+- `future_line_charge_cents`
+- `billing_cadence`
+- `first_bill_rule`
 - `currency`
 - `billing_name`
 - `billing_value`
@@ -169,122 +317,73 @@ Required line fields:
 - `requires_shipping`
 - `taxable`
 
-Server validation:
+The theme may expose readable line-item properties such as `Future charge` and `Billing begins` in checkout. Private underscore-prefixed properties can carry normalized values such as `_setup_future_charge_cents`, `_setup_billing_cadence`, and `_setup_first_bill_rule`. The external server must validate both; browser metadata is never authoritative.
 
-- Do not trust prices sent from the browser.
-- Validate every line against a server-side allowlist of Shopify variant IDs and expected prices.
-- Reject a checkout if required setup lines are missing.
-- Reject a checkout if hidden billing lines do not match the visible phone quantity.
-- Use an idempotency key derived from cart token plus setup ID to prevent duplicate Rev.io records.
+## Server Validation And Idempotency
+
+Before creating any Rev.io or payment object:
+
+1. Require schema exactly `independence_phone.revio_checkout.v2`.
+2. Allow only the two phone SKUs and seven future-billing SKUs listed above.
+3. Reject `package`, `shipping`, or `discount` product roles inside setup lines.
+4. Validate each Shopify product/variant ID, handle, SKU, role, quantity, checkout price, future price, cadence, taxability, and shipping requirement against a server-side inventory map.
+5. Require exactly one phone per setup group and exactly one selected service plan per phone quantity.
+6. Require service/add-on quantity to match the parent phone quantity.
+7. Calculate the phone subtotal server-side.
+8. Apply shipping once per order as exactly `1500` cents.
+9. Calculate tax only after receiving the address through the final checkout.
+10. Require policy consent and desired area code before payment/provisioning.
+11. Derive an idempotency key from a stable cart token plus sorted setup IDs and persist the result of every create/payment attempt.
+12. Use Rev.io webhook event IDs as separate idempotency keys for inbound reconciliation.
+
+Never use the browser-provided total as the charge amount.
 
 ## Quantity Model
 
-Default behavior should remain per-phone.
+Quantity remains per setup. If a customer chooses quantity two, the phone, selected service, and every selected add-on use quantity two. If two phones need different plans or add-ons, the storefront creates two setup groups instead of mixing configuration inside one quantity.
 
-If a customer chooses quantity 2 with add-ons selected, each selected service/add-on/package line should also have quantity 2. That means two phones and two matching service/add-on commitments.
-
-If the business needs one phone with add-ons and one phone without add-ons in the same purchase, the UI should create two separate setup groups. Do not overload a single quantity selector to represent mixed configurations.
-
-## Product Mapping For API Implementer
-
-The final Rev.io `product_id`, `bill_profile_id`, `service_type_id`, `provider_id`, package IDs, tax classes, and status IDs must come from the client's Rev.io tenant.
-
-| Storefront item | Shopify handle/status | Rev.io target | Price expectation |
-| --- | --- | --- | --- |
-| Classic Phone | visible phone product, current handle may still be `standard-phone` | one-time equipment `RequestProduct` or `Charge` | $100 one time |
-| Rugged Phone | visible phone product | one-time equipment `RequestProduct` or `Charge` | $150 one time |
-| Monthly service | hidden billing product | recurring service `RequestProduct` | $17.76/mo |
-| Annual service | hidden billing product | annual/prepaid service `RequestProduct` | $200/yr |
-| Auto Attendant | hidden add-on product | recurring add-on `RequestProduct` | $5/mo |
-| Call Recording | hidden add-on product | recurring add-on `RequestProduct` | $5/mo |
-| Quiet Hours | hidden add-on product | recurring add-on `RequestProduct` | $5/mo |
-| Voicemail to Email | hidden add-on product | recurring add-on `RequestProduct` | $5/mo |
-| Add-on bundle | hidden bundle product | bundle `RequestProduct` or package line representing all 4 add-ons | $10/mo |
-| Patriot Package | public package framing plus hidden package/billing line | Rev.io package, discount, or balancing line as agreed with Rev.io | $250 total public offer |
-| Shipping | cart/order fee | shipping charge or Shopify-only fulfillment fee | $15 per phone |
-
-Patriot Package modeling needs an explicit API decision. Publicly it should remain simple: Classic Phone, 1 year service, all 4 add-ons, $250. Behind the scenes it can be a Rev.io package, a set of request products plus discount, or a balancing product line if accounting approves that approach.
+Shipping remains `$15` once for the entire order regardless of phone quantity.
 
 ## Recommended Rev.io Workflow
 
-1. Search bill profiles with `GET /v1/BillProfiles`.
-2. Create or match customer with `POST /v1/Customers`.
-3. Search Rev.io product catalog with `GET /v1/Products`.
-4. Create a service setup request with `POST /v1/Requests`.
-5. Create the request service with `POST /v1/RequestServices`.
-6. Add phone, service plan, add-ons, bundle, or package with `POST /v1/RequestProducts`.
-7. If immediate invoicing is required, create charges with `POST /v1/Charges` and/or bill with `POST /v1/Bills`.
-8. If immediate payment is required, create payment account or card payment only with tokenized gateway data:
-   - `POST /v1/PaymentAccounts/paymentcard`
-   - `POST /v1/Payments/card`
-   - `POST /v1/Payments`
-9. Store returned Rev.io IDs on the local CRM sale record and Shopify order/cart note attributes where available.
-10. Reconcile through Rev.io webhooks and search endpoints.
+1. Validate and idempotently register the v2 checkout request.
+2. Collect and validate checkout contact/address fields, policy consent, and desired area code.
+3. Calculate tax after address entry.
+4. Charge the phone subtotal, tax, and one `$15` shipping fee through the approved tokenized gateway.
+5. Match or create the customer with `POST /v1/Customers`.
+6. Create the request with `POST /v1/Requests`.
+7. Create the service with `POST /v1/RequestServices`.
+8. Add the selected phone, service plan, add-ons, or bundle with `POST /v1/RequestProducts`.
+9. Schedule service/add-on billing for the first day of the following month.
+10. Store returned Rev.io IDs with the checkout/order record.
+11. Return an approved redirect or confirmation URL.
+12. Reconcile request, order, bill, and payment state through Rev.io webhooks.
 
-## Webhook Events To Configure
+## Webhook Requirements
 
-Subscribe the backend receiver to the events needed for order and payment lifecycle tracking:
+Subscribe to the customer, request, request status, order, order status, charge, bill, payment, void, reversal, auto-debit success, and auto-debit failure events required by the tenant.
 
-- Customer created
-- Customer status changed
-- Request created
-- Request status changed
-- Order created
-- Order status changed
-- Charge created
-- Bill created
-- Payment created
-- Payment voided
-- Payment reversed
-- Payment auto debit success
-- Payment auto debit failure
+For each inbound notification:
 
-Inbound webhook requirements:
+- Verify Rev.io receiver activation and any supported signature/authentication.
+- Persist event ID, event type, object ID, created timestamp, and received timestamp.
+- Resolve the local record by Rev.io customer/request/order/payment ID.
+- Process each event ID once.
+- Keep the raw payload in an access-controlled audit store.
 
-- Verify receiver activation according to Rev.io's webhook receiver flow.
-- Persist the full event ID, event type, created date, object ID, and received timestamp.
-- Update the CRM sale record by Rev.io customer/request/order/payment IDs.
-- Keep raw webhook payloads in a secure server log or database table for audit.
-- Make processing idempotent by Rev.io event ID.
+## Questions The Rev.io Implementer Must Answer
 
-## CRM Requirements
+1. Which Rev.io tenant/client code and sandbox tenant will be used?
+2. Who supplies the APIM subscription key and API-only user?
+3. Which `bill_profile_id`, `service_type_id`, `provider_id`, process, phase, request status, and assignment values apply?
+4. Which Rev.io product IDs map to every stable Shopify SKU above?
+5. Which hosted/tokenized gateway owns today's phone, tax, and shipping payment?
+6. How are sales tax, telecom fees, and the single order shipping charge represented?
+7. Should the integration create a Shopify order before payment, after payment, or after Rev.io reconciliation?
+8. Which Rev.io webhooks are enabled and what endpoint/authentication do they require?
+9. What retry and manual-recovery workflow applies to partial customer/request/payment creation?
 
-Contact forms and purchase attempts both need CRM entries.
-
-Contact lead record:
-
-- Lead type: `contact_form`.
-- Captured fields: all form fields.
-- Captured metadata: submitted at, source page, user agent if available, IP if permitted, consent flags if present.
-- Outbound action: forward to configured webhook destinations.
-
-Purchase lead/sale record:
-
-- Lead type: `cart_started`, `checkout_started`, `revio_request_created`, `payment_pending`, `payment_succeeded`, `payment_failed`, or `cancelled`.
-- Captured fields: all checkout/contact fields, full normalized setup payload, consent, cart token, and Shopify line IDs.
-- Rev.io IDs: customer ID, request ID, request service IDs, request product IDs, bill ID, payment ID, order ID if available.
-- Outbound action: forward sale events to configured webhook destinations.
-
-## API Questions To Resolve
-
-The API implementer needs these answers before final wiring:
-
-1. Which Rev.io tenant/client code is this store using?
-2. Is there a Rev.io sandbox tenant?
-3. Who creates the APIM subscription key and API-only user?
-4. Which `bill_profile_id` should web customers use?
-5. Which `request_status_id`, `assigned_to`, process IDs, and phase IDs should a web checkout use?
-6. Which `service_type_id` and `provider_id` represent Independence Phone service?
-7. What are the exact Rev.io `product_id` values for Classic Phone, Rugged Phone, monthly service, annual service, each add-on, add-on bundle, Patriot Package, shipping, and discounts?
-8. Should web checkout create only a request, or should it also create charges, bills, and payments immediately?
-9. Does Rev.io provide a hosted checkout/payment portal link for this account?
-10. If hosted checkout is not available, which gateway tokenizes card data before calling Rev.io payment endpoints?
-11. How should sales tax, telecom fees, and shipping be modeled?
-12. Should Shopify orders be created before Rev.io payment, after Rev.io payment, or only after successful Rev.io reconciliation?
-13. Which Rev.io webhook events are enabled for the tenant?
-14. What endpoint and secret should Rev.io use for webhook receiver activation?
-
-## Implemented Bridge Configuration
+## Bridge Configuration
 
 Theme setting:
 
@@ -292,10 +391,10 @@ Theme setting:
 Online Store -> Themes -> Customize -> Cart -> Rev.io checkout handoff URL
 ```
 
-Recommended value when routed through the ops service:
+Recommended same-domain route:
 
 ```text
-https://www.example.com/revio/checkout
+https://YOUR_DOMAIN/revio/checkout
 ```
 
 Ops variables:
@@ -307,55 +406,30 @@ REVIO_CHECKOUT_SUCCESS_URL=https://jordan-mark-premier.myshopify.com/cart?revio_
 REVIO_CHECKOUT_ALLOWED_ORIGINS=https://jordan-mark-premier.myshopify.com
 ```
 
-The ops receiver does not call Rev.io directly. It stores the checkout intent in the CRM and forwards a signed `revio.checkout.requested` webhook to the configured middleware. That middleware is where the API implementer should translate the payload into Rev.io `Customers`, `Requests`, `RequestServices`, `RequestProducts`, bills, charges, or tokenized payments.
+The ops receiver stores the checkout intent and forwards a signed `revio.checkout.requested` event. The API middleware consumes `record.revio_checkout_payload`.
 
-The signed outbound webhook includes:
+## Proof Required Before Production Checkout
 
-- `event`: `revio.checkout.requested`.
-- `record.fields`: normalized CRM/sale fields.
-- `record.meta`: cart token, setup IDs, schema, total cents, and dedupe key.
-- `record.revio_checkout_payload`: parsed checkout payload object for direct API mapping.
+### Storefront/catalog proof
 
-## Done Definition
+- Both phones retain the approved one-time price and correct phone media.
+- Every supported service/add-on variant is `$0.00`, non-shipping, hidden from public discovery, and has its stable SKU.
+- Service/add-on lines use American-flag media.
+- Cart and v2 payload preserve `future_charge_cents`, `billing_cadence`, and `first_bill_rule`.
+- Cart shows one `$15` order shipping fee, tax pending until address, phone-only due today, and separate future charges.
+- Setup update/removal works.
+- Patriot Package is absent.
+- Order Now and cart do not collect policy consent or desired area code.
 
-Docs proof:
+### External sandbox proof
 
-- Developer portal and `llms.txt` are reachable.
-- API implementer can open every linked guide/reference page above.
-- Old APIary URL is documented as not usable.
+- Server rejects tampered SKU, variant, quantity, checkout price, future price, cadence, first-bill rule, and totals.
+- Duplicate submit does not duplicate a Rev.io customer, request, product, bill, charge, or payment.
+- Final checkout requires consent and desired area code exactly once.
+- Tax calculates after address.
+- Today's successful charge contains only phone, tax, and one `$15` shipping fee.
+- Service/add-ons begin billing on the first day of the following month.
+- Returned Rev.io IDs are stored and reconciled through idempotent webhooks.
+- No raw card number, CVV, or Rev.io credential appears in the browser, theme, logs, Shopify notes, or CRM.
 
-Payload proof:
-
-- Test checkout payload contains one `setup_id`, accepted policy fields, customer fields, and normalized lines.
-- Hidden billing lines have the same quantity as the parent phone.
-- Mixed configurations produce separate setup groups.
-- Server rejects tampered browser prices.
-
-Rev.io sandbox proof:
-
-- A Classic monthly setup creates or matches a customer, request, request service, and request products.
-- A Rugged annual setup creates the expected annual product mapping.
-- A Patriot Package setup creates the agreed package/discount/product structure.
-- Returned Rev.io IDs are stored in CRM records.
-
-Payment proof:
-
-- No raw card number or CVV appears in browser requests to the theme, server logs, Shopify notes, or CRM records.
-- Tokenized payment flow creates a Rev.io payment or payment account in sandbox.
-- Failed payment creates a CRM status update and user-visible error.
-- Successful payment creates a CRM status update and user-visible confirmation.
-
-Webhook proof:
-
-- Rev.io sends at least one test notification to the backend receiver.
-- Receiver stores event ID, event type, object ID, and timestamp.
-- Duplicate webhook delivery does not duplicate CRM actions.
-- Payment and order/request status changes update the correct CRM sale record.
-
-Launch proof:
-
-- Cart checkout no longer depends on native Shopify payment processing when Rev.io is the processor.
-- All purchase buttons eventually lead to either the order builder or the Rev.io checkout handoff.
-- The public catalog remains narrow and does not expose hidden service/add-on products as a broad product grid.
-- Privacy policy and terms acceptance is required before checkout handoff.
-- API credentials are absent from Liquid, JavaScript, rendered HTML, and browser network payloads.
+Production checkout remains blocked until the external sandbox proof passes.

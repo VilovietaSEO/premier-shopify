@@ -1,0 +1,31 @@
+{
+  "provider": "fal.ai",
+  "model": "fal-ai/nano-banana-pro/edit",
+  "reference_image": "references/classic-phone-canonical-front.jpg",
+  "common": {
+    "resolution": "2K",
+    "aspect_ratio": "1:1",
+    "output_format": "png",
+    "num_images": 1,
+    "limit_generations": true,
+    "enable_web_search": false
+  },
+  "scenarios": [
+    {
+      "slug": "bus-days",
+      "prompt_section": "Bus days"
+    },
+    {
+      "slug": "home-alone-minutes",
+      "prompt_section": "Home-alone minutes"
+    },
+    {
+      "slug": "grandparents",
+      "prompt_section": "Grandparents"
+    },
+    {
+      "slug": "before-the-smartphone",
+      "prompt_section": "Before the smartphone"
+    }
+  ]
+}

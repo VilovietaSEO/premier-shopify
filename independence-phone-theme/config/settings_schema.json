@@ -23,6 +23,17 @@
     ]
   },
   {
+    "name": "Independence Phone brand",
+    "settings": [
+      {
+        "type": "text",
+        "id": "ip_brand_name",
+        "label": "Public brand name",
+        "default": "Independence Phone"
+      }
+    ]
+  },
+  {
     "name": "t:general.layout",
     "settings": [
       {

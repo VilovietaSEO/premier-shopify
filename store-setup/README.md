@@ -1,16 +1,16 @@
-# Fresh Store Setup Data
+# Independence Phone Store Setup Data
 
-This folder contains the Independence Phone product data needed after the Shopify store exists.
+This folder contains the Independence Phone product data and launch helpers for `jordan-mark-premier.myshopify.com`.
 
 Files:
 
 - `product-metafields.json` - product metafield definitions the theme reads.
 - `products.csv` - two-product starter import file.
-- `LAUNCH_CHECKLIST.md` - store-by-store checklist for access, users, payment path, products, theme settings, CRM, and launch proof.
+- `LAUNCH_CHECKLIST.md` - store-by-store checklist to execute after access exists.
 - `/Users/vilovieta/Documents/Shopify/scripts/create-product-metafields.js` - Admin GraphQL helper for creating the product metafield definitions from `product-metafields.json`.
 - `/Users/vilovieta/Documents/Shopify/scripts/create-storefront-objects.js` - Admin GraphQL helper for upserting the two products, creating the `Phones` collection, publishing products/collection to Online Store when publication scopes are available, and creating the `Order Now`, `FAQ`, and `Contact` pages.
 - `/Users/vilovieta/Documents/Shopify/scripts/audit-storefront-objects.js` - read-only Admin GraphQL audit for products, prices, metafields, templates, media counts, collection membership, and required pages.
-- `/Users/vilovieta/Documents/Shopify/scripts/assign-product-media.js` - Admin GraphQL helper for assigning existing theme product images to Classic/Rugged products with concise alt text.
+- `/Users/vilovieta/Documents/Shopify/scripts/assign-product-media.js` - Admin GraphQL helper for assigning approved phone media to Classic/Rugged products and the American-flag image to hidden service/add-on products.
 - `/Users/vilovieta/Documents/Shopify/llms/automatic-llms.js` - automatic raw Markdown `llms.txt` generator/server for root and route-level summaries.
 
 ## Setup Order
@@ -19,8 +19,8 @@ Files:
 2. Pull Refresh and apply `/Users/vilovieta/Documents/Shopify/refresh-overlay` with `/Users/vilovieta/Documents/Shopify/scripts/bootstrap-refresh-store.sh`.
 3. Create the product metafields in Shopify admin or run `/Users/vilovieta/Documents/Shopify/scripts/create-product-metafields.js`.
 4. Import `products.csv` manually or run `/Users/vilovieta/Documents/Shopify/scripts/create-storefront-objects.js`.
-5. Publish both products and the `Phones` collection to Online Store if the helper prints a publication-scope warning.
-6. Upload/select product images.
+5. Publish both phone products, the seven supported hidden billing products, and the `Phones` collection to Online Store if the helper prints a publication-scope warning.
+6. Assign each phone's approved Front image first, then its optimized rotating MP4, Buttons, Charger, and Back media; assign the American-flag billing-item image to all seven deferred products.
 7. Add descriptive alt text to meaningful product images in Shopify product media.
 8. Open Theme Editor and select the product objects in the product comparison section.
 9. Run the read-only object audit:
@@ -35,8 +35,16 @@ If using the included theme assets as starter product media:
 ```bash
 cd /Users/vilovieta/Documents/Shopify
 npm run store:media:dry-run
-SHOPIFY_STORE=STORE.myshopify.com SHOPIFY_USE_CLI_SESSION=1 npm run store:media:assign
+SHOPIFY_THEME_ASSET_BASE='https://cdn.shopify.com/s/files/.../assets' \
+SHOPIFY_PRODUCT_MEDIA_APPROVED=1 \
+SHOPIFY_STORE=STORE.myshopify.com \
+SHOPIFY_USE_CLI_SESSION=1 \
+npm run store:media:assign
 ```
+
+For a real assignment, copy the exact asset-directory base from a rendered QA-theme asset URL. Do not assume a `/cdn/shop/t/N/assets` number. The approval flag is intentionally required because this changes product-global media, not just the unpublished theme.
+
+The phone assignment order is intentional: Front, rotating MP4, Buttons, Charger, then Back. The Classic and Rugged rotating MP4s are silent, optimized `960x540` H.264 files mirrored in the full theme and refresh overlay.
 
 ## Product Metafields
 
@@ -143,17 +151,27 @@ Required collection:
 - Handle: `phones`
 - Template: `collection.phones`
 
-## Cart and Recurring Billing Boundary
+Required Shopify product category for both phone products:
 
-- Normal cart behavior does not require a Shopify app. The theme uses Shopify's native cart form plus Ajax cart endpoints for add-to-cart, live cart count, and quantity/subtotal updates.
-- The current product form captures phone setup intent as line-item properties and, when billing products are assigned, adds the matching service/add-on products as real priced cart items.
-- The Order Now page captures Patriot Package, chosen phone, service plan, add-ons, savings, and policy agreement on the phone line, then adds configured service/add-on/package billing products with the same hidden setup id.
-- Hidden billing products are created for monthly service, annual service, Call Recording, Quiet Hours, Voicemail to Email, Auto Attendant, Add-on Bundle, and Patriot Package. They use template `product.billing-item` and should not be added to the `Phones` collection.
-- If a shopper chooses quantity `2` for one setup, the phone, service, and selected add-on billing item quantities are all submitted as `2`. If they need one phone with upgrades and one without, they should add two separate setups.
-- After checkout settings are configured, place test/manual orders and confirm Shopify Admin order detail and order CSV export show the setup details in a usable form.
-- Product line items charge one-time checkout totals by default. If monthly service and add-ons need true recurring billing through Shopify checkout, configure selling plans through Shopify Subscriptions or another subscription app and attach the applicable `selling_plan` IDs to the hidden billing products.
-- If Rev.io owns recurring billing after checkout, the hidden billing products and setup ids provide the order structure the ops webhook can send downstream.
-- Keep product-page dynamic checkout buttons off unless an app-level checkout path is added. Express checkout can bypass the theme's grouped add-to-cart logic and skip the hidden billing products.
+- `Electronics > Communications > Telephony > Cordless Phones`
+- `gid://shopify/TaxonomyCategory/el-4-8-3`
+
+Deferred billing products remain uncategorized until accounting provides tax-category guidance.
+
+## Cart And Deferred-Billing Boundary
+
+- Normal order-builder and cart behavior does not require a Shopify app. The theme uses Shopify's Ajax cart endpoints for grouped add-to-cart, live cart count, quantity updates, setup removal, and totals.
+- The Order Now page adds one phone line plus the selected service/add-on billing lines with one shared hidden `setup_id`.
+- Hidden billing products exist for Monthly Service, Annual Service, Call Recording, Quiet Hours, Voicemail to Email, Auto Attendant, and Add-on Bundle. They use template `product.billing-item`, stay out of the `Phones` collection and public product grids, and use the approved American-flag media.
+- Each hidden billing variant has a Shopify checkout price of `$0.00`, requires no shipping, and retains a stable SKU. Its approved nominal amount is carried separately as `future_charge_cents` with `billing_cadence` and `first_bill_rule=first_day_of_next_month`.
+- Shopify charges only the phone as merchandise today. Store shipping is one flat `$15` fee per order. Tax is calculated after the customer enters an address.
+- If a shopper chooses quantity `2` for one setup, the phone, service, and selected add-on quantities are all submitted as `2`. Different configurations require separate setup groups.
+- Privacy Policy/Terms consent and desired area code are not collected on Order Now or cart. The final Rev.io/gateway checkout, or a Shopify Plus checkout extension, must require both exactly once.
+- Zero-dollar billing lines do not create recurring billing. The external Rev.io/gateway integration validates the v2 payload, charges phone/tax/shipping today, and starts service/add-on billing on the first day of the following month.
+- Keep product-page dynamic checkout buttons off. Express checkout can bypass grouped selection metadata and the server-side handoff.
+- The retired Patriot Package product and SKU are not part of the current purchase contract.
+- `npm run store:retired-product:dry-run` describes the non-destructive retirement action without contacting Shopify. After explicit approval, `SHOPIFY_RETIRED_PRODUCT_ARCHIVE_APPROVED=1 npm run store:retired-product:archive` unpublishes the old product from Online Store and archives it; it does not delete the product.
+- See `/Users/vilovieta/Documents/Shopify/REVIO_INTEGRATION_HANDOFF.md` for `independence_phone.revio_checkout.v2`, stable SKU mappings, server validation, idempotency, and the exact external handoff boundary.
 
 ## SEO And Form Operations Boundary
 
@@ -163,21 +181,23 @@ Required collection:
 - Shopify provides default `/robots.txt`; add `templates/robots.txt.liquid` only if custom crawl directives are intentionally required.
 - Use `SHOPIFY_STORE_URL=https://STORE.myshopify.com npm run seo:live` after the storefront is publicly reachable to generate `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/seo-ops-audit.json`.
 - If the storefront is password-gated or the audit needs the unpublished draft theme, run `read -s SHOPIFY_STOREFRONT_PASSWORD`, export it for the command, and include `SHOPIFY_PREVIEW_THEME_ID=THEME_ID`. The audit report records that a password was provided, but it does not store the password.
-- Use `npm run launch:readiness` to generate `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/launch-readiness-audit.json`, the consolidated current-state launch status. It exits nonzero until public access/SEO, live `llms.txt`, contact email delivery, ops, and order proof are complete.
+- Use `npm run launch:readiness` to generate `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/launch-readiness-audit.json`, the consolidated current-state launch status. It exits nonzero until public access/SEO, live `llms.txt`, deployed CRM/ops, and order proof are complete.
 - Automatic `llms.txt` output is generated by `/Users/vilovieta/Documents/Shopify/llms/automatic-llms.js`.
 - Route-level raw Markdown is available for homepage, collections, products, pages, and cart-style routes through the llms service.
 - Use `npm run llms:test` to verify root `/llms.txt`, Shopify app-proxy `/a/llms.txt`, product route `/products/standard-phone/llms.txt`, guided order route `/pages/order-now/llms.txt`, and page route summaries.
 - Root `/llms.txt` requires an edge/proxy or custom domain route in front of Shopify. Shopify app proxy routing can serve `/a/llms.txt` and route-specific output with `?path=/products/standard-phone`.
-- The contact page should use Shopify's native contact form for the current launch. Leave `CRM endpoint URL` blank in the `IP contact form` section.
-- In Shopify Admin, set the contact form recipient/Sender email to `jordan@premiercompanies.com`, then submit a test contact form entry and confirm delivery.
-- CRM lead capture remains optional for a later phase if they want a durable lead database or CSV export.
-- Shopify order webhooks and protected manual imports create CRM `sale` records tagged with `source_type=shopify_order` and `sale_type` values such as `classic_monthly_addon_sale`, `classic_patriot_package_sale`, or `rugged_patriot_package_sale`.
+- For the current client handoff, leave `CRM endpoint URL` blank in the `IP contact form` section so Shopify's native contact form is used. Set Shopify Admin `Settings -> Notifications -> Sender email` to `jordan@premiercompanies.com`.
+- Configure staff new-order notifications separately for `mark@premiercompanies.com` and `jordan@premiercompanies.com`; the contact-form Sender email does not control order notifications.
+- Do not send a contact-form test or place an email-triggering test order until the client explicitly approves the external delivery test.
+- If CRM capture is later approved, audit the rendered page after configuring the endpoint: `CONTACT_CRM_HTML=/path/to/rendered-contact-page.html CONTACT_CRM_EXPECTED_ENDPOINT=https://www.example.com/crm/capture npm run contact:crm:audit`.
+- When the optional CRM path is enabled, contact form submissions become CRM `lead` records tagged with `source_type=contact_form` and `lead_type=contact_form`.
+- When optional CRM sale capture is enabled, Shopify order webhooks and protected manual imports create CRM `sale` records tagged with `source_type=shopify_order` and a setup-derived `sale_type`, such as `classic_monthly_addon_sale` or `rugged_annual_bundle_sale`.
 - Optional outbound webhooks can forward accepted leads and sales to owner-controlled systems. Configure `CRM_LEAD_WEBHOOK_URLS`, `CRM_SALE_WEBHOOK_URLS`, and `CRM_WEBHOOK_SECRET` on the ops server; do not put destination secrets in Liquid.
 - Lead outbound webhooks send `crm.lead.created`; sale outbound webhooks send `crm.sale.created`. Each request includes `x-patriot-phone-event`, `x-patriot-phone-record-id`, and a `sha256=` HMAC signature.
 - The included simple CRM path is `/Users/vilovieta/Documents/Shopify/crm/simple-crm.js`; `npm run crm:test` verifies timestamp capture, all submitted fields, lead/sale tagging, Shopify webhook signature checks, expandable full-detail viewer output, CSV export with raw field and metadata columns, honeypot, and rate limiting.
 - The deployable storefront ops service is `/Users/vilovieta/Documents/Shopify/ops/storefront-ops-server.js`; `npm run ops:test` verifies health, CRM lead capture, sale import, signed Shopify order webhook capture, staff viewer, CSV export, root `llms.txt`, route-level `llms.txt`, and app-proxy style `llms.txt` requests in one process.
-- Use `/Users/vilovieta/Documents/Shopify/ops/README.md` for persistent-host environment variables, Shopify order webhook wiring, Rev.io handoff, and edge/proxy routing requirements.
-- Shopify's native contact form is the current launch path for parent questions; durable CRM capture can be added later without changing the visible form.
+- Use `/Users/vilovieta/Documents/Shopify/ops/README.md` for persistent-host environment variables, Shopify-order/Rev.io transport guidance, optional later CRM capture, and edge/proxy routing requirements.
+- Shopify's native contact form is the approved current handoff path while the CRM endpoint is blank. It delivers email but does not provide a durable submission database or CSV export; those capabilities remain an optional later CRM track.
 - Order setup selections are captured as Shopify line-item properties. If the native Shopify order CSV does not expose those properties cleanly enough for staff, use `/Users/vilovieta/Documents/Shopify/orders/setup-export.js`; `npm run orders:test` proves the Classic/Rugged setup properties normalize to a staff-readable CSV, and `npm run orders:export` converts a Shopify orders JSON export into setup-detail CSV.
 - After real/test orders exist, run `ORDER_PROOF_INPUT=/path/to/shopify-orders.json npm run orders:proof:audit`. It writes `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/order-proof-audit.json` and `/Users/vilovieta/Documents/Shopify/tmp/shopify-live-proof/order-setup-details.csv`, then `npm run launch:readiness` can clear the order-proof blocker.
 
@@ -217,12 +237,16 @@ Required collection:
 
 ### Hidden Billing Products
 
-These products support checkout charging and should use template `product.billing-item`, tag `hidden-from-catalog`, and stay out of the `Phones` collection.
+These products preserve readable checkout/order lines and stable Rev.io mappings. Each uses template `product.billing-item`, tag `hidden-from-catalog`, a `$0.00` Shopify checkout price, no shipping requirement, and the approved American-flag media. Keep them out of the `Phones` collection.
 
-- Monthly Service: `/products/monthly-service`, `$17.76`
-- Annual Service: `/products/annual-service`, `$200`
-- Call Recording: `/products/call-recording`, `$5`
-- Quiet Hours: `/products/family-quiet-hours`, `$5`
-- Voicemail to Email: `/products/voicemail-to-email`, `$5`
-- Auto Attendant: `/products/auto-attendant`, `$5`
-- Add-on Bundle: `/products/add-on-bundle`, `$10`
+| Product | Handle | Stable SKU | Shopify price | Future charge |
+| --- | --- | --- | ---: | ---: |
+| Monthly Service | `/products/monthly-service` | `PP-MONTHLY-SERVICE` | `$0.00` | `$17.76/mo` |
+| Annual Service | `/products/annual-service` | `PP-ANNUAL-SERVICE` | `$0.00` | `$200/yr` |
+| Call Recording | `/products/call-recording` | `PP-ADDON-CALL-RECORDING` | `$0.00` | `$5/mo` |
+| Quiet Hours | `/products/family-quiet-hours` | `PP-ADDON-FAMILY-QUIET-HOURS` | `$0.00` | `$5/mo` |
+| Voicemail to Email | `/products/voicemail-to-email` | `PP-ADDON-VOICEMAIL-TO-EMAIL` | `$0.00` | `$5/mo` |
+| Auto Attendant | `/products/auto-attendant` | `PP-ADDON-AUTO-ATTENDANT` | `$0.00` | `$5/mo` |
+| Add-on Bundle | `/products/add-on-bundle` | `PP-ADDON-BUNDLE` | `$0.00` | `$10/mo` |
+
+All future charges begin on the first day of the following month. The retired `/products/patriot-package` product must not be selected or published as part of the current order flow.

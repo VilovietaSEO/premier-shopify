@@ -3,6 +3,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { resolveAdminAuth } = require('./shopify-admin-auth');
+const { billingProducts } = require('./storefront-billing-products');
+const { PHONE_PRODUCT_CATEGORY } = require('./storefront-product-taxonomy');
 
 const root = path.resolve(__dirname, '..');
 const productsCsvPath = path.join(root, 'store-setup/products.csv');
@@ -17,15 +19,13 @@ const requiredPages = [
   { handle: 'contact', title: 'Contact', templateSuffix: 'contact' },
 ];
 
-const requiredBillingProducts = [
-  { handle: 'monthly-service', title: 'Monthly Service', price: '17.76' },
-  { handle: 'annual-service', title: 'Annual Service', price: '200.00' },
-  { handle: 'call-recording', title: 'Call Recording', price: '5.00' },
-  { handle: 'family-quiet-hours', title: 'Quiet Hours', price: '5.00' },
-  { handle: 'voicemail-to-email', title: 'Voicemail to Email', price: '5.00' },
-  { handle: 'auto-attendant', title: 'Auto Attendant', price: '5.00' },
-  { handle: 'add-on-bundle', title: 'Add-on Bundle', price: '10.00' },
-  { handle: 'patriot-package', title: 'Patriot Package', price: '150.00' },
+const requiredBillingProducts = billingProducts.map((product) => ({
+  ...product,
+  mediaAlt: `${product.title} billing item`,
+}));
+
+const retiredProducts = [
+  { handle: 'patriot-package', title: 'Patriot Package' },
 ];
 
 const productByHandleQuery = `
@@ -36,7 +36,12 @@ query ProductByHandle($identifier: ProductIdentifierInput!) {
     handle
     status
     templateSuffix
+    publishedAt
     onlineStoreUrl
+    category {
+      id
+      fullName
+    }
     variants(first: 10) {
       nodes {
         id
@@ -45,6 +50,7 @@ query ProductByHandle($identifier: ProductIdentifierInput!) {
         taxable
         inventoryItem {
           id
+          sku
           requiresShipping
         }
       }
@@ -201,10 +207,23 @@ function productAudit(product, expected) {
     if (product.title !== expected.Title) failures.push(`title is ${product.title || '(blank)'}`);
     if (product.handle !== expected['URL handle']) failures.push(`handle is ${product.handle || '(blank)'}`);
     if (product.status !== 'ACTIVE') failures.push(`status is ${product.status || '(blank)'}`);
+    if (!product.publishedAt) failures.push('not published to the Online Store');
     if (product.templateSuffix !== 'independence-phone') failures.push(`template is ${product.templateSuffix || '(blank)'}`);
+    if (product.category?.id !== PHONE_PRODUCT_CATEGORY.id) {
+      failures.push(`category is ${product.category?.id || '(blank)'}`);
+    }
+    if (product.category?.fullName !== PHONE_PRODUCT_CATEGORY.fullName) {
+      failures.push(`category full name is ${product.category?.fullName || '(blank)'}`);
+    }
     if (!firstVariant) failures.push('missing variant');
     if (firstVariant && normalizePrice(firstVariant.price) !== normalizePrice(expected.Price)) {
       failures.push(`price is ${firstVariant.price}`);
+    }
+    if (firstVariant?.inventoryItem?.sku !== expected.SKU) {
+      failures.push(`SKU is ${firstVariant?.inventoryItem?.sku || '(blank)'}`);
+    }
+    if (firstVariant?.inventoryItem?.requiresShipping !== (expected['Requires shipping'] === 'true')) {
+      failures.push(`requiresShipping is ${Boolean(firstVariant?.inventoryItem?.requiresShipping)}`);
     }
     if (metafields.product_deck !== expected['product.metafields.custom.product_deck']) failures.push('product_deck metafield mismatch');
     if (metafields.best_for !== expected['product.metafields.custom.best_for']) failures.push('best_for metafield mismatch');
@@ -217,7 +236,12 @@ function productAudit(product, expected) {
     actualTitle: product?.title || '',
     status: product?.status || '',
     templateSuffix: product?.templateSuffix || '',
+    categoryId: product?.category?.id || '',
+    categoryFullName: product?.category?.fullName || '',
     price: firstVariant?.price || '',
+    sku: firstVariant?.inventoryItem?.sku || '',
+    requiresShipping: Boolean(firstVariant?.inventoryItem?.requiresShipping),
+    publishedAt: product?.publishedAt || '',
     onlineStoreUrl: product?.onlineStoreUrl || '',
     mediaCount: media.length,
     mediaWithAltCount: media.filter((item) => String(item.alt || '').trim()).length,
@@ -228,6 +252,8 @@ function productAudit(product, expected) {
 function billingProductAudit(product, expected) {
   const failures = [];
   const firstVariant = product?.variants?.nodes?.[0];
+  const metafields = metafieldMap(product);
+  const media = product?.media?.nodes || [];
 
   if (!product) {
     failures.push('missing billing product');
@@ -235,13 +261,39 @@ function billingProductAudit(product, expected) {
     if (product.title !== expected.title) failures.push(`title is ${product.title || '(blank)'}`);
     if (product.handle !== expected.handle) failures.push(`handle is ${product.handle || '(blank)'}`);
     if (product.status !== 'ACTIVE') failures.push(`status is ${product.status || '(blank)'}`);
+    if (!product.publishedAt) failures.push('not published to the Online Store');
     if (product.templateSuffix !== 'billing-item') failures.push(`template is ${product.templateSuffix || '(blank)'}`);
+    const usesShopifyUncategorizedSentinel =
+      product.category?.id === 'gid://shopify/TaxonomyCategory/na'
+      && product.category?.fullName === 'Uncategorized';
+    if (product.category && !usesShopifyUncategorizedSentinel) {
+      failures.push(`billing product category is ${product.category.fullName || product.category.id}; expected uncategorized`);
+    }
     if (!firstVariant) failures.push('missing variant');
-    if (firstVariant && normalizePrice(firstVariant.price) !== normalizePrice(expected.price)) {
+    if (firstVariant && normalizePrice(firstVariant.price) !== normalizePrice(expected.checkoutPrice)) {
       failures.push(`price is ${firstVariant.price}`);
+    }
+    if (firstVariant?.taxable !== false) failures.push('billing product is taxable');
+    if (firstVariant?.inventoryItem?.sku !== expected.sku) {
+      failures.push(`SKU is ${firstVariant?.inventoryItem?.sku || '(blank)'}`);
     }
     if (firstVariant?.inventoryItem?.requiresShipping) {
       failures.push('billing product requires shipping');
+    }
+    if (metafields.future_price_cents !== String(expected.futurePriceCents)) {
+      failures.push(`future_price_cents is ${metafields.future_price_cents || '(blank)'}`);
+    }
+    if (metafields.billing_cadence !== expected.billingCadence) {
+      failures.push(`billing_cadence is ${metafields.billing_cadence || '(blank)'}`);
+    }
+    if (metafields.first_bill_rule !== expected.firstBillRule) {
+      failures.push(`first_bill_rule is ${metafields.first_bill_rule || '(blank)'}`);
+    }
+    if (metafields.billing_role !== expected.role) {
+      failures.push(`billing_role is ${metafields.billing_role || '(blank)'}`);
+    }
+    if (!media.some((item) => item.mediaContentType === 'IMAGE' && item.alt === expected.mediaAlt)) {
+      failures.push(`missing billing media alt "${expected.mediaAlt}"`);
     }
   }
 
@@ -251,8 +303,43 @@ function billingProductAudit(product, expected) {
     actualTitle: product?.title || '',
     status: product?.status || '',
     templateSuffix: product?.templateSuffix || '',
+    categoryId: product?.category?.id || '',
+    categoryFullName: product?.category?.fullName || '',
     price: firstVariant?.price || '',
+    checkoutPrice: firstVariant?.price || '',
+    futurePrice: expected.futurePrice,
+    futurePriceCents: expected.futurePriceCents,
+    billingCadence: expected.billingCadence,
+    firstBillRule: expected.firstBillRule,
+    role: expected.role,
+    sku: firstVariant?.inventoryItem?.sku || '',
+    taxable: firstVariant?.taxable,
     requiresShipping: Boolean(firstVariant?.inventoryItem?.requiresShipping),
+    mediaCount: media.length,
+    mediaWithAltCount: media.filter((item) => String(item.alt || '').trim()).length,
+    publishedAt: product?.publishedAt || '',
+    onlineStoreUrl: product?.onlineStoreUrl || '',
+    failures,
+  };
+}
+
+function retiredProductAudit(product, expected) {
+  const failures = [];
+
+  if (product?.status === 'ACTIVE') {
+    failures.push('is ACTIVE; archive or draft the retired product');
+  }
+  if (product?.publishedAt) {
+    failures.push('is still published to the Online Store');
+  }
+
+  return {
+    handle: expected.handle,
+    expectedTitle: expected.title,
+    exists: Boolean(product),
+    actualTitle: product?.title || '',
+    status: product?.status || '',
+    publishedAt: product?.publishedAt || '',
     onlineStoreUrl: product?.onlineStoreUrl || '',
     failures,
   };
@@ -316,12 +403,19 @@ function auditSnapshot(snapshot, expectedProducts = readExpectedProducts()) {
   const billingProductResults = requiredBillingProducts.map((expected) =>
     billingProductAudit(snapshot.billingProducts?.[expected.handle], expected)
   );
+  const retiredProductResults = retiredProducts.map((expected) =>
+    retiredProductAudit(
+      snapshot.retiredProducts?.[expected.handle] || snapshot.billingProducts?.[expected.handle],
+      expected,
+    )
+  );
   const collectionResult = collectionAudit(snapshot.collections?.phones, expectedHandles);
   const pageResults = requiredPages.map((expected) => pageAudit(snapshot.pages?.[expected.handle], expected));
   const failures = [
     ...(snapshot.pageAccessError ? [`pages: ${snapshot.pageAccessError}`] : []),
     ...productResults.flatMap((result) => result.failures.map((failure) => `product ${result.handle}: ${failure}`)),
     ...billingProductResults.flatMap((result) => result.failures.map((failure) => `billing product ${result.handle}: ${failure}`)),
+    ...retiredProductResults.flatMap((result) => result.failures.map((failure) => `retired product ${result.handle}: ${failure}`)),
     ...collectionResult.failures.map((failure) => `collection phones: ${failure}`),
     ...pageResults.flatMap((result) => result.failures.map((failure) => `page ${result.handle}: ${failure}`)),
   ];
@@ -330,6 +424,7 @@ function auditSnapshot(snapshot, expectedProducts = readExpectedProducts()) {
     generatedAt: new Date().toISOString(),
     products: productResults,
     billingProducts: billingProductResults,
+    retiredProducts: retiredProductResults,
     collection: collectionResult,
     pages: pageResults,
     failures,
@@ -375,6 +470,17 @@ async function fetchSnapshot({ store, auth, expectedProducts = readExpectedProdu
     billingProducts[expected.handle] = data.productByIdentifier;
   }
 
+  const retiredProductResults = {};
+  for (const expected of retiredProducts) {
+    const data = await adminGraphql({
+      store,
+      auth,
+      query: productByHandleQuery,
+      variables: { identifier: { handle: expected.handle } },
+    });
+    retiredProductResults[expected.handle] = data.productByIdentifier;
+  }
+
   const collectionData = await adminGraphql({
     store,
     auth,
@@ -411,6 +517,7 @@ async function fetchSnapshot({ store, auth, expectedProducts = readExpectedProdu
     store,
     products,
     billingProducts,
+    retiredProducts: retiredProductResults,
     collections: {
       phones: collectionData.collections.nodes[0] || null,
     },
@@ -446,6 +553,7 @@ async function main() {
   console.log(`Storefront object audit wrote ${path.relative(root, outputPath)}`);
   console.log(`Products checked: ${report.products.length}`);
   console.log(`Billing products checked: ${report.billingProducts.length}`);
+  console.log(`Retired products checked: ${report.retiredProducts.length}`);
   console.log(`Pages checked: ${report.pages.length}`);
   console.log(`Failures: ${report.failures.length}`);
 
@@ -467,8 +575,10 @@ module.exports = {
   collectionAudit,
   fetchSnapshot,
   billingProductAudit,
+  retiredProductAudit,
   pageAudit,
   productAudit,
   requiredBillingProducts,
+  retiredProducts,
   requiredPages,
 };

@@ -7,34 +7,62 @@
           "type": "faq",
           "settings": {
             "question": "How do I install the phone?",
-            "answer": "<p>Place the cordless Wi-Fi handset on its charging base, connect it to the home Wi-Fi setup provided after purchase, and follow the activation steps from the Patriot Phone team.</p>"
+            "answer": "<p>Place the cordless Wi-Fi handset on its charging base, connect it to the home Wi-Fi setup provided after purchase, and follow the activation steps from the Independence Phone team.</p>",
+            "anchor_id": "installation"
           }
         },
         "use": {
           "type": "faq",
           "settings": {
             "question": "How does my family use it?",
-            "answer": "<p>The phone is designed around calling. It does not include apps, a web browser, social feeds, GPS, camera, or cellular mobility unless the product scope changes.</p>"
+            "answer": "<p>The phone is designed around calling. It does not include apps, a web browser, social feeds, GPS, camera, or cellular mobility unless the product scope changes.</p>",
+            "anchor_id": "using-the-phone"
           }
         },
         "refer": {
           "type": "faq",
           "settings": {
-            "question": "Can I refer another family?",
-            "answer": "<p>Referral details can be added here when the program is finalized.</p>"
+            "question": "How does the referral offer work?",
+            "answer": "<p>If a friend referred you, upon checkout type in their referral code, and you both will get one month of service for free!</p>",
+            "anchor_id": "referral-offer"
           }
         },
         "troubleshoot": {
           "type": "faq",
           "settings": {
             "question": "Where do I go for troubleshooting?",
-            "answer": "<p>Use the contact page for setup, service, billing, or phone troubleshooting. The team can expand this page with step-by-step support articles after launch.</p>"
+            "answer": "<p>Use the contact page for setup, service, billing, or phone troubleshooting. The team can expand this page with step-by-step support articles after launch.</p>",
+            "anchor_id": "troubleshooting"
+          }
+        },
+        "internet": {
+          "type": "faq",
+          "settings": {
+            "question": "Does it have internet?",
+            "answer": "<p>No. Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>",
+            "anchor_id": "internet"
+          }
+        },
+        "monthly": {
+          "type": "faq",
+          "settings": {
+            "question": "What is the monthly fee?",
+            "answer": "<p>Personal phone number plus monthly phone service is $17.76/mo. Annual service is $200/yr and saves $13.12 compared with monthly billing.</p>",
+            "anchor_id": "monthly-fee"
+          }
+        },
+        "comparison": {
+          "type": "faq",
+          "settings": {
+            "question": "What is the difference between Classic Phone and Rugged Phone?",
+            "answer": "<p>Both phones include Wi-Fi, Bluetooth, encrypted data transmission and storage, and 9-hour talk time. Rugged Phone also adds waterproof and drop-proof protection.</p>",
+            "anchor_id": "phone-comparison"
           }
         }
       },
-      "block_order": ["install", "use", "refer", "troubleshoot"],
+      "block_order": ["install", "use", "refer", "troubleshoot", "internet", "monthly", "comparison"],
       "settings": {
-        "eyebrow": "Help center",
+        "eyebrow": "",
         "heading": "Install, use, refer, and troubleshoot."
       }
     }

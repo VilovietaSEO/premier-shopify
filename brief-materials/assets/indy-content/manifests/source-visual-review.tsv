@@ -1,0 +1,11 @@
+source	product	manufacturer_mark	production_status	note
+Non-Rugged - Back.jpg	classic	none visible	approved	Real supplied 5:4 photo; safe for logo-free QA gallery
+Non-Rugged - Buttons.jpg	classic	none visible	approved	Real supplied 5:4 photo; safe as the featured QA image
+Non-Rugged - Charger.jpg	classic	none visible	approved	Real supplied 5:4 photo; safe for logo-free QA gallery
+Non-Rugged - Front.jpg	classic	Yealink above screen	approved	Yealink retention explicitly approved 2026-07-15; source for patriotic front-card composite
+Non-Rugged - Side.jpg	classic	Yealink above screen	blocked	Outside the approved front-card scope; requires separate storefront selection review
+Rugged - Back.jpg	rugged	none visible	approved	Real supplied 5:4 photo; safe for logo-free QA gallery
+Rugged - Buttons.jpg	rugged	none visible	approved	Real supplied 5:4 photo; safe as the featured QA image
+Rugged - Charger.jpg	rugged	none visible	approved	Real supplied 5:4 photo; safe for logo-free QA gallery
+Rugged - Front.jpg	rugged	Yealink above screen	approved	Yealink retention explicitly approved 2026-07-15; source for patriotic front-card composite
+Rugged - Side.jpg	rugged	Yealink above screen	blocked	Outside the approved front-card scope; requires separate storefront selection review

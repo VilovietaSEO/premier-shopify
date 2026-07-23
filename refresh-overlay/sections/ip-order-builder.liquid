@@ -1,258 +1,19 @@
-{% liquid
-  assign standard_product = section.settings.standard_product
-  assign rugged_product = section.settings.rugged_product
-  assign standard_variant = standard_product.selected_or_first_available_variant
-  assign rugged_variant = rugged_product.selected_or_first_available_variant
-  assign monthly_service_variant = section.settings.monthly_service_product.selected_or_first_available_variant
-  assign annual_service_variant = section.settings.annual_service_product.selected_or_first_available_variant
-  assign call_recording_variant = section.settings.call_recording_product.selected_or_first_available_variant
-  assign quiet_hours_variant = section.settings.family_quiet_hours_product.selected_or_first_available_variant
-  assign voicemail_variant = section.settings.voicemail_to_email_product.selected_or_first_available_variant
-  assign auto_attendant_variant = section.settings.auto_attendant_product.selected_or_first_available_variant
-  assign addon_bundle_variant = section.settings.addon_bundle_product.selected_or_first_available_variant
-  assign patriot_package_variant = section.settings.patriot_package_product.selected_or_first_available_variant
-  assign default_variant_id = standard_variant.id
-
-  if default_variant_id == blank
-    assign default_variant_id = rugged_variant.id
-  endif
+{% render 'ip-order-builder-form',
+  builder_id: section.id,
+  standard_product: section.settings.standard_product,
+  rugged_product: section.settings.rugged_product,
+  monthly_service_product: section.settings.monthly_service_product,
+  annual_service_product: section.settings.annual_service_product,
+  call_recording_product: section.settings.call_recording_product,
+  family_quiet_hours_product: section.settings.family_quiet_hours_product,
+  voicemail_to_email_product: section.settings.voicemail_to_email_product,
+  auto_attendant_product: section.settings.auto_attendant_product,
+  addon_bundle_product: section.settings.addon_bundle_product,
+  heading: section.settings.heading,
+  body: section.settings.body,
+  checkout_note: section.settings.checkout_note,
+  button_label: section.settings.button_label
 %}
-
-<section class="ip-section ip-order-builder" data-order-builder>
-  <div class="ip-order-builder__header ip-stack">
-    {% if section.settings.eyebrow != blank %}
-      <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
-    {% endif %}
-    <h1 class="ip-heading ip-heading--medium ip-heading--wide">{{ section.settings.heading }}</h1>
-    <div class="ip-lede">{{ section.settings.body }}</div>
-  </div>
-
-  <form
-    action="{{ routes.cart_add_url }}"
-    method="post"
-    enctype="multipart/form-data"
-    class="ip-product-form ip-order-builder__form"
-    data-order-form
-  >
-    <input type="hidden" name="id" value="{{ default_variant_id }}" data-order-variant-id>
-    <input type="hidden" name="quantity" value="1">
-
-    <fieldset class="ip-choice-group ip-order-builder__package">
-      <legend>{{ section.settings.package_heading }}</legend>
-      <label class="ip-choice ip-order-card ip-order-card--package" for="OrderPackage-{{ section.id }}">
-        <input
-          id="OrderPackage-{{ section.id }}"
-          type="checkbox"
-          name="properties[Patriot Package]"
-          value="{{ section.settings.package_value | escape }}"
-          data-order-package
-          data-order-savings-year="30312"
-          data-billing-variant="{{ patriot_package_variant.id }}"
-          data-billing-role="package"
-        >
-        <span>
-          <strong>{{ section.settings.package_title }}</strong>
-          <small>{{ section.settings.package_price }}</small>
-          <em>{{ section.settings.package_descriptor }}</em>
-        </span>
-      </label>
-    </fieldset>
-
-    <fieldset class="ip-choice-group ip-order-builder__step">
-      <legend>1. Choose your phone</legend>
-      <div class="ip-order-builder__grid ip-order-builder__grid--phones">
-        <label class="ip-choice ip-order-card ip-order-card--phone" for="OrderPhoneStandard-{{ section.id }}">
-          <input
-            id="OrderPhoneStandard-{{ section.id }}"
-            type="radio"
-            name="properties[Phone]"
-            value="Classic Phone - $100"
-            data-order-phone
-            data-order-variant="{{ standard_variant.id }}"
-            data-order-title="Classic Phone"
-            data-order-price-cents="10000"
-            data-order-image="{{ 'ip-current-site-product-1.png' | asset_url }}"
-            checked
-          >
-          <span>
-            <strong>Classic Phone</strong>
-            <small>Wi-Fi, Bluetooth, encrypted data transmission and storage, 9-hour talk time.</small>
-          </span>
-          <img src="{{ 'ip-current-site-product-1.png' | asset_url }}" alt="Classic Phone" width="1200" height="1200" loading="lazy">
-        </label>
-
-        <label class="ip-choice ip-order-card ip-order-card--phone" for="OrderPhoneRugged-{{ section.id }}">
-          <input
-            id="OrderPhoneRugged-{{ section.id }}"
-            type="radio"
-            name="properties[Phone]"
-            value="Rugged Phone - $150"
-            data-order-phone
-            data-order-variant="{{ rugged_variant.id }}"
-            data-order-title="Rugged Phone"
-            data-order-price-cents="15000"
-            data-order-image="{{ 'ip-current-site-product-2.png' | asset_url }}"
-          >
-          <span>
-            <strong>Rugged Phone</strong>
-            <small>Wi-Fi, Bluetooth, encrypted data transmission and storage, 9-hour talk time, waterproof, drop proof.</small>
-          </span>
-          <img src="{{ 'ip-current-site-product-2.png' | asset_url }}" alt="Rugged Phone" width="1200" height="1200" loading="lazy">
-        </label>
-      </div>
-    </fieldset>
-
-    <fieldset class="ip-choice-group ip-order-builder__step">
-      <legend>2. Choose your plan</legend>
-      <div class="ip-order-builder__grid ip-order-builder__grid--two">
-        <label class="ip-choice ip-order-card" for="OrderPlanMonthly-{{ section.id }}">
-          <input
-            id="OrderPlanMonthly-{{ section.id }}"
-            type="radio"
-            name="properties[Service plan]"
-            value="Monthly service - $17.76/mo"
-            data-billing-variant="{{ monthly_service_variant.id }}"
-            data-billing-role="service"
-            checked
-          >
-          <span>
-            <strong>Monthly service</strong>
-            <small>$17.76/mo</small>
-            <em>Personal phone number and monthly service.</em>
-          </span>
-        </label>
-
-        <label class="ip-choice ip-order-card" for="OrderPlanAnnual-{{ section.id }}">
-          <input
-            id="OrderPlanAnnual-{{ section.id }}"
-            type="radio"
-            name="properties[Service plan]"
-            value="Annual service - $200/yr (saves $13.12/yr)"
-            data-order-annual
-            data-order-savings-year="1312"
-            data-billing-variant="{{ annual_service_variant.id }}"
-            data-billing-role="service"
-          >
-          <span>
-            <strong>Annual service</strong>
-            <small>$200/yr</small>
-            <em>Saves $13.12 compared with 12 monthly payments.</em>
-          </span>
-        </label>
-      </div>
-    </fieldset>
-
-    <fieldset class="ip-choice-group ip-order-builder__step">
-      <legend>3. Choose add-ons</legend>
-      <div class="ip-order-builder__grid ip-order-builder__grid--addons">
-        <label class="ip-choice ip-order-card ip-order-card--bundle" for="OrderAddonBundle-{{ section.id }}">
-          <input
-            id="OrderAddonBundle-{{ section.id }}"
-            type="checkbox"
-            name="properties[Add-on Bundle]"
-            value="Add-on Bundle - $10/mo; includes Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant (saves $10/mo)"
-            data-order-bundle
-            data-order-savings-month="1000"
-            data-billing-variant="{{ addon_bundle_variant.id }}"
-            data-billing-role="addon_bundle"
-          >
-          <span>
-            <strong>Add-on Bundle</strong>
-            <small>$10/mo</small>
-            <em>Includes every add-on: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant. Saves $10/mo.</em>
-          </span>
-        </label>
-
-        <label class="ip-choice ip-order-card" for="OrderAddonRecording-{{ section.id }}">
-          <input id="OrderAddonRecording-{{ section.id }}" type="checkbox" name="properties[Call Recording]" value="$5/mo" data-order-addon data-billing-variant="{{ call_recording_variant.id }}" data-billing-role="addon">
-          <span>
-            <strong>Call Recording</strong>
-            <small>$5/mo</small>
-            <em>Access to 90 days of recorded calls.</em>
-          </span>
-        </label>
-
-        <label class="ip-choice ip-order-card" for="OrderAddonQuietHours-{{ section.id }}">
-          <input id="OrderAddonQuietHours-{{ section.id }}" type="checkbox" name="properties[Quiet Hours]" value="$5/mo" data-order-addon data-billing-variant="{{ quiet_hours_variant.id }}" data-billing-role="addon">
-          <span>
-            <strong>Quiet Hours</strong>
-            <small>$5/mo</small>
-            <em>Set times for when to receive incoming calls.</em>
-          </span>
-        </label>
-
-        <label class="ip-choice ip-order-card" for="OrderAddonVoicemail-{{ section.id }}">
-          <input id="OrderAddonVoicemail-{{ section.id }}" type="checkbox" name="properties[Voicemail to Email]" value="$5/mo" data-order-addon data-billing-variant="{{ voicemail_variant.id }}" data-billing-role="addon">
-          <span>
-            <strong>Voicemail to Email</strong>
-            <small>$5/mo</small>
-            <em>Voicemail messages are sent to email as audio and transcription.</em>
-          </span>
-        </label>
-
-        <label class="ip-choice ip-order-card" for="OrderAddonAttendant-{{ section.id }}">
-          <input id="OrderAddonAttendant-{{ section.id }}" type="checkbox" name="properties[Auto Attendant]" value="$5/mo" data-order-addon data-billing-variant="{{ auto_attendant_variant.id }}" data-billing-role="addon">
-          <span>
-            <strong>Auto Attendant</strong>
-            <small>$5/mo</small>
-            <em>Filter unwanted spam calls.</em>
-          </span>
-        </label>
-      </div>
-    </fieldset>
-
-    <label class="ip-policy-check" for="OrderPolicyAgreement-{{ section.id }}">
-      <input
-        id="OrderPolicyAgreement-{{ section.id }}"
-        type="checkbox"
-        name="properties[Policy agreement]"
-        value="Agreed to Privacy Policy and Terms and Conditions"
-        required
-      >
-      <span>
-        I agree to the
-        <a href="/policies/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>
-        and
-        <a href="/policies/terms-of-service" target="_blank" rel="noopener">Terms and Conditions</a>.
-      </span>
-    </label>
-
-    <aside class="ip-card ip-order-summary" aria-live="polite">
-      <p class="ip-kicker">Order summary</p>
-      <h2 data-order-summary-title>Classic Phone</h2>
-      <dl>
-        <div>
-          <dt>Phone</dt>
-          <dd data-order-summary-phone>$100</dd>
-        </div>
-        <div>
-          <dt>Service</dt>
-          <dd data-order-summary-service>$17.76/mo</dd>
-        </div>
-        <div>
-          <dt>Add-ons</dt>
-          <dd data-order-summary-addons>None selected</dd>
-        </div>
-        <div>
-          <dt>Estimated savings</dt>
-          <dd data-order-summary-savings>$0</dd>
-        </div>
-      </dl>
-      <p class="ip-form-note">{{ section.settings.checkout_note }}</p>
-      <button
-        type="submit"
-        data-add-to-cart-button
-        data-default-text="{{ section.settings.button_label }}"
-        {% if default_variant_id == blank %}
-          disabled
-        {% endif %}
-      >
-        {{ section.settings.button_label }}
-      </button>
-      <p class="ip-form-note" data-cart-status aria-live="polite" hidden></p>
-    </aside>
-  </form>
-</section>
 
 {% schema %}
 {
@@ -261,20 +22,19 @@
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "Eyebrow",
-      "default": "Order now"
+      "label": "Eyebrow"
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Build your Independence Phone setup."
+      "default": "Build your Independence Phone order now."
     },
     {
       "type": "richtext",
       "id": "body",
       "label": "Body",
-      "default": "<p>Start with the Patriot Package, or choose your phone, plan, and add-ons below.</p>"
+      "default": "<p>Choose your phone, service plan, and add-ons below.</p>"
     },
     {
       "type": "product",
@@ -322,51 +82,16 @@
       "label": "Add-on Bundle billing product"
     },
     {
-      "type": "product",
-      "id": "patriot_package_product",
-      "label": "Patriot Package billing product"
-    },
-    {
-      "type": "text",
-      "id": "package_heading",
-      "label": "Package heading",
-      "default": "Limited offer"
-    },
-    {
-      "type": "text",
-      "id": "package_title",
-      "label": "Package title",
-      "default": "Patriot Package"
-    },
-    {
-      "type": "text",
-      "id": "package_price",
-      "label": "Package price",
-      "default": "$250"
-    },
-    {
-      "type": "textarea",
-      "id": "package_value",
-      "label": "Package property value",
-      "default": "Patriot Package - $250; Classic Phone, 1 year phone service, and all 4 add-ons (saves $303.12)"
-    },
-    {
-      "type": "textarea",
-      "id": "package_descriptor",
-      "label": "Package descriptor",
-      "default": "Take advantage of our limited offer honoring the 250th anniversary of America. Includes Classic Phone, 1 Year phone service, all 4 add-on's for only $250! A savings of $303.12."
-    },
-    {
       "type": "textarea",
       "id": "checkout_note",
       "label": "Checkout note",
-      "default": "Taxes, shipping, and recurring billing are finalized through the approved store setup. Savings shown here are based on the selected setup options."
+      "default": "Taxes, shipping, and recurring billing will be shown in the cart."
     },
     {
       "type": "text",
       "id": "button_label",
       "label": "Button label",
-      "default": "Add setup to cart"
+      "default": "Add order to cart"
     }
   ],
   "presets": [

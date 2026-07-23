@@ -1,91 +1,21 @@
 # Independence Phone Go-Live Runbook
 
-Date: 2026-07-05
+Date: 2026-07-23
 
-This runbook explains how to take the Independence Phone Shopify store live.
-
-It is written in two layers:
-
-- Business-owner checklist first.
-- Developer/API setup after that.
-
-## Business Owner Summary
-
-The site is built, but it is not fully launched because a few business decisions and live proofs still need to happen.
-
-The owner needs to decide:
-
-1. Who should have Shopify access?
-2. Should payment launch through Shopify Checkout first, or wait for Rev.io checkout?
-3. What domain should be public?
-4. Who will host the small server for CRM, order capture, Rev.io handoff, and `llms.txt`?
-5. Who will receive contact leads and order/sale records?
-6. When should the storefront password be removed?
-
-Fastest path to start selling:
-
-1. Add staff users in Shopify.
-2. Turn on Shopify Payments or another supported payment provider.
-3. Leave the Rev.io checkout handoff setting blank.
-4. Configure shipping for the phones.
-5. Add policies.
-6. Place a test order.
-7. Remove the storefront password when approved.
-
-Rev.io path:
-
-1. Host the ops server.
-2. Give the Rev.io API implementer the handoff docs.
-3. Prove a Rev.io sandbox checkout/request flow.
-4. Enter the hosted `/revio/checkout` URL in the Shopify theme.
-5. Place a test order/handoff.
-
-Do not put Rev.io keys or card-handling code into Shopify.
+This runbook covers the final path from local repo to GitHub, Shopify draft theme, owner-hosted ops server, Rev.io middleware handoff, and live launch.
 
 ## Current Known Targets
 
 - Shopify store: `jordan-mark-premier.myshopify.com`
-- Shopify live working theme: `Independence Phone` / theme ID `150479208517`
+- Shopify current live theme ID: `151266459717`
+- Shopify unpublished QA theme ID: `151553245253`
+- Rollback theme: select and verify an unpublished candidate with `shopify theme list` before launch
 - Local theme path: `/Users/vilovieta/Documents/Shopify/independence-phone-theme`
 - GitHub repo: `https://github.com/VilovietaSEO/premier-shopify`
 - Ops server entrypoint: `ops/storefront-ops-server.js`
 - Rev.io handoff endpoint exposed by ops server: `/revio/checkout`
-- Cart payload schema: `independence_phone.revio_checkout.v1`
+- Cart payload schema: `independence_phone.revio_checkout.v2`
 - Rev.io outbound event for API middleware: `revio.checkout.requested`
-- Current public access: storefront password protection is still on until launch.
-
-## Current Launch Status
-
-Latest saved launch audit:
-
-```bash
-cd /Users/vilovieta/Documents/Shopify
-SHOPIFY_STORE=jordan-mark-premier.myshopify.com SHOPIFY_USE_CLI_SESSION=1 npm run launch:readiness
-```
-
-Current result in `tmp/shopify-live-proof/launch-readiness-audit.json`:
-
-- Status: `blocked`.
-- Pass: `22`.
-- Pending: `1`.
-- Blockers: `6`.
-
-Resolved since the earlier checklist:
-
-- `Independence Phone` is the live theme.
-- Classic Phone and Rugged Phone are active public products.
-- Hidden billing products are active line items for service/add-ons/package mapping.
-- Hidden billing products are non-shipping, so only phone products require shipping.
-- Homepage/product/order/cart theme flows are implemented.
-
-Remaining blockers:
-
-- Storefront password page blocks public crawler/SEO proof.
-- Public `llms.txt` and route-level Markdown routes need ops/proxy deployment.
-- Sitemap and route SEO proof need to be rerun after public access/proxy routing.
-- Ops endpoint proof must be run against a public HTTPS endpoint.
-- The contact form CRM endpoint must be changed from the placeholder/example URL to the real hosted `/crm/capture` URL, then proven with a test submission.
-- A real or approved test Shopify order proof must be run after payment setup.
 
 ## What Shopify Handles
 
@@ -94,15 +24,18 @@ Shopify remains the storefront and product-management surface:
 - Theme rendering.
 - Homepage, collection, product, cart, FAQ, and contact pages.
 - Product images, image alt text, product titles, SEO title/meta description, product handles, and collection membership.
-- Public phone products and hidden billing products.
+- Public phone products and seven hidden `$0.00` billing products.
 - Cart state and line-item grouping before checkout handoff.
-- Native Shopify checkout if the business chooses Shopify as the payment processor.
+- Phone-only merchandise totals due today, one `$15` shipping fee per order, tax pending until address, and separate future service/add-on totals.
+- Stable SKU, future-charge, cadence, and first-bill metadata for the external handoff.
 
-Do not expose the hidden service/add-on billing products in a broad public product grid. The storefront should stay focused on Classic Phone, Rugged Phone, and the Patriot Package framing.
+Do not expose the hidden service/add-on billing products in a broad public product grid. The storefront stays focused on Classic Phone, Rugged Phone, service, and optional add-ons. The retired Patriot Package is not part of the current order flow.
 
-## What The Owner-Hosted Server Handles
+The Shopify side is complete before gateway handoff only when service/add-on variants are `$0.00`, non-shipping, use stable SKUs and American-flag media, preserve `future_charge_cents`, `billing_cadence`, and `first_bill_rule`, and grouped setup removal works.
 
-The ops server provides features Shopify Liquid should not own:
+## What The Owner-Hosted Server Handles When Enabled
+
+The ops server provides optional features Shopify Liquid should not own. CRM capture is not enabled for the current native-contact handoff:
 
 - Contact-form CRM capture: `POST /crm/capture`.
 - Staff CRM viewer: `GET /crm/leads`.
@@ -113,8 +46,6 @@ The ops server provides features Shopify Liquid should not own:
 - Rev.io checkout handoff receiver: `POST /revio/checkout`.
 - Signed outbound webhooks to Rev.io middleware or other automation endpoints.
 
-The ops server does not store Rev.io API credentials and does not collect raw card numbers. It stores CRM proof, verifies/normalizes payloads, and forwards signed events to owner-controlled destinations.
-
 ## What Rev.io Middleware Handles
 
 This repo does not call Rev.io directly. The API implementer should receive the signed `revio.checkout.requested` webhook, then translate `record.revio_checkout_payload` into the client's Rev.io account.
@@ -124,68 +55,14 @@ Expected Rev.io-side mapping:
 1. Match or create the customer.
 2. Create the request.
 3. Create the request service.
-4. Create request products for phone, service, package, and add-ons.
-5. Create charges/bill/payment records if the Rev.io account wants immediate invoicing or payment.
-6. Return a `redirect_url` or `checkout_url` if the visitor should continue to a hosted payment step.
-7. Send lifecycle events back through configured CRM/webhook paths as needed.
+4. Collect required policy consent and desired area code exactly once at final checkout.
+5. Calculate tax after address entry and charge only phone, applicable tax, and one `$15` order shipping fee today.
+6. Create request products for phone, service, and add-ons; schedule service/add-ons for the first day of the following month.
+7. Make customer, request, payment, provisioning, retry, and webhook handling idempotent.
+8. Return a `redirect_url` or `checkout_url` for the approved hosted/tokenized payment step.
+9. Send lifecycle events back through configured CRM/webhook paths as needed.
 
 See `REVIO_INTEGRATION_HANDOFF.md` for endpoint docs, payload shape, and Rev.io questions the API implementer needs answered.
-
-## 0. Choose The Payment Path
-
-There are two launchable payment models. Pick one before final order proof.
-
-### Option A: Fastest Payment Launch With Shopify Checkout
-
-Use this if the business needs to accept money quickly.
-
-1. In Shopify Admin, go to `Settings -> Payments`.
-2. Activate Shopify Payments or an approved third-party payment provider.
-3. Leave the theme's `Cart -> Rev.io checkout handoff URL` blank.
-4. Keep the hidden billing products active and non-shipping so Shopify checkout receives priced line items for the phone setup.
-5. Configure the Shopify `orders/create` webhook to the ops server so paid orders become CRM sale records.
-6. Have the Rev.io/API implementer sync Shopify orders into Rev.io after checkout, if Rev.io needs to own service/billing records.
-
-This path creates Shopify orders and collects payment in Shopify. Rev.io can still be updated after the order through webhook/middleware work.
-
-### Option B: Rev.io Owns Checkout Or Payment
-
-Use this only after the API implementer has a working Rev.io tenant/sandbox flow.
-
-1. Deploy the ops server.
-2. Configure `REVIO_CHECKOUT_WEBHOOK_URLS` and `REVIO_WEBHOOK_SECRET` on the ops server.
-3. Set the theme's `Cart -> Rev.io checkout handoff URL` to `https://YOUR_DOMAIN/revio/checkout`.
-4. The cart button posts the setup payload to the ops server.
-5. The ops server stores CRM proof and forwards `revio.checkout.requested` to Rev.io middleware.
-6. The Rev.io middleware creates the customer/request/products/bill/payment or returns a hosted payment URL.
-7. Run sandbox proof before launch.
-
-Do not put Rev.io API keys, APIM subscription keys, Basic Auth credentials, raw card numbers, or CVV handling in Shopify Liquid, browser JavaScript, or Theme Editor settings.
-
-Official Shopify payment references:
-
-- Shopify Payments setup: `https://help.shopify.com/en/manual/payments/shopify-payments/onboarding`
-- Third-party payment providers: `https://help.shopify.com/en/manual/payments/third-party-providers`
-
-## 0.1 Add Store Users
-
-The store owner or an administrator should add staff before launch:
-
-1. Shopify Admin -> `Settings -> Users`.
-2. Click `Add users`.
-3. Enter each staff email.
-4. Assign a role with the minimum permissions needed.
-5. Require two-step authentication for anyone who can manage payments, orders, users, apps, themes, or settings.
-6. Confirm each invite is accepted. Shopify invitations expire after seven days.
-
-Recommended roles to create or assign:
-
-- Owner/admin: billing, payments, users, settings, apps, themes, products, orders, reports.
-- Store manager: products, orders, customers, discounts, reports, fulfillment.
-- Support/CRM: orders, customers, contact submissions/CRM viewer link, no theme/payment settings.
-- Developer/API implementer: themes, apps/webhooks, products as needed, no payment/bank access unless explicitly approved.
-
-Official Shopify user reference: `https://help.shopify.com/en/manual/your-account/users/invite-users`
 
 ## 1. Verify Locally
 
@@ -215,16 +92,16 @@ npm run overlay:test
 npm run theme:check
 ```
 
-## 2. Commit And Push
+## 2. Review And Merge Through GitHub
 
 ```bash
-cd /Users/vilovieta/Documents/Shopify
 git status --short
-git add .
-git status --short
-git commit -m "Add Rev.io checkout handoff and launch ops"
-git push origin main
+git fetch origin
+git diff --stat origin/main...HEAD
+npm run verify:local
 ```
+
+Open a pull request to `main`, review the complete integrated diff and test output, then merge only after the approved checks pass. A GitHub merge does not push or publish a Shopify theme.
 
 Do not commit:
 
@@ -236,25 +113,25 @@ Do not commit:
 
 Those are ignored by `.gitignore`.
 
-## 3. Push Theme To Shopify Draft Theme
+## 3. Push Theme To The Unpublished QA Theme
 
-Push the local theme package to the known Shopify theme ID:
+Use the fixed QA-only deployment script. It checks both theme roles, verifies every reviewed allowlist file exists, adds `--nodelete`, passes one `--only` per file, and checks both roles again afterward. The repo's `.shopifyignore` also excludes `config/settings_data.json`, so the script cannot erase server-side Theme Editor selections.
 
 ```bash
 cd /Users/vilovieta/Documents/Shopify
-shopify theme push \
-  --store jordan-mark-premier.myshopify.com \
-  --theme 150479208517 \
-  --path independence-phone-theme
+
+scripts/push-client-qa-theme.sh
 ```
 
 Expected result:
 
-- Shopify CLI uploads the local theme files to theme `150479208517`.
-- The theme remains a draft/non-published theme unless Shopify explicitly prompts and you choose to publish.
+- Shopify CLI uploads the local theme files to QA theme `151553245253`.
+- QA theme `151553245253` remains unpublished.
+- Current theme `151266459717` remains live and unchanged.
+- Server-side `config/settings_data.json` remains unchanged.
 - Theme editor should show the latest cart setting named `Rev.io checkout handoff URL`.
 
-If Shopify CLI asks to overwrite remote changes, confirm only after checking that the target theme ID is `150479208517`.
+Never add `--allow-live`, `--live`, or `--publish` to the QA push command. Never use current live theme `151266459717` as the push target.
 
 ## 4. Configure Shopify Theme Settings
 
@@ -269,7 +146,7 @@ Required checks:
 - Header logo size is correct.
 - Homepage video, text, add-ons, FAQ, and product links match the latest client feedback.
 - Cart section includes `Rev.io checkout handoff URL`.
-- If Rev.io is not ready yet, leave `Rev.io checkout handoff URL` blank so native Shopify checkout remains available for testing.
+- If Rev.io is not ready, leave `Rev.io checkout handoff URL` blank only for password-protected cart QA. Do not treat native checkout as production-ready: zero-dollar service/add-on lines preserve selections but do not provision recurring billing.
 - If Rev.io middleware is ready, set it to the same-domain ops route:
 
 ```text
@@ -280,49 +157,40 @@ Contact form:
 
 ```text
 Online Store -> Themes -> Customize -> Pages -> Contact -> IP contact form
-CRM endpoint URL = https://YOUR_DOMAIN/crm/capture
+CRM endpoint URL = blank
 ```
 
-Do not leave the CRM endpoint pointed at a placeholder/example host for launch. A launch-ready contact form must post to the real hosted ops server and the test submission must appear in the CRM viewer and CSV export.
+With that field blank, Shopify's native contact form delivers to the Admin Sender email. Set `Settings -> Notifications -> Sender email` to `jordan@premiercompanies.com`. Configure new-order staff notifications separately for both `mark@premiercompanies.com` and `jordan@premiercompanies.com`.
+
+Do not submit a contact-form test or place an email-triggering test order until the client explicitly approves the external delivery test. If CRM capture is later approved, replace the blank value with the approved HTTPS `/crm/capture` endpoint and run the CRM wiring audit documented below.
 
 ## 5. Create Or Verify Shopify Store Objects
 
-Use the Shopify CLI session or Admin API token.
+Use the stored, ignored Admin API token for a read-only audit. Never print it or commit the credential file.
 
-Dry run:
+Read-only audit:
 
 ```bash
 cd /Users/vilovieta/Documents/Shopify
-SHOPIFY_STORE=jordan-mark-premier.myshopify.com \
-SHOPIFY_USE_CLI_SESSION=1 \
-npm run store:objects:dry-run
-```
-
-Actual create/update:
-
-```bash
-SHOPIFY_STORE=jordan-mark-premier.myshopify.com \
-SHOPIFY_USE_CLI_SESSION=1 \
-node scripts/create-storefront-objects.js
-```
-
-Verify:
-
-```bash
-SHOPIFY_STORE=jordan-mark-premier.myshopify.com \
-SHOPIFY_USE_CLI_SESSION=1 \
+set -a
+source tmp/shopify-admin-access-token.env
+set +a
 npm run store:objects:audit
 ```
+
+The helper `scripts/create-storefront-objects.js` is broad: it rewrites both phone products, the supported billing products, the collection, publications, and missing pages. Do not run it against this established store without a fresh snapshot and explicit approval. If one object is missing, use a narrow Admin action or a guarded billing-only mode.
 
 Required store objects:
 
 - Classic Phone visible product.
 - Rugged Phone visible product.
-- Hidden billing products for monthly service, annual service, add-ons, add-on bundle, and Patriot Package.
+- Seven hidden billing products for monthly service, annual service, four individual add-ons, and the add-on bundle.
 - Order Now page.
 - FAQ page.
 - Contact page.
 - `All` or phone collection route points users to the order flow.
+
+Before launch, confirm the seven billing products are available to the order builder, hidden from public discovery, priced at `$0.00`, non-shipping, assigned stable SKUs, and use American-flag media. The v2 handoff, not the zero-dollar Shopify line, provisions future billing.
 
 ## 6. Assign Product Media
 
@@ -337,10 +205,15 @@ npm run store:media:dry-run
 Assign:
 
 ```bash
+# Copy the exact asset-directory base from a rendered QA-theme asset URL.
+SHOPIFY_THEME_ASSET_BASE='https://cdn.shopify.com/s/files/.../assets' \
+SHOPIFY_PRODUCT_MEDIA_APPROVED=1 \
 SHOPIFY_STORE=jordan-mark-premier.myshopify.com \
 SHOPIFY_USE_CLI_SESSION=1 \
 npm run store:media:assign
 ```
+
+Do not infer or hard-code a `/cdn/shop/t/N/assets` path. Run the real assignment only after the approved phone stills and `ip-billing-flag.webp` are visible at the exact base URL and the media mutation is explicitly approved.
 
 Then manually confirm in Shopify Admin:
 
@@ -348,6 +221,7 @@ Then manually confirm in Shopify Admin:
 - Alt text is correct.
 - Product image order is correct.
 - Large images are not visually overwhelming on product and collection pages.
+- Each hidden service/add-on product uses the American-flag image in checkout.
 
 ## 7. Deploy Owner-Hosted Ops Server
 
@@ -408,8 +282,6 @@ REVIO_CHECKOUT_SUCCESS_URL=https://jordan-mark-premier.myshopify.com/cart?revio_
 REVIO_CHECKOUT_ALLOWED_ORIGINS=https://jordan-mark-premier.myshopify.com
 ```
 
-Keep these as server environment variables only. Do not paste real values into Git, Theme Editor fields, customer-facing scripts, screenshots, or chat.
-
 ## 8. Route Public Domain To Ops Server
 
 Preferred public routes:
@@ -456,12 +328,6 @@ Set the same webhook signing secret in:
 SHOPIFY_ORDER_WEBHOOK_SECRET
 ```
 
-The Shopify webhook secret is not the same as `CRM_WEBHOOK_SECRET` or `REVIO_WEBHOOK_SECRET`:
-
-- `SHOPIFY_ORDER_WEBHOOK_SECRET` verifies inbound Shopify order webhooks.
-- `CRM_WEBHOOK_SECRET` signs outbound CRM lead/sale webhooks.
-- `REVIO_WEBHOOK_SECRET` signs outbound Rev.io checkout handoff webhooks.
-
 ## 10. Configure Rev.io Middleware
 
 Give the API implementer:
@@ -471,6 +337,11 @@ Give the API implementer:
 - The signing secret used in `REVIO_WEBHOOK_SECRET`
 - The outbound event name: `revio.checkout.requested`
 - The parsed payload field: `record.revio_checkout_payload`
+- The required schema: `independence_phone.revio_checkout.v2`
+- The stable SKU/future-charge map in `REVIO_INTEGRATION_HANDOFF.md`
+- The rule that today includes phone, applicable tax, and one `$15` order shipping fee only
+- The rule that service/add-ons begin billing on the first day of the following month
+- The requirement to collect policy consent and desired area code exactly once at final checkout
 
 The API implementer should verify HMAC signature header:
 
@@ -504,7 +375,7 @@ After deployment:
 curl -i https://YOUR_DOMAIN/healthz
 curl -i https://YOUR_DOMAIN/llms.txt
 curl -i https://YOUR_DOMAIN/products/standard-phone/llms.txt
-curl -i https://YOUR_DOMAIN/collections/all/llms.txt
+curl -i https://YOUR_DOMAIN/pages/order-now/llms.txt
 curl -i 'https://YOUR_DOMAIN/crm/leads?token=<staff-token>'
 curl -i -X POST https://YOUR_DOMAIN/revio/checkout
 ```
@@ -537,24 +408,47 @@ SHOPIFY_STOREFRONT_PASSWORD=<password>
 
 Do not commit or paste that password.
 
+## 11A. Legal Policy Recovery
+
+The approved company-published legal sources and Shopify destinations are:
+
+- Terms source: `https://independencephone.com/terms/`
+- Terms destination: `https://jordan-mark-premier.myshopify.com/policies/terms-of-service`
+- Privacy source: `https://independencephone.com/privacy/`
+- Privacy destination: `https://jordan-mark-premier.myshopify.com/policies/privacy-policy`
+
+Both source pages reported a WordPress modified date of 2026-06-02 when they were restored to Shopify on 2026-07-14. The Shopify Privacy Policy must use the PCI/Independence Phone text with `Use automated policy` disabled; do not replace it with Shopify's generic `jordan-mark-premier` template. Restore or review policies at:
+
+```text
+https://admin.shopify.com/store/jordan-mark-premier/settings/legal
+```
+
+After any policy change, verify both storefront destinations render the approved company wording, return no 404, retain `noindex,nofollow` during QA, and have no horizontal overflow.
+
 ## 12. Final Launch Gate
 
 Only publish the theme after these are true:
 
 - GitHub `main` contains the launch commit.
-- Shopify theme `150479208517` has the latest local theme files.
+- Shopify QA theme `151553245253` has the latest local theme files and remains unpublished.
+- Shopify current theme `151266459717` remains live until the approved publish action.
+- A rollback candidate has been explicitly selected and its role verified immediately before launch.
 - Theme preview works on desktop and mobile.
-- Store owner/staff users are added with correct roles and two-step authentication decisions.
-- Payment path is chosen and proven: native Shopify checkout or Rev.io checkout handoff.
-- Cart can build Classic, Rugged, annual, monthly, bundle, individual add-ons, and Patriot Package setups.
+- Cart can build Classic, Rugged, annual, monthly, bundle, and individual add-on setups without Patriot Package.
 - Quantity 2 creates matching quantity 2 phone/service/add-on lines.
-- Only phone products require shipping; hidden billing products remain non-shipping.
-- Privacy policy and terms checkbox is required.
-- Contact form posts to the real hosted CRM endpoint and appears in `/crm/leads`.
-- Shopify `orders/create` webhook creates CRM sale records.
-- If Rev.io checkout is enabled, the handoff posts `revio.checkout.requested` to middleware and middleware can parse `record.revio_checkout_payload`.
+- Cart removal removes the parent phone and every service/add-on line sharing its setup id.
+- Service/add-on variants are `$0.00`, non-shipping, use stable SKUs and American-flag media, and preserve future charge/cadence/first-bill metadata.
+- Cart shows phone-only merchandise due today, one `$15` shipping fee, tax pending until address, and separate future charges.
+- Order Now and cart do not collect Privacy Policy/Terms consent or desired area code.
+- Contact form uses Shopify native handling and reaches `jordan@premiercompanies.com` after an explicitly approved delivery test. If CRM capture is later approved, the form instead posts to CRM and appears in `/crm/leads`.
+- If CRM sale capture is approved, Shopify `orders/create` webhook creates CRM sale records.
+- Rev.io checkout handoff posts `revio.checkout.requested` with schema `independence_phone.revio_checkout.v2`.
+- Middleware validates `record.revio_checkout_payload`, stable inventory data, immediate/future prices, and idempotency keys.
+- Final checkout requires policy consent and desired area code exactly once.
+- Sandbox proves today's payment contains only phone, applicable tax, and one `$15` order shipping fee.
+- Sandbox proves service/add-ons start billing on the first day of the following month.
 - `llms.txt` routes return raw `text/plain` Markdown, not Shopify HTML.
-- Staff can export CRM CSV.
+- If CRM capture is approved, staff can export CRM CSV.
 - No Rev.io credentials are present in Liquid, JavaScript, rendered HTML, or browser network payloads.
 
 Publish command when approved:
@@ -562,7 +456,7 @@ Publish command when approved:
 ```bash
 shopify theme publish \
   --store jordan-mark-premier.myshopify.com \
-  --theme 150479208517
+  --theme 151553245253
 ```
 
 Do not publish until the business owner approves the final preview.

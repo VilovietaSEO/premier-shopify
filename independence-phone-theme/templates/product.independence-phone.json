@@ -93,7 +93,7 @@
           "settings": {
             "title": "Shipping and setup",
             "source": "shipping_setup",
-            "body": "<p>Shipping: $15 per phone anywhere in the USA.</p><p>All products and services are subject to federal, state, and local taxes.</p><p>Service and add-on selections are captured with the order and added as billing items when the matching products are configured.</p>",
+            "body": "<p>Shipping: one $15 charge per order in the USA.</p><p>Applicable tax is calculated after the customer enters an address.</p><p>Service and add-on selections are captured as $0.00 deferred-billing lines with their future-charge details.</p>",
             "open_by_default": false
           }
         }
@@ -265,7 +265,7 @@
           "type": "faq",
           "settings": {
             "question": "Does it have internet?",
-            "answer": "<p>Patriot Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>"
+            "answer": "<p>Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>"
           }
         },
         "monthly": {

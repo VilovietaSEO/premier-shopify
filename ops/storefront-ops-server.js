@@ -15,6 +15,19 @@ function parseList(value) {
   return String(value || '').split(/[\n,]+/).map((item) => item.trim()).filter(Boolean);
 }
 
+function booleanSetting(value) {
+  return value === true || ['1', 'true', 'yes', 'on'].includes(String(value || '').trim().toLowerCase());
+}
+
+function httpsCheckoutRedirect(value) {
+  try {
+    const url = new URL(String(value || '').trim());
+    return url.protocol === 'https:' && url.hostname ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
 function validateProductionConfig(env = process.env) {
   if (env.NODE_ENV !== 'production') return;
 
@@ -31,6 +44,9 @@ function validateProductionConfig(env = process.env) {
   }
   if (!env.LLMS_SITE_URL || !/^https:\/\//.test(env.LLMS_SITE_URL)) {
     missing.push('LLMS_SITE_URL with an https:// URL');
+  }
+  if (booleanSetting(env.REVIO_CHECKOUT_QA_MODE)) {
+    missing.push('REVIO_CHECKOUT_QA_MODE must be disabled in production');
   }
 
   const outboundWebhookUrls = [env.CRM_LEAD_WEBHOOK_URLS, env.CRM_SALE_WEBHOOK_URLS].filter(Boolean).join('\n');
@@ -114,6 +130,9 @@ function createRequestHandler(options = {}) {
   const revioWebhookSecret =
     options.revioWebhookSecret || process.env.REVIO_WEBHOOK_SECRET || options.crmWebhookSecret || process.env.CRM_WEBHOOK_SECRET || '';
   const revioCheckoutSuccessUrl = options.revioCheckoutSuccessUrl ?? process.env.REVIO_CHECKOUT_SUCCESS_URL ?? '';
+  const revioCheckoutQaMode = booleanSetting(
+    options.revioCheckoutQaMode ?? process.env.REVIO_CHECKOUT_QA_MODE ?? false,
+  );
   const revioAllowedOrigins = parseList(options.revioCheckoutAllowedOrigins ?? process.env.REVIO_CHECKOUT_ALLOWED_ORIGINS ?? '');
   const revioRateLimiter = options.revioCheckoutRateLimiter || new crm.MemoryRateLimiter({ limit: 20, windowMs: 60_000 });
   const crmStoragePath = options.crmStoragePath || DEFAULT_STORAGE_PATH;
@@ -152,6 +171,7 @@ function createRequestHandler(options = {}) {
           revioCheckoutDestinations: configuredWebhookCount(revioCheckoutWebhookUrls),
         },
         revioCheckout: '/revio/checkout',
+        revioCheckoutQaMode,
         llms: '/llms.txt',
       });
       return;
@@ -189,6 +209,15 @@ function createRequestHandler(options = {}) {
         return;
       }
 
+      const revioDestinationCount = configuredWebhookCount(revioCheckoutWebhookUrls);
+      if (!revioCheckoutQaMode && revioDestinationCount === 0) {
+        jsonResponseWithHeaders(response, 503, {
+          ok: false,
+          errors: ['Rev.io checkout is not configured with an outbound destination'],
+        }, corsHeaders);
+        return;
+      }
+
       const result = crm.saveCheckoutHandoffToCrm(payload, {
         storagePath: crmStoragePath,
         timeZone: crmTimeZone,
@@ -201,12 +230,44 @@ function createRequestHandler(options = {}) {
         return;
       }
 
-      const outboundWebhooks = result.saved
+      const outboundWebhooks = revioDestinationCount > 0
         ? await crm.dispatchRecordWebhooks('revio.checkout.requested', [result.record], revioCheckoutWebhookUrls, {
             secret: revioWebhookSecret,
             fetchImpl: outboundWebhookFetch,
           })
         : [];
+      const successfulDeliveries = outboundWebhooks.filter((delivery) => delivery.ok);
+      const deliveryRedirect = successfulDeliveries
+        .map((delivery) => httpsCheckoutRedirect(delivery.checkoutUrl))
+        .find(Boolean) || '';
+      const configuredRedirect = httpsCheckoutRedirect(revioCheckoutSuccessUrl);
+
+      if (!revioCheckoutQaMode && successfulDeliveries.length === 0) {
+        jsonResponseWithHeaders(response, 502, {
+          ok: false,
+          errors: ['No Rev.io checkout destination accepted the request'],
+          record_id: result.record.id,
+          saved: result.saved,
+          skipped: result.skipped,
+          outboundWebhooks,
+        }, corsHeaders);
+        return;
+      }
+
+      const redirectUrl = deliveryRedirect
+        || configuredRedirect
+        || (revioCheckoutQaMode ? String(revioCheckoutSuccessUrl || '').trim() : '');
+      if (!revioCheckoutQaMode && !redirectUrl) {
+        jsonResponseWithHeaders(response, 502, {
+          ok: false,
+          errors: ['Rev.io checkout did not return a valid HTTPS checkout redirect'],
+          record_id: result.record.id,
+          saved: result.saved,
+          skipped: result.skipped,
+          outboundWebhooks,
+        }, corsHeaders);
+        return;
+      }
 
       jsonResponseWithHeaders(response, 200, {
         ok: true,
@@ -215,7 +276,8 @@ function createRequestHandler(options = {}) {
         saved: result.saved,
         skipped: result.skipped,
         outboundWebhooks,
-        redirect_url: revioCheckoutSuccessUrl,
+        redirect_url: redirectUrl,
+        qa_mode: revioCheckoutQaMode,
       }, corsHeaders);
       return;
     }

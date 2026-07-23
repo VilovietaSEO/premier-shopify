@@ -11,17 +11,12 @@
   "type": "header",
   "name": "t:general.header",
   "sections": {
-    "announcement": {
-      "type": "ip-announcement-banner",
-      "settings": {}
-    },
     "header": {
       "type": "header",
       "settings": {}
     }
   },
   "order": [
-    "announcement",
     "header"
   ]
 }

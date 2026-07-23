@@ -1,22 +1,72 @@
+{% assign public_brand_name = settings.ip_brand_name | default: 'Independence Phone' %}
+{% assign footer_email = section.settings.contact_email | strip %}
+{% assign footer_phone = section.settings.contact_phone | strip %}
+{% assign footer_phone_link = section.settings.contact_phone_link | strip %}
+{% assign show_footer_phone = false %}
+{% if footer_phone != blank and footer_phone_link != blank %}
+  {% assign show_footer_phone = true %}
+{% endif %}
+
 <footer>
   <div class="footer__copyright">
-    <a class="footer__brand" href="{{ routes.root_url }}">{{ shop.name }}</a>
+    <a class="footer__brand" href="{{ routes.root_url }}">{{ public_brand_name }}</a>
     <small>&copy; {{ 'now' | date: '%Y' }}</small>
     <p>{{ section.settings.footer_note }}</p>
+    {% if footer_email != blank or show_footer_phone %}
+      <address class="footer__contact" aria-label="Independence Phone contact information">
+        {% if footer_email != blank %}
+          {% assign footer_email_url = 'mailto:' | append: footer_email %}
+          <a class="footer__contact-link" href="{{ footer_email_url | escape }}">
+            {{ footer_email | escape }}
+          </a>
+        {% endif %}
+        {% if show_footer_phone %}
+          {% assign footer_phone_url = 'tel:' | append: footer_phone_link %}
+          <a class="footer__contact-link" href="{{ footer_phone_url | escape }}">
+            {{ footer_phone | escape }}
+          </a>
+        {% endif %}
+      </address>
+    {% endif %}
   </div>
+
+  {% assign privacy_policy_url = routes.root_url | append: 'policies/privacy-policy' %}
+  {% assign terms_policy_url = routes.root_url | append: 'policies/terms-of-service' %}
+  {% assign menu_has_privacy_policy = false %}
+  {% assign menu_has_terms_policy = false %}
+
+  {% if section.settings.menu != blank %}
+    {% for link in section.settings.menu.links %}
+      {% if link.url contains '/policies/privacy-policy' %}
+        {% assign menu_has_privacy_policy = true %}
+      {% endif %}
+      {% if link.url contains '/policies/terms-of-service' %}
+        {% assign menu_has_terms_policy = true %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
 
   <nav class="footer__links" aria-label="Footer menu">
     {% if section.settings.menu != blank %}
       {% for link in section.settings.menu.links %}
-        {{ link.title | link_to: link.url }}
+        {% assign footer_link_url = link.url %}
+        {% assign footer_link_title = link.title | downcase | strip %}
+        {% if footer_link_title == 'order now' %}
+          {% assign footer_link_url = routes.root_url | append: 'pages/order-now' %}
+        {% endif %}
+        {{ link.title | link_to: footer_link_url }}
       {% endfor %}
     {% else %}
       <a href="{{ routes.root_url }}pages/order-now">Order Now</a>
       <a href="{{ routes.root_url }}pages/faq">FAQ</a>
       <a href="{{ routes.root_url }}pages/contact">Contact</a>
-      <a href="{{ routes.root_url }}policies/privacy-policy">Privacy</a>
-      <a href="{{ routes.root_url }}policies/terms-of-service">Terms</a>
     {% endif %}
+    {% unless menu_has_privacy_policy %}
+      <a href="{{ privacy_policy_url }}">Privacy Policy</a>
+    {% endunless %}
+    {% unless menu_has_terms_policy %}
+      <a href="{{ terms_policy_url }}">Terms and Conditions</a>
+    {% endunless %}
   </nav>
 
   <div class="footer__payment">
@@ -37,6 +87,25 @@
       "id": "footer_note",
       "label": "Footer note",
       "default": "American-owned and family-focused. Built for the smartphone-free years."
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Contact email",
+      "default": "info@independencephone.com"
+    },
+    {
+      "type": "text",
+      "id": "contact_phone",
+      "label": "Contact phone",
+      "default": "(615) 704-1776"
+    },
+    {
+      "type": "text",
+      "id": "contact_phone_link",
+      "label": "Contact phone link",
+      "info": "Use international format, for example +16157041776.",
+      "default": "+16157041776"
     },
     {
       "type": "link_list",

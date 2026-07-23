@@ -26,20 +26,15 @@ const crmHtml = `<!doctype html>
       <input type="hidden" name="crm[utm_campaign]" value="">
       <input type="hidden" name="crm[return_to]" value="/pages/contact?crm=received">
       <input type="text" name="company_website" tabindex="-1">
+      <label>Name</label>
       <input type="text" name="contact[name]" required>
+      <label>Email</label>
       <input type="email" name="contact[email]" required>
+      <label>Phone Number</label>
       <input type="tel" name="contact[phone]">
-      <select name="contact[Child age range]"></select>
-      <select name="contact[Main use case]"></select>
-      <select name="contact[Interested product]"></select>
-      <select name="contact[Preferred service plan]"></select>
-      <select name="contact[Patriot Package interest]"></select>
-      <input type="checkbox" name="contact[Selected add-ons]" value="Voicemail to Email">
-      <textarea name="contact[body]"></textarea>
-      <input type="checkbox" name="contact[Marketing opt-in]" value="Yes">
-      <input type="checkbox" name="contact[Privacy and terms consent]" value="Yes" required>
-      <a href="/policies/privacy-policy">Privacy Policy</a>
-      <a href="/policies/terms-of-service">Terms and Conditions</a>
+      <label>How can we Help?</label>
+      <textarea name="contact[body]" required></textarea>
+      <button type="submit">Send</button>
     </form>
   </body>
 </html>`;
@@ -49,6 +44,35 @@ assert.equal(pass.status, 'pass');
 assert.equal(pass.crmFormFound, true);
 assert.equal(pass.formAction, endpoint);
 assert.equal(pass.failures.length, 0);
+
+const retiredField = auditHtml(crmHtml.replace(
+  '<button type="submit">Send</button>',
+  '<select name="contact[Interested product]"></select><button type="submit">Send</button>',
+));
+assert.equal(retiredField.status, 'fail');
+assert.equal(retiredField.failures.some((failure) => /retired visible field contact\[Interested product\]/.test(failure)), true);
+
+const unexpectedField = auditHtml(crmHtml.replace(
+  '<button type="submit">Send</button>',
+  '<input type="text" name="contact[Additional detail]"><button type="submit">Send</button>',
+));
+assert.equal(unexpectedField.status, 'fail');
+assert.equal(unexpectedField.failures.some((failure) => /unexpected visible contact field contact\[Additional detail\]/.test(failure)), true);
+
+const policyConsent = auditHtml(crmHtml.replace(
+  '<button type="submit">Send</button>',
+  '<input type="checkbox" name="contact[Privacy and terms consent]" required><a href="/policies/privacy-policy">Privacy Policy</a><button type="submit">Send</button>',
+));
+assert.equal(policyConsent.status, 'fail');
+assert.equal(policyConsent.failures.some((failure) => /retired visible field contact\[Privacy and terms consent\]/.test(failure)), true);
+assert.equal(policyConsent.failures.some((failure) => /policy link is present/.test(failure)), true);
+
+const patriotReference = auditHtml(crmHtml.replace(
+  '<button type="submit">Send</button>',
+  '<p>Patriot Package</p><button type="submit">Send</button>',
+));
+assert.equal(patriotReference.status, 'fail');
+assert.equal(patriotReference.failures.some((failure) => /Patriot reference/.test(failure)), true);
 
 const wrongEndpoint = auditHtml(crmHtml, { expectedEndpoint: 'https://ops.example.com/wrong' });
 assert.equal(wrongEndpoint.status, 'fail');
@@ -71,7 +95,7 @@ async function main() {
 
   const contactUrl = contactUrlFromOptions({
     storeUrl: 'https://jordan-mark-premier.myshopify.com',
-    previewThemeId: '150479208517',
+    previewThemeId: '151553245253',
   });
   assert.equal(contactUrl.href, 'https://jordan-mark-premier.myshopify.com/pages/contact');
 
@@ -123,7 +147,7 @@ async function main() {
   assert.equal(passwordReport.auth.storefrontPasswordLength, 'secret-password'.length);
   assert.equal(JSON.stringify(passwordReport).includes('secret-password'), false);
 
-  console.log('Contact CRM wiring proof passed: endpoint action, URL fetch, password unlock metadata, required fields, consent, and fallback failure verified.');
+  console.log('Contact CRM wiring proof passed: simplified visible fields, endpoint action, URL fetch, password unlock metadata, provenance, retired-field rejection, and fallback failure verified.');
 }
 
 main().catch((error) => {

@@ -5,7 +5,8 @@
       "settings": {
         "primary_link": "/pages/order-now",
         "price_callout": "$17.76/mo",
-        "proof_line": "42 years in business, American owned, Family Focused",
+        "proof_line": "Established in 1984.",
+        "heading": "Give your child a phone, not the internet.",
         "subheading": "<p>Children can call home without apps, browsers, social media, or a personal screen. Built for bus days, home-alone minutes, grandparents, and the years before a smartphone.</p>"
       }
     },
@@ -67,7 +68,7 @@
             "title": "Auto Attendant",
             "icon": "shield_check",
             "body": "Filter unwanted spam calls.",
-            "included_label": "Included in the Patriot Package"
+            "included_label": ""
           }
         },
         "feature_2": {
@@ -76,7 +77,7 @@
             "title": "Call Recording",
             "icon": "microphone",
             "body": "Access to 90 days of recorded calls.",
-            "included_label": "Included in the Patriot Package"
+            "included_label": ""
           }
         },
         "feature_3": {
@@ -85,7 +86,7 @@
             "title": "Quiet Hours",
             "icon": "clock",
             "body": "Set times for when to receive incoming calls.",
-            "included_label": "Included in the Patriot Package"
+            "included_label": ""
           }
         },
         "feature_4": {
@@ -94,7 +95,7 @@
             "title": "Voicemail to Email",
             "icon": "microphone",
             "body": "Voicemail messages are sent to email as audio and transcription.",
-            "included_label": "Included in the Patriot Package"
+            "included_label": ""
           }
         }
       },
@@ -152,7 +153,7 @@
             "title": "Call Recording",
             "price": "$5/mo",
             "body": "Record and store all calls for 90 days.",
-            "included_label": "Included in the Patriot Package"
+            "included_label": ""
           }
         },
         "quiet_hours": {
@@ -161,7 +162,7 @@
             "title": "Quiet Hours",
             "price": "$5/mo",
             "body": "Set on/off times for incoming calls.",
-            "included_label": "Included in the Patriot Package"
+            "included_label": ""
           }
         },
         "voicemail": {
@@ -170,7 +171,7 @@
             "title": "Voicemail to Email",
             "price": "$5/mo",
             "body": "Unanswered calls go to voicemail and messages are sent to email.",
-            "included_label": "Included in the Patriot Package"
+            "included_label": ""
           }
         },
         "bundle": {
@@ -179,7 +180,7 @@
             "title": "Add-on Bundle",
             "price": "$10/mo",
             "body": "Includes all add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant. Saves $10/mo.",
-            "included_label": "Included in the Patriot Package"
+            "included_label": ""
           }
         },
         "attendant": {
@@ -188,7 +189,7 @@
             "title": "Auto Attendant",
             "price": "$5/mo",
             "body": "Help screen spam calls before they interrupt the family phone.",
-            "included_label": "Included in the Patriot Package"
+            "included_label": ""
           }
         }
       },
@@ -259,13 +260,6 @@
         "unsupported"
       ],
       "settings": {},
-      "disabled": true
-    },
-    "package": {
-      "type": "ip-package-band",
-      "settings": {
-        "cta_link": "/pages/order-now"
-      },
       "disabled": true
     },
     "matrix": {
@@ -344,20 +338,12 @@
             "question": "What is the monthly fee?",
             "answer": "<p>Personal phone number plus monthly service is $17.76/mo. Annual service is $200/yr and saves $13.12 compared with monthly billing.</p>"
           }
-        },
-        "package": {
-          "type": "faq",
-          "settings": {
-            "question": "What does the Patriot Package include?",
-            "answer": "<p>The Patriot Package includes a Classic Phone, 1 year of phone service, and all 4 add-ons: Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant for $250.</p>"
-          }
         }
       },
       "block_order": [
         "internet",
         "apps",
-        "fee",
-        "package"
+        "fee"
       ],
       "settings": {
         "eyebrow": "",
@@ -378,22 +364,14 @@
         "experience": {
           "type": "trust_item",
           "settings": {
-            "title": "42 years in communications",
+            "title": "Established in 1984",
             "body": "Use the company history to make the product feel dependable and experienced."
-          }
-        },
-        "package": {
-          "type": "trust_item",
-          "settings": {
-            "title": "Patriot Package",
-            "body": "A concrete all-in offer for families who want every add-on included."
           }
         }
       },
       "block_order": [
         "owned",
-        "experience",
-        "package"
+        "experience"
       ],
       "settings": {},
       "disabled": true
@@ -403,13 +381,12 @@
     "hero",
     "feature_strip",
     "parent_conflict",
+    "faq",
     "products",
     "plans",
     "addons",
     "capabilities",
-    "package",
     "matrix",
-    "faq",
     "trust"
   ]
 }

@@ -1,6 +1,8 @@
 # Storefront Ops Service
 
-This service is the deployable server-side layer for the Independence Phone storefront. It intentionally stays outside Shopify Liquid because the theme cannot securely store CRM records, verify private webhooks, forward signed integration events, or create arbitrary route-level raw text files by itself.
+This service is the deployable server-side layer for the Independence Phone storefront. It intentionally stays outside Shopify Liquid because the theme cannot securely store CRM records, hold integration credentials, or create arbitrary route-level raw text files by itself.
+
+This service validates, records, and forwards signed order evidence. It is not a payment gateway and it is not the tenant-specific Rev.io integration. Never send raw card numbers, CVV, or Rev.io tenant credentials through it.
 
 It serves:
 
@@ -10,33 +12,13 @@ It serves:
 - `POST /crm/orders/import` - protected Shopify order import into CRM sale records.
 - `POST /crm/shopify/orders/create` - signed Shopify `orders/create` webhook into CRM sale records.
 - outbound `crm.sale.created` webhooks after accepted order imports or Shopify order webhooks.
-- `POST /revio/checkout` - pre-checkout Rev.io handoff receiver for the theme cart button.
+- `POST /revio/checkout` - transport receiver for `independence_phone.revio_checkout.v2` from the theme cart button.
 - outbound `revio.checkout.requested` webhooks after accepted Rev.io checkout handoffs.
 - `GET /crm/leads` - staff lead viewer.
 - `GET /crm/leads.csv` - staff CSV export.
 - `GET /llms.txt` - root/site overview Markdown.
 - `GET /products/standard-phone/llms.txt` and other route-level `.../llms.txt` paths.
 - `GET /a/llms.txt?path=/pages/faq` - Shopify app-proxy compatible LLM Markdown route.
-
-## Payment Boundary
-
-The ops service is not a payment gateway.
-
-Fast payment launch:
-
-- Configure Shopify Payments or another Shopify-supported provider in Shopify Admin.
-- Leave the theme's `Cart -> Rev.io checkout handoff URL` blank.
-- Shopify Checkout collects payment and creates the order.
-- Shopify's signed `orders/create` webhook sends the completed order to `/crm/shopify/orders/create` for CRM sale capture.
-
-Rev.io checkout launch:
-
-- Deploy this ops service first.
-- Set the theme's `Cart -> Rev.io checkout handoff URL` to the public `/revio/checkout` route.
-- Configure `REVIO_CHECKOUT_WEBHOOK_URLS` and `REVIO_WEBHOOK_SECRET`.
-- This service stores the checkout intent and forwards a signed `revio.checkout.requested` event to the API implementer's Rev.io middleware.
-
-Do not put Rev.io API credentials, APIM subscription keys, Basic Auth credentials, raw card numbers, or CVV handling in Shopify Liquid, browser JavaScript, Theme Editor settings, this README, or committed env files. Rev.io tenant credentials belong only in the API implementer's server environment.
 
 ## Local Proof
 
@@ -72,7 +54,7 @@ Use a persistent host or a database-backed storage adapter. Do not run the CRM c
 Deployment templates in this folder:
 
 - `patriot-phone-ops.service.example` - systemd service for a persistent Linux host.
-- `patriot-phone-ops.env.example` - secret environment file template for tokens and outbound webhook settings. The filename is legacy; the service supports the Independence Phone storefront.
+- `patriot-phone-ops.env.example` - secret environment file template for the staff viewer token.
 - `cloudflare-worker.example.js` - edge proxy for final-domain CRM, Rev.io handoff, and `llms.txt` paths.
 - `wrangler.toml.example` - Cloudflare Worker route and `OPS_ORIGIN` template.
 
@@ -84,6 +66,8 @@ npm run ops:bundle
 ```
 
 The bundle is written to `/Users/vilovieta/Documents/Shopify/tmp/patriot-phone-ops-deployment` and includes `DEPLOYMENT.md`, `deployment-manifest.json`, the CRM service, the automatic `llms.txt` generator, order setup export support, package files, and the systemd/env/edge proxy templates.
+
+The `patriot-phone-*` filenames and deployment directory are legacy operational names retained for compatibility. They do not represent a current Patriot Package product.
 
 Required production variables:
 
@@ -110,17 +94,17 @@ REVIO_CHECKOUT_SUCCESS_URL=https://jordan-mark-premier.myshopify.com/cart?revio_
 REVIO_CHECKOUT_ALLOWED_ORIGINS=https://jordan-mark-premier.myshopify.com
 ```
 
-Secret meanings:
+Secret meanings are intentionally distinct:
 
-- `CRM_VIEWER_TOKEN` protects `/crm/leads` and `/crm/leads.csv`.
-- `CRM_ORDER_INGEST_TOKEN` protects manual order imports at `/crm/orders/import`.
-- `SHOPIFY_ORDER_WEBHOOK_SECRET` verifies inbound Shopify `orders/create` webhooks.
-- `CRM_WEBHOOK_SECRET` signs outbound `crm.lead.created` and `crm.sale.created` webhooks.
-- `REVIO_WEBHOOK_SECRET` signs outbound `revio.checkout.requested` webhooks.
+- `SHOPIFY_ORDER_WEBHOOK_SECRET` verifies inbound Shopify order webhooks.
+- `CRM_WEBHOOK_SECRET` signs outbound CRM lead and sale events.
+- `REVIO_WEBHOOK_SECRET` signs outbound Rev.io checkout handoffs.
+- `CRM_VIEWER_TOKEN` protects the staff viewer and CSV export.
+- `CRM_ORDER_INGEST_TOKEN` protects manual order imports.
 
 `CRM_LEAD_WEBHOOK_URLS` and `CRM_SALE_WEBHOOK_URLS` can contain one or more comma-separated or newline-separated `https://` destinations. When either outbound webhook variable is configured in production, the service refuses to start unless every URL is valid and `CRM_WEBHOOK_SECRET` is at least 24 characters.
 
-`REVIO_CHECKOUT_WEBHOOK_URLS` is the bridge for the Rev.io API implementer. The theme posts the normalized cart to `/revio/checkout`; this ops service stores the checkout intent as a CRM sale record and forwards `revio.checkout.requested` to every configured Rev.io middleware URL. When this variable is configured in production, set `REVIO_WEBHOOK_SECRET` or `CRM_WEBHOOK_SECRET` to a long random signing secret. `REVIO_CHECKOUT_ALLOWED_ORIGINS` is only needed when the theme posts directly across origins; prefer a same-domain proxy route such as `https://www.example.com/revio/checkout`.
+`REVIO_CHECKOUT_WEBHOOK_URLS` is the transport bridge for the Rev.io API implementer. The theme posts `independence_phone.revio_checkout.v2` to `/revio/checkout`; this ops service stores the checkout intent as a CRM sale record and forwards `revio.checkout.requested` to every configured middleware URL. It does not validate the client tenant inventory, collect payment, calculate tax, create recurring billing, or provision service. When this variable is configured in production, set `REVIO_WEBHOOK_SECRET` or `CRM_WEBHOOK_SECRET` to a long random signing secret. `REVIO_CHECKOUT_ALLOWED_ORIGINS` is only needed when the theme posts directly across origins; prefer a same-domain proxy route such as `https://www.example.com/revio/checkout`.
 
 When `NODE_ENV=production`, the service refuses to start unless `CRM_SUBMISSIONS_PATH`, a `CRM_VIEWER_TOKEN` of at least 24 characters, a `CRM_ORDER_INGEST_TOKEN` of at least 24 characters, a `SHOPIFY_ORDER_WEBHOOK_SECRET` of at least 24 characters, and an `https://` `LLMS_SITE_URL` are configured.
 
@@ -132,6 +116,19 @@ Accepted order imports and signed Shopify `orders/create` webhooks are stored fi
 
 Accepted Rev.io checkout handoffs are stored first, then posted to every `REVIO_CHECKOUT_WEBHOOK_URLS` destination as `revio.checkout.requested`.
 
+The forwarded `record.revio_checkout_payload` must keep the v2 cart and line values intact:
+
+- phone-only immediate merchandise price;
+- one flat `1500`-cent shipping fee per order;
+- `tax_cents: null` with `tax_status: calculated_after_address`;
+- zero-dollar service/add-on Shopify lines;
+- stable SKU, `future_charge_cents`, `billing_cadence`, and `first_bill_rule`;
+- `consent.collection_status: pending_checkout`;
+- `customer.desired_area_code_collection_status: required_at_checkout`;
+- no Patriot Package role or SKU.
+
+The receiving gateway/middleware is authoritative. It must validate every value against server-side inventory, collect policy consent and desired area code exactly once, tokenize payment, calculate tax after address, charge phone/tax/shipping today, and start service/add-on billing on the first day of the following month. Checkout creation, payment, provisioning, retry, and webhook handling must be idempotent.
+
 Each outbound request is `POST application/json` and includes:
 
 ```text
@@ -140,28 +137,28 @@ x-patriot-phone-record-id: <CRM record id>
 x-patriot-phone-signature: sha256=<HMAC SHA-256 body signature>
 ```
 
-The JSON body includes `event`, `generatedAt`, `source`, and the normalized `record` with submitted timestamp, store-timezone timestamp, normalized fields, raw form fields, and metadata. For `revio.checkout.requested`, the record also includes `revio_checkout_payload` as a parsed object for direct middleware consumption. The HMAC signature uses `CRM_WEBHOOK_SECRET` or `REVIO_WEBHOOK_SECRET`. Failed outbound delivery is reported in import/webhook JSON responses when applicable, but it does not delete the already stored CRM record.
+The `x-patriot-phone-*` names are legacy transport headers retained for compatibility; they do not indicate a Patriot Package product. The JSON body includes `event`, `generatedAt`, `source`, and the normalized `record` with submitted timestamp, store-timezone timestamp, normalized fields, raw form fields, and metadata. For `revio.checkout.requested`, the record also includes `revio_checkout_payload` as a parsed object for direct middleware consumption. The HMAC signature uses `CRM_WEBHOOK_SECRET` or `REVIO_WEBHOOK_SECRET`. Failed outbound delivery is reported in import/webhook JSON responses when applicable, but it does not delete the already stored CRM record.
 
 ## Shopify Wiring
 
-For the current launch, do not wire the visible contact form to this CRM endpoint. Leave the Theme Editor `CRM endpoint URL` blank and use Shopify native contact-form email delivery to `jordan@premiercompanies.com`.
-
-If CRM capture is added later, configure Theme Editor:
+In Theme Editor:
 
 ```text
 Online Store -> Themes -> Customize -> Pages -> Contact -> IP contact form
 ```
 
-Set `CRM endpoint URL` to the HTTPS capture URL:
+For the current client handoff, leave `CRM endpoint URL` blank. The contact form then uses Shopify native contact delivery. Set Shopify Admin `Settings -> Notifications -> Sender email` to:
+
+```text
+jordan@premiercompanies.com
+```
+
+Configure new-order staff notifications separately for both Mark and Jordan. Do not submit an external contact-form test or place an email-triggering test order until the client explicitly approves it.
+
+Only if the client later approves CRM capture, set `CRM endpoint URL` to the deployed HTTPS capture URL:
 
 ```text
 https://ops.example.com/crm/capture
-```
-
-If a same-domain proxy is available, use:
-
-```text
-https://www.example.com/crm/capture
 ```
 
 The contact form sends `crm[source_url]` and `crm[return_to]`. The CRM resolves that return path against the storefront source origin, so a successful submission returns the visitor to the Shopify contact page even when `/crm/capture` is hosted on a separate ops domain.
@@ -172,7 +169,7 @@ Create a Shopify `orders/create` webhook that posts to:
 https://ops.example.com/crm/shopify/orders/create
 ```
 
-The endpoint verifies `X-Shopify-Hmac-Sha256` with `SHOPIFY_ORDER_WEBHOOK_SECRET`, then writes the purchase as a CRM `sale` record tagged with `source_type=shopify_order`, a `sale_type`, order id/name, product/plan/package tags, and the setup summary. Keep `/crm/orders/import` available as a protected manual backfill path for exported order JSON.
+The endpoint verifies `X-Shopify-Hmac-Sha256` with `SHOPIFY_ORDER_WEBHOOK_SECRET`, then writes the purchase as a CRM `sale` record tagged with `source_type=shopify_order`, a `sale_type`, order id/name, product/plan/add-on tags, and the setup summary. Keep `/crm/orders/import` available as a protected manual backfill path for exported order JSON.
 
 For Rev.io processing, configure the cart section setting:
 
@@ -186,7 +183,11 @@ Use a same-domain route when possible:
 https://www.example.com/revio/checkout
 ```
 
-When the setting is blank, the cart button keeps native Shopify checkout behavior. When the setting is filled, the checkout button posts a Rev.io-ready payload with `schema=independence_phone.revio_checkout.v1`, grouped `setups`, line roles, Shopify product/variant IDs, quantities, cents-based prices, cart token, source URL, and privacy/terms consent. The endpoint returns JSON and may include `redirect_url` or `checkout_url` for the browser to follow.
+When the setting is blank, native cart review can be used for password-protected QA, but production checkout is not complete because zero-dollar billing lines do not schedule future charges. When the setting is filled, the checkout button posts `schema=independence_phone.revio_checkout.v2` with grouped `setups`, normalized top-level `lines`, stable SKUs, line roles, Shopify product/variant IDs, quantities, `checkout_price_cents`, `future_charge_cents`, `billing_cadence`, `first_bill_rule`, cart token, source URL, immediate/future totals, one `$15` order shipping fee, and tax pending until address.
+
+The theme deliberately sends checkout consent as pending and desired area code as required at checkout. The final middleware/gateway, or a Shopify Plus checkout extension, must collect both exactly once. The endpoint returns JSON and may include `redirect_url` or `checkout_url` for the browser to follow.
+
+Production activation requires the sandbox proof in `/Users/vilovieta/Documents/Shopify/REVIO_INTEGRATION_HANDOFF.md`. Do not enable the handoff merely because this transport endpoint accepts and forwards a payload.
 
 ## llms.txt Routing
 

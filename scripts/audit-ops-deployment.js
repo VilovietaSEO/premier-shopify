@@ -62,19 +62,37 @@ function buildLead(shopifyStoreUrl, label) {
   params.set('contact[name]', label);
   params.set('contact[email]', 'ops.audit@example.com');
   params.set('contact[phone]', '555-0199');
-  params.set('contact[Child age range]', '11-13');
-  params.set('contact[Main use case]', 'Deployment proof');
-  params.set('contact[Interested product]', 'Classic Phone');
-  params.set('contact[Preferred service plan]', 'Monthly service - $17.76/mo');
-  params.set('contact[Patriot Package interest]', 'Need help deciding');
-  params.append('contact[Selected add-ons]', 'Voicemail to Email');
   params.set('contact[body]', `Deployment audit lead ${label}`);
-  params.set('contact[Marketing opt-in]', 'No');
-  params.set('contact[Privacy and terms consent]', 'Yes');
   return params;
 }
 
+function deferredBillingProperties({
+  setupId,
+  role,
+  billingName,
+  billingValue,
+  futureChargeCents,
+  billingCadence,
+  savings = '',
+}) {
+  return {
+    'Future charge': billingValue,
+    'Billing starts': 'First day of the following month',
+    ...(savings ? { Savings: savings } : {}),
+    _setup_id: setupId,
+    _order_contract: 'deferred-billing-v2',
+    _setup_parent: 'true',
+    _setup_role: role,
+    _setup_billing_name: billingName,
+    _setup_billing_value: billingValue,
+    _setup_future_charge_cents: String(futureChargeCents),
+    _setup_billing_cadence: billingCadence,
+    _setup_first_bill_rule: 'first_day_of_next_month',
+  };
+}
+
 function buildOrderPayload(label) {
+  const setupId = `ops-import-${Date.now()}`;
   return {
     orders: [
       {
@@ -86,16 +104,46 @@ function buildOrderPayload(label) {
         fulfillment_status: 'unfulfilled',
         line_items: [
           {
-            title: 'Classic Phone',
-            sku: 'PP-CLASSIC-PHONE',
+            title: 'Rugged Phone',
+            sku: 'PP-RUGGED-PHONE',
             quantity: 1,
+            price: '150.00',
             properties: {
-              Phone: 'Classic Phone - $100',
-              'Service plan': 'Annual service - $200/yr (saves $13.12/yr)',
-              'Patriot Package': 'Patriot Package - $250; Classic Phone, 1 year phone service, and all 4 add-ons (saves $303.12)',
-              'Add-on Bundle': 'Add-on Bundle - $10/mo; includes Call Recording, Quiet Hours, Voicemail to Email, and Auto Attendant (saves $10/mo)',
-              'Policy agreement': 'Agreed to Privacy Policy and Terms and Conditions',
+              Phone: 'Rugged Phone - $150',
+              _setup_id: setupId,
+              _setup_role: 'phone',
+              _order_contract: 'deferred-billing-v2',
             },
+          },
+          {
+            title: 'Annual Service',
+            sku: 'PP-ANNUAL-SERVICE',
+            quantity: 1,
+            price: '0.00',
+            properties: deferredBillingProperties({
+              setupId,
+              role: 'service',
+              billingName: 'Service plan',
+              billingValue: '$200/yr',
+              futureChargeCents: 20000,
+              billingCadence: 'annual',
+              savings: 'Save $13.12/yr',
+            }),
+          },
+          {
+            title: 'Add-on Bundle',
+            sku: 'PP-ADDON-BUNDLE',
+            quantity: 1,
+            price: '0.00',
+            properties: deferredBillingProperties({
+              setupId,
+              role: 'addon_bundle',
+              billingName: 'Add-on Bundle',
+              billingValue: '$10/mo',
+              futureChargeCents: 1000,
+              billingCadence: 'monthly',
+              savings: 'Save $10/mo',
+            }),
           },
         ],
       },
@@ -104,6 +152,7 @@ function buildOrderPayload(label) {
 }
 
 function buildShopifyWebhookOrder(label) {
+  const setupId = `ops-webhook-${Date.now()}`;
   return {
     id: `ops-webhook-${Date.now()}`,
     name: label,
@@ -116,14 +165,69 @@ function buildShopifyWebhookOrder(label) {
         title: 'Classic Phone',
         sku: 'PP-CLASSIC-PHONE',
         quantity: 1,
+        price: '100.00',
         properties: {
           Phone: 'Classic Phone - $100',
-          'Service plan': 'Monthly service - $17.76/mo',
-          'Call Recording': 'Call Recording - $5/mo',
-          'Quiet Hours': 'Quiet Hours - $5/mo',
-          'Voicemail to Email': 'Voicemail to Email - $5/mo',
-          'Policy agreement': 'Agreed to Privacy Policy and Terms and Conditions',
+          _setup_id: setupId,
+          _setup_role: 'phone',
+          _order_contract: 'deferred-billing-v2',
         },
+      },
+      {
+        title: 'Monthly Service',
+        sku: 'PP-MONTHLY-SERVICE',
+        quantity: 1,
+        price: '0.00',
+        properties: deferredBillingProperties({
+          setupId,
+          role: 'service',
+          billingName: 'Service plan',
+          billingValue: '$17.76/mo',
+          futureChargeCents: 1776,
+          billingCadence: 'monthly',
+        }),
+      },
+      {
+        title: 'Call Recording',
+        sku: 'PP-ADDON-CALL-RECORDING',
+        quantity: 1,
+        price: '0.00',
+        properties: deferredBillingProperties({
+          setupId,
+          role: 'addon',
+          billingName: 'Call Recording',
+          billingValue: '$5/mo',
+          futureChargeCents: 500,
+          billingCadence: 'monthly',
+        }),
+      },
+      {
+        title: 'Quiet Hours',
+        sku: 'PP-ADDON-FAMILY-QUIET-HOURS',
+        quantity: 1,
+        price: '0.00',
+        properties: deferredBillingProperties({
+          setupId,
+          role: 'addon',
+          billingName: 'Quiet Hours',
+          billingValue: '$5/mo',
+          futureChargeCents: 500,
+          billingCadence: 'monthly',
+        }),
+      },
+      {
+        title: 'Voicemail to Email',
+        sku: 'PP-ADDON-VOICEMAIL-TO-EMAIL',
+        quantity: 1,
+        price: '0.00',
+        properties: deferredBillingProperties({
+          setupId,
+          role: 'addon',
+          billingName: 'Voicemail to Email',
+          billingValue: '$5/mo',
+          futureChargeCents: 500,
+          billingCadence: 'monthly',
+        }),
       },
     ],
   };
@@ -310,7 +414,7 @@ async function runAudit(options = {}) {
       status: viewer.status,
       contentType: viewer.contentType,
       containsLead: viewer.body.includes(leadLabel),
-      containsImportedSale: report.crm.orderImport ? viewer.body.includes('classic_patriot_package_sale') : false,
+      containsImportedSale: report.crm.orderImport ? viewer.body.includes('phone_setup_sale') : false,
       containsWebhookSale: report.crm.orderWebhook ? viewer.body.includes('classic_monthly_addon_sale') : false,
       exportLinkKeepsToken: viewer.body.includes('/crm/leads.csv?token='),
       failures: [],
@@ -332,7 +436,7 @@ async function runAudit(options = {}) {
       status: csv.status,
       contentType: csv.contentType,
       containsLead: csv.body.includes(leadLabel),
-      containsImportedSale: report.crm.orderImport ? csv.body.includes('classic_patriot_package_sale') : false,
+      containsImportedSale: report.crm.orderImport ? csv.body.includes('phone_setup_sale') : false,
       containsWebhookSale: report.crm.orderWebhook ? csv.body.includes('classic_monthly_addon_sale') : false,
       containsUtm: csv.body.includes('ops-deployment-audit'),
       failures: [],
@@ -382,6 +486,7 @@ if (require.main === module) {
 
 module.exports = {
   buildLead,
+  buildOrderPayload,
   buildShopifyWebhookOrder,
   checkLlms,
   runAudit,

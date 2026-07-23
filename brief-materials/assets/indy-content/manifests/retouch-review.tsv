@@ -1,0 +1,5 @@
+candidate	sha256	status	reason
+rejected/ip-classic-front-logo-free-imagegen-v1.png	91ac67b6565f77013bbacc4b99d7de95b54f5a32c0a6621c7f4ca0ce7df942dc	rejected	1402x1122; logo removal changed product fidelity; quarantine only
+rejected/ip-classic-side-logo-free-imagegen-v1.png	2b02eb6710d2575305ca8402de2c98cfbb80657accccd822d120f0710e239e79	rejected	1402x1122; logo removal changed product fidelity; quarantine only
+rejected/ip-rugged-front-logo-free-imagegen-v1.png	656a789998581fc06b3f45d060b090e384a305d1e608fe035de783564993df66	rejected	1402x1122; logo removal changed product fidelity; quarantine only
+rejected/ip-rugged-side-logo-free-imagegen-v1.png	c58c41fd47fab3736317fd854cde0d50eb095bea9f0823ff2e478538db748f48	rejected	1402x1122; logo removal changed product fidelity; quarantine only

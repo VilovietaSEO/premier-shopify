@@ -3,9 +3,15 @@
     <div class="ip-announcement__inner">
       {% if section.settings.text != blank %}
         {% if section.settings.link != blank %}
-          <a href="{{ section.settings.link }}">{{ section.settings.text | newline_to_br }}</a>
+          <a href="{{ section.settings.link }}">
+            <span class="ip-announcement__full">{{ section.settings.text | newline_to_br }}</span>
+            <span class="ip-announcement__compact">{{ section.settings.compact_text | strip | newline_to_br }}</span>
+          </a>
         {% else %}
-          <p>{{ section.settings.text | newline_to_br }}</p>
+          <p>
+            <span class="ip-announcement__full">{{ section.settings.text | newline_to_br }}</span>
+            <span class="ip-announcement__compact">{{ section.settings.compact_text | strip | newline_to_br }}</span>
+          </p>
         {% endif %}
       {% endif %}
     </div>
@@ -20,13 +26,17 @@
       "type": "checkbox",
       "id": "enabled",
       "label": "Show announcement banner",
-      "default": true
+      "default": false
     },
     {
       "type": "textarea",
       "id": "text",
-      "label": "Banner text",
-      "default": "Take advantage of our limited offer honoring the 250th anniversary of America\nPatriot Package Includes: Classic Phone, 1 Year phone service, all 4 add on's for only $250! a savings of $303.12"
+      "label": "Banner text"
+    },
+    {
+      "type": "textarea",
+      "id": "compact_text",
+      "label": "Compact banner text"
     },
     {
       "type": "url",

@@ -1,0 +1,1231 @@
+schema_version: 1.0.0
+project:
+  id: project:shopify:511f72b0b073
+  name: Shopify
+  slug: shopify
+  repo_root: .
+  repo_url: https://github.com/VilovietaSEO/premier-shopify.git
+  default_branch: main
+ledger:
+  created_at: '2026-07-23T02:20:27Z'
+  updated_at: '2026-07-23T21:35:32Z'
+  id_prefix: ARL
+  next_sequence: 19
+  writer_policy: single-writer
+  managed_by: agentic-run-ledger
+runs:
+- id: shopify-full-page-screenshots-20260722
+  kind: live-system-test
+  workflow: test
+  objective: Capture complete full-page screenshots for every client-facing page in the unpublished Independence Phone QA
+    storefront
+  started_at: '2026-07-23T02:20:27Z'
+  finished_at: '2026-07-23T18:00:59Z'
+  status: cancelled
+  summary: Screenshot run was superseded by the user's product-photo diagnosis request after storefront password access blocked
+    capture.
+  orchestrator:
+    name: root
+    role: orchestrator
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: 702298a6114f81f054f940245f2fc6b9af43ae61
+    upstream: null
+    dirty: false
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    - chrome:control-chrome
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+- id: shopify-product-photo-diagnosis-20260723
+  kind: live-system-test
+  workflow: test
+  objective: Determine why the published Shopify order builder shows rear phone photos while the approved QA screenshot shows
+    front composites
+  started_at: '2026-07-23T18:01:00Z'
+  finished_at: '2026-07-23T18:02:26Z'
+  status: completed
+  summary: Confirmed that the published theme is an older revision using rear phone media and clipping CSS, while the approved
+    front-photo page is present on unpublished QA theme 151266459717; no changes were made.
+  orchestrator:
+    name: root
+    role: orchestrator
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: 702298a6114f81f054f940245f2fc6b9af43ae61
+    upstream: null
+    dirty: false
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+- id: ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498
+  kind: live-system-test
+  workflow: test
+  objective: Read-only QA of the published Independence Phone storefront against client feedback
+  started_at: '2026-07-23T18:24:09Z'
+  finished_at: '2026-07-23T18:38:21Z'
+  status: completed
+  summary: Completed read-only desktop and mobile QA of the published Shopify theme, order path, cart, checkout, FAQ, Contact,
+    footer, and public-domain routing; captured screenshots and a Pass/Fail/Blocked report without changing or publishing
+    the store.
+  orchestrator:
+    name: root
+    role: orchestrator
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: 702298a6114f81f054f940245f2fc6b9af43ae61
+    upstream: null
+    dirty: false
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    - chrome:control-chrome
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+- id: fal-scenario-images-2026-07-23-cf5c8888-3c78-44d3-b12d-e1d4434c467b
+  kind: multi-agent
+  workflow: other
+  objective: Prepare a reference-grounded context bundle and generate four 2048 by 2048 Independence Phone homepage scenario
+    images with the leading available Fal.ai model.
+  started_at: '2026-07-23T19:17:22Z'
+  finished_at: '2026-07-23T19:37:42Z'
+  status: completed
+  summary: Generated four 2K scenario-image masters and sub-100 KB WebP review candidates; strict handset-fidelity gates remain
+    unmet, so nothing was uploaded.
+  orchestrator:
+    name: root
+    role: orchestrator
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: 702298a6114f81f054f940245f2fc6b9af43ae61
+    upstream: null
+    dirty: true
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    - imagegen
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+- id: footer-contact-fix-2026-07-23-1cd0f12d-1f6b-482b-9291-23ad3f564f91
+  kind: multi-agent
+  workflow: other
+  objective: Implement an editable, responsive global footer that displays the client email and phone on every Shopify storefront
+    page while preserving existing navigation and policies.
+  started_at: '2026-07-23T19:26:44Z'
+  finished_at: '2026-07-23T19:37:42Z'
+  status: completed
+  summary: Added merchant-editable email and phone links to the global footer in the canonical theme and Refresh overlay;
+    all focused checks passed.
+  orchestrator:
+    name: root
+    role: orchestrator
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: 702298a6114f81f054f940245f2fc6b9af43ae61
+    upstream: null
+    dirty: true
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+- id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+  kind: multi-agent
+  workflow: other
+  objective: Finish every cart, catalog, store-configuration, and integration-contract change possible before the external
+    payment and Rev.io developer connects the live gateway.
+  started_at: '2026-07-23T20:19:47Z'
+  finished_at: '2026-07-23T21:35:32Z'
+  status: completed
+  summary: Completed all in-scope pre-gateway Shopify theme, catalog, media, shipping, cart, checkout, FAQ, contact, footer,
+    responsive QA, and evidence work; retained the unpublished review theme and documented external blockers.
+  orchestrator:
+    name: root
+    role: orchestrator
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: 702298a6114f81f054f940245f2fc6b9af43ae61
+    upstream: null
+    dirty: true
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    - record-decision
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+entries:
+- id: ARL-0001
+  fingerprint: 1c90e409de4cbf07
+  title: Password-gated Shopify preview loses authenticated browser state between QA runs
+  scope: agentic-system
+  category: friction
+  layers:
+  - process
+  - runtime
+  - third-party-api
+  severity: medium
+  max_run_impact: blocked
+  status: open
+  first_observed_at: '2026-07-23T02:23:36Z'
+  last_observed_at: '2026-07-23T02:23:36Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T02:23:36Z'
+    event: opened
+    detail: First observed in run shopify-full-page-screenshots-20260722.
+  occurrences:
+  - observed_at: '2026-07-23T02:23:36Z'
+    run_id: shopify-full-page-screenshots-20260722
+    reporter:
+      type: orchestrator
+      name: root
+      role: main agent
+      thread_id: null
+    context:
+      workflow: test
+      phase: null
+      task: null
+      operation: null
+    run_impact: blocked
+    observation:
+      symptom: The unpublished Shopify preview redirected to the storefront password page before screenshots could be captured.
+      expected: The existing browser session should open the previously authenticated QA preview for read-only screenshot
+        capture.
+      actual: The only available browser surface had no active storefront password session and required manual re-entry.
+      evidence:
+      - kind: error
+        ref: https://jordan-mark-premier.myshopify.com/password
+        detail: Direct navigation to unpublished QA theme 151266459717 ended at the password page; no alternate browser surface
+          was available.
+      root_cause:
+        confidence: unknown
+        detail: The prior storefront password session is no longer present; expiration or profile-state change was not inspected.
+      workaround: Left the password page open for the user to authenticate, then resume the same screenshot run.
+      suggested_fix: Preflight password-gated preview access at the start of future live Shopify QA capture runs.
+- id: ARL-0002
+  fingerprint: 90d9a1f76e129b40
+  title: Published order builder uses superseded rear-phone selector media
+  scope: product-under-test
+  category: quality-reduction
+  layers:
+  - process
+  - ui
+  severity: medium
+  max_run_impact: degraded
+  status: open
+  first_observed_at: '2026-07-23T18:02:26Z'
+  last_observed_at: '2026-07-23T18:02:26Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T18:02:26Z'
+    event: opened
+    detail: First observed in run shopify-product-photo-diagnosis-20260723.
+  occurrences:
+  - observed_at: '2026-07-23T18:02:26Z'
+    run_id: shopify-product-photo-diagnosis-20260723
+    reporter:
+      type: orchestrator
+      name: root
+      role: main agent
+      thread_id: null
+    context:
+      workflow: test
+      phase: null
+      task: null
+      operation: null
+    run_impact: degraded
+    observation:
+      symptom: The published Shopify order builder shows rear phone photographs with clipping that does not match the approved
+        front-photo page.
+      expected: The customer-facing order builder should use the approved 800x640 Classic and Rugged front composites with
+        no clip-path or transform.
+      actual: Live theme 151228809285 references ip-classic-phone-back.webp and ip-rugged-phone-back.webp and applies polygon
+        clip paths and scale transforms; unpublished QA theme 151266459717 contains the approved front references and corrected
+        CSS.
+      evidence:
+      - kind: artifact
+        ref: <external-path>/indy-photo-diagnosis.qDTYJE
+        detail: Read-only Shopify theme pulls and role checks on 2026-07-23 confirmed the live-versus-QA source mismatch in
+          both ip-order-builder.liquid and page.liquid, plus the old clipping rules in live ip-theme.css.
+      root_cause:
+        confidence: confirmed
+        detail: The former QA theme was published before the later front-photo correction; safety controls then placed that
+          correction on a fresh unpublished QA duplicate instead of mutating the live theme.
+      workaround: Review unpublished QA theme 151266459717 to see the corrected page.
+      suggested_fix: After explicit approval, publish the tested QA theme or perform a narrowly reviewed live deployment of
+        the front assets, Liquid references, and matching CSS together.
+- id: ARL-0003
+  fingerprint: 9d61d32a3f022cae
+  title: Broad source search exceeded useful output size
+  scope: agentic-system
+  category: inefficiency
+  layers:
+  - agent
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T18:36:20Z'
+  last_observed_at: '2026-07-23T18:36:20Z'
+  occurrence_count: 1
+  tags:
+  - search-scope
+  - shopify
+  - static-audit
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T18:36:20Z'
+    event: opened
+    detail: First observed in run ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498.
+  occurrences:
+  - observed_at: '2026-07-23T18:36:20Z'
+    run_id: ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498
+    reporter:
+      type: subagent
+      name: static_theme_audit
+      role: read-only static auditor
+      thread_id: null
+    context:
+      workflow: test
+      phase: static audit
+      task: Quick Published-Store Check
+      operation: source search
+    run_impact: recovered
+    observation:
+      symptom: The initial broad checklist regex produced more than 30,000 tokens and was truncated.
+      expected: The first search should return a compact set of relevant source evidence.
+      actual: The broad query included generic terms such as product, total, and setup across CSS and templates.
+      evidence:
+      - kind: command
+        ref: static theme audit search
+        detail: Search returned 1,077 lines and required focused follow-up reads.
+      root_cause:
+        confidence: confirmed
+        detail: The initial query combined high-frequency generic terms with all theme source folders.
+      workaround: Repeated the audit using focused files and narrow line ranges.
+      suggested_fix: Begin future theme audits with route templates and their directly referenced sections before broad string
+        searches.
+- id: ARL-0004
+  fingerprint: 3117654fecba3681
+  title: Public domain still serves the old WordPress storefront
+  scope: product-under-test
+  category: failure
+  layers:
+  - infrastructure
+  - third-party-api
+  severity: high
+  max_run_impact: degraded
+  status: open
+  first_observed_at: '2026-07-23T18:36:31Z'
+  last_observed_at: '2026-07-23T18:36:31Z'
+  occurrence_count: 1
+  tags:
+  - dns
+  - shopify
+  - wordpress
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T18:36:31Z'
+    event: opened
+    detail: First observed in run ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498.
+  occurrences:
+  - observed_at: '2026-07-23T18:36:31Z'
+    run_id: ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498
+    reporter:
+      type: subagent
+      name: public_http_audit
+      role: read-only live-store HTTP auditor
+      thread_id: /root/public_http_audit
+    context:
+      workflow: test
+      phase: published-store verification
+      task: custom-domain routing
+      operation: public HTTP and DNS inspection
+    run_impact: degraded
+    observation:
+      symptom: Visitors to independencephone.com receive the WordPress/WooCommerce site instead of the published Shopify theme.
+      expected: The client-facing custom domain should resolve to the published Shopify storefront.
+      actual: DNS resolves independencephone.com to 207.246.255.73 and HTTP identifies WordPress and WooCommerce, while Shopify
+        remains on its password-protected MyShopify domain.
+      evidence:
+      - kind: test
+        ref: https://independencephone.com/
+        detail: HTTP 200 identifies WordPress/WooCommerce; MyShopify separately reports published theme 151266459717.
+      root_cause:
+        confidence: confirmed
+        detail: The apex A record targets the existing WordPress host rather than Shopify.
+      workaround: Audit Shopify assets through its CDN and use the authenticated browser session for storefront rendering.
+      suggested_fix: After approval, connect the custom domain to Shopify or update DNS according to the intended cutover.
+- id: ARL-0005
+  fingerprint: 2cdaa1de53a07213
+  title: Published story images use incorrect phone hardware
+  scope: product-under-test
+  category: quality-reduction
+  layers:
+  - ui
+  severity: medium
+  max_run_impact: degraded
+  status: open
+  first_observed_at: '2026-07-23T18:36:39Z'
+  last_observed_at: '2026-07-23T18:36:39Z'
+  occurrence_count: 1
+  tags:
+  - homepage
+  - media
+  - product-accuracy
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T18:36:39Z'
+    event: opened
+    detail: First observed in run ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498.
+  occurrences:
+  - observed_at: '2026-07-23T18:36:39Z'
+    run_id: ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498
+    reporter:
+      type: subagent
+      name: public_http_audit
+      role: read-only live-store HTTP auditor
+      thread_id: /root/public_http_audit
+    context:
+      workflow: test
+      phase: published-store verification
+      task: homepage scenario imagery
+      operation: live visual inspection
+    run_impact: degraded
+    observation:
+      symptom: The four story images do not show the requested AX83H handset.
+      expected: Bus Days, Home-Alone Minutes, Grandparents, and Before the Smartphone should show an accurate logo-free AX83H.
+      actual: The published cards all resolve to generic or legacy telephone imagery.
+      evidence:
+      - kind: screenshot
+        ref: published-store-qa-2026-07-23/desktop-home.png
+        detail: Live homepage and public CDN asset inspection show non-AX83H hardware in all four story positions.
+      root_cause:
+        confidence: confirmed
+        detail: The published homepage falls back to a generic theme image instead of approved scenario assets.
+      workaround: null
+      suggested_fix: Replace and assign all four story assets with approved AX83H composites before client delivery.
+- id: ARL-0006
+  fingerprint: a1a798771b7bc421
+  title: Chrome viewport override did not apply to a claimed storefront tab
+  scope: agentic-system
+  category: friction
+  layers:
+  - runtime
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T18:36:49Z'
+  last_observed_at: '2026-07-23T18:36:49Z'
+  occurrence_count: 1
+  tags:
+  - browser-control
+  - chrome
+  - responsive-testing
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T18:36:49Z'
+    event: opened
+    detail: First observed in run ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498.
+  occurrences:
+  - observed_at: '2026-07-23T18:36:49Z'
+    run_id: ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498
+    reporter:
+      type: orchestrator
+      name: root
+      role: QA orchestrator
+      thread_id: null
+    context:
+      workflow: test
+      phase: responsive verification
+      task: Quick Published-Store Check
+      operation: mobile viewport setup
+    run_impact: recovered
+    observation:
+      symptom: The browser viewport capability accepted 390 by 844 but the claimed tab remained 1566 pixels wide after navigation.
+      expected: Responsive QA should run at the requested mobile viewport.
+      actual: The page retained the desktop viewport until a raw CDP device-metrics override was applied.
+      evidence:
+      - kind: test
+        ref: mobile viewport QA
+        detail: innerWidth remained 1566 after viewport.set and changed to 390 after Emulation.setDeviceMetricsOverride.
+      root_cause:
+        confidence: unknown
+        detail: The browser-scoped viewport capability did not affect this claimed Chrome tab.
+      workaround: Applied and later cleared a tab-scoped CDP device-metrics override.
+      suggested_fix: Make viewport.set reliably target already-claimed Chrome tabs or document the limitation.
+- id: ARL-0007
+  fingerprint: 05b21676de3153a0
+  title: Checkout charges recurring service items today and cannot accept payment
+  scope: product-under-test
+  category: failure
+  layers:
+  - third-party-api
+  - ui
+  severity: high
+  max_run_impact: degraded
+  status: open
+  first_observed_at: '2026-07-23T18:37:00Z'
+  last_observed_at: '2026-07-23T18:37:00Z'
+  occurrence_count: 1
+  tags:
+  - billing
+  - checkout
+  - payments
+  - shipping
+  - shopify
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T18:37:00Z'
+    event: opened
+    detail: First observed in run ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498.
+  occurrences:
+  - observed_at: '2026-07-23T18:37:00Z'
+    run_id: ip-published-qa-2026-07-23-aa860ec9-8803-4d28-a4de-e1b3d144c498
+    reporter:
+      type: test-runner
+      name: root
+      role: live storefront tester
+      thread_id: null
+    context:
+      workflow: test
+      phase: checkout verification
+      task: Quick Published-Store Check
+      operation: live checkout calculation
+    run_impact: degraded
+    observation:
+      symptom: Checkout lists Monthly Service and Add-on Bundle as priced current-order items and displays that the store
+        cannot accept payments.
+      expected: Only the phone, tax, and one 15 dollar shipping option should be due today; service and add-ons should be
+        shown as future charges.
+      actual: Checkout subtotal is 127.76 for three items, offers free Standard plus 15 dollar Express shipping, shows no
+        tax after a valid address, and disables Pay now.
+      evidence:
+      - kind: screenshot
+        ref: published-store-qa-2026-07-23/mobile-checkout-shipping-test.png
+        detail: Authenticated live checkout with a neutral test identity and public address showed two shipping methods, no
+          tax line, recurring items in subtotal, and payment disabled.
+      root_cause:
+        confidence: confirmed
+        detail: The order builder adds service and add-on products as normal priced cart lines, while checkout/payment and
+          shipping settings do not match the delivery specification.
+      workaround: No order was submitted; the QA stopped at checkout.
+      suggested_fix: Rework cart billing representation and correct payment, shipping, tax, and future-charge configuration
+        before client delivery.
+- id: ARL-0008
+  fingerprint: a9e37d17e35b5917
+  title: Reference editing retained handset microtext and occlusion defects
+  scope: agentic-system
+  category: quality-reduction
+  layers:
+  - prompt
+  - third-party-api
+  - tool
+  severity: medium
+  max_run_impact: degraded
+  status: open
+  first_observed_at: '2026-07-23T19:37:31Z'
+  last_observed_at: '2026-07-23T19:37:31Z'
+  occurrence_count: 1
+  tags:
+  - fal-ai
+  - handset
+  - image-generation
+  - reference-fidelity
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T19:37:31Z'
+    event: opened
+    detail: First observed in run fal-scenario-images-2026-07-23-cf5c8888-3c78-44d3-b12d-e1d4434c467b.
+  occurrences:
+  - observed_at: '2026-07-23T19:37:31Z'
+    run_id: fal-scenario-images-2026-07-23-cf5c8888-3c78-44d3-b12d-e1d4434c467b
+    reporter:
+      type: subagent
+      name: generate_scenario_images
+      role: Fal.ai scenario asset generator
+      thread_id: null
+    context:
+      workflow: other
+      phase: asset generation
+      task: homepage scenario images
+      operation: fal-ai/nano-banana-pro/edit
+    run_impact: degraded
+    observation:
+      symptom: All four Fal lifestyle candidates retained at least one strict hardware-identity defect after a targeted retry.
+      expected: The phone-only retry should preserve the lifestyle scene while matching the canonical handset, eliminating
+        invented lettering, and exposing its defining silhouette.
+      actual: Fal preserved the scenes but continued inventing tiny keypad labels; two phone-to-ear poses obscured the upper
+        handset and the bus image remained somewhat touchscreen-like.
+      evidence:
+      - kind: artifact
+        ref: creative/scenario-images-2026-07-23/RESULTS.md
+        detail: The report records both request IDs, exact prompts, retained candidates, and failed acceptance gates for every
+          scene.
+      root_cause:
+        confidence: suspected
+        detail: Free-form reference editing appears weak at preserving small repeated hardware geometry and suppressing microtext
+          inside complex hand-held lifestyle compositions.
+      workaround: Retained the best 2K candidate and optimized WebP review derivative for each scene, but marked all as unapproved
+        and did not upload them.
+      suggested_fix: Create a clean logo-free canonical handset cutout, then use masked phone-region replacement or deterministic
+        compositing instead of free-form identity reference generation.
+- id: ARL-0009
+  fingerprint: 13a148d2ba050d33
+  title: Large audit output was truncated during subagent reporting
+  scope: agentic-system
+  category: friction
+  layers:
+  - orchestrator
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T21:34:57Z'
+  last_observed_at: '2026-07-23T21:34:57Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T21:34:57Z'
+    event: opened
+    detail: First observed in run cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11.
+  occurrences:
+  - observed_at: '2026-07-23T21:34:57Z'
+    run_id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+    reporter:
+      type: subagent
+      name: cart_pre_gateway_audit
+      role: audit
+      thread_id: null
+    context:
+      workflow: other
+      phase: null
+      task: null
+      operation: null
+    run_impact: recovered
+    observation:
+      symptom: The audit return exceeded the available output window, so some raw evidence was truncated.
+      expected: Audit agents should return bounded summaries and stable artifact references.
+      actual: The full command output was emitted inline and exceeded the tool output cap.
+      evidence:
+      - kind: log
+        ref: null
+        detail: The subagent observation reported output truncation; targeted checks and saved artifacts preserved the result.
+      root_cause:
+        confidence: confirmed
+        detail: The audit emitted more inline output than the tool budget allowed.
+      workaround: Used the concise agent summary and reran targeted checks locally.
+      suggested_fix: Default audit tasks to concise summaries plus paths to full artifacts.
+- id: ARL-0010
+  fingerprint: 0b32eda970f47677
+  title: Concurrent shared-worktree edits made audit snapshots stale
+  scope: agentic-system
+  category: friction
+  layers:
+  - orchestrator
+  - process
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T21:34:57Z'
+  last_observed_at: '2026-07-23T21:34:57Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T21:34:57Z'
+    event: opened
+    detail: First observed in run cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11.
+  occurrences:
+  - observed_at: '2026-07-23T21:34:57Z'
+    run_id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+    reporter:
+      type: subagent
+      name: store_config_pre_gateway_audit
+      role: audit
+      thread_id: null
+    context:
+      workflow: other
+      phase: null
+      task: null
+      operation: null
+    run_impact: recovered
+    observation:
+      symptom: Store configuration audit findings could drift while sibling agents edited the same shared worktree.
+      expected: A verification pass should evaluate a stable tree state.
+      actual: The audit and implementation waves overlapped on shared files.
+      evidence:
+      - kind: log
+        ref: null
+        detail: The subagent reported shared-worktree audit drift; the orchestrator reran the full final verification after
+          all edits settled.
+      root_cause:
+        confidence: confirmed
+        detail: Concurrent agents shared one mutable worktree without a frozen audit boundary.
+      workaround: Reran the complete local verification after all child work completed.
+      suggested_fix: Separate implementation and final-audit waves or pass auditors a frozen revision.
+- id: ARL-0011
+  fingerprint: 27b334d68e46b4a7
+  title: Shell quoting broke a contract-test command
+  scope: agentic-system
+  category: friction
+  layers:
+  - prompt
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T21:34:58Z'
+  last_observed_at: '2026-07-23T21:34:58Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T21:34:58Z'
+    event: opened
+    detail: First observed in run cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11.
+  occurrences:
+  - observed_at: '2026-07-23T21:34:58Z'
+    run_id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+    reporter:
+      type: subagent
+      name: central_contract_tests
+      role: test
+      thread_id: null
+    context:
+      workflow: other
+      phase: null
+      task: null
+      operation: null
+    run_impact: recovered
+    observation:
+      symptom: A contract-test shell command interpreted backticks instead of treating them as literal test text.
+      expected: The command should preserve literal fixture text.
+      actual: Shell interpolation changed the command before the test ran.
+      evidence:
+      - kind: error
+        ref: null
+        detail: The subagent reported backtick escaping failure and recovered with safe quoting.
+      root_cause:
+        confidence: confirmed
+        detail: The command used shell-sensitive quoting for literal content.
+      workaround: Reran the test with safe quoting.
+      suggested_fix: Use single-quoted arguments or file-backed fixtures for shell-sensitive test content.
+- id: ARL-0012
+  fingerprint: da4f4ced23bbba07
+  title: Preview fixtures lagged behind cart removal behavior
+  scope: agentic-system
+  category: quality-reduction
+  layers:
+  - contract
+  - process
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T21:34:58Z'
+  last_observed_at: '2026-07-23T21:34:58Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T21:34:58Z'
+    event: opened
+    detail: First observed in run cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11.
+  occurrences:
+  - observed_at: '2026-07-23T21:34:58Z'
+    run_id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+    reporter:
+      type: subagent
+      name: final_cart_remove_audit
+      role: audit
+      thread_id: null
+    context:
+      workflow: other
+      phase: null
+      task: null
+      operation: null
+    run_impact: recovered
+    observation:
+      symptom: Cart removal behavior changed while preview fixtures and assertions still represented the older state.
+      expected: Fixtures should track the active cart contract before final QA.
+      actual: Stale preview expectations initially disagreed with the implemented removal flow.
+      evidence:
+      - kind: test
+        ref: null
+        detail: The subagent reported stale preview tests; fixtures were updated and the final suite passed 31 of 31 tests.
+      root_cause:
+        confidence: confirmed
+        detail: Behavior and preview contract updates were not applied atomically.
+      workaround: Updated the preview fixtures and reran the full suite.
+      suggested_fix: Keep behavior, fixture, and contract assertions in the same implementation task.
+- id: ARL-0013
+  fingerprint: c96a99ffdddee706
+  title: Builder response format did not match the requested grouping contract
+  scope: agentic-system
+  category: friction
+  layers:
+  - agent
+  - contract
+  - prompt
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T21:34:58Z'
+  last_observed_at: '2026-07-23T21:34:58Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T21:34:58Z'
+    event: opened
+    detail: First observed in run cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11.
+  occurrences:
+  - observed_at: '2026-07-23T21:34:58Z'
+    run_id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+    reporter:
+      type: subagent
+      name: order_export_v2_grouping
+      role: implementation
+      thread_id: null
+    context:
+      workflow: other
+      phase: null
+      task: null
+      operation: null
+    run_impact: recovered
+    observation:
+      symptom: The first builder return did not preserve the exact requested order-export grouping contract.
+      expected: The implementation return and output should follow the named grouping contract exactly.
+      actual: The output required orchestrator reconciliation before final verification.
+      evidence:
+      - kind: log
+        ref: null
+        detail: The subagent observation identified a builder contract mismatch; focused tests verified the reconciled export
+          behavior.
+      root_cause:
+        confidence: suspected
+        detail: The task prompt allowed ambiguity between implementation behavior and reporting shape.
+      workaround: Reconciled the grouping behavior and verified it with dedicated tests.
+      suggested_fix: Include an executable expected grouping fixture in the builder task.
+- id: ARL-0014
+  fingerprint: 1709f5341d5337cd
+  title: Combined patch failed on shifted contact audit context
+  scope: agentic-system
+  category: friction
+  layers:
+  - process
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T21:34:59Z'
+  last_observed_at: '2026-07-23T21:34:59Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T21:34:59Z'
+    event: opened
+    detail: First observed in run cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11.
+  occurrences:
+  - observed_at: '2026-07-23T21:34:59Z'
+    run_id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+    reporter:
+      type: subagent
+      name: contact_audit_simplification
+      role: implementation
+      thread_id: null
+    context:
+      workflow: other
+      phase: null
+      task: null
+      operation: null
+    run_impact: recovered
+    observation:
+      symptom: A combined patch could not match all target hunks after neighboring edits shifted context.
+      expected: The scoped contact audit patch should apply cleanly.
+      actual: One large multi-hunk patch failed context matching.
+      evidence:
+      - kind: error
+        ref: null
+        detail: The subagent reported the context failure and recovered by applying smaller focused patches.
+      root_cause:
+        confidence: confirmed
+        detail: The patch bundled multiple edits against a concurrently changing file context.
+      workaround: Split the patch into smaller context-specific edits.
+      suggested_fix: Prefer narrow patches when sibling work can shift nearby lines.
+- id: ARL-0015
+  fingerprint: 244e8ce81bb88b32
+  title: Unscoped Playwright locators matched multiple preview regions
+  scope: agentic-system
+  category: friction
+  layers:
+  - process
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T21:34:59Z'
+  last_observed_at: '2026-07-23T21:34:59Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T21:34:59Z'
+    event: opened
+    detail: First observed in run cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11.
+  occurrences:
+  - observed_at: '2026-07-23T21:34:59Z'
+    run_id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+    reporter:
+      type: subagent
+      name: preview_home_faq_alignment
+      role: test
+      thread_id: null
+    context:
+      workflow: other
+      phase: null
+      task: null
+      operation: null
+    run_impact: recovered
+    observation:
+      symptom: Broad locators found duplicate text across preview routes and produced ambiguous matches.
+      expected: Each assertion should target the active route or section.
+      actual: Unscoped text locators matched more than one preview region.
+      evidence:
+      - kind: test
+        ref: null
+        detail: The subagent reported locator ambiguity; route-scoped locators produced five of five focused passes.
+      root_cause:
+        confidence: confirmed
+        detail: Selectors were not scoped to the rendered route container.
+      workaround: Scoped assertions to the active route and section.
+      suggested_fix: Require route-root scoping in preview test helpers.
+- id: ARL-0016
+  fingerprint: 5e8aa1ecdddd656e
+  title: Shopify rejected blank schema defaults not caught by local Theme Check
+  scope: agentic-system
+  category: failure
+  layers:
+  - schema
+  - third-party-api
+  - tool
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T21:34:59Z'
+  last_observed_at: '2026-07-23T21:34:59Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T21:34:59Z'
+    event: opened
+    detail: First observed in run cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11.
+  occurrences:
+  - observed_at: '2026-07-23T21:34:59Z'
+    run_id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+    reporter:
+      type: orchestrator
+      name: root
+      role: orchestrator
+      thread_id: null
+    context:
+      workflow: other
+      phase: null
+      task: null
+      operation: null
+    run_impact: recovered
+    observation:
+      symptom: A strict theme push failed because several schema settings used an empty string as a default.
+      expected: Local Theme Check should catch schema defaults that Shopify rejects remotely.
+      actual: Local checks passed, but Shopify remote validation rejected the theme.
+      evidence:
+      - kind: error
+        ref: independence-phone-theme/sections
+        detail: Remote push rejected blank schema defaults; removing them in the theme and overlay produced a clean unpublished-theme
+          upload.
+      root_cause:
+        confidence: confirmed
+        detail: The local validator and Shopify remote schema validation enforced different constraints.
+      workaround: Removed invalid empty defaults in both theme copies and pushed again.
+      suggested_fix: Add a repository preflight that rejects empty schema default strings before theme push.
+- id: ARL-0017
+  fingerprint: 08c2bc3ba05da9ea
+  title: Product video upload required a staged media workflow
+  scope: agentic-system
+  category: failure
+  layers:
+  - contract
+  - third-party-api
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T21:35:00Z'
+  last_observed_at: '2026-07-23T21:35:00Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T21:35:00Z'
+    event: opened
+    detail: First observed in run cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11.
+  occurrences:
+  - observed_at: '2026-07-23T21:35:00Z'
+    run_id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+    reporter:
+      type: orchestrator
+      name: root
+      role: orchestrator
+      thread_id: null
+    context:
+      workflow: other
+      phase: null
+      task: null
+      operation: null
+    run_impact: recovered
+    observation:
+      symptom: Direct product media association failed for local video files and VIDEO rejected duplicate replacement mode.
+      expected: The catalog media script should assign both images and videos in one run.
+      actual: Shopify required staged uploads for videos and a media-type-specific productSet input.
+      evidence:
+      - kind: source
+        ref: scripts/assign-product-media.js
+        detail: The script was updated to call stagedUploadsCreate, upload the video, omit duplicateResolutionMode for VIDEO,
+          and then associate the staged resource.
+      root_cause:
+        confidence: confirmed
+        detail: The initial uploader treated video media like remotely fetchable image media.
+      workaround: Implemented Shopify staged upload handling and reran the catalog media assignment.
+      suggested_fix: Keep explicit image and video code paths with contract tests for Shopify media inputs.
+- id: ARL-0018
+  fingerprint: ad88f80e4a3cc366
+  title: Native Chrome resize command targeted an unrelated window
+  scope: agentic-system
+  category: friction
+  layers:
+  - process
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T21:35:00Z'
+  last_observed_at: '2026-07-23T21:35:00Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T21:35:00Z'
+    event: opened
+    detail: First observed in run cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11.
+  occurrences:
+  - observed_at: '2026-07-23T21:35:00Z'
+    run_id: cart-pre-gateway-2026-07-23-7b5d0d11-5a75-4aa4-b55e-22148706ff11
+    reporter:
+      type: orchestrator
+      name: root
+      role: orchestrator
+      thread_id: null
+    context:
+      workflow: other
+      phase: null
+      task: null
+      operation: null
+    run_impact: recovered
+    observation:
+      symptom: An OS-level resize attempt changed an unrelated Chrome window instead of the selected QA tab.
+      expected: Responsive QA should affect only the controlled browser target.
+      actual: AppleScript window selection was ambiguous across native Chrome windows.
+      evidence:
+      - kind: log
+        ref: null
+        detail: The unrelated window was immediately restored; responsive proof used tab-scoped browser control and local
+          Playwright instead.
+      root_cause:
+        confidence: confirmed
+        detail: The OS command addressed a Chrome window rather than the bound QA tab.
+      workaround: Restored the window and used browser-native and Playwright viewport control.
+      suggested_fix: Avoid OS-level window resizing when a tab-scoped browser API is available.

@@ -6,6 +6,7 @@
   const shopRoot = window.Shopify?.routes?.root || '/';
   const endpoint = (path) => `${shopRoot}${path.replace(/^\//, '')}`;
   const previewStorageKey = 'ipPreviewCart';
+  let cartMutationVersion = 0;
   const previewCart = {
     currency: 'USD',
     imageAlt: 'Classic Phone',
@@ -29,10 +30,39 @@
   };
 
   const setCartCount = (count) => {
+    const label = `${count} item${count === 1 ? '' : 's'} in cart`;
     document.querySelectorAll('[data-cart-count]').forEach((badge) => {
       badge.textContent = String(count);
       badge.hidden = count <= 0;
-      badge.setAttribute('aria-label', `${count} item${count === 1 ? '' : 's'} in cart`);
+      badge.setAttribute('aria-label', label);
+    });
+    if (count > 0 && !document.querySelector('.cart-count-bubble')) {
+      const cartIcon = document.querySelector('#cart-icon-bubble, .header__icon--cart');
+      if (cartIcon) {
+        const bubble = document.createElement('div');
+        bubble.className = 'cart-count-bubble';
+        bubble.innerHTML = '<span aria-hidden="true"></span><span class="visually-hidden"></span>';
+        cartIcon.append(bubble);
+      }
+    }
+
+    document.querySelectorAll('.cart-count-bubble').forEach((bubble) => {
+      bubble.hidden = count <= 0;
+      let visualCount = bubble.querySelector('span[aria-hidden="true"]');
+      let accessibleCount = bubble.querySelector('.visually-hidden');
+      if (!visualCount) {
+        visualCount = document.createElement('span');
+        visualCount.setAttribute('aria-hidden', 'true');
+        bubble.prepend(visualCount);
+      }
+      if (!accessibleCount) {
+        accessibleCount = document.createElement('span');
+        accessibleCount.className = 'visually-hidden';
+        bubble.append(accessibleCount);
+      }
+      visualCount.textContent = String(count);
+      visualCount.hidden = count >= 100;
+      accessibleCount.textContent = label;
     });
   };
 
@@ -48,7 +78,6 @@
     if (!element) return;
     element.toggleAttribute('aria-busy', busy);
     element.querySelectorAll('button, input, select').forEach((control) => {
-      if (control.name === 'checkout') return;
       if (busy) {
         if (control.disabled) control.dataset.wasDisabled = 'true';
         control.disabled = true;
@@ -62,30 +91,11 @@
     });
   };
 
-  const validateProductForm = (form) => {
-    const requiredPolicy = form.querySelector('input[name="properties[Policy agreement]"][required]');
-    if (requiredPolicy && !requiredPolicy.checked) {
-      setStatus(form, 'Please agree to the Privacy Policy and Terms and Conditions before adding this setup to cart.', 'error');
-      requiredPolicy.focus({ preventScroll: false });
-      form.reportValidity();
-      return false;
-    }
-
-    if (!form.reportValidity()) {
-      setStatus(form, 'Please complete the required fields before adding this setup to cart.', 'error');
-      return false;
-    }
-
-    return true;
-  };
-
-  const reportPolicyError = (control) => {
-    const form = control?.closest('.ip-product-form');
-    if (!form) return;
-    setStatus(form, 'Please agree to the Privacy Policy and Terms and Conditions before adding this setup to cart.', 'error');
-  };
-
   const fetchJson = async (url, options = {}) => {
+    const method = String(options.method || 'GET').toUpperCase();
+    if (method !== 'GET' && /\/cart\/(?:add|change|update|clear)\.js$/.test(new URL(url, window.location.href).pathname)) {
+      cartMutationVersion += 1;
+    }
     const response = await fetch(url, {
       credentials: 'same-origin',
       headers: {
@@ -151,6 +161,7 @@
 
   const normalizeCheckoutLine = (item, index) => {
     const properties = item.properties || {};
+    const futureChargeCents = Number(cartPropertyValue(properties, '_setup_future_charge_cents') || 0);
     return {
       line_index: index + 1,
       key: item.key || '',
@@ -167,8 +178,12 @@
       title: item.product_title || item.title || '',
       variant_title: item.variant_title || '',
       quantity: Number(item.quantity || 0),
-      unit_price_cents: Number(item.final_price ?? item.price ?? 0),
-      final_line_price_cents: Number(item.final_line_price ?? item.line_price ?? 0),
+      checkout_price_cents: Number(item.final_price ?? item.price ?? 0),
+      checkout_line_price_cents: Number(item.final_line_price ?? item.line_price ?? 0),
+      future_charge_cents: futureChargeCents,
+      future_line_charge_cents: futureChargeCents * Number(item.quantity || 0),
+      billing_cadence: cartPropertyValue(properties, '_setup_billing_cadence'),
+      first_bill_rule: cartPropertyValue(properties, '_setup_first_bill_rule'),
       currency: document.documentElement.dataset.cartCurrency || 'USD',
       requires_shipping: Boolean(item.requires_shipping),
       taxable: Boolean(item.taxable),
@@ -179,19 +194,24 @@
   const setupSummaryFromLines = (lines) => {
     const phone = lines.find((line) => line.role === 'phone' || !line.setup_parent);
     const service = lines.find((line) => line.role === 'service');
-    const packageLine = lines.find((line) => line.role === 'package');
     const addons = lines.filter((line) => ['addon', 'addon_bundle'].includes(line.role));
 
     return {
       phone: phone?.title || phone?.setup_phone || '',
       service: service?.setup_billing_value || service?.title || '',
-      package: packageLine?.setup_billing_value || '',
       add_ons: addons.map((line) => line.setup_billing_name || line.title).filter(Boolean),
+      due_today_before_tax_cents: lines.reduce(
+        (total, line) => total + Number(line.checkout_line_price_cents || 0),
+        0,
+      ),
+      future_charge_cents: lines.reduce(
+        (total, line) => total + Number(line.future_line_charge_cents || 0),
+        0,
+      ),
     };
   };
 
-  const buildCheckoutHandoffPayload = (cart, form) => {
-    const acceptedPolicy = form.querySelector('input[name="attributes[Policy agreement]"]:checked');
+  const buildCheckoutHandoffPayload = (cart) => {
     const lines = (cart.items || []).map(normalizeCheckoutLine);
     const groups = new Map();
     const ungroupedLines = [];
@@ -221,24 +241,44 @@
       summary: setupSummaryFromLines(group.lines),
     }));
 
+    const immediateSubtotalCents = lines.reduce(
+      (total, line) => total + Number(line.checkout_line_price_cents || 0),
+      0,
+    );
+    const futureChargeCents = lines.reduce(
+      (total, line) => total + Number(line.future_line_charge_cents || 0),
+      0,
+    );
+    const shippingCents = cartDisplayCount(cart) > 0 ? 1500 : 0;
+
     return {
-      schema: 'independence_phone.revio_checkout.v1',
+      schema: 'independence_phone.revio_checkout.v2',
       source: 'shopify-theme-cart',
       occurred_at: new Date().toISOString(),
       source_url: window.location.href,
       referrer: document.referrer || '',
       consent: {
-        privacy_terms_accepted: Boolean(acceptedPolicy),
-        policy_agreement: acceptedPolicy?.value || '',
+        collection_status: 'pending_checkout',
+        privacy_terms_accepted: null,
       },
-      customer: {},
+      customer: {
+        desired_area_code: null,
+        desired_area_code_collection_status: 'required_at_checkout',
+      },
       cart: {
         token: cart.token || '',
         currency: cart.currency || document.documentElement.dataset.cartCurrency || 'USD',
         item_count: cartDisplayCount(cart),
         raw_item_count: cart.item_count || 0,
-        total_price_cents: Number(cart.total_price || 0),
-        items_subtotal_price_cents: Number(cart.items_subtotal_price || 0),
+        immediate_subtotal_cents: immediateSubtotalCents,
+        flat_shipping_cents: shippingCents,
+        tax_cents: null,
+        tax_status: 'calculated_after_address',
+        due_today_before_tax_cents: immediateSubtotalCents + shippingCents,
+        future_charge_cents: futureChargeCents,
+        first_bill_rule: 'first_day_of_next_month',
+        shopify_total_price_cents: Number(cart.total_price || 0),
+        shopify_items_subtotal_price_cents: Number(cart.items_subtotal_price || 0),
         total_discount_cents: Number(cart.total_discount || 0),
       },
       setup_count: setups.length,
@@ -257,7 +297,7 @@
     setBusy(form, true);
     try {
       const cart = await getCart();
-      const payload = buildCheckoutHandoffPayload(cart, form);
+      const payload = buildCheckoutHandoffPayload(cart);
       const response = await fetch(handoffUrl, {
         body: JSON.stringify(payload),
         credentials: fetchCredentialsFor(handoffUrl),
@@ -297,6 +337,15 @@
     }
   };
 
+  const validateCartIntegrity = (form) => {
+    const orphan = form.querySelector('[data-cart-orphan-child], [data-cart-incomplete-setup]');
+    const error = form.querySelector('[data-cart-integrity-error]');
+    const valid = !orphan;
+    if (error) error.hidden = valid;
+    if (!valid) orphan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return valid;
+  };
+
   const createSetupId = () => {
     if (window.crypto?.randomUUID) return window.crypto.randomUUID();
     return `setup-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -313,8 +362,15 @@
 
   const cartDisplayCount = (cart) => {
     if (!Array.isArray(cart.items)) return cart.item_count || 0;
+    const parentSetupIds = new Set(
+      cart.items
+        .filter((item) => !isSetupChild(item.properties))
+        .map((item) => cartPropertyValue(item.properties, '_setup_id'))
+        .filter(Boolean),
+    );
     return cart.items.reduce((count, item) => {
-      if (isSetupChild(item.properties)) return count;
+      const setupId = cartPropertyValue(item.properties, '_setup_id');
+      if (isSetupChild(item.properties) && parentSetupIds.has(setupId)) return count;
       return count + (Number(item.quantity) || 0);
     }, 0);
   };
@@ -341,10 +397,29 @@
 
   const renderCart = (cart) => {
     const currency = cart.currency || document.documentElement.dataset.cartCurrency || 'USD';
+    const lines = (cart.items || []).map(normalizeCheckoutLine);
+    const immediateSubtotal = lines.reduce(
+      (total, line) => total + Number(line.checkout_line_price_cents || 0),
+      0,
+    );
+    const futureCharge = lines.reduce(
+      (total, line) => total + Number(line.future_line_charge_cents || 0),
+      0,
+    );
+    const shipping = cartDisplayCount(cart) > 0 ? 1500 : 0;
     setCartCount(cartDisplayCount(cart));
 
     document.querySelectorAll('[data-cart-subtotal]').forEach((subtotal) => {
-      subtotal.textContent = formatMoney(cart.total_price, currency);
+      subtotal.textContent = formatMoney(immediateSubtotal, currency);
+    });
+    document.querySelectorAll('[data-cart-shipping]').forEach((target) => {
+      target.textContent = formatMoney(shipping, currency);
+    });
+    document.querySelectorAll('[data-cart-due-today]').forEach((target) => {
+      target.textContent = formatMoney(immediateSubtotal + shipping, currency);
+    });
+    document.querySelectorAll('[data-cart-future-charge]').forEach((target) => {
+      target.textContent = formatMoney(futureCharge, currency);
     });
 
     document.querySelectorAll('[data-cart-line-price]').forEach((price) => {
@@ -422,10 +497,6 @@
 
   const calculateSavings = (properties) => {
     const text = properties.map((property) => `${property.name} ${property.value}`).join(' ');
-    if (/Patriot Package/i.test(text)) {
-      return { year: 30312, month: 0 };
-    }
-
     let year = 0;
     let month = 0;
 
@@ -448,13 +519,31 @@
   };
 
   const updateCartSavings = () => {
-    const properties = [...document.querySelectorAll('.ip-cart-properties > div')].map((row) => ({
-      name: row.querySelector('dt')?.textContent?.trim() || '',
-      value: row.querySelector('dd')?.textContent?.trim() || '',
-    }));
+    const sources = [...document.querySelectorAll('[data-cart-savings-source]')];
+    const savings = sources.length > 0
+      ? sources.reduce((total, source) => {
+          const lineSavings = calculateSavings([{
+            name: 'Setup',
+            value: source.dataset.cartSavingsSource || '',
+          }]);
+          const quantity = Math.max(
+            1,
+            Number(source.querySelector('[data-cart-quantity]')?.value || source.dataset.cartQuantity || 1),
+          );
+          return {
+            year: total.year + (lineSavings.year * quantity),
+            month: total.month + (lineSavings.month * quantity),
+          };
+        }, { year: 0, month: 0 })
+      : calculateSavings(
+          [...document.querySelectorAll('.ip-cart-properties > div')].map((row) => ({
+            name: row.querySelector('dt')?.textContent?.trim() || '',
+            value: row.querySelector('dd')?.textContent?.trim() || '',
+          })),
+        );
     const currency = previewCart.currency || document.documentElement.dataset.cartCurrency || 'USD';
     document.querySelectorAll('[data-cart-savings]').forEach((target) => {
-      target.textContent = formatSavings(calculateSavings(properties), currency);
+      target.textContent = formatSavings(savings, currency);
     });
   };
 
@@ -524,13 +613,29 @@
   };
 
   const selectedBillingInputs = (form) => {
-    const packageInput = form.querySelector('[data-order-package]:checked');
-    const inputs = [...form.querySelectorAll('[data-billing-variant]:checked')]
+    return [...form.querySelectorAll('[data-billing-variant]:checked')]
       .filter((input) => !input.disabled && String(input.dataset.billingVariant || '').trim() !== '');
-    if (packageInput && String(packageInput.dataset.billingVariant || '').trim() !== '') {
-      return [packageInput];
+  };
+
+  const orderBillingConfigurationError = (form) => {
+    if (!form.matches('[data-order-form]')) return '';
+
+    const selectedInputs = [...form.querySelectorAll('[data-billing-variant]:checked')]
+      .filter((input) => !input.disabled);
+
+    if (selectedInputs.length === 0) {
+      return 'Choose a service plan before adding this setup to the cart.';
     }
-    return inputs;
+
+    const missingBillingItem = selectedInputs.some(
+      (input) => String(input.dataset.billingVariant || '').trim() === '',
+    );
+    const phoneVariant = String(form.querySelector('[data-order-variant-id]')?.value || '').trim();
+    if (missingBillingItem || phoneVariant === '') {
+      return 'Ordering is temporarily unavailable because a required billing item is not configured. Please contact Independence Phone for help.';
+    }
+
+    return '';
   };
 
   const buildSetupCartPayload = (form) => {
@@ -548,9 +653,14 @@
       form.querySelector('input[name="properties[Phone]"]')?.value ||
       form.closest('section')?.querySelector('h1, h2')?.textContent?.trim() ||
       'Phone setup';
-    const setupProperties = propertiesToObject(submittedProperties(form));
+    const submittedSetupProperties = propertiesToObject(submittedProperties(form));
+    const setupProperties = {};
+    ['Phone', 'Discount/referral code', 'Referral'].forEach((name) => {
+      if (submittedSetupProperties[name]) setupProperties[name] = submittedSetupProperties[name];
+    });
     setupProperties._setup_id = setupId;
     setupProperties._setup_role = 'phone';
+    setupProperties._order_contract = 'deferred-billing-v2';
 
     const items = [{
       id: variantId,
@@ -560,21 +670,104 @@
 
     for (const input of billingInputs) {
       const details = getChoiceDetails(input);
+      const billingProperties = {
+        'Future charge': details.price || details.value,
+        'Billing starts': 'First day of the following month',
+        _setup_id: setupId,
+        _order_contract: 'deferred-billing-v2',
+        _setup_parent: 'true',
+        _setup_role: input.dataset.billingRole || 'billing',
+        _setup_billing_name: propertyNameFromInput(input),
+        _setup_billing_value: details.price || details.value,
+        _setup_phone: phoneTitle,
+        _setup_future_charge_cents: String(input.dataset.futureChargeCents || '0'),
+        _setup_billing_cadence: input.dataset.billingCadence || '',
+        _setup_first_bill_rule: input.dataset.firstBillRule || 'first_day_of_next_month',
+      };
+      if (Number(input.dataset.orderSavingsYear || 0) > 0) {
+        billingProperties.Savings = `Save ${formatMoney(Number(input.dataset.orderSavingsYear))}/yr`;
+      }
+      if (Number(input.dataset.orderSavingsMonth || 0) > 0) {
+        billingProperties.Savings = `Save ${formatMoney(Number(input.dataset.orderSavingsMonth))}/mo`;
+      }
       items.push({
         id: input.dataset.billingVariant,
         quantity,
-        properties: {
-          _setup_id: setupId,
-          _setup_parent: 'true',
-          _setup_role: input.dataset.billingRole || 'billing',
-          _setup_billing_name: propertyNameFromInput(input),
-          _setup_billing_value: details.value,
-          _setup_phone: phoneTitle,
-        },
+        properties: billingProperties,
       });
     }
 
     return { items };
+  };
+
+  const cartItemProperty = (item, name) => {
+    const properties = item?.properties || {};
+    if (Array.isArray(properties)) {
+      return properties.find((property) => property.name === name)?.value || '';
+    }
+    return properties[name] || '';
+  };
+
+  const validateAddedSetup = (cart, setupPayload) => {
+    const expectedItems = setupPayload?.items || [];
+    if (expectedItems.length === 0) return { complete: true, setupId: '' };
+
+    const setupId = expectedItems[0]?.properties?._setup_id || '';
+    const setupLines = (cart.items || []).filter(
+      (item) => String(cartItemProperty(item, '_setup_id')) === String(setupId),
+    );
+    const unmatchedLines = [...setupLines];
+    const complete = expectedItems.every((expected) => {
+      const expectedRole = String(expected.properties?._setup_role || '');
+      const expectedBillingName = String(expected.properties?._setup_billing_name || '');
+      const matchIndex = unmatchedLines.findIndex((line) =>
+        String(line.variant_id || line.id) === String(expected.id) &&
+        String(cartItemProperty(line, '_setup_role')) === expectedRole &&
+        String(cartItemProperty(line, '_setup_billing_name')) === expectedBillingName &&
+        Number(line.quantity || 0) >= Number(expected.quantity || 1)
+      );
+      if (matchIndex === -1) return false;
+      unmatchedLines.splice(matchIndex, 1);
+      return true;
+    });
+
+    return { cart, complete, setupId, setupLines };
+  };
+
+  const removeIncompleteSetup = async (validation) => {
+    let remainingLines = validation.setupLines || [];
+    if (remainingLines.length === 0) return validation.cart;
+    let latestCart = validation.cart;
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const updates = Object.fromEntries(
+        remainingLines
+          .map((line) => line.key)
+          .filter(Boolean)
+          .map((key) => [key, 0]),
+      );
+      if (Object.keys(updates).length === 0) break;
+      try {
+        latestCart = await fetchJson(endpoint('cart/update.js'), {
+          body: JSON.stringify({ updates }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        });
+      } catch (_error) {
+        continue;
+      }
+      remainingLines = (latestCart.items || []).filter(
+        (item) => String(cartItemProperty(item, '_setup_id')) === String(validation.setupId),
+      );
+      if (remainingLines.length === 0) return latestCart;
+    }
+
+    const error = new Error(
+      'Only part of the phone setup was added, and it could not be removed automatically. Open the cart and remove the incomplete billing item before retrying.',
+    );
+    error.code = 'SETUP_CLEANUP_FAILED';
+    error.cart = latestCart;
+    throw error;
   };
 
   const addPreviewProduct = (form, submitter) => {
@@ -583,7 +776,7 @@
     previewCart.currency = form.dataset.productCurrency || previewCart.currency;
     previewCart.imageSrc = form.dataset.productImageSrc || previewCart.imageSrc;
     previewCart.imageAlt = form.dataset.productImageAlt || previewCart.title;
-    previewCart.properties = getProductFormProperties(form);
+    previewCart.properties = submittedProperties(form);
     previewCart.quantity = Math.max(1, Number(form.querySelector('[name="quantity"]')?.value || 1));
     updatePreviewCart(previewCart.quantity);
     setStatus(form, `Added ${previewCart.quantity} ${previewCart.title}${previewCart.quantity === 1 ? '' : 's'} to cart.`);
@@ -593,25 +786,15 @@
         submitter.textContent = 'Add to cart';
       }, 1600);
     }
-    window.location.assign('?route=cart');
   };
 
   const updateOrderBuilder = (form) => {
     if (!form) return;
     let phone = form.querySelector('[data-order-phone]:checked');
-    const packageInput = form.querySelector('[data-order-package]');
     const annual = form.querySelector('[data-order-annual]');
     const bundle = form.querySelector('[data-order-bundle]');
     const addonInputs = [...form.querySelectorAll('[data-order-addon]')];
     const variantInput = form.querySelector('[data-order-variant-id]');
-
-    if (packageInput?.checked) {
-      const classicPhone = form.querySelector('[data-order-phone][data-order-title="Classic Phone"]');
-      if (classicPhone) classicPhone.checked = true;
-      if (annual) annual.checked = true;
-      if (bundle) bundle.checked = true;
-      phone = classicPhone || phone;
-    }
 
     if (bundle?.checked) {
       addonInputs.forEach((input) => {
@@ -640,12 +823,10 @@
       ...(bundle?.checked ? [bundle] : []),
       ...addonInputs.filter((input) => input.checked && !input.disabled),
     ];
-    const savings = packageInput?.checked
-      ? { year: Number(packageInput.dataset.orderSavingsYear || 0), month: 0 }
-      : {
-          year: Number(annual?.checked ? annual.dataset.orderSavingsYear || 0 : 0),
-          month: selectedAddons.reduce((total, input) => total + Number(input.dataset.orderSavingsMonth || 0), 0),
-        };
+    const savings = {
+      year: Number(annual?.checked ? annual.dataset.orderSavingsYear || 0 : 0),
+      month: selectedAddons.reduce((total, input) => total + Number(input.dataset.orderSavingsMonth || 0), 0),
+    };
     const phonePrice = phone ? formatMoney(Number(phone.dataset.orderPriceCents || 0)) : '$0';
     const serviceDetails = service ? getChoiceDetails(service) : null;
     const addonText = selectedAddons.length
@@ -656,7 +837,7 @@
       target.textContent = form.dataset.productTitle || 'Selected phone';
     });
     form.querySelectorAll('[data-order-summary-phone]').forEach((target) => {
-      target.textContent = phonePrice;
+      target.textContent = `${phonePrice} one-time`;
     });
     form.querySelectorAll('[data-order-summary-service]').forEach((target) => {
       target.textContent = serviceDetails ? [serviceDetails.title, serviceDetails.price].filter(Boolean).join(' - ') : 'Not selected';
@@ -706,6 +887,12 @@
   };
 
   const addProduct = async (form, submitter) => {
+    const configurationError = orderBillingConfigurationError(form);
+    if (configurationError) {
+      setStatus(form, configurationError, 'error');
+      return;
+    }
+
     const setupPayload = buildSetupCartPayload(form);
     const formData = setupPayload ? null : new FormData(form);
     setBusy(form, true);
@@ -723,6 +910,15 @@
         });
       }
       const cart = await getCart();
+      if (setupPayload) {
+        const validation = validateAddedSetup(cart, setupPayload);
+        if (!validation.complete) {
+          setCartCount(cartDisplayCount(cart));
+          const cleanedCart = await removeIncompleteSetup(validation);
+          renderCart(cleanedCart);
+          throw new Error('We could not add the complete phone setup. Nothing was kept in your cart. Please try again.');
+        }
+      }
       renderCart(cart);
       setStatus(form, 'Added to cart. You can review your order from the cart.');
       if (submitter) {
@@ -733,10 +929,20 @@
       }
       window.location.assign(endpoint('cart'));
     } catch (error) {
+      if (error.cart) renderCart(error.cart);
       setStatus(form, error.message, 'error');
     } finally {
       setBusy(form, false);
     }
+  };
+
+  const syncSetupQuantity = (input, value = input.value) => {
+    const setup = input.closest('[data-cart-setup]');
+    if (!setup) return;
+    input.value = String(value);
+    setup.querySelectorAll('[data-cart-parent-quantity], [data-cart-child-quantity]').forEach((hiddenInput) => {
+      hiddenInput.value = String(value);
+    });
   };
 
   const updateCartLine = async (input) => {
@@ -744,6 +950,7 @@
     const lineItem = input.closest('[data-cart-line-item]');
     const line = Number(input.dataset.cartLine || 0);
     const quantity = Math.max(0, Number(input.value) || 0);
+    const previousQuantity = Math.max(0, Number(input.dataset.cartOriginalQuantity ?? input.value) || 0);
     if (!line) return;
 
     setBusy(form, true);
@@ -776,12 +983,36 @@
           });
       renderCart(cart);
       setStatus(form, 'Cart updated.');
-      if (quantity === 0 || cart.item_count === 0) {
+      input.dataset.cartOriginalQuantity = String(quantity);
+      if (setupId || quantity === 0 || cart.item_count === 0) {
         window.location.reload();
       }
     } catch (error) {
+      if (lineItem?.dataset.setupId && lineItem.dataset.setupParent !== 'true') {
+        syncSetupQuantity(input, previousQuantity);
+      }
       setStatus(form, error.message, 'error');
     } finally {
+      setBusy(form, false);
+    }
+  };
+
+  const removeCartChild = async (button) => {
+    const form = button.closest('[data-cart-form]');
+    const child = button.closest('[data-cart-setup-child]');
+    const key = child?.dataset.cartKey || '';
+    if (!form || !key) return;
+
+    setBusy(form, true);
+    try {
+      await fetchJson(endpoint('cart/update.js'), {
+        body: JSON.stringify({ updates: { [key]: 0 } }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      });
+      window.location.reload();
+    } catch (error) {
+      setStatus(form, error.message, 'error');
       setBusy(form, false);
     }
   };
@@ -789,6 +1020,11 @@
   document.addEventListener('submit', (event) => {
     const cartForm = event.target.closest('[data-cart-form]');
     if (cartForm && event.submitter?.name === 'checkout') {
+      const integrityValid = validateCartIntegrity(cartForm);
+      if (!integrityValid) {
+        event.preventDefault();
+        return;
+      }
       const hasHandoff = String(cartForm.dataset.revioCheckoutUrl || '').trim() !== '';
       if (hasHandoff) {
         event.preventDefault();
@@ -802,19 +1038,13 @@
     if (!form || !submitter?.matches('[data-add-to-cart-button]')) return;
 
     event.preventDefault();
-    if (!validateProductForm(form)) return;
+    if (!form.reportValidity()) return;
     if (form.matches('[data-preview-product-form]')) {
       addPreviewProduct(form, submitter);
       return;
     }
     addProduct(form, submitter);
   });
-
-  document.addEventListener('invalid', (event) => {
-    if (event.target.matches('input[name="properties[Policy agreement]"][required]')) {
-      reportPolicyError(event.target);
-    }
-  }, true);
 
   document.addEventListener('change', (event) => {
     const orderInput = event.target.closest('[data-order-form] input');
@@ -842,42 +1072,136 @@
     updateCartLine(input);
   });
 
+  document.addEventListener('input', (event) => {
+    const setupQuantity = event.target.closest('[data-cart-setup-quantity]');
+    if (!setupQuantity) return;
+    syncSetupQuantity(setupQuantity);
+  });
+
+  const heroDesktopMedia = window.matchMedia('(min-width: 721px)');
+  const syncHeroPoster = () => {
+    document.querySelectorAll('[data-hero-video-player]').forEach((video) => {
+      const poster = heroDesktopMedia.matches
+        ? video.dataset.posterDesktop
+        : video.dataset.posterMobile;
+      if (poster && video.getAttribute('poster') !== poster) video.setAttribute('poster', poster);
+    });
+  };
+
+  syncHeroPoster();
+  heroDesktopMedia.addEventListener?.('change', syncHeroPoster);
+
+  const heroReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const syncHeroMotionPreference = () => {
+    document.querySelectorAll('[data-hero-video] video').forEach((video) => {
+      if (heroReducedMotion.matches && video.dataset.audiblePlaybackStarted !== 'true') {
+        video.autoplay = false;
+        video.pause();
+      }
+    });
+  };
+
+  syncHeroMotionPreference();
+  heroReducedMotion.addEventListener?.('change', syncHeroMotionPreference);
+
   document.addEventListener('click', (event) => {
     const soundButton = event.target.closest('[data-hero-sound-toggle]');
     if (soundButton) {
       const hero = soundButton.closest('[data-hero-video]');
       const video = hero?.querySelector('video');
       if (video) {
-        video.classList.remove('has-ended');
+        const setSoundState = (state) => {
+          const labels = {
+            idle: soundButton.dataset.labelIdle || 'Play with sound',
+            playing: soundButton.dataset.labelPlaying || 'Sound is on',
+            muted: soundButton.dataset.labelMuted || 'Sound is off. Play with sound',
+            paused: soundButton.dataset.labelPaused || 'Resume with sound',
+            ended: soundButton.dataset.labelEnded || 'Replay with sound',
+            failed: soundButton.dataset.labelFailed || 'Sound could not start. Try again',
+          };
+          const isPlaying = state === 'playing';
+
+          soundButton.dataset.soundState = state;
+          soundButton.classList.toggle('is-playing', isPlaying);
+          soundButton.setAttribute('aria-pressed', String(isPlaying));
+          soundButton.setAttribute('aria-label', labels[state] || labels.idle);
+        };
+
+        if (video.dataset.soundEventsBound !== 'true') {
+          video.dataset.soundEventsBound = 'true';
+          const syncSoundState = () => {
+            if (video.dataset.soundFailure === 'true') return;
+            if (video.ended) {
+              setSoundState('ended');
+            } else if (video.muted || video.volume === 0) {
+              setSoundState('muted');
+            } else if (video.paused) {
+              setSoundState('paused');
+            } else {
+              setSoundState('playing');
+            }
+          };
+          video.addEventListener('ended', () => {
+            video.classList.add('has-ended');
+            setSoundState('ended');
+          });
+          video.addEventListener('pause', syncSoundState);
+          video.addEventListener('playing', syncSoundState);
+          video.addEventListener('volumechange', syncSoundState);
+        }
+
+        if (!video.muted && video.volume > 0 && !video.paused && !video.ended) {
+          video.muted = true;
+          setSoundState('muted');
+          return;
+        }
+
+        const shouldRestart = video.dataset.audiblePlaybackStarted !== 'true' || video.ended;
+        video.dataset.soundFailure = 'false';
         video.muted = false;
         video.removeAttribute('muted');
         video.volume = 1;
         video.loop = false;
         video.controls = true;
-        video.currentTime = 0;
-        video.addEventListener('ended', () => {
-          video.classList.add('has-ended');
-          soundButton.classList.remove('is-playing');
-          soundButton.setAttribute('aria-label', 'Video replay ended');
-        }, { once: true });
-        video.play().catch(() => {});
-        soundButton.classList.add('is-playing');
-        soundButton.setAttribute('aria-pressed', 'true');
-        soundButton.setAttribute('aria-label', 'Video sound is on');
+        if (shouldRestart) video.currentTime = 0;
+        video.classList.remove('has-ended');
+        const playback = video.play();
+        if (playback) {
+          playback.then(() => {
+            video.dataset.audiblePlaybackStarted = 'true';
+            setSoundState('playing');
+          }).catch(() => {
+            video.dataset.soundFailure = 'true';
+            video.muted = true;
+            setSoundState('failed');
+          });
+        } else {
+          video.dataset.audiblePlaybackStarted = 'true';
+          setSoundState('playing');
+        }
       }
       return;
     }
 
-    const addButton = event.target.closest('[data-add-to-cart-button]');
-    if (addButton) {
-      const requiredPolicy = addButton
-        .closest('.ip-product-form')
-        ?.querySelector('input[name="properties[Policy agreement]"][required]');
-      if (requiredPolicy && !requiredPolicy.checked) reportPolicyError(requiredPolicy);
+    const remove = event.target.closest('[data-preview-remove]');
+    const childRemove = event.target.closest('[data-cart-child-remove]');
+    if (childRemove) {
+      event.preventDefault();
+      removeCartChild(childRemove);
+      return;
+    }
+    const setupRemove = event.target.closest('[data-cart-setup-remove]');
+    if (setupRemove) {
+      event.preventDefault();
+      const setup = setupRemove.closest('[data-cart-setup]');
+      const quantity = setup?.querySelector('[data-cart-setup-quantity]');
+      if (quantity) {
+        syncSetupQuantity(quantity, 0);
+        updateCartLine(quantity);
+      }
       return;
     }
 
-    const remove = event.target.closest('[data-preview-remove]');
     if (!remove) return;
 
     event.preventDefault();
@@ -888,6 +1212,50 @@
   if (document.querySelector('[data-preview-cart]')) {
     loadPreviewCart();
     updatePreviewCart(previewCart.quantity);
+  }
+
+  document.querySelectorAll('[data-cart-setup-quantity][readonly]').forEach((input) => {
+    input.readOnly = false;
+  });
+
+  document.querySelectorAll('[data-cart-setup-remove][hidden]').forEach((button) => {
+    button.hidden = false;
+  });
+
+  document.querySelectorAll('[data-order-script-required][data-order-configured="true"]').forEach((button) => {
+    button.disabled = false;
+  });
+
+  if (
+    !document.querySelector('[data-preview-cart]') &&
+    !document.querySelector('[data-cart-count]') &&
+    document.querySelector('#cart-icon-bubble, .header__icon--cart, .cart-count-bubble')
+  ) {
+    const cartIcon = document.querySelector('#cart-icon-bubble, .header__icon--cart') ||
+      document.querySelector('.cart-count-bubble')?.parentElement;
+    const requestVersion = cartMutationVersion;
+    let nativeCartHeaderChanged = false;
+    const observerRoot = cartIcon?.parentElement || cartIcon;
+    const cartIconObserver = observerRoot
+      ? new MutationObserver((records) => {
+          nativeCartHeaderChanged = records.some((record) => {
+            if (record.target === cartIcon || cartIcon?.contains(record.target)) return true;
+            return [...record.addedNodes, ...record.removedNodes].some((node) =>
+              node === cartIcon ||
+              (node.nodeType === Node.ELEMENT_NODE && (
+                node.matches?.('#cart-icon-bubble, .header__icon--cart') ||
+                node.contains?.(cartIcon)
+              ))
+            );
+          });
+        })
+      : null;
+    cartIconObserver?.observe(observerRoot, { childList: true, characterData: true, subtree: true });
+    getCart().then((cart) => {
+      if (cartMutationVersion === requestVersion && !nativeCartHeaderChanged) {
+        setCartCount(cartDisplayCount(cart));
+      }
+    }).catch(() => {}).finally(() => cartIconObserver?.disconnect());
   }
 
   document.querySelectorAll('[data-order-form]').forEach(updateOrderBuilder);

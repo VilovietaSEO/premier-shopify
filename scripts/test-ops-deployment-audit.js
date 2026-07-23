@@ -5,7 +5,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { createServer } = require('../ops/storefront-ops-server');
-const { runAudit } = require('./audit-ops-deployment');
+const {
+  buildLead,
+  buildOrderPayload,
+  buildShopifyWebhookOrder,
+  runAudit,
+} = require('./audit-ops-deployment');
 
 const root = path.resolve(__dirname, '..');
 const storagePath = path.join(root, 'tmp/ops-deployment-audit-test-submissions.jsonl');
@@ -13,7 +18,72 @@ const outputPath = path.join(root, 'tmp/ops-deployment-audit-test.json');
 fs.rmSync(storagePath, { force: true });
 fs.rmSync(outputPath, { force: true });
 
+function assertDeferredBillingFixture(order, expectedSkus) {
+  assert.deepEqual(order.line_items.map((line) => line.sku), expectedSkus);
+  assert.equal(order.line_items[0].properties._setup_role, 'phone');
+  assert.equal(order.line_items[0].properties._order_contract, 'deferred-billing-v2');
+  assert.equal(order.line_items[0].properties['Service plan'], undefined);
+  assert.equal(order.line_items[0].properties['Add-on Bundle'], undefined);
+
+  const setupId = order.line_items[0].properties._setup_id;
+  for (const line of order.line_items.slice(1)) {
+    assert.equal(line.price, '0.00');
+    assert.equal(line.properties._setup_id, setupId);
+    assert.equal(line.properties._setup_parent, 'true');
+    assert.equal(line.properties._order_contract, 'deferred-billing-v2');
+    assert.match(line.properties._setup_billing_name, /\S/);
+    assert.match(line.properties._setup_billing_value, /^\$/);
+    assert.match(line.properties._setup_future_charge_cents, /^[1-9]\d*$/);
+    assert.match(line.properties._setup_billing_cadence, /^(monthly|annual)$/);
+    assert.equal(line.properties._setup_first_bill_rule, 'first_day_of_next_month');
+    assert.equal(line.properties['Billing starts'], 'First day of the following month');
+  }
+
+  const serialized = JSON.stringify(order);
+  assert.doesNotMatch(serialized, /Patriot Package/i);
+  assert.doesNotMatch(serialized, /Policy agreement|Privacy Policy and Terms and Conditions/i);
+}
+
 async function main() {
+  const lead = buildLead(new URL('https://jordan-mark-premier.myshopify.com'), 'fixture-proof');
+  const leadKeys = [...lead.keys()];
+  assert.equal(leadKeys.some((key) => /Patriot Package/i.test(key)), false);
+  for (const retiredField of [
+    'contact[Child age range]',
+    'contact[Main use case]',
+    'contact[Interested product]',
+    'contact[Preferred service plan]',
+    'contact[Selected add-ons]',
+    'contact[Marketing opt-in]',
+    'contact[Privacy and terms consent]',
+  ]) {
+    assert.equal(leadKeys.includes(retiredField), false);
+  }
+  for (const visibleField of [
+    'contact[name]',
+    'contact[email]',
+    'contact[phone]',
+    'contact[body]',
+  ]) {
+    assert.equal(leadKeys.includes(visibleField), true);
+  }
+
+  const importFixture = buildOrderPayload('fixture-import').orders[0];
+  assertDeferredBillingFixture(importFixture, [
+    'PP-RUGGED-PHONE',
+    'PP-ANNUAL-SERVICE',
+    'PP-ADDON-BUNDLE',
+  ]);
+
+  const webhookFixture = buildShopifyWebhookOrder('fixture-webhook');
+  assertDeferredBillingFixture(webhookFixture, [
+    'PP-CLASSIC-PHONE',
+    'PP-MONTHLY-SERVICE',
+    'PP-ADDON-CALL-RECORDING',
+    'PP-ADDON-FAMILY-QUIET-HOURS',
+    'PP-ADDON-VOICEMAIL-TO-EMAIL',
+  ]);
+
   const server = createServer({
     crmStoragePath: storagePath,
     crmViewerToken: 'test-token',
@@ -61,6 +131,17 @@ async function main() {
     assert.equal(saved.includes('/crm/leads.csv?token=<redacted>'), true);
     assert.equal(saved.includes('/crm/orders/import?token=<redacted>'), true);
     assert.equal(saved.includes('/crm/shopify/orders/create'), true);
+
+    const storedRecords = fs.readFileSync(storagePath, 'utf8')
+      .trim()
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => JSON.parse(line));
+    const saleTypes = storedRecords
+      .filter((record) => record.fields.recordType === 'sale')
+      .map((record) => record.fields.saleType)
+      .sort();
+    assert.deepEqual(saleTypes, ['classic_monthly_addon_sale', 'phone_setup_sale']);
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }

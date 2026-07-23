@@ -1,4 +1,5 @@
 {% layout none %}
+{% assign public_brand_name = settings.ip_brand_name | default: 'Independence Phone' %}
 
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
@@ -42,7 +43,7 @@
 
         <p>
           {% if settings.logo %}
-            {{ settings.logo | image_url: width: 300 | image_tag: alt: shop.name }}
+            {{ settings.logo | image_url: width: 300 | image_tag: alt: public_brand_name }}
           {% else %}
             <img
               src="{{ 'gift-card/card.svg' | shopify_asset_url }}"
@@ -53,7 +54,7 @@
           {% endif %}
         </p>
 
-        <h2>{{ shop.name }}</h2>
+        <h2>{{ public_brand_name }}</h2>
         <p>{{ 'gift_card.use_at_checkout' | t }}</p>
         <p>{{ gift_card.code | format_code }}</p>
 

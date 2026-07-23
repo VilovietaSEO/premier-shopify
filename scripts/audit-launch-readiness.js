@@ -2,6 +2,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { billingProducts } = require('./storefront-billing-products');
 
 const root = path.resolve(__dirname, '..');
 const proofDir = path.join(root, 'tmp', 'shopify-live-proof');
@@ -26,16 +27,10 @@ const requiredProducts = [
   { handle: 'rugged-phone', title: 'Rugged Phone', price: '150.00' },
 ];
 
-const requiredBillingProducts = [
-  { handle: 'monthly-service', title: 'Monthly Service', price: '17.76' },
-  { handle: 'annual-service', title: 'Annual Service', price: '200.00' },
-  { handle: 'call-recording', title: 'Call Recording', price: '5.00' },
-  { handle: 'family-quiet-hours', title: 'Quiet Hours', price: '5.00' },
-  { handle: 'voicemail-to-email', title: 'Voicemail to Email', price: '5.00' },
-  { handle: 'auto-attendant', title: 'Auto Attendant', price: '5.00' },
-  { handle: 'add-on-bundle', title: 'Add-on Bundle', price: '10.00' },
-  { handle: 'patriot-package', title: 'Patriot Package', price: '150.00' },
-];
+const requiredBillingProducts = billingProducts.map((product) => ({
+  ...product,
+  price: product.checkoutPrice,
+}));
 
 const requiredOpsBundleFiles = [
   'package.json',
@@ -177,13 +172,30 @@ function productChecks(storeObjects) {
     if (product.price !== expected.price) failures.push(`price is ${product.price || '(blank)'}`);
     if (product.templateSuffix !== 'billing-item') failures.push(`template is ${product.templateSuffix || '(blank)'}`);
     if (product.status !== 'ACTIVE') failures.push(`status is ${product.status || '(blank)'}`);
+    if (Number(product.futurePriceCents) !== expected.futurePriceCents) {
+      failures.push(`futurePriceCents is ${product.futurePriceCents ?? '(blank)'}`);
+    }
+    if (product.billingCadence !== expected.billingCadence) {
+      failures.push(`billingCadence is ${product.billingCadence || '(blank)'}`);
+    }
+    if (product.firstBillRule !== expected.firstBillRule) {
+      failures.push(`firstBillRule is ${product.firstBillRule || '(blank)'}`);
+    }
+    if (product.role !== expected.role) failures.push(`role is ${product.role || '(blank)'}`);
+    if (product.taxable !== false) failures.push('taxable is not false');
+    if (product.requiresShipping !== false) failures.push('requiresShipping is not false');
+    if (Number(product.mediaCount || 0) < 1 || Number(product.mediaWithAltCount || 0) < 1) {
+      failures.push('billing media is missing');
+    }
     if ((product.failures || []).length > 0) failures.push(...product.failures);
 
     checks.push(
       check(
         `billing product ${expected.handle} data`,
         failures.length > 0 ? 'blocker' : 'pass',
-        failures.length > 0 ? failures.join('; ') : `${expected.title}, $${expected.price}, hidden billing template ready`,
+        failures.length > 0
+          ? failures.join('; ')
+          : `${expected.title}, $0 checkout line, ${expected.futurePrice} future charge, metadata/media ready`,
         [storeObjects.path]
       )
     );
@@ -451,14 +463,37 @@ function orderChecks(orderProof) {
     ];
   }
 
-  const failures = orderProof.data.failures || [];
+  const failures = [...(orderProof.data.failures || [])];
+  const contract = orderProof.data.deferredBillingContract || {};
+  if (contract.schema !== 'independence_phone.revio_checkout.v2') {
+    failures.push('order proof is missing the deferred-billing v2 schema');
+  }
+  if (!contract.zeroDollarBillingLinesVerified) {
+    failures.push('zero-dollar service and add-on checkout lines are not verified');
+  }
+  if (!contract.futureMetadataVerified) {
+    failures.push('future-charge cadence and first-bill metadata are not verified');
+  }
+  if (contract.flatShippingCents !== 1500) {
+    failures.push('one $15 per-order shipping charge is not verified');
+  }
+  if (!contract.totalsSeparated) {
+    failures.push('due-today and future-charge totals are not verified separately');
+  }
+  if (contract.consentCollectionStatus !== 'pending_checkout') {
+    failures.push('privacy and terms consent is not pending checkout');
+  }
+  if (contract.desiredAreaCodeCollectionStatus !== 'required_at_checkout') {
+    failures.push('desired area code is not required at checkout');
+  }
+
   return [
     check(
       'real or approved manual Shopify order proof',
       failures.length > 0 || orderProof.data.status !== 'pass' ? 'blocker' : 'pass',
       failures.length > 0
-        ? `${failures.length} order proof failure(s)`
-        : 'Classic monthly add-on and Classic Patriot Package order scenarios verified with setup CSV output',
+        ? failures.join('; ')
+        : 'active phone scenarios and deferred-billing v2 verified: zero-dollar billing lines, one $15 shipping charge, separated totals, and pending checkout fields',
       [orderProof.path, orderProof.data.csvOutputPath].filter(Boolean)
     ),
   ];
@@ -495,7 +530,9 @@ function buildReport() {
   return {
     generatedAt: new Date().toISOString(),
     store: 'jordan-mark-premier.myshopify.com',
-    liveThemeId: '150479208517',
+    liveThemeId: '151266459717',
+    qaThemeId: '151553245253',
+    rollbackThemeId: null,
     status: blockerCount > 0 ? 'blocked' : pendingCount > 0 ? 'pending' : 'ready',
     summary: {
       pass: passCount,
@@ -533,5 +570,8 @@ if (require.main === module) {
 
 module.exports = {
   buildReport,
+  orderChecks,
   opsBundleChecks,
+  productChecks,
+  requiredBillingProducts,
 };

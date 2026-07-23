@@ -1,0 +1,16 @@
+Build platform: macOS 15.6 (24G84), arm64
+sips: sips-316
+ffmpeg: 8.0, built with Apple clang 17.0.0 (clang-1700.0.13.3)
+ffprobe: 8.0, built with Apple clang 17.0.0 (clang-1700.0.13.3)
+cwebp: 1.6.0, libsharpyuv 0.4.2
+sRGB profile: /System/Library/ColorSync/Profiles/sRGB Profile.icc
+sRGB profile SHA-256: 2b3aa1645779a9e634744faf9b01e9102b0c9b88fd6deced7934df86b949af7e
+Front-card compositor: scripts/build-indy-front-card-media.py
+Python: 3.12.13
+Pillow: 12.3.0
+NumPy: 2.4.6
+ONNX Runtime: 1.27.0
+rembg: 2.0.76
+rembg model: BiRefNet General epoch 244
+rembg model MD5: 7a35a0141cbbc80de11d9c9a28f52697
+rembg model SHA-256: 58f621f00f5d756097615970a88a791584600dcf7c45b18a0a6267535a1ebd3c

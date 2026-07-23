@@ -13,7 +13,7 @@ const PAGE_ENTRIES = [
     type: 'page',
     title: 'Home',
     path: '/',
-    summary: 'Main Independence Phone sales page with the promise: Give them a phone. Not the internet.',
+    summary: 'Main Independence Phone sales page with the promise: Give your child a phone, not the internet.',
     facts: [
       'Parent-first pitch for a phone without apps, a web browser, social feeds, or the open internet.',
       'Highlights personal phone service at $17.76/mo.',
@@ -24,11 +24,11 @@ const PAGE_ENTRIES = [
     type: 'page',
     title: 'Order Now',
     path: '/pages/order-now',
-    summary: 'Primary guided purchase route for choosing the Patriot Package, phone, plan, and add-ons.',
+    summary: 'Primary guided purchase route for choosing a phone, service plan, and optional add-ons.',
     facts: [
       'This is the guided order builder for the current client-facing order flow.',
       'Lets shoppers choose phone, monthly or annual service, and add-ons.',
-      'Includes policy agreement and savings descriptors.',
+      'Shows future service and add-on charges separately from the phone amount due through Shopify.',
     ],
   },
   {
@@ -45,21 +45,21 @@ const PAGE_ENTRIES = [
     type: 'page',
     title: 'Contact',
     path: '/pages/contact',
-    summary: 'Lead/contact page for product, service, setup, and launch questions.',
+    summary: 'Contact page for product, service, setup, and support questions.',
     facts: [
-      'Form UI is controlled by the theme.',
-      'Launch scope requires server-side CRM capture with timestamp, every form field, viewer, and CSV export.',
+      'The form collects Name, Email, optional Phone Number, and How can we Help.',
+      'The current launch path uses Shopify native contact delivery; a separate CRM capture service is optional later.',
     ],
   },
   {
     type: 'cart',
     title: 'Cart',
     path: '/cart',
-    summary: 'Cart review route showing chosen phone, service plan, add-ons, savings, and policy agreement details.',
+    summary: 'Cart review route separating charges due today from future service and add-on charges.',
     facts: [
-      'The phone line carries setup properties for staff review.',
-      'Configured service and add-on billing products are added as priced cart items with the same hidden setup id.',
-      'True recurring billing still requires Shopify subscriptions, Rev.io, or another recurring billing system.',
+      'Only the phone is priced in Shopify checkout; the cart also displays one $15 shipping charge before tax.',
+      'Service and add-on selections use $0 Shopify lines with future-charge metadata and a shared setup id.',
+      'Rev.io middleware still must collect final consent and desired area code, then create the future billing schedule.',
     ],
   },
 ];
@@ -81,37 +81,31 @@ const SERVICE_ENTRIES = [
     title: 'Call Recording',
     path: '/pages/order-now',
     price: '$5/mo',
-    summary: 'Add-on service option. Included in the Patriot Package.',
+    summary: 'Optional future-billed service add-on.',
   },
   {
     title: 'Quiet Hours',
     path: '/pages/order-now',
     price: '$5/mo',
-    summary: 'Add-on service option. Included in the Patriot Package.',
+    summary: 'Optional future-billed service add-on.',
   },
   {
     title: 'Voicemail to Email',
     path: '/pages/order-now',
     price: '$5/mo',
-    summary: 'Add-on service option. Included in the Patriot Package.',
+    summary: 'Optional future-billed service add-on.',
   },
   {
     title: 'Auto Attendant',
     path: '/pages/order-now',
     price: '$5/mo',
-    summary: 'Add-on service option. Included in the Patriot Package.',
+    summary: 'Optional future-billed service add-on.',
   },
   {
     title: 'Add-on Bundle',
     path: '/pages/order-now',
     price: '$10/mo',
     summary: 'Bundle of all add-ons.',
-  },
-  {
-    title: 'Patriot Package',
-    path: '/pages/order-now',
-    price: '$250',
-    summary: 'Package option with Classic Phone, annual service, and every add-on.',
   },
 ];
 

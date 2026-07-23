@@ -12,14 +12,11 @@
         "voicemail_to_email_product": "voicemail-to-email",
         "auto_attendant_product": "auto-attendant",
         "addon_bundle_product": "add-on-bundle",
-        "patriot_package_product": "patriot-package",
-        "heading": "Build your Independence Phone setup.",
-        "body": "<p>Start with the Patriot Package, or choose your phone, plan, and add-ons below.</p>",
-        "package_heading": "Limited offer",
-        "package_value": "Patriot Package - $250; Classic Phone, 1 year phone service, and all 4 add-ons (saves $303.12)",
-        "package_descriptor": "Take advantage of our limited offer honoring the 250th anniversary of America. Includes Classic Phone, 1 Year phone service, all 4 add-on's for only $250! A savings of $303.12.",
-        "checkout_note": "Taxes, shipping, and recurring billing are finalized through the approved store setup. Savings shown here are based on the selected setup options.",
-        "button_label": "Add setup to cart"
+        "eyebrow": "",
+        "heading": "Build your Independence Phone order now.",
+        "body": "<p>Choose your phone, service plan, and add-ons below.</p>",
+        "checkout_note": "Taxes, shipping, and recurring billing will be shown in the cart.",
+        "button_label": "Add order to cart"
       }
     },
     "faq": {
@@ -29,14 +26,14 @@
           "type": "faq",
           "settings": {
             "question": "What gets billed at checkout?",
-            "answer": "<p>The chosen phone, service, and add-ons are added to the cart when the matching billing products are configured. Taxes, shipping, subscriptions, and any final bundle logic still depend on the approved Shopify or Rev.io setup.</p>"
+            "answer": "<p>Your phone, applicable tax, and a flat $15 shipping charge are due today. Service and selected add-ons begin billing on the first day of the following month.</p>"
           }
         },
         "savings": {
           "type": "faq",
           "settings": {
             "question": "How are savings shown?",
-            "answer": "<p>Annual service, the add-on bundle, and the Patriot Package show savings descriptors in the order builder and cart so the customer can see the value of the selected setup.</p>"
+            "answer": "<p>Annual service and the add-on bundle show their savings in the order builder and cart so you can compare the available options before checkout.</p>"
           }
         }
       },
