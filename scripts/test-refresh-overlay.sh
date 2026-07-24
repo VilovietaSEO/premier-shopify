@@ -299,7 +299,7 @@ done
 
 for phrase in \
   'Your Independence Phone Cart' \
-  "approved_phone_asset = 'ip-classic-phone-front.webp'" \
+  "approved_phone_asset = 'ip-story-before-smartphone.webp'" \
   "approved_phone_asset = 'ip-rugged-phone-front.webp'" \
   '{% assign flat_shipping = 1500 %}' \
   'data-cart-subtotal' \
