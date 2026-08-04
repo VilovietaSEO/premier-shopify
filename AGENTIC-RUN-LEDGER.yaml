@@ -8,9 +8,9 @@ project:
   default_branch: main
 ledger:
   created_at: '2026-07-23T02:20:27Z'
-  updated_at: '2026-07-23T21:35:32Z'
+  updated_at: '2026-08-04T17:05:35Z'
   id_prefix: ARL
-  next_sequence: 19
+  next_sequence: 36
   writer_policy: single-writer
   managed_by: agentic-run-ledger
 runs:
@@ -254,6 +254,253 @@ runs:
     skills:
     - agentic-run-ledger
     - record-decision
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+- id: github-pr-merge-c43d188-2026-07-23
+  kind: orchestrated-workflow
+  workflow: other
+  objective: Create a reviewable PR for the Independence Phone QA work and merge it to main after all gates pass.
+  started_at: '2026-07-23T21:44:56Z'
+  finished_at: '2026-07-23T22:22:54Z'
+  status: completed
+  summary: 'Opened PR #1, passed local and GitHub checks, and fast-forward merged verified commit 0973bce to main without
+    publishing Shopify.'
+  orchestrator:
+    name: root
+    role: orchestrator
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: c43d188a8903cca0a0b2b08b5dddb5bb87fee255
+    upstream: origin/codex/independence-client-qa
+    dirty: true
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    - make-pr
+    - make-release
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+- id: shopify-live-theme-deploy-0973bce-2026-07-23
+  kind: live-system-test
+  workflow: deploy-verify
+  objective: Deploy merged commit 0973bce to the approved Shopify theme and verify client-visible storefront behavior without
+    exposing secrets or overwriting unreviewed state.
+  started_at: '2026-07-23T22:32:59Z'
+  finished_at: '2026-07-23T23:04:44Z'
+  status: completed
+  summary: Pushed exact commit 0973bce to QA theme 151553245253, verified desktop and mobile storefront behavior, published
+    it live, and confirmed former live theme 151266459717 remains unpublished as rollback.
+  orchestrator:
+    name: root
+    role: primary-agent
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: c43d188a8903cca0a0b2b08b5dddb5bb87fee255
+    upstream: origin/codex/independence-client-qa
+    dirty: true
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    - deploy-verify
+    command: null
+    plan: Establish live theme identity; push exact main commit to unpublished QA target; verify; publish only after target
+      and behavior proof; verify live storefront.
+    task_store: null
+    parent_run_id: null
+- id: 2026-07-23-homepage-scenario-image-audit
+  kind: live-system-test
+  workflow: test
+  objective: Verify whether the published homepage renders the same image for all four scenario cards
+  started_at: '2026-07-23T23:29:24Z'
+  finished_at: '2026-07-23T23:34:36Z'
+  status: completed
+  summary: Deployed and verified four distinct homepage scenario images on live theme 151553245253.
+  orchestrator:
+    name: root
+    role: orchestrator
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: c43d188a8903cca0a0b2b08b5dddb5bb87fee255
+    upstream: origin/codex/independence-client-qa
+    dirty: true
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    - browser:control-chrome
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+- id: 2026-07-23-scenario-image-quality-rollback
+  kind: live-system-test
+  workflow: test
+  objective: Remove the failed Bus days and Grandparents images from the live homepage and verify clear temporary replacements
+  started_at: '2026-07-24T01:22:25Z'
+  finished_at: '2026-07-24T01:24:40Z'
+  status: completed
+  summary: Removed the two visibly failed scenario images from the live homepage and verified clear temporary replacements
+    on mobile.
+  orchestrator:
+    name: root
+    role: orchestrator
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: c43d188a8903cca0a0b2b08b5dddb5bb87fee255
+    upstream: origin/codex/independence-client-qa
+    dirty: true
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    - deploy-verify
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+- id: 2026-07-24-responsive-hero-video
+  kind: live-system-test
+  workflow: test
+  objective: Integrate the supplied horizontal hero video for desktop, preserve the vertical video for mobile, deploy the
+    change, and verify responsive playback
+  started_at: '2026-07-24T16:10:49Z'
+  finished_at: '2026-07-24T16:18:39Z'
+  status: completed
+  summary: Integrated the supplied horizontal desktop hero video, preserved the vertical mobile video, deployed both responsive
+    states, and verified playback and sound live.
+  orchestrator:
+    name: root
+    role: orchestrator
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: c43d188a8903cca0a0b2b08b5dddb5bb87fee255
+    upstream: origin/codex/independence-client-qa
+    dirty: true
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    - chrome:control-chrome
+    - deploy-verify
+    - video-walkthrough
+    command: null
+    plan: null
+    task_store: null
+    parent_run_id: null
+- id: 2026-08-04-shopify-branch-consolidation
+  kind: orchestrated-workflow
+  workflow: release
+  objective: Merge all intended Shopify repository work into main and remove only proven-stale branches and worktrees
+  started_at: '2026-08-04T16:49:50Z'
+  finished_at: '2026-08-04T17:05:35Z'
+  status: completed
+  summary: Merged PR 2 to main at c8f667b, verified the live comparison files and full local gate, archived superseded refs
+    and rejected artifacts, and removed all stale local/remote branches and extra worktrees.
+  orchestrator:
+    name: /root
+    role: primary-agent
+    thread_id: null
+  source:
+    working_directory: .
+    branch: codex/independence-client-qa
+    commit: c43d188a8903cca0a0b2b08b5dddb5bb87fee255
+    upstream: origin/codex/independence-client-qa
+    dirty: true
+  environment:
+    platform: Darwin
+    platform_release: 24.6.0
+    architecture: arm64
+    shell: /bin/zsh
+    runtimes:
+      python: 3.9.6
+      node: v24.18.0
+      npm: 11.16.0
+      pnpm: 10.23.0
+      yarn: null
+      bun: 1.3.5
+      ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+  context:
+    skills:
+    - agentic-run-ledger
+    - make-changelog
+    - make-pr
+    - make-release
     command: null
     plan: null
     task_store: null
@@ -1229,3 +1476,927 @@ entries:
         detail: The OS command addressed a Chrome window rather than the bound QA tab.
       workaround: Restored the window and used browser-native and Playwright viewport control.
       suggested_fix: Avoid OS-level window resizing when a tab-scoped browser API is available.
+- id: ARL-0019
+  fingerprint: 99a7a2f63bcca896
+  title: Squash integration initially ran in the wrong worktree
+  scope: agentic-system
+  category: friction
+  layers:
+  - orchestrator
+  - process
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T22:22:43Z'
+  last_observed_at: '2026-07-23T22:22:43Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T22:22:43Z'
+    event: opened
+    detail: First observed in run github-pr-merge-c43d188-2026-07-23.
+  occurrences:
+  - observed_at: '2026-07-23T22:22:43Z'
+    run_id: github-pr-merge-c43d188-2026-07-23
+    reporter:
+      type: orchestrator
+      name: root
+      role: null
+      thread_id: null
+    context:
+      workflow: other
+      phase: integration
+      task: prepare pull request
+      operation: squash merge
+    run_impact: recovered
+    observation:
+      symptom: The first squash integration command ran in the original QA worktree and reported already up to date.
+      expected: The integration command should run in the clean PR worktree.
+      actual: The command omitted an explicit workdir change after the new worktree was created.
+      evidence:
+      - kind: command
+        ref: git merge --squash codex/independence-client-qa
+        detail: The command caused no tracked change and was rerun successfully in /tmp/premier-shopify-pr-c43d188.
+      root_cause:
+        confidence: confirmed
+        detail: The shell command relied on the caller working directory instead of specifying the integration worktree.
+      workaround: Reran the squash integration with the clean worktree as the explicit working directory.
+      suggested_fix: Always assert or set cwd before branch integration commands.
+- id: ARL-0020
+  fingerprint: d8ff6487d2da11d3
+  title: Clean PR worktree resolved an unrelated Playwright CLI before npm ci
+  scope: agentic-system
+  category: friction
+  layers:
+  - process
+  - runtime
+  - tool
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T22:22:44Z'
+  last_observed_at: '2026-07-23T22:22:44Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T22:22:44Z'
+    event: opened
+    detail: First observed in run github-pr-merge-c43d188-2026-07-23.
+  occurrences:
+  - observed_at: '2026-07-23T22:22:44Z'
+    run_id: github-pr-merge-c43d188-2026-07-23
+    reporter:
+      type: orchestrator
+      name: root
+      role: null
+      thread_id: null
+    context:
+      workflow: other
+      phase: verification
+      task: run release gates
+      operation: playwright
+    run_impact: recovered
+    observation:
+      symptom: The first local verification in the clean worktree failed with unknown command test.
+      expected: npm scripts should invoke the repository Playwright test runner.
+      actual: With node_modules absent, the shell resolved a Python-installed playwright executable.
+      evidence:
+      - kind: error
+        ref: npm run verify:local
+        detail: Installing lockfile dependencies with npm ci restored the repository-local @playwright/test binary and all
+          31 tests passed.
+      root_cause:
+        confidence: confirmed
+        detail: The clean worktree had not yet installed repository dependencies.
+      workaround: Ran npm ci before rerunning the full verification gate.
+      suggested_fix: Make dependency installation an explicit clean-worktree preflight.
+- id: ARL-0021
+  fingerprint: a6ae1792ca66045f
+  title: Media gate depended on ignored review files and a developer-local source folder
+  scope: agentic-system
+  category: failure
+  layers:
+  - contract
+  - process
+  - runtime
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T22:22:44Z'
+  last_observed_at: '2026-07-23T22:22:44Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T22:22:44Z'
+    event: opened
+    detail: First observed in run github-pr-merge-c43d188-2026-07-23.
+  occurrences:
+  - observed_at: '2026-07-23T22:22:44Z'
+    run_id: github-pr-merge-c43d188-2026-07-23
+    reporter:
+      type: orchestrator
+      name: root
+      role: null
+      thread_id: null
+    context:
+      workflow: other
+      phase: verification
+      task: verify media
+      operation: media gate
+    run_impact: recovered
+    observation:
+      symptom: Clean-worktree media verification failed because optional rejected review images were ignored and the original
+        Downloads source folder was not portable.
+      expected: Committed production derivatives should be verifiable from a clean clone.
+      actual: The verifier unconditionally required ignored review artifacts and developer-local originals.
+      evidence:
+      - kind: source
+        ref: scripts/verify-indy-media.sh
+        detail: The verifier now skips absent optional rejected images, treats source hashes as optional, and still validates
+          all committed production derivatives including the 100KB WebP ceiling.
+      root_cause:
+        confidence: confirmed
+        detail: The verification contract mixed required production artifacts with local review and provenance inputs.
+      workaround: Separated committed production checks from optional local provenance checks.
+      suggested_fix: Keep clean-clone verification as a required CI fixture.
+- id: ARL-0022
+  fingerprint: 1b51b56d3c41c0de
+  title: Verification conflicts mixed retired checkout behavior with deferred-billing v2
+  scope: agentic-system
+  category: friction
+  layers:
+  - contract
+  - process
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T22:22:45Z'
+  last_observed_at: '2026-07-23T22:22:45Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T22:22:45Z'
+    event: opened
+    detail: First observed in run github-pr-merge-c43d188-2026-07-23.
+  occurrences:
+  - observed_at: '2026-07-23T22:22:45Z'
+    run_id: github-pr-merge-c43d188-2026-07-23
+    reporter:
+      type: subagent
+      name: central_contract_tests
+      role: null
+      thread_id: null
+    context:
+      workflow: other
+      phase: integration
+      task: resolve test conflicts
+      operation: contract reconciliation
+    run_impact: recovered
+    observation:
+      symptom: Test and preview conflicts combined legacy checkout assertions with the new deferred-billing contract.
+      expected: Verification should enforce the final v2 contract consistently.
+      actual: Parallel branches retained assertions for retired consent placement and billing behavior.
+      evidence:
+      - kind: source
+        ref: scripts/audit-goal-coverage.js and visual-preview/preview.spec.js
+        detail: Conflicts were resolved semantically and the final gate passed 1507 assertions plus 31 Playwright tests.
+      root_cause:
+        confidence: confirmed
+        detail: Multiple concurrent branches modified the same central contract surfaces from different snapshots.
+      workaround: Resolved against the approved deferred-billing specification and reran the complete gate.
+      suggested_fix: Freeze one shared contract fixture before parallel edits to central tests.
+- id: ARL-0023
+  fingerprint: 4b6f21fd48d0fe47
+  title: Review contract requested an unavailable task database
+  scope: agentic-system
+  category: friction
+  layers:
+  - contract
+  - database
+  - process
+  - prompt
+  severity: medium
+  max_run_impact: degraded
+  status: open
+  first_observed_at: '2026-07-23T22:22:46Z'
+  last_observed_at: '2026-07-23T22:22:46Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T22:22:46Z'
+    event: opened
+    detail: First observed in run github-pr-merge-c43d188-2026-07-23.
+  occurrences:
+  - observed_at: '2026-07-23T22:22:46Z'
+    run_id: github-pr-merge-c43d188-2026-07-23
+    reporter:
+      type: subagent
+      name: final_code_reviewer
+      role: null
+      thread_id: null
+    context:
+      workflow: other
+      phase: review
+      task: independent code review
+      operation: review contract
+    run_impact: degraded
+    observation:
+      symptom: The code-reviewer role expected an Agentic System Design task database that this repository does not contain.
+      expected: The reviewer should receive a repository-appropriate audit contract.
+      actual: The role contract referenced tasks.db despite this being a focused Shopify release review.
+      evidence:
+      - kind: other
+        ref: final independent code review
+        detail: The reviewer completed a read-only source and test audit and returned a direct verdict after two passes.
+      root_cause:
+        confidence: confirmed
+        detail: A generic reviewer role contract was broader than the repository workflow in use.
+      workaround: Used the reviewer for independent source verification without requiring nonexistent orchestration state.
+      suggested_fix: Use a focused reviewer prompt for repositories without the ASD task database.
+- id: ARL-0024
+  fingerprint: af45920269f2a664
+  title: Markdown backticks in a shell search invoked command substitution
+  scope: agentic-system
+  category: friction
+  layers:
+  - process
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T22:22:46Z'
+  last_observed_at: '2026-07-23T22:22:46Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T22:22:46Z'
+    event: opened
+    detail: First observed in run github-pr-merge-c43d188-2026-07-23.
+  occurrences:
+  - observed_at: '2026-07-23T22:22:46Z'
+    run_id: github-pr-merge-c43d188-2026-07-23
+    reporter:
+      type: orchestrator
+      name: root
+      role: null
+      thread_id: null
+    context:
+      workflow: other
+      phase: review
+      task: inspect documentation
+      operation: text search
+    run_impact: recovered
+    observation:
+      symptom: A repository search emitted zsh command not found because Markdown backticks were placed inside a double-quoted
+        shell command.
+      expected: The search should treat documentation text literally.
+      actual: The shell evaluated the backtick-delimited text as command substitution.
+      evidence:
+      - kind: error
+        ref: repository documentation search
+        detail: The search was rerun with safe quoting and no sensitive value was exposed.
+      root_cause:
+        confidence: confirmed
+        detail: Unsafe shell quoting around Markdown content.
+      workaround: Used single-quoted fixed strings for the repeated search.
+      suggested_fix: Pass literal search patterns with single quotes or argument arrays.
+- id: ARL-0025
+  fingerprint: 1252139feda28e04
+  title: Browser viewport override stopped applying to an existing storefront tab
+  scope: agentic-system
+  category: friction
+  layers:
+  - runtime
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T23:04:33Z'
+  last_observed_at: '2026-07-23T23:04:33Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T23:04:33Z'
+    event: opened
+    detail: First observed in run shopify-live-theme-deploy-0973bce-2026-07-23.
+  occurrences:
+  - observed_at: '2026-07-23T23:04:33Z'
+    run_id: shopify-live-theme-deploy-0973bce-2026-07-23
+    reporter:
+      type: orchestrator
+      name: root
+      role: null
+      thread_id: null
+    context:
+      workflow: deploy-verify
+      phase: live verification
+      task: responsive storefront verification
+      operation: browser viewport
+    run_impact: recovered
+    observation:
+      symptom: After the mobile QA pass, setting a desktop viewport on the existing tab continued to report a 390 by 844 viewport.
+      expected: The existing tab should adopt the requested 1440 by 900 responsive-test viewport.
+      actual: The tab retained the mobile dimensions even after reset, set, and reload.
+      evidence:
+      - kind: log
+        ref: Chrome viewport verification metrics
+        detail: A newly created tab opened at a desktop viewport of 1566 by 1139 and confirmed the live desktop layout with
+          no horizontal overflow.
+      root_cause:
+        confidence: suspected
+        detail: The Chrome extension-backed viewport override remained bound to the existing tab state.
+      workaround: Opened a fresh tab after the viewport reset and performed the desktop live verification there.
+      suggested_fix: Make viewport capability behavior explicit for existing versus newly created Chrome tabs.
+- id: ARL-0026
+  fingerprint: 544d531155c691ae
+  title: Browser page sandbox could not read Shopify cart JSON
+  scope: agentic-system
+  category: friction
+  layers:
+  - runtime
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T23:04:33Z'
+  last_observed_at: '2026-07-23T23:04:33Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T23:04:33Z'
+    event: opened
+    detail: First observed in run shopify-live-theme-deploy-0973bce-2026-07-23.
+  occurrences:
+  - observed_at: '2026-07-23T23:04:33Z'
+    run_id: shopify-live-theme-deploy-0973bce-2026-07-23
+    reporter:
+      type: orchestrator
+      name: root
+      role: null
+      thread_id: null
+    context:
+      workflow: deploy-verify
+      phase: QA verification
+      task: cart pricing verification
+      operation: browser read
+    run_impact: recovered
+    observation:
+      symptom: The page evaluation sandbox did not expose fetch and direct navigation to cart.js was blocked by the browser
+        client.
+      expected: A read-only cart JSON request should expose underlying line prices for the smoke-test cart.
+      actual: The fetch call returned fetch is not a function and the direct endpoint navigation returned a client block.
+      evidence:
+      - kind: error
+        ref: QA cart pricing verification
+        detail: Rendered cart proof showed the correct due-today and future totals; the Shopify Admin read-only audit independently
+          confirmed all seven billing variants are zero-dollar, non-shipping, and non-taxable.
+      root_cause:
+        confidence: confirmed
+        detail: The browser-control page sandbox and client navigation policy restrict this JSON retrieval path.
+      workaround: Combined rendered cart DOM verification with the repository Admin GraphQL audit using the existing Shopify
+        CLI session.
+      suggested_fix: Provide a supported same-session GET helper for read-only JSON endpoints.
+- id: ARL-0027
+  fingerprint: 632e2018e3009653
+  title: Homepage scenario cards rendered one repeated image
+  scope: product-under-test
+  category: quality-reduction
+  layers:
+  - ui
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-23T23:34:35Z'
+  last_observed_at: '2026-07-23T23:34:35Z'
+  occurrence_count: 1
+  tags:
+  - homepage
+  - scenario-images
+  - shopify
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-23T23:34:35Z'
+    event: opened
+    detail: First observed in run 2026-07-23-homepage-scenario-image-audit.
+  occurrences:
+  - observed_at: '2026-07-23T23:34:35Z'
+    run_id: 2026-07-23-homepage-scenario-image-audit
+    reporter:
+      type: main-agent
+      name: root
+      role: orchestrator
+      thread_id: null
+    context:
+      workflow: test
+      phase: verification
+      task: homepage-scenario-images
+      operation: deploy-and-verify
+    run_impact: recovered
+    observation:
+      symptom: Bus days, Home-alone minutes, Grandparents, and Before the smartphone displayed the same flag-and-phone image.
+      expected: Each scenario card should use its approved, scenario-specific image.
+      actual: The storefront visibly repeated one image across all four scenario cards.
+      evidence:
+      - kind: screenshot
+        ref: <external-path>/1-Photo-1.jpg
+        detail: The provided mobile storefront screenshot shows the flag-and-phone treatment repeated on Bus days, Home-alone
+          minutes, and Grandparents.
+      root_cause:
+        confidence: suspected
+        detail: The deployed section appears to have resolved each card through the same fallback asset instead of a per-card
+          mapping.
+      workaround: Mapped each block position to a dedicated WebP asset and deployed the five-file allowlist to live theme
+        151553245253.
+      suggested_fix: Keep the per-card fallback mapping and add a visual regression assertion that the four resolved asset
+        URLs are unique.
+- id: ARL-0028
+  fingerprint: ef02c45f2ce356c0
+  title: Scenario images failed literal scene requirements
+  scope: product-under-test
+  category: quality-reduction
+  layers:
+  - ui
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-24T01:24:39Z'
+  last_observed_at: '2026-07-24T01:24:39Z'
+  occurrence_count: 1
+  tags:
+  - homepage
+  - scenario-images
+  - shopify
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-24T01:24:39Z'
+    event: opened
+    detail: First observed in run 2026-07-23-scenario-image-quality-rollback.
+  occurrences:
+  - observed_at: '2026-07-24T01:24:39Z'
+    run_id: 2026-07-23-scenario-image-quality-rollback
+    reporter:
+      type: main-agent
+      name: root
+      role: orchestrator
+      thread_id: null
+    context:
+      workflow: test
+      phase: verification
+      task: scenario-image-rollback
+      operation: deploy-and-verify
+    run_impact: recovered
+    observation:
+      symptom: The Bus days card showed a child holding two devices and the Grandparents card contained no grandparent in
+        the scene.
+      expected: Bus days should show one Independence Phone with a clearly readable bus context; Grandparents should visibly
+        include an actual grandparent.
+      actual: The bus was only a soft background prop while a second smartphone-like device dominated the scene, and Grandparents
+        relied on a framed photograph.
+      evidence:
+      - kind: artifact
+        ref: creative/scenario-images-2026-07-23/deliverables
+        detail: Full-resolution inspection of bus-days.webp and grandparents.webp confirmed the semantic and object-count
+          failures.
+      root_cause:
+        confidence: confirmed
+        detail: The generated candidates did not satisfy literal scene and object-count acceptance criteria.
+      workaround: Replaced the two failed live assets with clear temporary WebP scenes showing one phone plus a bus, and an
+        actual grandparent with a child.
+      suggested_fix: Require full-resolution object-count, scene-subject, and final-card-crop review before any lifestyle
+        image can be published.
+- id: ARL-0029
+  fingerprint: d16d234fa70697e3
+  title: Known failed image candidates were published
+  scope: agentic-system
+  category: quality-reduction
+  layers:
+  - agent
+  - process
+  severity: high
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-24T01:24:40Z'
+  last_observed_at: '2026-07-24T01:24:40Z'
+  occurrence_count: 1
+  tags:
+  - agent-quality
+  - review-gate
+  - shopify
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-24T01:24:40Z'
+    event: opened
+    detail: First observed in run 2026-07-23-scenario-image-quality-rollback.
+  occurrences:
+  - observed_at: '2026-07-24T01:24:40Z'
+    run_id: 2026-07-23-scenario-image-quality-rollback
+    reporter:
+      type: main-agent
+      name: root
+      role: orchestrator
+      thread_id: null
+    context:
+      workflow: test
+      phase: verification
+      task: scenario-image-rollback
+      operation: deploy-and-verify
+    run_impact: recovered
+    observation:
+      symptom: Images explicitly marked strict-gate Fail and not for automatic theme replacement were uploaded to the live
+        theme.
+      expected: The generation report acceptance gate should block deployment until the files pass full-resolution and card-crop
+        review.
+      actual: A small card-layout preview was treated as sufficient after user selection, overriding the recorded strict-gate
+        failures.
+      evidence:
+      - kind: source
+        ref: creative/scenario-images-2026-07-23/RESULTS.md
+        detail: The report states that all four scenes failed strict acceptance and recommends not uploading them automatically.
+      root_cause:
+        confidence: confirmed
+        detail: The deployment decision failed to honor the existing review gate and relied on layout-only verification.
+      workaround: Rolled back the two visibly failed assets and verified the replacement mobile card crop live.
+      suggested_fix: Make failed generation status a hard pre-deploy check and require explicit artifact-level approval for
+        each image, not a contact-sheet impression.
+- id: ARL-0030
+  fingerprint: b62c866315cb0fa3
+  title: Unquoted optional FFmpeg map caused a partial media pipeline
+  scope: agentic-system
+  category: failure
+  layers:
+  - process
+  - tool
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-24T16:18:37Z'
+  last_observed_at: '2026-07-24T16:18:37Z'
+  occurrence_count: 1
+  tags:
+  - ffmpeg
+  - video
+  - zsh
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-24T16:18:37Z'
+    event: opened
+    detail: First observed in run 2026-07-24-responsive-hero-video.
+  occurrences:
+  - observed_at: '2026-07-24T16:18:37Z'
+    run_id: 2026-07-24-responsive-hero-video
+    reporter:
+      type: main-agent
+      name: root
+      role: orchestrator
+      thread_id: null
+    context:
+      workflow: test
+      phase: implementation
+      task: responsive-hero-video
+      operation: encode
+    run_impact: recovered
+    observation:
+      symptom: The shell expanded the optional audio map selector before FFmpeg ran, and later newline-separated commands
+        still generated a poster against the unchanged desktop video.
+      expected: The encode should fail closed or produce both the new MP4 and poster as one verified unit.
+      actual: zsh reported no matches for 0:a:0?, the video remained old, and the poster changed before checksum verification
+        caught the mismatch.
+      evidence:
+      - kind: error
+        ref: interactive encode output
+        detail: zsh emitted no matches found for 0:a:0?; ffprobe then showed the old 4,659,057-byte desktop video.
+      root_cause:
+        confidence: confirmed
+        detail: The optional stream selector was unquoted and the multi-command shell did not use fail-fast behavior.
+      workaround: Reran FFmpeg with the confirmed audio stream selected explicitly, then validated dimensions, audio, duration,
+        fast-start offsets, and SHA-256.
+      suggested_fix: Quote optional FFmpeg map selectors and run media pipelines with fail-fast semantics plus a required
+        output checksum change.
+- id: ARL-0031
+  fingerprint: e5676aa6313a1c6a
+  title: Walkthrough verifier rejects intentional website audio
+  scope: agentic-system
+  category: friction
+  layers:
+  - skill
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-24T16:18:37Z'
+  last_observed_at: '2026-07-24T16:18:37Z'
+  occurrence_count: 1
+  tags:
+  - skill
+  - verification
+  - video
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-24T16:18:37Z'
+    event: opened
+    detail: First observed in run 2026-07-24-responsive-hero-video.
+  occurrences:
+  - observed_at: '2026-07-24T16:18:37Z'
+    run_id: 2026-07-24-responsive-hero-video
+    reporter:
+      type: main-agent
+      name: root
+      role: orchestrator
+      thread_id: null
+    context:
+      workflow: test
+      phase: verification
+      task: responsive-hero-video
+      operation: media-verify
+    run_impact: recovered
+    observation:
+      symptom: The packaged video verifier failed both hero assets solely because they intentionally contain audio.
+      expected: A website-video verifier should support an explicit audio-required mode for interactive sound playback.
+      actual: verify_walkthrough.py hard-fails every MP4 containing audio because it is tailored to silent autoplay walkthroughs.
+      evidence:
+      - kind: test
+        ref: ~/.codex/skills/video-walkthrough/scripts/verify_walkthrough.py
+        detail: 'Both desktop and mobile checks returned FAIL: web walkthrough must not contain audio.'
+      root_cause:
+        confidence: confirmed
+        detail: The verifier encodes the skill default for silent walkthrough media and exposes no audio-required option.
+      workaround: Used ffprobe, fast-start offset checks, live currentSrc/playback checks, and real sound-toggle verification.
+      suggested_fix: Add an explicit verifier mode that requires AAC audio while retaining muted autoplay and user-initiated
+        unmute checks.
+- id: ARL-0032
+  fingerprint: 53d93ea9f7bb659e
+  title: Chrome tab claim returned an unrelated tab
+  scope: agentic-system
+  category: failure
+  layers:
+  - tool
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-07-24T16:18:38Z'
+  last_observed_at: '2026-07-24T16:18:38Z'
+  occurrence_count: 1
+  tags:
+  - browser
+  - chrome
+  - tab-claim
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-24T16:18:38Z'
+    event: opened
+    detail: First observed in run 2026-07-24-responsive-hero-video.
+  occurrences:
+  - observed_at: '2026-07-24T16:18:38Z'
+    run_id: 2026-07-24-responsive-hero-video
+    reporter:
+      type: main-agent
+      name: root
+      role: orchestrator
+      thread_id: null
+    context:
+      workflow: test
+      phase: verification
+      task: responsive-hero-video
+      operation: browser-verify
+    run_impact: recovered
+    observation:
+      symptom: Claiming the exact storefront object returned by openTabs produced a controllable tab for an unrelated MCP
+        Scraper page.
+      expected: claimTab should bind the exact listed tab object or fail closed.
+      actual: The returned tab URL was https://mcpscraper.dev/dashboard/integrations rather than the listed Shopify storefront
+        URL.
+      evidence:
+      - kind: log
+        ref: browser control output
+        detail: openTabs listed the storefront first, but the claimed tab reported the MCP Scraper integrations URL and DOM.
+      root_cause:
+        confidence: unknown
+        detail: The tab handoff identity mismatch was directly observed, but the provider-side cause is unknown.
+      workaround: Stopped using the claimed tab and opened a clean agent-created storefront tab for verification.
+      suggested_fix: Validate claimed provider tab identity against the requested title and URL before returning control.
+- id: ARL-0033
+  fingerprint: 76c3bccfde5bee2f
+  title: Commit authorship policy blocks PR publication
+  scope: agentic-system
+  category: friction
+  layers:
+  - process
+  severity: medium
+  max_run_impact: degraded
+  status: open
+  first_observed_at: '2026-07-24T16:18:39Z'
+  last_observed_at: '2026-07-24T16:18:39Z'
+  occurrence_count: 1
+  tags:
+  - authorship
+  - git
+  - pr
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-07-24T16:18:39Z'
+    event: opened
+    detail: First observed in run 2026-07-24-responsive-hero-video.
+  occurrences:
+  - observed_at: '2026-07-24T16:18:39Z'
+    run_id: 2026-07-24-responsive-hero-video
+    reporter:
+      type: main-agent
+      name: root
+      role: orchestrator
+      thread_id: null
+    context:
+      workflow: test
+      phase: delivery
+      task: responsive-hero-video
+      operation: pr-preflight
+    run_impact: degraded
+    observation:
+      symptom: The three branch commits cannot be published through the required PR workflow under the active authorship policy.
+      expected: Every PR-range commit should be authored and committed as Andrew Sterling Ansley.
+      actual: The branch commits are authored and committed as ViloVietaSEO.
+      evidence:
+      - kind: command
+        ref: git log origin/main..HEAD --format=%h|%an|%cn|%s
+        detail: Commits 577b869, e8e28f4, and 4c1f3e8 show ViloVietaSEO for both author and committer.
+      root_cause:
+        confidence: confirmed
+        detail: The commits used the repository-configured identity instead of the command-scoped identity required by make-pr.
+      workaround: Kept the verified changes on the pushed feature branch and withheld PR creation and merge.
+      suggested_fix: After explicit approval to replace history, recreate the coherent branch diff in a correctly attributed
+        commit and publish the PR.
+- id: ARL-0034
+  fingerprint: aaf19ab181bbef71
+  title: Temporary recovery setup used a policy-rejected removal command
+  scope: agentic-system
+  category: friction
+  layers:
+  - orchestrator
+  - process
+  - tool
+  severity: low
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-08-04T17:05:11Z'
+  last_observed_at: '2026-08-04T17:05:11Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-08-04T17:05:11Z'
+    event: opened
+    detail: First observed in run 2026-08-04-shopify-branch-consolidation.
+  occurrences:
+  - observed_at: '2026-08-04T17:05:11Z'
+    run_id: 2026-08-04-shopify-branch-consolidation
+    reporter:
+      type: orchestrator
+      name: root
+      role: primary-agent
+      thread_id: null
+    context:
+      workflow: release
+      phase: inventory
+      task: null
+      operation: recover-live-theme
+    run_impact: recovered
+    observation:
+      symptom: The first live-theme recovery command was rejected before Shopify CLI ran.
+      expected: Temporary recovery should use a fresh path without destructive cleanup.
+      actual: The command prefixed theme pull with rm -rf on a fixed temporary path, which command policy rejected.
+      evidence:
+      - kind: error
+        ref: 'run transcript: initial live-theme recovery attempt'
+        detail: exec_command rejected the command because rm -f style commands are not permitted.
+      root_cause:
+        confidence: confirmed
+        detail: The orchestrator selected a destructive fixed-path cleanup pattern instead of a unique temporary directory.
+      workaround: Retried with a new unique directory and no removal command.
+      suggested_fix: Default recovery workflows to unique mktemp-style paths and never pre-clean them with rm.
+- id: ARL-0035
+  fingerprint: 56d1188a75eeac11
+  title: Shell interpolation executed Markdown code spans while creating the pull request
+  scope: agentic-system
+  category: inefficiency
+  layers:
+  - orchestrator
+  - process
+  - tool
+  severity: medium
+  max_run_impact: recovered
+  status: open
+  first_observed_at: '2026-08-04T17:05:12Z'
+  last_observed_at: '2026-08-04T17:05:12Z'
+  occurrence_count: 1
+  tags: []
+  resolution:
+    resolved_at: null
+    summary: null
+    verified_by: []
+    graduated_to: null
+  history:
+  - at: '2026-08-04T17:05:12Z'
+    event: opened
+    detail: First observed in run 2026-08-04-shopify-branch-consolidation.
+  occurrences:
+  - observed_at: '2026-08-04T17:05:12Z'
+    run_id: 2026-08-04-shopify-branch-consolidation
+    reporter:
+      type: orchestrator
+      name: root
+      role: primary-agent
+      thread_id: null
+    context:
+      workflow: release
+      phase: pull-request
+      task: null
+      operation: create-pr
+    run_impact: recovered
+    observation:
+      symptom: Creating PR 2 reran the full verification command and inserted its output into the PR body.
+      expected: The PR body should be passed to GitHub literally without shell evaluation.
+      actual: Markdown backticks were interpolated inside a shell command, triggering command substitution and producing a
+        polluted PR description.
+      evidence:
+      - kind: artifact
+        ref: https://github.com/VilovietaSEO/premier-shopify/pull/2
+        detail: The initial PR body contained the full verify-local output in place of the intended inline code; gh pr edit
+          then replaced it with the correct concise body.
+      root_cause:
+        confidence: confirmed
+        detail: The orchestrator embedded a Markdown body containing backticks directly into a shell command string.
+      workaround: Replaced the PR body using a temporary file created through apply_patch and gh pr edit --body-file.
+      suggested_fix: Always pass rich PR bodies through a body file or a structured API payload; never interpolate Markdown
+        into shell command arguments.
