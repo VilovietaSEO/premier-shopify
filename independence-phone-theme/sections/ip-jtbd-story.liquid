@@ -31,15 +31,13 @@
         {% liquid
           case forloop.index
             when 1
-              assign fallback_card_bg = 'ip-story-bus-days.png' | asset_url
+              assign fallback_card_bg = 'ip-story-bus-days.webp' | asset_url
             when 2
-              assign fallback_card_bg = 'ip-story-home-alone.png' | asset_url
+              assign fallback_card_bg = 'ip-story-home-alone.webp' | asset_url
             when 3
-              assign fallback_card_bg = 'ip-story-grandparents.png' | asset_url
-            when 4
-              assign fallback_card_bg = 'ip-story-before-smartphone.png' | asset_url
+              assign fallback_card_bg = 'ip-story-grandparents.webp' | asset_url
             else
-              assign fallback_card_bg = 'ip-story-bus-days.png' | asset_url
+              assign fallback_card_bg = 'ip-story-before-smartphone.webp' | asset_url
           endcase
 
           assign card_bg = fallback_card_bg
