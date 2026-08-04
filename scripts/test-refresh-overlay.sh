@@ -297,6 +297,38 @@ for retired_phrase in \
   fi
 done
 
+comparison_trigger_count="$(grep -c 'data-phone-comparison-open' "$tmp_theme/snippets/ip-order-builder-form.liquid" || true)"
+if [ "$comparison_trigger_count" -ne 1 ]; then
+  echo "Expected one phone comparison control, found $comparison_trigger_count" >&2
+  exit 1
+fi
+
+for phrase in \
+  'Compare Classic and Rugged phones' \
+  'data-phone-comparison-dialog' \
+  '<th scope="row">Waterproof</th>' \
+  '<th scope="row">Drop proof</th>'; do
+  if ! grep -Fq "$phrase" "$tmp_theme/snippets/ip-order-builder-form.liquid"; then
+    echo "Overlay smoke test is missing phone comparison content: $phrase" >&2
+    exit 1
+  fi
+done
+
+if grep -Fq 'data-phone-description-link' "$tmp_theme/snippets/ip-order-builder-form.liquid"; then
+  echo "Overlay smoke test still contains the retired per-phone description links" >&2
+  exit 1
+fi
+
+for phrase in \
+  'data-phone-comparison-open' \
+  "typeof dialog.showModal === 'function'" \
+  'data-phone-comparison-close'; do
+  if ! grep -Fq "$phrase" "$tmp_theme/assets/ip-cart.js"; then
+    echo "Overlay smoke test is missing phone comparison behavior: $phrase" >&2
+    exit 1
+  fi
+done
+
 for phrase in \
   'Your Independence Phone Cart' \
   "approved_phone_asset = 'ip-story-before-smartphone.webp'" \

@@ -1285,12 +1285,15 @@ assertFileIncludes('independence-phone-theme/snippets/ip-order-builder-form.liqu
   'aria-label="Rotating view of the Rugged Phone"',
   'alt="Full front view of the Classic Phone"',
   'alt="Full front view of the Rugged Phone"',
-  '/pages/faq#phone-comparison',
-], 'Shared Order Now builder front images, rotating media, and description links');
+  'data-phone-comparison-open',
+  'data-phone-comparison-dialog',
+  'Compare Classic and Rugged phones',
+], 'Shared Order Now builder front images, rotating media, and comparison dialog');
 assertFileExcludes('independence-phone-theme/snippets/ip-order-builder-form.liquid', [
   'ip-classic-phone-buttons.webp',
   'ip-rugged-phone-buttons.webp',
-], 'Shared Order Now builder excludes cropped selector imagery');
+  'data-phone-description-link',
+], 'Shared Order Now builder excludes cropped selector imagery and retired description links');
 assertFileMatches(
   'independence-phone-theme/assets/ip-theme.css',
   /\.ip-order-card__phone-media img,\s*\.ip-order-card__phone-media video\s*\{[^}]*clip-path:\s*none;[^}]*object-fit:\s*cover;[^}]*transform:\s*none;[^}]*\}/,

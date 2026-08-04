@@ -56,10 +56,7 @@
           <span>
             <strong>Classic Phone</strong>
             <small>$100 one-time</small>
-            <em>
-              Wi-Fi, Bluetooth, encrypted data transmission and storage, 9-hour talk time.
-              <a href="/pages/faq#phone-comparison" data-phone-description-link>Click here for a description of the phone.</a>
-            </em>
+            <em>Wi-Fi, Bluetooth, encrypted data transmission and storage, 9-hour talk time.</em>
           </span>
           <div class="ip-order-card__phone-media ip-order-card__phone-media--classic">
             <video
@@ -94,10 +91,7 @@
           <span>
             <strong>Rugged Phone</strong>
             <small>$150 one-time</small>
-            <em>
-              Wi-Fi, Bluetooth, encrypted data transmission and storage, 9-hour talk time, waterproof, drop proof.
-              <a href="/pages/faq#phone-comparison" data-phone-description-link>Click here for a description of the phone.</a>
-            </em>
+            <em>Wi-Fi, Bluetooth, encrypted data transmission and storage, 9-hour talk time, waterproof, drop proof.</em>
           </span>
           <div class="ip-order-card__phone-media ip-order-card__phone-media--rugged">
             <video
@@ -117,7 +111,109 @@
           </div>
         </label>
       </div>
+      <div class="ip-phone-comparison__trigger-wrap">
+        <button
+          class="ip-phone-comparison__trigger"
+          type="button"
+          data-phone-comparison-open
+          aria-haspopup="dialog"
+          aria-controls="PhoneComparison-{{ builder_id }}"
+        >
+          <span>Compare Classic and Rugged phones</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M8 7h11M8 12h11M8 17h11M3.5 7h.01M3.5 12h.01M3.5 17h.01"/>
+          </svg>
+        </button>
+      </div>
     </fieldset>
+
+    <dialog
+      class="ip-phone-comparison"
+      id="PhoneComparison-{{ builder_id }}"
+      data-phone-comparison-dialog
+      aria-labelledby="PhoneComparisonTitle-{{ builder_id }}"
+      scroll-lock
+    >
+      <div class="ip-phone-comparison__panel">
+        <header class="ip-phone-comparison__header">
+          <div>
+            <p class="ip-phone-comparison__eyebrow">Phone comparison</p>
+            <h2 id="PhoneComparisonTitle-{{ builder_id }}">Compare Classic and Rugged phones</h2>
+          </div>
+          <button
+            class="ip-phone-comparison__close"
+            type="button"
+            data-phone-comparison-close
+            aria-label="Close phone comparison"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="m6 6 12 12M18 6 6 18"/>
+            </svg>
+          </button>
+        </header>
+
+        <div class="ip-phone-comparison__table-wrap">
+          <table>
+            <caption class="ip-visually-hidden">Classic Phone and Rugged Phone feature comparison</caption>
+            <thead>
+              <tr>
+                <th scope="col">Feature</th>
+                <th scope="col">
+                  <span class="ip-phone-comparison__phone">
+                    <strong>Classic Phone</strong>
+                    <small>$100 one-time</small>
+                  </span>
+                </th>
+                <th scope="col">
+                  <span class="ip-phone-comparison__phone">
+                    <strong>Rugged Phone</strong>
+                    <small>$150 one-time</small>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Wi-Fi</th>
+                <td><span class="ip-phone-comparison__included"><span aria-hidden="true">✓</span> Included</span></td>
+                <td><span class="ip-phone-comparison__included"><span aria-hidden="true">✓</span> Included</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Bluetooth</th>
+                <td><span class="ip-phone-comparison__included"><span aria-hidden="true">✓</span> Included</span></td>
+                <td><span class="ip-phone-comparison__included"><span aria-hidden="true">✓</span> Included</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Encrypted data transmission and storage</th>
+                <td><span class="ip-phone-comparison__included"><span aria-hidden="true">✓</span> Included</span></td>
+                <td><span class="ip-phone-comparison__included"><span aria-hidden="true">✓</span> Included</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Talk time</th>
+                <td>Up to 9 hours</td>
+                <td>Up to 9 hours</td>
+              </tr>
+              <tr>
+                <th scope="row">Waterproof</th>
+                <td><span class="ip-phone-comparison__not-included" aria-label="Not included">—</span></td>
+                <td><span class="ip-phone-comparison__included"><span aria-hidden="true">✓</span> Included</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Drop proof</th>
+                <td><span class="ip-phone-comparison__not-included" aria-label="Not included">—</span></td>
+                <td><span class="ip-phone-comparison__included"><span aria-hidden="true">✓</span> Included</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="ip-phone-comparison__footer">
+          <button class="ip-button ip-button--secondary" type="button" data-phone-comparison-close>
+            Close comparison
+          </button>
+        </div>
+      </div>
+    </dialog>
 
     <fieldset class="ip-choice-group ip-order-builder__step ip-order-builder__step--service">
       <legend class="ip-order-builder__section-title">

@@ -7,6 +7,7 @@
   const endpoint = (path) => `${shopRoot}${path.replace(/^\//, '')}`;
   const previewStorageKey = 'ipPreviewCart';
   let cartMutationVersion = 0;
+  let phoneComparisonOpener = null;
   const previewCart = {
     currency: 'USD',
     imageAlt: 'Classic Phone',
@@ -1104,7 +1105,59 @@
   syncHeroMotionPreference();
   heroReducedMotion.addEventListener?.('change', syncHeroMotionPreference);
 
+  const restorePhoneComparisonFocus = () => {
+    if (phoneComparisonOpener?.isConnected) phoneComparisonOpener.focus();
+    phoneComparisonOpener = null;
+  };
+
+  document.addEventListener('close', (event) => {
+    if (!event.target.matches?.('[data-phone-comparison-dialog]')) return;
+    restorePhoneComparisonFocus();
+  }, true);
+
   document.addEventListener('click', (event) => {
+    const comparisonOpen = event.target.closest('[data-phone-comparison-open]');
+    if (comparisonOpen) {
+      event.preventDefault();
+      const dialogId = comparisonOpen.getAttribute('aria-controls');
+      const dialog = dialogId ? document.getElementById(dialogId) : null;
+      if (!dialog) return;
+      phoneComparisonOpener = comparisonOpen;
+      if (typeof dialog.showModal === 'function') {
+        dialog.showModal();
+      } else {
+        dialog.setAttribute('open', '');
+      }
+      return;
+    }
+
+    const comparisonClose = event.target.closest('[data-phone-comparison-close]');
+    if (comparisonClose) {
+      event.preventDefault();
+      const dialog = comparisonClose.closest('[data-phone-comparison-dialog]');
+      if (!dialog) return;
+      if (typeof dialog.close === 'function') {
+        dialog.close();
+      } else {
+        dialog.removeAttribute('open');
+        restorePhoneComparisonFocus();
+      }
+      return;
+    }
+
+    const comparisonBackdrop = event.target.closest('[data-phone-comparison-dialog][open]');
+    if (comparisonBackdrop && event.target === comparisonBackdrop) {
+      const bounds = comparisonBackdrop.getBoundingClientRect();
+      const outsideDialog = (
+        event.clientX < bounds.left ||
+        event.clientX > bounds.right ||
+        event.clientY < bounds.top ||
+        event.clientY > bounds.bottom
+      );
+      if (outsideDialog && typeof comparisonBackdrop.close === 'function') comparisonBackdrop.close();
+      return;
+    }
+
     const soundButton = event.target.closest('[data-hero-sound-toggle]');
     if (soundButton) {
       const hero = soundButton.closest('[data-hero-video]');
