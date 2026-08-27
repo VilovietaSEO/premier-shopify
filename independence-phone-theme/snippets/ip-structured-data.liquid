@@ -1,8 +1,8 @@
 {%- liquid
-  assign organization_name = settings.ip_brand_name | default: 'Independence Phone'
+  assign organization_name = settings.ip_brand_name | default: 'INDEPENDENCE PHONE'
   assign organization_url = request.origin | append: routes.root_url
   assign organization_logo = 'ip-current-site-logo.png' | asset_url | prepend: 'https:'
-  assign organization_description = shop.description | default: 'Independence Phone helps families give kids a phone without apps, browsers, social feeds, or the open internet.'
+  assign organization_description = shop.description | default: 'INDEPENDENCE PHONE helps families give kids a phone without apps, browsers, social feeds, or the open internet.'
 -%}
 
 <script type="application/ld+json">

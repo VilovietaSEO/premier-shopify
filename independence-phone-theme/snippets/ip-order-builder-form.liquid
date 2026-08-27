@@ -235,7 +235,7 @@
             checked
           >
           <span>
-            <strong>Monthly service</strong>
+            <strong>Monthly service <em style="font-weight: 400;">(free long distance)</em></strong>
             <small>$17.76/mo</small>
             <em>Personal phone number and monthly service.</em>
           </span>
@@ -256,7 +256,7 @@
             data-first-bill-rule="first_day_of_next_month"
           >
           <span>
-            <strong>Annual service</strong>
+            <strong>Annual service <em style="font-weight: 400;">(free long distance)</em></strong>
             <small>$200/yr</small>
             <em>Saves $13.12 compared with 12 monthly payments.</em>
           </span>
@@ -330,7 +330,22 @@
     </fieldset>
 
     <div class="ip-order-builder__referral">
-      <label for="OrderReferral-{{ builder_id }}">Discount/referral code</label>
+      <label for="OrderAreaCode-{{ builder_id }}">What area code do you want INDEPENDENCE PHONE to have?</label>
+      <input
+        id="OrderAreaCode-{{ builder_id }}"
+        type="text"
+        name="properties[Requested area code]"
+        inputmode="numeric"
+        pattern="[0-9]{3}"
+        minlength="3"
+        maxlength="3"
+        autocomplete="tel-area-code"
+        required
+      >
+    </div>
+
+    <div class="ip-order-builder__referral">
+      <label for="OrderReferral-{{ builder_id }}">Discount/referral/customer ID</label>
       <input
         id="OrderReferral-{{ builder_id }}"
         type="text"

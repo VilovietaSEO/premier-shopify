@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -7,7 +16,7 @@
           "type": "faq",
           "settings": {
             "question": "How do I install the phone?",
-            "answer": "<p>Place the cordless Wi-Fi handset on its charging base, connect it to the home Wi-Fi setup provided after purchase, and follow the activation steps from the Independence Phone team.</p>",
+            "answer": "<p>Place the cordless Wi-Fi handset on its charging base, connect the Wi-Fi handset to the home Wi-Fi network, and your phone is ready to be used!</p>",
             "anchor_id": "installation"
           }
         },
@@ -15,7 +24,7 @@
           "type": "faq",
           "settings": {
             "question": "How does my family use it?",
-            "answer": "<p>The phone is designed around calling. It does not include apps, a web browser, social feeds, GPS, camera, or cellular mobility unless the product scope changes.</p>",
+            "answer": "<p>For inbound calls, just press the green answer button and begin talking.</p><p>For outbound calls, simply dial the number you wish to call and press the green button.</p>",
             "anchor_id": "using-the-phone"
           }
         },
@@ -31,7 +40,7 @@
           "type": "faq",
           "settings": {
             "question": "Where do I go for troubleshooting?",
-            "answer": "<p>Use the contact page for setup, service, billing, or phone troubleshooting. The team can expand this page with step-by-step support articles after launch.</p>",
+            "answer": "<p>Most issues can be fixed by turning the phone off for 1 minute and turning it back on. Please hold down the red \"end call\" button for 5 seconds to turn the phone off, then after 1 minute has passed, hold down the red \"end call\" button for 5 seconds to turn the phone back on. If that does not fix your issue, please use the <a href=\"/pages/contact\">Contact Us page</a>, email <a href=\"mailto:tech@independencephone.com\">tech@independencephone.com</a>, or call us at <a href=\"tel:+16157041776\">(615) 704-1776</a>.</p>",
             "anchor_id": "troubleshooting"
           }
         },
@@ -39,7 +48,7 @@
           "type": "faq",
           "settings": {
             "question": "Does it have internet?",
-            "answer": "<p>No. Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>",
+            "answer": "<p>No. INDEPENDENCE PHONE is positioned as a phone-first product without web browsing, apps, or social feeds.</p>",
             "anchor_id": "internet"
           }
         },

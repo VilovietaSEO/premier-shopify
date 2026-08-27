@@ -7,7 +7,7 @@
 
 <section class="ip-cart">
   <div class="ip-stack ip-cart__header">
-    <h1 class="ip-heading ip-heading--medium">Your Independence Phone Cart</h1>
+    <h1 class="ip-heading ip-heading--medium">Your INDEPENDENCE PHONE Cart</h1>
     <p class="ip-note">Review your phone, service choices, and add-ons before checkout.</p>
   </div>
 
@@ -157,7 +157,7 @@
               {% if property_value == blank or first_character == '_' or property_name == 'Policy agreement' %}
                 {% assign show_property = false %}
               {% endif %}
-              {% if setup_id != blank and property_name != 'Discount/referral code' and property_name != 'Referral' %}
+              {% if setup_id != blank and property_name != 'Requested area code' and property_name != 'Discount/referral code' and property_name != 'Referral' %}
                 {% assign show_property = false %}
               {% endif %}
               {% if show_property %}
@@ -167,7 +167,7 @@
 
             {% assign approved_phone_asset = '' %}
             {% if item.product.handle == 'standard-phone' %}
-              {% assign approved_phone_asset = 'ip-story-before-smartphone.webp' %}
+              {% assign approved_phone_asset = 'ip-classic-phone-front.webp' %}
             {% elsif item.product.handle == 'rugged-phone' %}
               {% assign approved_phone_asset = 'ip-rugged-phone-front.webp' %}
             {% endif %}
@@ -189,8 +189,8 @@
                     <img
                       src="{{ approved_phone_asset | asset_url }}"
                       alt="Front view of the {{ item.product.title | escape }}"
-                      width="800"
-                      height="640"
+                      width="1600"
+                      height="1280"
                       loading="eager"
                     >
                   </a>
@@ -233,7 +233,7 @@
                       {% if property_value == blank or first_character == '_' or property_name == 'Policy agreement' %}
                         {% assign show_property = false %}
                       {% endif %}
-                      {% if setup_id != blank and property_name != 'Discount/referral code' and property_name != 'Referral' %}
+                      {% if setup_id != blank and property_name != 'Requested area code' and property_name != 'Discount/referral code' and property_name != 'Referral' %}
                         {% assign show_property = false %}
                       {% endif %}
                       {% if show_property %}
@@ -287,7 +287,7 @@
                               {% if child_billing_value != blank %}<small>{{ child_billing_value }}</small>{% endif %}
                             </dt>
                             <dd>
-                              <span>Due on the first day of the following month</span>
+                              <span>Billed on the 1st of the next month</span>
                               {% if child_setup_role == 'addon' or child_setup_role == 'addon_bundle' %}
                                 <button
                                   class="ip-cart-setup-line__remove"
@@ -408,7 +408,7 @@
             <dd data-cart-due-today>{{ due_today_before_tax | money }}</dd>
           </div>
           <div class="ip-cart__total-future">
-            <dt>Due on the first of next month</dt>
+            <dt>Billed on the 1st of the next month</dt>
             <dd data-cart-future-charge>{{ cart_future_charge | money }}</dd>
           </div>
           <div>
@@ -417,7 +417,7 @@
           </div>
         </dl>
         <p class="ip-note">
-          Taxes and recurring billing are shown in checkout. Service and selected add-ons begin billing on the first day of the following month.
+          Taxes and recurring billing are shown in checkout. Service and selected add-ons are billed on the 1st of the next month.
         </p>
         <p class="ip-form-note ip-form-note--error" data-cart-integrity-error role="alert" {% unless cart_has_orphan_child or cart_has_incomplete_order %}hidden{% endunless %}>
           Remove every incomplete billing item before checkout, then rebuild that phone order if needed.

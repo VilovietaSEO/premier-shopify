@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -13,7 +22,7 @@
         "auto_attendant_product": "auto-attendant",
         "addon_bundle_product": "add-on-bundle",
         "eyebrow": "",
-        "heading": "Build your Independence Phone order now.",
+        "heading": "Build your INDEPENDENCE PHONE order now.",
         "body": "<p>Choose your phone, service plan, and add-ons below.</p>",
         "checkout_note": "Taxes, shipping, and recurring billing will be shown in the cart.",
         "button_label": "Add order to cart"

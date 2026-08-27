@@ -1,13 +1,75 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "ip-video-hero",
       "settings": {
-        "primary_link": "/pages/order-now",
-        "price_callout": "$17.76/mo",
-        "proof_line": "Established in 1984.",
         "heading": "Give your child a phone, not the internet.",
-        "subheading": "<p>Children can call home without apps, browsers, social media, or a personal screen. Built for bus days, home-alone minutes, grandparents, and the years before a smartphone.</p>"
+        "subheading": "<p>Children can call home without apps, browsers, social media, or a personal screen. Built for bus days, home-alone minutes, grandparents, and the years before a smartphone.</p>",
+        "proof_line": "Established in 1984, American Owned, Family Focused.",
+        "price_callout": "$17.76/mo",
+        "primary_label": "Order now",
+        "primary_link": "/pages/order-now",
+        "sound_label": "Play with sound"
+      }
+    },
+    "feature_strip": {
+      "type": "ip-feature-strip",
+      "blocks": {
+        "feature_1": {
+          "type": "feature",
+          "settings": {
+            "title": "Auto Attendant",
+            "body": "Filter unwanted spam calls.",
+            "included_label": "",
+            "icon": "shield_check"
+          }
+        },
+        "feature_2": {
+          "type": "feature",
+          "settings": {
+            "title": "Call Recording",
+            "body": "Access to 90 days of recorded calls.",
+            "included_label": "",
+            "icon": "microphone"
+          }
+        },
+        "feature_3": {
+          "type": "feature",
+          "settings": {
+            "title": "Quiet Hours",
+            "body": "Set times for when to receive incoming calls.",
+            "included_label": "",
+            "icon": "clock"
+          }
+        },
+        "feature_4": {
+          "type": "feature",
+          "settings": {
+            "title": "Voicemail to Email",
+            "body": "Voicemail messages are sent to email as audio and transcription.",
+            "included_label": "",
+            "icon": "microphone"
+          }
+        }
+      },
+      "block_order": [
+        "feature_1",
+        "feature_2",
+        "feature_3",
+        "feature_4"
+      ],
+      "settings": {
+        "eyebrow": "",
+        "heading": "Real Phone Service\nWITHOUT\nSmartphone drama"
       }
     },
     "parent_conflict": {
@@ -49,71 +111,29 @@
         "moment_4"
       ],
       "settings": {
+        "anchor_id": "how-it-works",
+        "eyebrow": "",
+        "heading": "Children need reachability. Not the whole internet yet.",
+        "body": "<p>The \"First Phone\" decision should start with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation. INDEPENDENCE PHONE is built for parents who want communication before distraction. It gives children a simple way to call while helping parents delay the smartphone step until the child is ready.</p>",
+        "note": "",
         "solution_heading": "",
         "solution_body": "",
-        "eyebrow": "",
-        "heading": "Children need reachability. They do not need the whole internet yet.",
-        "body": "<p>The \"First Phone\" decision should start with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation. Independence Phone is built for parents who want communication before distraction. It gives children a simple way to call while helping parents delay the smartphone step until the child is ready.</p>",
-        "note": "",
         "cta_label": "Order now",
         "cta_link": "/pages/order-now"
       }
     },
-    "feature_strip": {
-      "type": "ip-feature-strip",
-      "blocks": {
-        "feature_1": {
-          "type": "feature",
-          "settings": {
-            "title": "Auto Attendant",
-            "icon": "shield_check",
-            "body": "Filter unwanted spam calls.",
-            "included_label": ""
-          }
-        },
-        "feature_2": {
-          "type": "feature",
-          "settings": {
-            "title": "Call Recording",
-            "icon": "microphone",
-            "body": "Access to 90 days of recorded calls.",
-            "included_label": ""
-          }
-        },
-        "feature_3": {
-          "type": "feature",
-          "settings": {
-            "title": "Quiet Hours",
-            "icon": "clock",
-            "body": "Set times for when to receive incoming calls.",
-            "included_label": ""
-          }
-        },
-        "feature_4": {
-          "type": "feature",
-          "settings": {
-            "title": "Voicemail to Email",
-            "icon": "microphone",
-            "body": "Voicemail messages are sent to email as audio and transcription.",
-            "included_label": ""
-          }
-        }
-      },
-      "block_order": [
-        "feature_1",
-        "feature_2",
-        "feature_3",
-        "feature_4"
-      ],
-      "settings": {
-        "eyebrow": "",
-        "heading": "Real phone service without smartphone drama."
-      }
-    },
     "products": {
       "type": "ip-product-comparison",
-      "settings": {},
-      "disabled": true
+      "disabled": true,
+      "settings": {
+        "eyebrow": "Two phone styles. One simple decision.",
+        "heading": "Compare the everyday model and the rugged model.",
+        "body": "<p>Both phones are cordless Wi-Fi handsets with charging bases. Both are built around simple family calling, not apps or feeds.</p>",
+        "freedom_product": "",
+        "freedom_summary": "Best for home, grandparents, short independence windows, and everyday family calling.",
+        "patriot_product": "",
+        "patriot_summary": "Best for families who want rugged durability, longer battery life, and a more resilient handset."
+      }
     },
     "plans": {
       "type": "ip-service-plans",
@@ -141,8 +161,14 @@
         "monthly",
         "annual"
       ],
-      "settings": {},
-      "disabled": true
+      "disabled": true,
+      "settings": {
+        "eyebrow": "Simple service",
+        "heading": "Personal phone service, priced clearly.",
+        "body": "<p>Each phone pairs with a personal phone number and phone service. Choose the monthly plan or pay annually.</p>",
+        "disclosure": "Shipping is one $15 charge per order in the USA. Applicable tax is calculated after the customer enters an address.",
+        "compact_layout": false
+      }
     },
     "addons": {
       "type": "ip-add-ons",
@@ -200,8 +226,12 @@
         "bundle",
         "attendant"
       ],
-      "settings": {},
-      "disabled": true
+      "disabled": true,
+      "settings": {
+        "eyebrow": "Optional add-ons",
+        "heading": "Choose only the features your family needs.",
+        "body": "<p>Both phones can present the same optional add-ons during the purchase flow.</p>"
+      }
     },
     "capabilities": {
       "type": "ip-capability-table",
@@ -259,8 +289,12 @@
         "apps",
         "unsupported"
       ],
-      "settings": {},
-      "disabled": true
+      "disabled": true,
+      "settings": {
+        "eyebrow": "Plain answers",
+        "heading": "Plain answers before purchase.",
+        "body": "<p>The page should answer parent questions directly. If a feature is not in the supplied launch specs, do not market it as included.</p>"
+      }
     },
     "matrix": {
       "type": "ip-comparison-matrix",
@@ -312,8 +346,12 @@
         "browser",
         "cost"
       ],
-      "settings": {},
-      "disabled": true
+      "disabled": true,
+      "settings": {
+        "eyebrow": "Why not the usual options?",
+        "heading": "A simpler middle path before a smartphone.",
+        "body": "<p>Parents are not just comparing devices. They are comparing how much access, negotiation, and monthly complexity each choice brings into the home.</p>"
+      }
     },
     "faq": {
       "type": "ip-faq",
@@ -322,14 +360,14 @@
           "type": "faq",
           "settings": {
             "question": "Does it have internet?",
-            "answer": "<p>Independence Phone is positioned as a phone-first product without web browsing, apps, or social feeds.</p>"
+            "answer": "<p>INDEPENDENCE PHONE is positioned as a phone-first product without web browsing, apps, or social feeds.</p>"
           }
         },
         "apps": {
           "type": "faq",
           "settings": {
             "question": "Does it have an app store or social media?",
-            "answer": "<p>No. The storefront copy should keep the promise simple: calling without the app-store and social-feed ecosystem.</p>"
+            "answer": "<p>No app store or social media. INDEPENDENCE PHONE gives you phone calls without the scrolling.</p>"
           }
         },
         "fee": {
@@ -347,8 +385,9 @@
       ],
       "settings": {
         "eyebrow": "",
-        "heading": "Questions parents ask when choosing Independence Phone.",
-        "body": ""
+        "heading": "Questions parents ask when choosing INDEPENDENCE PHONE.",
+        "body": "",
+        "static_list": true
       }
     },
     "trust": {
@@ -373,8 +412,12 @@
         "owned",
         "experience"
       ],
-      "settings": {},
-      "disabled": true
+      "disabled": true,
+      "settings": {
+        "eyebrow": "American-owned. Family-focused.",
+        "heading": "A practical phone choice backed by decades of communication experience.",
+        "body": "<p>The patriotic layer should support trust after parents understand the product: a phone that helps families stay connected without rushing into smartphone life.</p>"
+      }
     }
   },
   "order": [

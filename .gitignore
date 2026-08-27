@@ -4,6 +4,10 @@ playwright-report/
 visual-preview/screenshots/
 visual-preview/reports/
 refresh-theme/
+refresh-overlay/
+scripts/apply-refresh-overlay.sh
+scripts/bootstrap-refresh-store.sh
+scripts/test-refresh-overlay.sh
 tmp/
 brief-materials/assets/indy-content/rejected/
 .DS_Store

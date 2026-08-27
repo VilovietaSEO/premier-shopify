@@ -21,22 +21,40 @@
           class: 'ip-hero__video'
       }}
     {% else %}
+      <picture class="ip-hero__poster" aria-hidden="true">
+        {% if section.settings.poster_image != blank %}
+          {{
+            section.settings.poster_image
+            | image_url: width: 2200
+            | image_tag: class: 'ip-hero__image', alt: '', loading: 'eager'
+          }}
+        {% else %}
+          <source media="(max-width: 720px)" srcset="{{ 'ip-hero-video-poster-mobile.webp' | asset_url }}">
+          <img
+            class="ip-hero__image"
+            src="{{ 'ip-hero-video-poster.webp' | asset_url }}"
+            alt=""
+            width="1280"
+            height="720"
+            loading="eager"
+          >
+        {% endif %}
+      </picture>
       <video
-        class="ip-hero__video"
+        class="ip-hero__video is-source-switching"
         data-hero-video-player
         data-poster-desktop="{{ hero_poster }}"
         data-poster-mobile="{{ hero_poster_mobile }}"
+        data-src-desktop="{{ 'ip-hero-video-desktop.mp4' | asset_url }}"
+        data-src-mobile="{{ 'ip-hero-video.mp4' | asset_url }}"
         autoplay
         loop
         muted
         playsinline
+        preload="metadata"
         poster="{{ hero_poster }}"
       >
-        <source
-          src="{{ 'ip-hero-video-desktop.mp4' | asset_url }}"
-          type="video/mp4"
-          media="(min-width: 721px)"
-        >
+        {% comment %}Mobile-safe fallback; JavaScript deterministically selects the correct viewport source.{% endcomment %}
         <source src="{{ 'ip-hero-video.mp4' | asset_url }}" type="video/mp4">
       </video>
     {% endif %}
@@ -75,7 +93,14 @@
 
     <div class="ip-hero__copy">
       {% if section.settings.heading != blank %}
-        <h1 class="ip-heading">{{ section.settings.heading }}</h1>
+        <h1 class="ip-heading">
+          {% if section.settings.heading == 'Give your child a phone, not the internet.' %}
+            <span style="display: block; font-size: min(1em, 7vw); white-space: nowrap;">Give your child a phone,</span>
+            <span style="display: block; font-size: min(1em, 7vw); white-space: nowrap;">Not the internet</span>
+          {% else %}
+            {{ section.settings.heading }}
+          {% endif %}
+        </h1>
       {% endif %}
 
       {% if section.settings.subheading != blank %}

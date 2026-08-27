@@ -633,7 +633,7 @@
     );
     const phoneVariant = String(form.querySelector('[data-order-variant-id]')?.value || '').trim();
     if (missingBillingItem || phoneVariant === '') {
-      return 'Ordering is temporarily unavailable because a required billing item is not configured. Please contact Independence Phone for help.';
+      return 'Ordering is temporarily unavailable because a required billing item is not configured. Please contact INDEPENDENCE PHONE for help.';
     }
 
     return '';
@@ -656,7 +656,7 @@
       'Phone setup';
     const submittedSetupProperties = propertiesToObject(submittedProperties(form));
     const setupProperties = {};
-    ['Phone', 'Discount/referral code', 'Referral'].forEach((name) => {
+    ['Phone', 'Requested area code', 'Discount/referral code', 'Referral'].forEach((name) => {
       if (submittedSetupProperties[name]) setupProperties[name] = submittedSetupProperties[name];
     });
     setupProperties._setup_id = setupId;
@@ -673,7 +673,7 @@
       const details = getChoiceDetails(input);
       const billingProperties = {
         'Future charge': details.price || details.value,
-        'Billing starts': 'First day of the following month',
+        'Billing starts': 'Billed on the 1st of the next month',
         _setup_id: setupId,
         _order_contract: 'deferred-billing-v2',
         _setup_parent: 'true',
@@ -1080,19 +1080,60 @@
   });
 
   const heroDesktopMedia = window.matchMedia('(min-width: 721px)');
-  const syncHeroPoster = () => {
+  const heroReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const bindMediaChange = (mediaQuery, listener) => {
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', listener);
+    } else if (typeof mediaQuery.addListener === 'function') {
+      mediaQuery.addListener(listener);
+    }
+  };
+
+  const syncHeroMedia = () => {
     document.querySelectorAll('[data-hero-video-player]').forEach((video) => {
-      const poster = heroDesktopMedia.matches
+      const sourceKey = heroDesktopMedia.matches ? 'desktop' : 'mobile';
+      const source = sourceKey === 'desktop'
+        ? video.dataset.srcDesktop
+        : video.dataset.srcMobile;
+      const poster = sourceKey === 'desktop'
         ? video.dataset.posterDesktop
         : video.dataset.posterMobile;
+
       if (poster && video.getAttribute('poster') !== poster) video.setAttribute('poster', poster);
+      if (!source || video.dataset.heroSourceKey === sourceKey) return;
+
+      const resumeAt = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+      const wasPlaying = !video.paused && !video.ended;
+      const explicitPlayback = video.dataset.audiblePlaybackStarted === 'true';
+      const shouldPlay = (wasPlaying || video.autoplay) && (!heroReducedMotion.matches || explicitPlayback);
+
+      video.dataset.heroSourceKey = sourceKey;
+      video.classList.add('is-source-switching');
+      video.setAttribute('src', source);
+      video.load();
+
+      const restorePlaybackPosition = () => {
+        if (video.dataset.heroSourceKey !== sourceKey || resumeAt <= 0 || !Number.isFinite(video.duration)) return;
+        try {
+          video.currentTime = Math.min(resumeAt, Math.max(0, video.duration - 0.1));
+        } catch (_error) {
+          // Some mobile browsers do not allow seeking until more data is buffered.
+        }
+      };
+
+      const revealSelectedSource = () => {
+        if (video.dataset.heroSourceKey !== sourceKey) return;
+        restorePlaybackPosition();
+        window.requestAnimationFrame(() => video.classList.remove('is-source-switching'));
+        if (shouldPlay) video.play().catch(() => {});
+      };
+
+      video.addEventListener('loadedmetadata', restorePlaybackPosition, { once: true });
+      video.addEventListener('loadeddata', revealSelectedSource, { once: true });
+      if (video.readyState >= 2) revealSelectedSource();
     });
   };
 
-  syncHeroPoster();
-  heroDesktopMedia.addEventListener?.('change', syncHeroPoster);
-
-  const heroReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const syncHeroMotionPreference = () => {
     document.querySelectorAll('[data-hero-video] video').forEach((video) => {
       if (heroReducedMotion.matches && video.dataset.audiblePlaybackStarted !== 'true') {
@@ -1102,8 +1143,10 @@
     });
   };
 
+  syncHeroMedia();
   syncHeroMotionPreference();
-  heroReducedMotion.addEventListener?.('change', syncHeroMotionPreference);
+  bindMediaChange(heroDesktopMedia, syncHeroMedia);
+  bindMediaChange(heroReducedMotion, syncHeroMotionPreference);
 
   const restorePhoneComparisonFocus = () => {
     if (phoneComparisonOpener?.isConnected) phoneComparisonOpener.focus();

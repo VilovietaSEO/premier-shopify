@@ -1,9 +1,0 @@
-{
-  "sections": {
-    "contact": {
-      "type": "ip-contact-form",
-      "settings": {}
-    }
-  },
-  "order": ["contact"]
-}

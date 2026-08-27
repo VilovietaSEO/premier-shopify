@@ -1,4 +1,4 @@
-{% assign public_brand_name = settings.ip_brand_name | default: 'Independence Phone' %}
+{% assign public_brand_name = settings.ip_brand_name | default: 'INDEPENDENCE PHONE' %}
 {% assign footer_email = section.settings.contact_email | strip %}
 {% assign footer_phone = section.settings.contact_phone | strip %}
 {% assign footer_phone_link = section.settings.contact_phone_link | strip %}
@@ -13,7 +13,7 @@
     <small>&copy; {{ 'now' | date: '%Y' }}</small>
     <p>{{ section.settings.footer_note }}</p>
     {% if footer_email != blank or show_footer_phone %}
-      <address class="footer__contact" aria-label="Independence Phone contact information">
+      <address class="footer__contact" aria-label="INDEPENDENCE PHONE contact information">
         {% if footer_email != blank %}
           {% assign footer_email_url = 'mailto:' | append: footer_email %}
           <a class="footer__contact-link" href="{{ footer_email_url | escape }}">

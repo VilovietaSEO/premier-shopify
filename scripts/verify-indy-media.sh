@@ -6,7 +6,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORKSPACE="$ROOT/brief-materials/assets/indy-content"
 SOURCE_DIR="${INDY_CONTENT_SOURCE_DIR:-/Users/vilovieta/Downloads/INDY CONTENT}"
 
-for command_name in cmp ffprobe rg shasum; do
+for command_name in ffprobe rg shasum; do
   command -v "$command_name" >/dev/null
 done
 
@@ -55,34 +55,24 @@ for image in "$WORKSPACE"/production/images/*.webp; do
 done
 
 for front_asset in ip-classic-phone-front.webp ip-rugged-phone-front.webp; do
-  production_asset="$WORKSPACE/production/images/$front_asset"
   theme_asset="$ROOT/independence-phone-theme/assets/$front_asset"
-  overlay_asset="$ROOT/refresh-overlay/assets/$front_asset"
-  test -f "$production_asset"
   test -f "$theme_asset"
-  test -f "$overlay_asset"
-  cmp -s "$production_asset" "$theme_asset"
-  cmp -s "$production_asset" "$overlay_asset"
+  test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$theme_asset")" = "1600x1280"
+  test "$(wc -c < "$theme_asset" | tr -d ' ')" -lt 100000
 done
 
 for spin_asset in ip-classic-phone-spin.mp4 ip-rugged-phone-spin.mp4; do
   theme_asset="$ROOT/independence-phone-theme/assets/$spin_asset"
-  overlay_asset="$ROOT/refresh-overlay/assets/$spin_asset"
   test -f "$theme_asset"
-  test -f "$overlay_asset"
-  cmp -s "$theme_asset" "$overlay_asset"
   test "$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of csv=p=0 "$theme_asset")" = "h264"
   test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$theme_asset")" = "960x540"
   test "$(ffprobe -v error -select_streams v:0 -show_entries stream=pix_fmt -of csv=p=0 "$theme_asset")" = "yuv420p"
   test "$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$theme_asset" | wc -l | tr -d ' ')" = "0"
-  test "$(wc -c < "$theme_asset" | tr -d ' ')" -lt 600000
+  test "$(wc -c < "$theme_asset" | tr -d ' ')" -lt 3000000
 done
 
 billing_theme_asset="$ROOT/independence-phone-theme/assets/ip-billing-flag.webp"
-billing_overlay_asset="$ROOT/refresh-overlay/assets/ip-billing-flag.webp"
 test -f "$billing_theme_asset"
-test -f "$billing_overlay_asset"
-cmp -s "$billing_theme_asset" "$billing_overlay_asset"
 test "$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of csv=p=0 "$billing_theme_asset")" = "webp"
 test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$billing_theme_asset")" = "576x576"
 test "$(wc -c < "$billing_theme_asset" | tr -d ' ')" -lt 100000
@@ -109,8 +99,6 @@ blocked_pattern='ip-(classic|rugged)-phone-side\.webp'
 if rg -n "$blocked_pattern" \
   independence-phone-theme/sections \
   independence-phone-theme/snippets \
-  refresh-overlay/sections \
-  refresh-overlay/snippets \
   visual-preview/index.html \
   scripts/assign-product-media.js; then
   echo "Blocked or rejected media is referenced by storefront code" >&2

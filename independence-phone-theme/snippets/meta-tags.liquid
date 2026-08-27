@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 {%- liquid
-  assign public_brand_name = settings.ip_brand_name | default: 'Independence Phone'
+  assign public_brand_name = settings.ip_brand_name | default: 'INDEPENDENCE PHONE'
   assign og_title = page_title | default: public_brand_name
   assign og_url = canonical_url | default: request.origin
   assign og_type = 'website'

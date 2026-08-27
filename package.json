@@ -33,9 +33,8 @@
     "orders:proof:audit": "node scripts/audit-order-proof.js",
     "orders:proof:audit:test": "node scripts/test-order-proof-audit.js",
     "orders:export": "node orders/setup-export.js",
-    "verify:local": "npm run audit:coverage && npm run crm:test && npm run contact:crm:audit:test && npm run llms:test && npm run ops:test && npm run ops:bundle:test && npm run ops:deployment:audit:test && npm run launch:readiness:test && npm run orders:test && npm run orders:proof:audit:test && npm run store:objects:audit:test && npm run store:deferred-billing:test && npm run store:metafields:dry-run && npm run store:objects:dry-run && npm run store:media:dry-run && npm run media:verify && npm run overlay:test && npm run theme:check && npm run preview:test",
-    "preview:test": "playwright test visual-preview/preview.spec.js --browser=chromium --reporter=line",
-    "overlay:test": "scripts/test-refresh-overlay.sh"
+    "verify:local": "npm run audit:coverage && npm run crm:test && npm run contact:crm:audit:test && npm run llms:test && npm run ops:test && npm run ops:bundle:test && npm run ops:deployment:audit:test && npm run launch:readiness:test && npm run orders:test && npm run orders:proof:audit:test && npm run store:objects:audit:test && npm run store:deferred-billing:test && npm run store:metafields:dry-run && npm run store:objects:dry-run && npm run store:media:dry-run && npm run media:verify && npm run theme:check && npm run preview:test",
+    "preview:test": "playwright test visual-preview/preview.spec.js --browser=chromium --reporter=line"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0"

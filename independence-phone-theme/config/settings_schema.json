@@ -1,7 +1,7 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Independence Phone",
+    "theme_name": "INDEPENDENCE PHONE",
     "theme_version": "0.1.0",
     "theme_author": "Vilovieta SEO",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
@@ -23,13 +23,13 @@
     ]
   },
   {
-    "name": "Independence Phone brand",
+    "name": "INDEPENDENCE PHONE brand",
     "settings": [
       {
         "type": "text",
         "id": "ip_brand_name",
         "label": "Public brand name",
-        "default": "Independence Phone"
+        "default": "INDEPENDENCE PHONE"
       }
     ]
   },
@@ -81,7 +81,7 @@
       },
       {
         "type": "header",
-        "content": "Independence Phone palette"
+        "content": "INDEPENDENCE PHONE palette"
       },
       {
         "type": "color",

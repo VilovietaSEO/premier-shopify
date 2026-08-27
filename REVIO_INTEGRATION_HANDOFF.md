@@ -14,8 +14,8 @@ The accepted contract is `independence_phone.revio_checkout.v2`.
 - The cart and checkout must distinguish today's charge from future recurring charges.
 - Shipping is one flat `$15` fee per order, not per phone.
 - Tax is calculated after the customer enters a taxable address.
-- The final Rev.io/gateway checkout, or a Shopify Plus checkout extension, collects required Privacy Policy/Terms consent and the required desired area code.
-- Consent and desired area code must not be collected a second time in the Order Now page or cart.
+- The Order Now page collects a required three-digit requested area code and stores it as the phone line-item property `Requested area code`.
+- The final Rev.io/gateway checkout, or a Shopify Plus checkout extension, collects required Privacy Policy/Terms consent. It must not ask for the requested area code a second time unless the original value is unavailable or cannot be fulfilled.
 - The retired Patriot Package is not part of this contract.
 - Service and add-on checkout lines use the approved American-flag media so `$0.00` operational lines do not look like broken or image-less products.
 
@@ -36,7 +36,7 @@ These are owned by this Shopify repository and can be finished before Rev.io cre
 - Use the approved phone media for phone lines and American-flag media for service/add-on lines.
 - Emit `independence_phone.revio_checkout.v2` when a handoff endpoint is configured.
 - Allow customers to update or remove a complete setup before checkout.
-- Do not duplicate policy consent or desired-area-code fields in Order Now or cart.
+- Keep policy consent in the final checkout. Preserve and validate the requested area code already collected by Order Now.
 
 ### External Rev.io/gateway obligations
 
@@ -45,7 +45,7 @@ These remain with the Rev.io/payment implementer:
 - Supply Rev.io tenant credentials, sandbox access, product IDs, bill profile, service type, provider, tax, request, status, and webhook mappings.
 - Receive and authenticate the v2 payload through the approved server-side handoff.
 - Revalidate every Shopify variant, SKU, quantity, role, immediate price, future price, cadence, and first-bill rule against a server-side allowlist.
-- Collect required Privacy Policy/Terms consent and the required desired area code exactly once at the final checkout step.
+- Collect required Privacy Policy/Terms consent at the final checkout step. Read the requested area code from the phone line's `Requested area code` property, validate it server-side, and provide an explicit resolution path if that area code cannot be fulfilled.
 - Tokenize payment details through an approved hosted or gateway flow. Never send raw card numbers or CVV through the theme.
 - Calculate tax after the customer provides an address.
 - Charge today only for the phone, applicable tax, and the single `$15` order shipping fee.
@@ -293,6 +293,8 @@ Example:
 }
 ```
 
+The current live theme retains the legacy `customer.desired_area_code` compatibility fields above, but the actual submitted value is present in the phone line's `visible_properties` entry named `Requested area code`. The server must read and validate that line property. Do not interpret the legacy null value as permission to ask the customer a second time.
+
 The abbreviated `phone_line` object and empty top-level `lines` array above are for readability; the real payload repeats each fully normalized line in both its setup and the top-level `lines` array. `tax_cents` remains `null` until the final checkout has an address. The gateway may add normalized name, email, phone, billing address, and service address fields after collecting them.
 
 ### Required line fields
@@ -332,7 +334,7 @@ Before creating any Rev.io or payment object:
 7. Calculate the phone subtotal server-side.
 8. Apply shipping once per order as exactly `1500` cents.
 9. Calculate tax only after receiving the address through the final checkout.
-10. Require policy consent and desired area code before payment/provisioning.
+10. Require policy consent and a validated three-digit `Requested area code` phone line property before payment/provisioning.
 11. Derive an idempotency key from a stable cart token plus sorted setup IDs and persist the result of every create/payment attempt.
 12. Use Rev.io webhook event IDs as separate idempotency keys for inbound reconciliation.
 
@@ -347,7 +349,7 @@ Shipping remains `$15` once for the entire order regardless of phone quantity.
 ## Recommended Rev.io Workflow
 
 1. Validate and idempotently register the v2 checkout request.
-2. Collect and validate checkout contact/address fields, policy consent, and desired area code.
+2. Collect and validate checkout contact/address fields and policy consent; extract and validate the requested area code already present on the phone line.
 3. Calculate tax after address entry.
 4. Charge the phone subtotal, tax, and one `$15` shipping fee through the approved tokenized gateway.
 5. Match or create the customer with `POST /v1/Customers`.
@@ -382,6 +384,7 @@ For each inbound notification:
 7. Should the integration create a Shopify order before payment, after payment, or after Rev.io reconciliation?
 8. Which Rev.io webhooks are enabled and what endpoint/authentication do they require?
 9. What retry and manual-recovery workflow applies to partial customer/request/payment creation?
+10. Which Rev.io fields receive `Requested area code` and the optional `Discount/referral code`, and what is the operator workflow when the requested area code is unavailable?
 
 ## Bridge Configuration
 
@@ -419,13 +422,13 @@ The ops receiver stores the checkout intent and forwards a signed `revio.checkou
 - Cart shows one `$15` order shipping fee, tax pending until address, phone-only due today, and separate future charges.
 - Setup update/removal works.
 - Patriot Package is absent.
-- Order Now and cart do not collect policy consent or desired area code.
+- Order Now collects `Requested area code` once on the phone line; policy consent remains pending for final checkout.
 
 ### External sandbox proof
 
 - Server rejects tampered SKU, variant, quantity, checkout price, future price, cadence, first-bill rule, and totals.
 - Duplicate submit does not duplicate a Rev.io customer, request, product, bill, charge, or payment.
-- Final checkout requires consent and desired area code exactly once.
+- Final checkout requires consent, preserves the submitted requested area code without asking again, and blocks provisioning if the value is missing or invalid.
 - Tax calculates after address.
 - Today's successful charge contains only phone, tax, and one `$15` shipping fee.
 - Service/add-ons begin billing on the first day of the following month.

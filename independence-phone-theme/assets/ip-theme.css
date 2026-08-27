@@ -293,6 +293,7 @@ summary:focus-visible {
 }
 
 .ip-hero__media::after,
+.ip-hero__poster,
 .ip-hero__video,
 .ip-hero__image {
   inset: 0;
@@ -304,12 +305,27 @@ summary:focus-visible {
   display: none;
 }
 
+.ip-hero__poster {
+  display: block;
+  z-index: 0;
+}
+
 .ip-hero__video,
 .ip-hero__image {
   height: 100%;
   object-fit: contain;
   object-position: center;
   width: 100%;
+}
+
+.ip-hero__video {
+  opacity: 1;
+  transition: opacity 120ms ease;
+  z-index: 1;
+}
+
+.ip-hero__video.is-source-switching {
+  opacity: 0;
 }
 
 .ip-hero__video.has-ended {
@@ -342,7 +358,7 @@ summary:focus-visible {
   display: grid;
   gap: 0.8rem;
   justify-items: center;
-  max-width: min(44rem, 100%);
+  max-width: min(54rem, 100%);
   text-align: center;
 }
 
@@ -354,7 +370,7 @@ summary:focus-visible {
 .ip-hero__copy .ip-heading {
   font-size: clamp(2rem, 4vw, 3.6rem);
   line-height: 0.98;
-  max-width: 11em;
+  max-width: 15em;
   text-shadow: none;
 }
 
@@ -551,6 +567,12 @@ summary:focus-visible {
   margin-inline: auto;
   min-height: 7rem;
   width: min(calc(var(--page-width) - var(--page-margin) * 2), calc(100% - var(--page-margin) * 2));
+}
+
+@media (min-width: 721px) {
+  .ip-strip__copy .ip-heading {
+    font-size: clamp(1.8rem, 2.2vw, 2.4rem);
+  }
 }
 
 .ip-strip__items {
@@ -1032,6 +1054,30 @@ summary:focus-visible {
 
 .ip-faq details[open] summary::after {
   content: "-";
+}
+
+.ip-faq--static {
+  gap: 0;
+}
+
+.ip-faq__item {
+  border-top: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 14%, transparent);
+  padding-block: 1.25rem;
+}
+
+.ip-faq__item:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--ip-ink, #172033) 14%, transparent);
+}
+
+.ip-faq__question {
+  font-size: clamp(1.08rem, 1.6vw, 1.3rem);
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.ip-faq__item .ip-faq__answer {
+  max-width: 60rem;
+  padding: 0.55rem 0 0;
 }
 
 .ip-faq__answer {
@@ -2410,7 +2456,7 @@ html.ip-gallery-lock body {
   display: grid;
   align-items: start;
   gap: clamp(1rem, 3vw, 1.5rem);
-  grid-template-columns: minmax(0, 1fr) minmax(21rem, 0.42fr);
+  grid-template-columns: minmax(0, 1fr) minmax(26rem, 0.5fr);
 }
 
 .ip-cart__header {
@@ -2599,8 +2645,13 @@ html.ip-gallery-lock body {
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   margin: 0;
-  max-width: 15rem;
+  max-width: none;
   text-align: right;
+}
+
+.ip-cart-setup-line dd > span {
+  font-size: clamp(0.78rem, 4vw, 1rem);
+  white-space: nowrap;
 }
 
 .ip-cart-setup-line__remove {
@@ -3062,7 +3113,7 @@ footer .footer__payment svg {
   .ip-hero__copy .ip-heading {
     font-size: 2.15rem;
     line-height: 1;
-    max-width: 10.5em;
+    max-width: 100%;
   }
 
   .ip-hero__copy .ip-lede {

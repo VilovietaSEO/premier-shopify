@@ -4,7 +4,14 @@
       {% if section.settings.eyebrow != blank %}
         <p class="ip-kicker">{{ section.settings.eyebrow }}</p>
       {% endif %}
-      <h2 class="ip-heading ip-heading--medium ip-heading--wide">{{ section.settings.heading }}</h2>
+      <h2 class="ip-heading ip-heading--medium ip-heading--wide">
+        {% if section.settings.heading == 'Children need reachability. They do not need the whole internet yet.' or section.settings.heading == 'Children need reachability. Not the whole internet yet.' %}
+          <span style="display: block; font-size: min(1em, 6.5vw); white-space: nowrap;">Children need reachability.</span>
+          <span style="display: block; font-size: min(1em, 6.5vw); white-space: nowrap;">Not the whole internet yet.</span>
+        {% else %}
+          {{ section.settings.heading }}
+        {% endif %}
+      </h2>
     </div>
     <div class="ip-stack">
       <div class="ip-lede">{{ section.settings.body }}</div>
@@ -37,7 +44,7 @@
             when 3
               assign fallback_card_bg = 'ip-story-grandparents.webp' | asset_url
             else
-              assign fallback_card_bg = 'ip-story-before-smartphone.webp' | asset_url
+              assign fallback_card_bg = 'ip-story-before-smartphone-context.webp' | asset_url
           endcase
 
           assign card_bg = fallback_card_bg
@@ -81,13 +88,13 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Children need reachability. They do not need the whole internet yet."
+      "default": "Children need reachability. Not the whole internet yet."
     },
     {
       "type": "richtext",
       "id": "body",
       "label": "Body",
-      "default": "<p>The \"First Phone\" decision should start with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation. Independence Phone is built for parents who want communication before distraction. It gives children a simple way to call while helping parents delay the smartphone step until the child is ready.</p>"
+      "default": "<p>The \"First Phone\" decision should start with something practical: a bus route, an activity, a sleepover, or a few minutes home alone. The hard part is giving them a way to call without opening the door to apps, feeds, browsers, and constant negotiation. INDEPENDENCE PHONE is built for parents who want communication before distraction. It gives children a simple way to call while helping parents delay the smartphone step until the child is ready.</p>"
     },
     {
       "type": "text",
