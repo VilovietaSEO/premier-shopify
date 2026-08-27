@@ -11,7 +11,7 @@ The INDEPENDENCE PHONE storefront is a Shopify theme. Moving administration to t
 - The client owns the custom domain and DNS account.
 - The client controls the branded Sender email and its DNS authentication.
 - The client organization owns or has administrator access to the GitHub repository.
-- The client owns the hosting account for the optional operations bridge, Rev.io handoff, CRM, and other server-side routes.
+- The client owns the hosting account for any future Rev.io, CRM, webhook, or other server-side integration.
 - Developers use named Shopify collaborator/user access and named GitHub access, not shared passwords.
 
 If “move this to their own hosted website” means leaving Shopify completely, that is a new migration project. A Shopify theme cannot simply be copied to generic web hosting and retain Shopify products, cart, checkout, Admin, or Theme Editor behavior.
@@ -41,7 +41,7 @@ Before transfer:
 - Export any financial, billing, payout, and order records the current owner must retain.
 - Add the new owner as a user when using the existing-user ownership path.
 - Update store contact, billing, payout, tax, domain, app, and third-party provider information to client-controlled details.
-- Inventory all apps and external contracts, including Rev.io and the operations bridge.
+- Inventory all apps and external contracts, including Rev.io and any separately hosted integration.
 - Confirm who will pay outstanding Shopify and app charges.
 
 Then use Shopify's current ownership workflow under **Settings → Users** for an existing user or **Settings → General** for a transfer outside the business. The recipient must accept the transfer. After acceptance, review every user's permissions and remove obsolete access.
@@ -60,7 +60,7 @@ GitHub is the version history for the live theme snapshot; it does not host the 
 
 ## Transfer the server-side hosting
 
-The operations bridge is separate from Shopify theme hosting. For any `/revio`, `/crm`, webhook, or similar server route:
+This repository does not include a hosted backend. If a future `/revio`, `/crm`, webhook, or similar server route is built, it is separate from Shopify theme hosting:
 
 1. Create the production project in the client's hosting account.
 2. Move source code through Git, not by copying secrets.

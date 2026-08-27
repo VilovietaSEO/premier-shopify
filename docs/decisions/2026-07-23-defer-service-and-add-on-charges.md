@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-07-23
 - **Scope:** Independence Phone order builder, Shopify cart and checkout handoff
-- **Related:** `independence-phone-theme/sections/cart.liquid`, `independence-phone-theme/assets/ip-cart.js`, `REVIO_INTEGRATION_HANDOFF.md`
+- **Related:** `independence-phone-theme/sections/cart.liquid`, `independence-phone-theme/assets/ip-cart.js`, `independence-phone-theme/snippets/ip-order-builder-form.liquid`, `guides/REVIO_PAYMENT_AND_PROVISIONING_GUIDE.md`
 - **Supersedes:** None
 - **Superseded by:** None
 
@@ -13,7 +13,7 @@ The client wants Shopify to charge only the phone, applicable tax, and one $15 s
 
 ## Decision
 
-Keep service plans and add-ons as hidden Shopify billing-item variants with a checkout price of $0. Store their approved future prices, billing cadence, and first-bill rule as line-item metadata and in the versioned checkout-handoff payload. Keep the selected phone as the only merchandise charge due today. Configure one $15 flat shipping rate per order. The final checkout or Rev.io integration must collect any required checkout consent and desired area code, validate all selections server-side, take today's payment, and provision future billing.
+Keep service plans and add-ons as hidden Shopify billing-item variants with a checkout price of $0. Store their approved future prices, billing cadence, and first-bill rule as line-item metadata. Keep the selected phone as the only merchandise charge due today. Configure one $15 flat shipping rate per order. Collect the desired area code as a required line-item property on Order Now. Any future Rev.io integration must validate all selections server-side, implement its approved payment boundary, and provision future billing.
 
 ## Drivers
 
@@ -41,7 +41,7 @@ Selling plans could model recurring billing, but the approved operating directio
 - **Positive:** The cart and Shopify order can truthfully separate today's equipment charge from future service commitments before the gateway exists.
 - **Positive:** The external developer receives stable line roles, SKUs, nominal future prices, and first-bill timing instead of having to reinterpret display copy.
 - **Negative:** Zero-dollar billing variants do not themselves schedule or collect future payments.
-- **Negative:** Checkout-step fields such as desired area code and required consent still depend on the final checkout surface or a Shopify Plus checkout extension.
+- **Negative:** The required area code is preserved in Shopify order metadata but is not a number reservation; availability and substitution still require a server-side provisioning workflow.
 
 ## Revisit when
 

@@ -17,12 +17,7 @@
 *.swp
 *.swo
 
-# Repository documentation and packaged exports
-README.md
-SHOPIFY_HANDOFF.md
-THEME_EDITOR_GUIDE.md
-CODE_OF_CONDUCT.md
-CONTRIBUTING.md
+# Repository-only files and packaged exports
 LICENSE.md
 *.zip
 

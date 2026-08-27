@@ -18,7 +18,7 @@ The phone, applicable phone tax, and one `$15` shipping charge are due today. Se
 
 ## Responsibility split
 
-Shopify owns the visible order flow, cart, physical phone order, line-item metadata, and fulfillment record. The owner-hosted operations bridge can validate Shopify order evidence and forward a signed request. The Rev.io implementer owns the tenant credentials, payment gateway, customer and product mappings, billing rules, number provisioning, retries, webhooks, and reconciliation.
+Shopify owns the visible order flow, cart, physical phone order, line-item metadata, and fulfillment record. This repository does not include or host a Rev.io backend. A future server-side integration must validate Shopify order evidence before calling Rev.io. The Rev.io implementer owns the tenant credentials, payment gateway, customer and product mappings, billing rules, number provisioning, retries, webhooks, and reconciliation.
 
 Never put Rev.io credentials, raw card numbers, CVV, or tenant-only identifiers in Liquid, browser JavaScript, Theme Editor fields, screenshots, chat, or GitHub.
 
@@ -43,16 +43,14 @@ Do not guess any of these values from Shopify titles or SKUs.
 
 ## Server setup
 
-1. Deploy the owner-hosted operations bridge described in [`ops/README.md`](../ops/README.md).
+1. Create a separate, client-owned server project and hosting account for the integration. Do not put server code or secrets in the Shopify theme.
 2. Put secrets in the hosting provider's encrypted environment-variable or secret-management system.
-3. Configure the Rev.io integration to receive `independence_phone.revio_checkout.v2`.
+3. Define and version a server-side input contract for the Shopify order, line-item properties, and deferred-billing metadata.
 4. Validate every submitted Shopify variant, SKU, role, quantity, immediate price, future price, cadence, and first-bill rule against a server-side allowlist.
-5. Map `Requested area code` and `Discount/referral code` from the Shopify setup to the approved Rev.io fields.
+5. Map `Requested area code` and `Discount/referral code` from the Shopify order to the approved Rev.io fields.
 6. Use a hosted or tokenized payment flow. The Shopify theme and operations bridge must never handle raw card data.
 7. Make checkout creation, customer creation, payment, provisioning, webhook processing, and retries idempotent.
-8. Configure the live theme's **Cart → Rev.io checkout handoff URL** only after the endpoint is hosted, authenticated, and approved.
-
-The lower-level payload contract and endpoint details are in [`REVIO_INTEGRATION_HANDOFF.md`](../REVIO_INTEGRATION_HANDOFF.md).
+8. Connect Shopify to the server only after the endpoint is hosted, authenticated, and approved. The exact mechanism—order webhook, app, checkout extension, or another supported server-side route—must be selected by the implementer for the client's Shopify plan and payment ownership.
 
 ## Sandbox acceptance test
 
@@ -74,7 +72,7 @@ Record sanitized request IDs, Shopify order numbers, Rev.io record IDs, timestam
 
 Production activation requires written approval from the client, the Rev.io implementer, and the person responsible for tax/payment compliance. After switching to production credentials, place one approved low-risk order and reconcile Shopify, gateway, and Rev.io records end to end.
 
-If checkout, payment, or provisioning fails, clear the live theme's Rev.io handoff URL or disable the server route according to the approved rollback plan. Do not delete orders or retry manually until the implementer checks idempotency state.
+If checkout, payment, or provisioning fails, disable the server-side integration according to its approved rollback plan. Do not delete Shopify orders or retry manually until the implementer checks idempotency state.
 
 ## Official references
 

@@ -168,9 +168,9 @@ function assetBase(store) {
   const configuredBase = String(process.env.SHOPIFY_THEME_ASSET_BASE || '').trim();
   if (configuredBase) return configuredBase.replace(/\/+$/, '');
   if (!dryRun) {
-    throw new Error('SHOPIFY_THEME_ASSET_BASE is required for a real assignment. Copy the exact base from a rendered QA-theme asset URL; do not assume a /cdn/shop/t/N/assets path.');
+    throw new Error('SHOPIFY_THEME_ASSET_BASE is required for a real assignment. Copy the exact base from a rendered Shopify theme asset URL; do not assume a /cdn/shop/t/N/assets path.');
   }
-  return `https://${store}/cdn/shop/t/VERIFY_RENDERED_QA_ASSET_BASE/assets`;
+  return `https://${store}/cdn/shop/t/VERIFY_RENDERED_THEME_ASSET_BASE/assets`;
 }
 
 function fileInputs(store) {

@@ -55,7 +55,7 @@ Before changing a live page:
 5. Verify the public URL.
 6. Pull the live theme back into `independence-phone-theme/` and commit that snapshot so GitHub remains the canonical copy of what is live.
 
-Do not use `refresh-overlay/` as a second theme source. Do not run an old script that assumes fixed live and QA theme IDs. Theme roles can change whenever a theme is published.
+Do not create a second theme source or run old scripts that assume fixed live and QA theme IDs. Theme roles can change whenever a theme is published.
 
 ## Live-theme synchronization
 
