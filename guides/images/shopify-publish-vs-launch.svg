@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">Publishing a Shopify theme versus launching the store</title>
+  <desc id="desc">A theme is published inside Shopify, then ownership, a paid plan, domain connection, and password removal make the hosted store public.</desc>
+  <rect width="1200" height="420" rx="28" fill="#f7f6f2"/>
+  <text x="60" y="65" fill="#17211b" font-family="Arial, sans-serif" font-size="30" font-weight="700">Publishing is not the same as launching</text>
+
+  <g font-family="Arial, sans-serif">
+    <rect x="60" y="115" width="205" height="190" rx="18" fill="#ffffff" stroke="#2f6f4e" stroke-width="3"/>
+    <circle cx="102" cy="157" r="22" fill="#dceee3"/>
+    <text x="102" y="166" text-anchor="middle" fill="#24583d" font-size="23" font-weight="700">1</text>
+    <text x="88" y="207" fill="#17211b" font-size="23" font-weight="700">Publish theme</text>
+    <text x="88" y="242" fill="#47544c" font-size="18">Chooses the design</text>
+    <text x="88" y="269" fill="#47544c" font-size="18">customers will see.</text>
+
+    <path d="M280 210 H327" stroke="#8b978f" stroke-width="4"/>
+    <path d="M317 200 L329 210 L317 220" fill="none" stroke="#8b978f" stroke-width="4"/>
+
+    <rect x="345" y="115" width="205" height="190" rx="18" fill="#ffffff" stroke="#2f6f4e" stroke-width="3"/>
+    <circle cx="387" cy="157" r="22" fill="#dceee3"/>
+    <text x="387" y="166" text-anchor="middle" fill="#24583d" font-size="23" font-weight="700">2</text>
+    <text x="373" y="207" fill="#17211b" font-size="23" font-weight="700">Transfer owner</text>
+    <text x="373" y="242" fill="#47544c" font-size="18">Client accepts and</text>
+    <text x="373" y="269" fill="#47544c" font-size="18">controls the store.</text>
+
+    <path d="M565 210 H612" stroke="#8b978f" stroke-width="4"/>
+    <path d="M602 200 L614 210 L602 220" fill="none" stroke="#8b978f" stroke-width="4"/>
+
+    <rect x="630" y="115" width="205" height="190" rx="18" fill="#ffffff" stroke="#2f6f4e" stroke-width="3"/>
+    <circle cx="672" cy="157" r="22" fill="#dceee3"/>
+    <text x="672" y="166" text-anchor="middle" fill="#24583d" font-size="23" font-weight="700">3</text>
+    <text x="658" y="207" fill="#17211b" font-size="23" font-weight="700">Activate plan</text>
+    <text x="658" y="242" fill="#47544c" font-size="18">Client adds Shopify</text>
+    <text x="658" y="269" fill="#47544c" font-size="18">billing information.</text>
+
+    <path d="M850 210 H897" stroke="#8b978f" stroke-width="4"/>
+    <path d="M887 200 L899 210 L887 220" fill="none" stroke="#8b978f" stroke-width="4"/>
+
+    <rect x="915" y="115" width="225" height="190" rx="18" fill="#24583d"/>
+    <circle cx="957" cy="157" r="22" fill="#ffffff" opacity="0.92"/>
+    <text x="957" y="166" text-anchor="middle" fill="#24583d" font-size="23" font-weight="700">4</text>
+    <text x="943" y="207" fill="#ffffff" font-size="23" font-weight="700">Connect + open</text>
+    <text x="943" y="242" fill="#e8f3ec" font-size="18">Connect domain and</text>
+    <text x="943" y="269" fill="#e8f3ec" font-size="18">remove the password.</text>
+
+    <rect x="60" y="340" width="1080" height="45" rx="12" fill="#fff3cd" stroke="#d8b449"/>
+    <text x="600" y="369" text-anchor="middle" fill="#604d16" font-size="19" font-weight="700">Shopify hosts the storefront throughout this process; GitHub and the domain registrar do not host it.</text>
+  </g>
+</svg>

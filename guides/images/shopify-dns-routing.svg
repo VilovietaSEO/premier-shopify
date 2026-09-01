@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480" role="img" aria-labelledby="title desc">
+  <title id="title">How a custom domain routes visitors to Shopify</title>
+  <desc id="desc">The client keeps the domain at its registrar, DNS routes web traffic to Shopify, Shopify serves the storefront and SSL, and email records remain unchanged.</desc>
+  <rect width="1200" height="480" rx="28" fill="#f7f6f2"/>
+  <text x="60" y="65" fill="#17211b" font-family="Arial, sans-serif" font-size="30" font-weight="700">The domain stays with the client; DNS points web traffic to Shopify</text>
+
+  <g font-family="Arial, sans-serif">
+    <rect x="60" y="120" width="270" height="175" rx="20" fill="#ffffff" stroke="#50665a" stroke-width="3"/>
+    <text x="88" y="165" fill="#17211b" font-size="24" font-weight="700">Domain registrar</text>
+    <text x="88" y="203" fill="#47544c" font-size="18">Client owns the domain</text>
+    <text x="88" y="232" fill="#47544c" font-size="18">and edits its DNS zone.</text>
+    <text x="88" y="267" fill="#24583d" font-size="17" font-weight="700">No web files are uploaded here.</text>
+
+    <path d="M350 208 H480" stroke="#2f6f4e" stroke-width="5"/>
+    <path d="M466 196 L482 208 L466 220" fill="none" stroke="#2f6f4e" stroke-width="5"/>
+    <text x="415" y="183" text-anchor="middle" fill="#47544c" font-size="16">A / AAAA / CNAME</text>
+
+    <rect x="500" y="120" width="270" height="175" rx="20" fill="#ffffff" stroke="#2f6f4e" stroke-width="3"/>
+    <text x="528" y="165" fill="#17211b" font-size="24" font-weight="700">Shopify hosting</text>
+    <text x="528" y="203" fill="#47544c" font-size="18">Serves the published theme,</text>
+    <text x="528" y="232" fill="#47544c" font-size="18">products, cart, checkout,</text>
+    <text x="528" y="261" fill="#47544c" font-size="18">and automatic SSL.</text>
+
+    <path d="M790 208 H920" stroke="#2f6f4e" stroke-width="5"/>
+    <path d="M906 196 L922 208 L906 220" fill="none" stroke="#2f6f4e" stroke-width="5"/>
+    <text x="855" y="183" text-anchor="middle" fill="#47544c" font-size="16">HTTPS storefront</text>
+
+    <rect x="940" y="120" width="200" height="175" rx="20" fill="#24583d"/>
+    <text x="968" y="165" fill="#ffffff" font-size="24" font-weight="700">Customers</text>
+    <text x="968" y="203" fill="#e8f3ec" font-size="18">Visit the client's</text>
+    <text x="968" y="232" fill="#e8f3ec" font-size="18">custom domain.</text>
+
+    <rect x="60" y="340" width="1080" height="85" rx="16" fill="#fff3cd" stroke="#d8b449"/>
+    <text x="88" y="375" fill="#604d16" font-size="19" font-weight="700">Preserve email DNS.</text>
+    <text x="88" y="405" fill="#604d16" font-size="18">Do not delete MX, SPF, DKIM, DMARC, verification records, or unrelated subdomains when connecting the website.</text>
+  </g>
+</svg>
